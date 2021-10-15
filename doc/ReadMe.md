@@ -13,3 +13,6 @@ The project board reflects these priotizations by placing high priority stories 
 ![image](https://user-images.githubusercontent.com/65202488/137423096-4dc1f06b-2e6b-4319-b0e5-f66b4bf343db.png)
 
 ![image](https://user-images.githubusercontent.com/65202488/137423055-b713aa3c-6395-4b7e-b08e-2c02accb1888.png)
+
+## Storyboard Summary
+In the file "StorySummary.pdf" is a summary of our main frames from our story board that is made in Figma. To view, navigate to AgileSprinters/doc, where the file is.
