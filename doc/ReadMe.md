@@ -4,6 +4,9 @@ To view click the projects tab at the top of the menu when viewing the organizat
 The backlog with in depth association of story points and risk level are show in the backlog document found in this directory. <br>
 The project board reflects these priotizations by placing high priority stories in the in progress column initally and the lower risk in todo coulmn.
 
+Note:
+In the to-do list, three-story duplicates were forgotten to be deleted
+
 ## CRC Cards
 
 ![image](https://user-images.githubusercontent.com/65202488/137422175-ed3496b1-6304-4eaa-804c-2638d13835cc.png)
