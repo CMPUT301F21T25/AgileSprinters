@@ -7,4 +7,5 @@ public class Instance {
     private String Opt_comment;
     private Date date;
     private int duration;
+
 }
