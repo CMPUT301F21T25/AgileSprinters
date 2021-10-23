@@ -35,12 +35,14 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance();
 
-        register = (TextView)findViewById(R.id.register);
-        register.setOnClickListener(this);
-
         emailEditText = (EditText) findViewById(R.id.email);
         passwordEditText = (EditText) findViewById(R.id.password);
 
+        //take to register page if the register text is clicked
+        register = (TextView) findViewById(R.id.register);
+        register.setOnClickListener(this);
+
+        //authenticate and log in if the user clicks log in button
         login = (Button) findViewById(R.id.login);
         login.setOnClickListener(this);
 
@@ -48,23 +50,30 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
+        // Check if user is signed in and update UI accordingly.
         FirebaseUser currentUser = auth.getCurrentUser();
         if(currentUser != null){
             reload();
         }
     }
 
-    private void signIn(String email, String password) {
-        // [START sign_in_with_email]
+    private void signIn() {
+
+        //get the email and password that the user inputed
+        String email = emailEditText.getText().toString();
+        String password = passwordEditText.getText().toString();
+
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = auth.getCurrentUser();
+                            Toast.makeText(Login.this, "Authentication successful.",
+                                    Toast.LENGTH_SHORT).show();
                             updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
@@ -75,7 +84,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                         }
                     }
                 });
-        // [END sign_in_with_email]
+
     }
 
 
@@ -88,22 +97,20 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+
         Intent intent = null;
+        //switch that shows action depending on what view was clicked
         switch(v.getId()){
             case R.id.register:
                 intent = new Intent(Login.this, Register.class);
                 break;
             case R.id.login:
-                userLogin();
+                signIn();
+                break;
+            default:
                 break;
         }
-        if (null!=intent) startActivity(intent);
+        if (null != intent) startActivity(intent);
     }
 
-    private void userLogin() {
-        String email = emailEditText.getText().toString();
-        String password = passwordEditText.getText().toString();
-
-        signIn(email,password);
-    }
 }
