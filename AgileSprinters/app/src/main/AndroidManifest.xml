@@ -10,8 +10,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AgileSprinters">
         <activity
-            android:name=".Home"
-            android:exported="false" />
+            android:name=".Login"
+            android:exported="true" />
         <activity
             android:name=".Register"
             android:exported="true" />
