@@ -10,14 +10,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AgileSprinters">
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:name=".Register"
+            android:exported="true" />
+        <activity
+            android:name=".Calendar"
+            android:exported="true" />
+        <activity
+            android:name=".ui.login.LoginActivity"
+            android:exported="true"
+            android:label="@string/title_activity_login" />
     </application>
 
 </manifest>
