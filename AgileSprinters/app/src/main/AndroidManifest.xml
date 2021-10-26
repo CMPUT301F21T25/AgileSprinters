@@ -13,6 +13,9 @@
             android:name=".Register"
             android:exported="true" />
         <activity
+            android:name=".Calendar"
+            android:exported="true" />
+        <activity
             android:name=".ui.login.LoginActivity"
             android:exported="true"
             android:label="@string/title_activity_login" />
