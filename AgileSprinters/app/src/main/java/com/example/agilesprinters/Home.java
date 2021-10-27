@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-public class Home extends AppCompatActivity implements addHabitFragment.OnFragmentInteractionListener {
+public class Home extends AppCompatActivity implements addHabitFragment.OnFragmentInteractionListener, viewEditHabitFragment.OnFragmentInteractionListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -14,6 +14,11 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
     @Override
     public void onAddPressed(Habit habit) {
+
+    }
+
+    @Override
+    public void onEditViewOkPressed(Habit habit, int position) {
 
     }
 }
