@@ -52,6 +52,9 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
         c.set(Calendar.YEAR, year);
         c.set(Calendar.MONTH, month);
         c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+        //make sure date is empty before setting it to the date picked
+        date = "";
         if(month+1 < 10) date+= "0";
         date += String.valueOf(month + 1) + "/";
         if (dayOfMonth < 10 ) date += "0";

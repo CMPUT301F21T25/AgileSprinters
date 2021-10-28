@@ -59,9 +59,14 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
     @Override
     public void onEditViewOkPressed(Habit habit, int position) {
-        habitAdapter.remove(habit);
-        habitAdapter.insert(habit,position);
+        Habit original = habitAdapter.getItem(position);
+        original.setTitle(habit.getTitle());
+        original.setReason(habit.getReason());
+        original.setDateToStart(habit.getDateToStart());
+        original.setWeekdays(habit.getWeekdays());
+        original.setPrivacySetting(habit.getPrivacySetting());
         habitAdapter.notifyDataSetChanged();
+
     }
 
 }
