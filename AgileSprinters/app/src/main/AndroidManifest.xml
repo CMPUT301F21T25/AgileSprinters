@@ -15,7 +15,11 @@
         <activity
             android:name=".Register"
             android:exported="true" />
-        <activity android:name=".Home"
+        <activity
+            android:name=".Home"
+            android:exported="true"/>
+        <activity
+            android:name=".UserCalendar"
             android:exported="true"/>
     </application>
 
