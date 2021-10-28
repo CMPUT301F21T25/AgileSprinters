@@ -3,6 +3,7 @@ package com.example.agilesprinters;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
@@ -43,7 +44,16 @@ public class Register extends AppCompatActivity {
                 final String passwordStr = password.getText().toString();
                 final String passwordConfirmStr = confirmPassword.getText().toString();
                 Log.d("j", passwordConfirmStr+passwordStr);
-                if(passwordStr.equals(passwordConfirmStr) ){
+                if(emailStr.isEmpty()){
+                    String err = "email can not be empty";
+                    updateUI(null, err);
+                } else if(!passwordStr.equals(passwordConfirmStr)){
+                    String err = "passwords do not match";
+                    updateUI(null, err);
+                } else if(passwordStr.isEmpty() || passwordConfirmStr.isEmpty()){
+                    String err = "passwords can not be empty";
+                    updateUI(null, err);
+                } else if (passwordStr.equals(passwordConfirmStr)){
                     Log.d("j", passwordConfirmStr+emailStr);
                     CreateAccount(emailStr, passwordConfirmStr);
                 }
@@ -70,16 +80,24 @@ public class Register extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = auth.getCurrentUser();
-                            //updateUI(user);
+                            updateUI(user, "success");
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(Register.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                            //updateUI(null);
+                            String err = task.getException().getLocalizedMessage();
+                            updateUI(null, err);
                         }
                     }
                 });
     }
 
+    public void updateUI(FirebaseUser user, String errOutput){
+        if (user == null) {
+            Toast.makeText(Register.this, errOutput,
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            Intent intent = new Intent(Register.this, Login.class);
+            if (null!=intent) startActivity(intent);
+        }
+    }
 }
