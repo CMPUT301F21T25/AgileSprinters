@@ -18,6 +18,7 @@ public class Habit implements Serializable {
         this.dateToStart = dateToStart;
         this.weekdays = weekdays;
         this.privacySetting = privacySetting;
+
     }
 
     public String getPrivacySetting() {

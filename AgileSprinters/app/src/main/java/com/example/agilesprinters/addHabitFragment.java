@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,6 +26,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
     private EditText habitTitle;
     private EditText habitReason;
     private EditText date_editText;
+    private TextView buttonError;
     private Button sunday;
     private Button monday;
     private Button tuesday;
@@ -92,6 +94,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
         habitReason = view.findViewById(R.id.habit_reason_editText);
         date_editText = view.findViewById(R.id.Date);
         privacy = view.findViewById(R.id.privacy_spinner);
+        buttonError = view.findViewById(R.id.add_habit_button_error);
 
         //set weekday buttons
         sunday = view.findViewById(R.id.button_sunday);
@@ -217,20 +220,63 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
         });
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        return builder
+         return builder
                 .setView(view)
                 .setTitle("Add Habit")
                 .setNegativeButton("Cancel", null)
                 .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String habit_title = habitTitle.getText().toString();
-                        String habit_reason = habitReason.getText().toString();
-                        String privacySetting = privacy.getSelectedItem().toString();
 
-                        listener.onAddPressed(new Habit(habit_title,habit_reason,date, weekdays, privacySetting));
                     }
                 }).create();
+
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        final AlertDialog dialog = (AlertDialog) getDialog();
+        if(dialog != null){
+            Button positive = (Button) dialog.getButton(Dialog.BUTTON_POSITIVE);
+
+            positive.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Boolean readyToClose = true;
+                    String habit_title = habitTitle.getText().toString();
+                    String habit_reason = habitReason.getText().toString();
+                    String privacySetting = privacy.getSelectedItem().toString();
+
+                    if (habit_title.matches("")) {
+                        readyToClose = false;
+                        habitTitle.setError("This field cannot be blank");
+                    }
+                    if (habit_reason.matches("")) {
+                        readyToClose = false;
+                        habitReason.setError("This field cannot be blank");
+                    }
+                    if (privacySetting.matches("")) {
+                        readyToClose = false;
+                    }
+                    if (date.matches("")) {
+                        readyToClose = false;
+                        date_editText.setError("This field cannot be blank");
+                    }
+                    if (weekdays.isEmpty()) {
+                        readyToClose = false;
+                        buttonError.setText("Please choose which days you would like this event to occur.");
+                    }
+
+                    if(readyToClose) positive.setEnabled(true);
+                    if(readyToClose){
+                        listener.onAddPressed(new Habit(habit_title,habit_reason,date, weekdays, privacySetting));
+                        dialog.dismiss();
+                    }
+                }
+            });
+        }
     }
 
 }

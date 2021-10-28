@@ -54,11 +54,12 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     @Override
     public void onAddPressed(Habit habit) {
         habitAdapter.add(habit);
+
         habitAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public void onEditViewOkPressed(Habit habit, int position) {
+    public void onEditViewSaveChangesPressed(Habit habit, int position) {
         Habit original = habitAdapter.getItem(position);
         original.setTitle(habit.getTitle());
         original.setReason(habit.getReason());
@@ -67,6 +68,13 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         original.setPrivacySetting(habit.getPrivacySetting());
         habitAdapter.notifyDataSetChanged();
 
+    }
+
+    @Override
+    public void onEditViewCancelPressed(Habit habit, int position) {
+        Habit original = habitAdapter.getItem(position);
+        original.setWeekdays(habit.getWeekdays());
+        habitAdapter.notifyDataSetChanged();
     }
 
 }

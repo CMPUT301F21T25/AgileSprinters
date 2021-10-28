@@ -40,7 +40,14 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="3dp"
         android:textSize="16sp"
-         />
+        />
+
+    <TextView
+        android:id="@+id/view_edit_habit_button_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#ff0000"
+        android:textSize="10sp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
