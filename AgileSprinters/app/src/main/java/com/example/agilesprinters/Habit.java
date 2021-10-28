@@ -1,6 +1,7 @@
 package com.example.agilesprinters;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -8,14 +9,15 @@ public class Habit implements Serializable {
     private String title;
     private String reason;
     private String dateToStart;
-    private List weekdays;
+    private ArrayList<String> weekdays;
     private String privacySetting;
 
-    public Habit(String title, String reason, String dateToStart, List weekdays, String privacySetting) {
+    public Habit(String title, String reason, String dateToStart, ArrayList<String> weekdays, String privacySetting) {
         this.title = title;
         this.reason = reason;
         this.dateToStart = dateToStart;
         this.weekdays = weekdays;
+        this.privacySetting = privacySetting;
     }
 
     public String getPrivacySetting() {
@@ -26,11 +28,11 @@ public class Habit implements Serializable {
         this.privacySetting = privacySetting;
     }
 
-    public List getWeekdays() {
+    public ArrayList<String> getWeekdays() {
         return weekdays;
     }
 
-    public void setWeekdays(List weekdays) {
+    public void setWeekdays(ArrayList<String> weekdays) {
         this.weekdays = weekdays;
     }
 
