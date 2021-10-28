@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/view_edit_habit_title_editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:maxLength="20"
+        android:hint="Title"
+        android:inputType="textPersonName"/>
+
+    <EditText
+        android:id="@+id/view_edit_habit_reason_editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Reason"
+        android:inputType="textPersonName"
+        android:maxLength="30"
+        android:minHeight="48dp" />
+
+    <Spinner
+        android:id="@+id/view_edit_privacy_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/btn_dropdown"
+        android:spinnerMode="dropdown"
+        android:entries="@array/privacy_options"/>
+
+
+    <TextView
+        android:id="@+id/view_edit_habit_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="3dp"
+        android:textSize="16sp"
+         />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_weight="100">
+
+        <Button
+            android:id="@+id/view_edit_button_sunday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="14"
+            android:backgroundTint="#808080"
+            android:gravity="center"
+            android:text="Su"
+            android:textSize="11sp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            app:cornerRadius="40sp" />
+
+        <Button
+            android:id="@+id/view_edit_button_monday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="14"
+            android:backgroundTint="#808080"
+            android:gravity="center"
+            android:text="Mo"
+            android:textSize="11sp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            app:cornerRadius="40sp"
+            />
+
+        <Button
+            android:id="@+id/view_edit_button_Tuesday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="14"
+            android:backgroundTint="#808080"
+            android:gravity="center"
+            android:text="Tu"
+            android:textSize="11sp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            app:cornerRadius="40sp"
+            />
+
+        <Button
+            android:id="@+id/view_edit_button_wednesday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="14"
+            android:backgroundTint="#808080"
+            android:gravity="center"
+            android:text="We"
+            android:textSize="11sp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            app:cornerRadius="40sp"
+            />
+
+        <Button
+            android:id="@+id/view_edit_button_thursday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="14"
+            android:backgroundTint="#808080"
+            android:gravity="center"
+            android:text="Th"
+            android:textSize="11sp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            app:cornerRadius="40sp"
+            />
+
+        <Button
+            android:id="@+id/view_edit_button_friday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="14"
+            android:backgroundTint="#808080"
+            android:gravity="center"
+            android:text="Fr"
+            android:textSize="11sp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            app:cornerRadius="40sp"
+            />
+
+        <Button
+            android:id="@+id/view_edit_button_saturday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="14"
+            android:backgroundTint="#808080"
+            android:gravity="center"
+            android:text="Sa"
+            android:textSize="11sp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            app:cornerRadius="40sp"
+            />
+
+    </LinearLayout>
+</LinearLayout>
