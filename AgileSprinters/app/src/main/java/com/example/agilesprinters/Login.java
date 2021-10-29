@@ -55,7 +55,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         }
     }
 
-    private void signIn(String email, String password) {
+    private void signIn(Strging email, String password) {
         // [START sign_in_with_email]
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
