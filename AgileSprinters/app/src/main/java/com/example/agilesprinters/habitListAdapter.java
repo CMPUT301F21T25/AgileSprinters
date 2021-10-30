@@ -14,6 +14,9 @@ import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class provides a custom layout for items in the habit list on the home page.
+ */
 public class habitListAdapter extends ArrayAdapter<Habit> {
     private Context mContext;
     int mResource;
@@ -27,14 +30,14 @@ public class habitListAdapter extends ArrayAdapter<Habit> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        //Get information about the medicine
+        //Get information about the habit
         String title = getItem(position).getTitle();
         String reason = getItem(position).getReason();
         String dateStarted = getItem(position).getDateToStart();
         String privacy = getItem(position).getPrivacySetting();
         ArrayList<String> weekdays = getItem(position).getWeekdays();
 
-        //create medicine object with that information
+        //create habit object with that information
         Habit habit = new Habit(title, reason, dateStarted, weekdays, privacy);
 
         LayoutInflater inflater = LayoutInflater.from(mContext);

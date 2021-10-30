@@ -21,7 +21,9 @@ import androidx.fragment.app.DialogFragment;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-
+/**
+ * This class is a dialog fragment that allows the user to add a new habit.
+ */
 public class addHabitFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener{
     private EditText habitTitle;
     private EditText habitReason;
@@ -39,6 +41,12 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
     private ArrayList<String> weekdays;
     private addHabitFragment.OnFragmentInteractionListener listener;
 
+    /**
+     * This function maintains the arraylist of weekdays for which days a habit is planned to occur.
+     * When one of the buttons containing a day is called, it sends a string with he corresponding
+     * day for this function to save.
+     * @param day
+     */
     public void addWeekday(String day){
         if (!weekdays.isEmpty() && weekdays.contains(day)){
             weekdays.remove(day);
@@ -48,6 +56,14 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
         }
     }
 
+    /**
+     * This function captures the date chosen by the user once they press ok on the datePicker
+     * fragment.
+     * @param view the datePicker dialog view
+     * @param year year of the date chosen by the user
+     * @param month month of the date chosen by the user
+     * @param dayOfMonth day of the month of the date chosen by the user
+     */
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
         Calendar c = Calendar.getInstance();
@@ -65,10 +81,20 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
         date_editText.setText(date);
     }
 
+    /**
+     * This interface listens for when dialog is ended and sends the information and the function
+     * to the Home class for it to implement.
+     */
     public interface OnFragmentInteractionListener {
         void onAddPressed(Habit habit);
     }
 
+    /**
+     * This function attaches the fragment to the activity and keeps track of the context of the
+     * fragment so the listener knows what to listen to. Ensures that the proper methods are
+     * implemented by the Home class.
+     * @param context
+     */
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
@@ -83,6 +109,12 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
     }
 
 
+    /**
+     * This function creates the actual dialog on the screen and listens for user input, returning
+     * the information through the listener based on which button is clicked.
+     * @param savedInstanceState
+     * @return
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -110,7 +142,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
             @Override
             public void onClick(View view) {
                 DialogFragment datePicker = new datePickerFragment();
-                datePicker.show(getChildFragmentManager(), "date picker");
+                datePicker.show(getChildFragmentManager(), "DATE PICKER");
             }
         });
 
@@ -227,12 +259,19 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
                 .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        /* Do not implement anything here in order to override the button
+                         * to only call the listener once all the information required has been
+                         * filled out and display error messages if they have been left blank.
+                         */
                     }
                 }).create();
 
     }
 
+    /**
+     * This function overrides the buttons clicked in order to only allow the dialog to be dismissed
+     * when all requirements have been met.
+     */
     @Override
     public void onResume(){
         super.onResume();
@@ -244,7 +283,10 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
             positive.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    // Boolean tracks when the all the fields have been filled out. Will turn to false
+                    // if anything has been left blank.
                     Boolean readyToClose = true;
+
                     String habit_title = habitTitle.getText().toString();
                     String habit_reason = habitReason.getText().toString();
                     String privacySetting = privacy.getSelectedItem().toString();
@@ -269,6 +311,8 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
                         buttonError.setText("Please choose which days you would like this event to occur.");
                     }
 
+                    // If everything has been filled out, call the listener and send the edited
+                    // habit back to the Home class and dismiss the dialog.
                     if(readyToClose) positive.setEnabled(true);
                     if(readyToClose){
                         listener.onAddPressed(new Habit(habit_title,habit_reason,date, weekdays, privacySetting));
@@ -278,5 +322,4 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
             });
         }
     }
-
 }
