@@ -105,5 +105,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         String password = passwordEditText.getText().toString();
 
         signIn(email,password);
+        Intent intent = null;
+        intent = new Intent(Login.this, Register.class);
     }
 }
