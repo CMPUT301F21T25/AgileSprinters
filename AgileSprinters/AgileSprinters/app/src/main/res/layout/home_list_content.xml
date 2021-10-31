@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:weightSum="100">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="50"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="50"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/habit_date_textView"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_weight="50"
+                android:gravity="left"
+                android:text="Date"
+                />
+
+            <TextView
+                android:id="@+id/habit_tag_textView"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_weight="50"
+                android:gravity="left"
+                android:text="Tags to be added later"
+                />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/habit_list_title_textView"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginLeft="6dp"
+            android:text="Habit Title"
+            android:textSize="20sp"/>
+
+
+        <TextView
+            android:id="@+id/habit_list_reason_textView"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="6dp"
+            android:text="Habit Reason"
+            android:textSize="18sp"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="50"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/privacy_setting_list"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_weight="50"
+                android:layout_marginLeft="6dp"
+                android:layout_gravity="left"
+                android:text = "Privacy Setting"
+                />
+
+            <TextView
+                android:id="@+id/buttons_textView"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:text="Buttons to be added later"
+                android:layout_weight="50"
+                android:gravity="left"
+                />
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>
