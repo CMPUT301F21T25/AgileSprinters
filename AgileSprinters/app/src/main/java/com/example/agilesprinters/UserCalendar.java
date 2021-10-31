@@ -2,6 +2,7 @@ package com.example.agilesprinters;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 
 import android.os.Bundle;
 import android.view.View;
@@ -18,7 +19,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
 
-public class UserCalendar extends AppCompatActivity implements editHabitEventFragment.OnFragmentInteractionListener{
+public class UserCalendar extends AppCompatActivity implements addHabitEventFragment.OnFragmentInteractionListener {
     private ListView toDoEventsList;
     private ListView completedEventsList;
 
@@ -29,6 +30,8 @@ public class UserCalendar extends AppCompatActivity implements editHabitEventFra
     private ArrayAdapter<String> completedEventAdapter;
 
     private final ArrayList<HabitInstance> habitEvents_list = new ArrayList<>();
+
+    String selectedCompletedEvent;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,7 +68,18 @@ public class UserCalendar extends AppCompatActivity implements editHabitEventFra
         toDoEventsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                new editHabitEventFragment().show(getSupportFragmentManager(), "EDIT");
+                addHabitEventFragment dialog = new addHabitEventFragment();
+                //dialog.setValue("Running");
+                dialog.show(getSupportFragmentManager(), "EDIT");
+            }
+        });
+
+        completedEventsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedCompletedEvent = completedEvents.get(i);
+                int pos = Integer.parseInt(selectedCompletedEvent.split("[)]")[0]);
+
             }
         });
     }
@@ -76,8 +90,8 @@ public class UserCalendar extends AppCompatActivity implements editHabitEventFra
         days.add("WEDNESDAY");
         days.add("SUNDAY");
 
-        Habit habit1 = new Habit("Running", "To run a 5k", "2021-10-27", days,"Private");
-        Habit habit2 = new Habit("Walking", "To stay healthy", "2021-10-05", days,"Private");
+        Habit habit1 = new Habit("Running", "To run a 5k", "2021-10-27", days, "Private");
+        Habit habit2 = new Habit("Walking", "To stay healthy", "2021-10-05", days, "Private");
 
         ArrayList<Habit> habits = new ArrayList<>();
         habits.add(habit1);
@@ -94,6 +108,7 @@ public class UserCalendar extends AppCompatActivity implements editHabitEventFra
 
             // Checking if there are any habits assigned for today
             LocalDate startDate = LocalDate.parse(currentHabit.getDateToStart(), formatter);
+
             if (startDate.isBefore(todayDate) && currentHabit.getWeekdays().contains(todayDay)) {
                 toDoEvents.add(currentHabit.getTitle());
             }
@@ -102,12 +117,27 @@ public class UserCalendar extends AppCompatActivity implements editHabitEventFra
         toDoEventAdapter.notifyDataSetChanged();
     }
 
+    public void displayCompletedEvents() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        for (int i = 0; i < habitEvents_list.size(); i++) {
+            HabitInstance currentHabit = habitEvents_list.get(i);
+            currentHabit.setUniqueId(i+1);
+
+            LocalDate doneDate = LocalDate.parse(currentHabit.getDate(), formatter);
+            String formattedDate = doneDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG));
+            String toDisplay = currentHabit.getUniqueId() + ") Running" + " @ " + formattedDate
+                    + " for " + String.valueOf(currentHabit.getDuration()) + " mins";
+            completedEvents.add(toDisplay);
+        }
+
+        completedEventAdapter.notifyDataSetChanged();
+    }
+
     @Override
     public void onSavePressed(HabitInstance habitInstance) {
         habitEvents_list.add(habitInstance);
 
-        String completed = habitInstance.getOpt_comment() + " " + habitInstance.getDate();
-        completedEvents.add(completed);
-        completedEventAdapter.notifyDataSetChanged();
+        displayCompletedEvents();
     }
+
 }
