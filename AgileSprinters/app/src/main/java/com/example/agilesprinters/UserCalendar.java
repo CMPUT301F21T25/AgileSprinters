@@ -58,7 +58,7 @@ public class UserCalendar extends AppCompatActivity {
 
         // Setting the current date to the first text view
         String formattedDate = todayDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG));
-        title1.setText(formattedDate + " | Habits to do today");
+        title1.setText(formattedDate + ")");
 
         // Create a list of habit events and initialize an adapter
         toDoEventsList = findViewById(R.id.toDoEventsList);
@@ -76,7 +76,7 @@ public class UserCalendar extends AppCompatActivity {
         ArrayList<String> days = new ArrayList<>();
         days.add("MONDAY");
         days.add("WEDNESDAY");
-        days.add("FRIDAY");
+        days.add("SATURDAY");
         Habit habit1 = new Habit("Running", "To run a 5k", "2021-10-27",
                 days,"Private");
 
@@ -86,9 +86,12 @@ public class UserCalendar extends AppCompatActivity {
         // Checking if there are any habits assigned for today
         if (startDate.isBefore(todayDate) && habit1.getWeekdays().contains(todayDay)) {
             toDoEvents.add(habit1.getTitle());
+            toDoEvents.add("Cooking");
         }
 
+        completedEvents.add("Walking");
         toDoEventAdapter.notifyDataSetChanged();
+        completedEventAdapter.notifyDataSetChanged();
 
         //Habit habit2 = new Habit("Walking", "To stay healthy", "2021-11-05", days,"Private");
         //ArrayList<Habit> habits = new ArrayList<>();
