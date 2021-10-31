@@ -48,23 +48,23 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
     }
 
-
     @Override
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = auth.getCurrentUser();
-        if(currentUser != null){
-            reload();
+        if ( currentUser != null){
+            //Do anything here which needs to be done after user is set is complete
+            updateUI(currentUser);
         }
-    }
 
+    }
 
     private void signIn() {
 
         // get the email and password from respective fields
-        String email = emailEditText.getText().toString();
-        String password = passwordEditText.getText().toString();
+        String email = emailEditText.getText().toString().trim();
+        String password = passwordEditText.getText().toString().trim();
 
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -102,15 +102,18 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     }
 
     // function switches to the home page
-    private void reload() {
-        Intent intent = new Intent(Login.this, Register.class);
-        startActivity(intent);
-    }
-
     private void updateUI(FirebaseUser user) {
 
-    }
+        Intent intent = new Intent(Login.this, Home.class);
 
+        Bundle bundle = new Bundle();
+        //pass in the unique user ID to home page
+        String uId = user.getUid();
+        bundle.putString("userId", uId);
+        intent.putExtras(bundle);
+
+        startActivity(intent);
+    }
     @Override
     public void onClick(View v) {
         Intent intent = null;
