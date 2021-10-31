@@ -23,15 +23,17 @@ import com.google.firebase.auth.FirebaseUser;
 public class Login extends AppCompatActivity implements View.OnClickListener {
 
     private FirebaseAuth auth;
-    private TextView register;
     private EditText emailEditText;
     private EditText passwordEditText;
-    private Button login;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        TextView register;
+        Button login;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance();
 
@@ -45,6 +47,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         login.setOnClickListener(this);
 
     }
+
+
     @Override
     public void onStart() {
         super.onStart();
@@ -55,8 +59,13 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         }
     }
 
-    private void signIn(Strging email, String password) {
-        // [START sign_in_with_email]
+
+    private void signIn() {
+
+        // get the email and password from respective fields
+        String email = emailEditText.getText().toString();
+        String password = passwordEditText.getText().toString();
+
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -67,21 +76,37 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                             FirebaseUser user = auth.getCurrentUser();
                             updateUI(user);
                         } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            Toast.makeText(Login.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                            updateUI(null);
+
+                            if (email.equals("")){
+                                errMsg(task,"Email field is empty");
+                            }
+
+                            else if (password.equals("")){
+                               errMsg(task,"Password field is empty");
+                            }
+                            else {
+                                // If sign in fails, display a message to the user.
+                                errMsg(task,"Email or password entered is incorrect");
+                            }
                         }
                     }
                 });
         // [END sign_in_with_email]
     }
 
-
-    private void reload() {
-
+    private void errMsg(@NonNull Task<AuthResult> task, String errStr){
+        Log.w(TAG, "signInWithEmail:failure", task.getException());
+        Toast.makeText(Login.this, errStr,
+                Toast.LENGTH_SHORT).show();
+        updateUI(null);
     }
+
+    // function switches to the home page
+    private void reload() {
+        Intent intent = new Intent(Login.this, Register.class);
+        startActivity(intent);
+    }
+
     private void updateUI(FirebaseUser user) {
 
     }
@@ -94,16 +119,12 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 intent = new Intent(Login.this, Register.class);
                 break;
             case R.id.login:
-                userLogin();
+                signIn();
+                break;
+            default:
                 break;
         }
         if (null!=intent) startActivity(intent);
     }
 
-    private void userLogin() {
-        String email = emailEditText.getText().toString();
-        String password = passwordEditText.getText().toString();
-
-        signIn(email,password);
-    }
 }
