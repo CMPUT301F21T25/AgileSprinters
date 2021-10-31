@@ -24,7 +24,8 @@
         android:textSize="25sp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="5dp"
-        android:text="           Habits to do today"/>
+        android:textAlignment="center"
+        android:text="Habits to do today"/>
 
     <ListView
         android:id="@+id/toDoEventsList"
@@ -42,7 +43,8 @@
         android:textSize="25sp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="5dp"
-        android:text="Completed habits" />
+        android:textAlignment="center"
+        android:text="Completed habit events" />
 
     <ListView
         android:id="@+id/completedEventsList"

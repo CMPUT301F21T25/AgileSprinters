@@ -1,36 +1,22 @@
 package com.example.agilesprinters;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.usage.UsageEvents;
-import android.content.Context;
-import android.graphics.Color;
-import android.icu.util.LocaleData;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CalendarView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import org.w3c.dom.Text;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 
 public class UserCalendar extends AppCompatActivity {
     private ListView toDoEventsList;
@@ -42,7 +28,7 @@ public class UserCalendar extends AppCompatActivity {
     private ArrayAdapter<String> toDoEventAdapter;
     private ArrayAdapter<String> completedEventAdapter;
 
-    private final ArrayList<Instance> habitEvents_list = new ArrayList<>();
+    private final ArrayList<HabitInstance> habitEvents_list = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,29 +59,16 @@ public class UserCalendar extends AppCompatActivity {
         completedEventsList.setAdapter(completedEventAdapter);
 
         // Creating habits
-        ArrayList<String> days = new ArrayList<>();
-        days.add("MONDAY");
-        days.add("WEDNESDAY");
-        days.add("SATURDAY");
-        Habit habit1 = new Habit("Running", "To run a 5k", "2021-10-27",
-                days,"Private");
+        ArrayList<Habit> habits = createHabits();
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate startDate = LocalDate.parse(habit1.getDateToStart(), formatter);
+        initialScreen(habits, todayDate, todayDay);
 
-        // Checking if there are any habits assigned for today
-        if (startDate.isBefore(todayDate) && habit1.getWeekdays().contains(todayDay)) {
-            toDoEvents.add(habit1.getTitle());
-            toDoEvents.add("Cooking");
-        }
-
-        completedEvents.add("Walking");
-        toDoEventAdapter.notifyDataSetChanged();
-        completedEventAdapter.notifyDataSetChanged();
-
-        //Habit habit2 = new Habit("Walking", "To stay healthy", "2021-11-05", days,"Private");
-        //ArrayList<Habit> habits = new ArrayList<>();
-        //habits.add(habit1);
+        toDoEventsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                new editHabitEventFragment().show(getSupportFragmentManager(), "EDIT");
+            }
+        });
 
 
         /**
@@ -156,5 +129,37 @@ public class UserCalendar extends AppCompatActivity {
             }
         });
          **/
+    }
+
+    public ArrayList<Habit> createHabits() {
+        ArrayList<String> days = new ArrayList<>();
+        days.add("MONDAY");
+        days.add("WEDNESDAY");
+        days.add("SUNDAY");
+
+        Habit habit1 = new Habit("Running", "To run a 5k", "2021-10-27", days,"Private");
+        Habit habit2 = new Habit("Walking", "To stay healthy", "2021-10-05", days,"Private");
+
+        ArrayList<Habit> habits = new ArrayList<>();
+        habits.add(habit1);
+        habits.add(habit2);
+
+        return habits;
+    }
+
+    public void initialScreen(ArrayList<Habit> habits, LocalDate todayDate, String todayDay) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        for (int i = 0; i < habits.size(); i++) {
+            Habit currentHabit = habits.get(i);
+
+            // Checking if there are any habits assigned for today
+            LocalDate startDate = LocalDate.parse(currentHabit.getDateToStart(), formatter);
+            if (startDate.isBefore(todayDate) && currentHabit.getWeekdays().contains(todayDay)) {
+                toDoEvents.add(currentHabit.getTitle());
+            }
+        }
+
+        toDoEventAdapter.notifyDataSetChanged();
     }
 }
