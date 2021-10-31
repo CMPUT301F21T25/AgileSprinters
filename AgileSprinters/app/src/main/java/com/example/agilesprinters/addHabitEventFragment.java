@@ -53,7 +53,6 @@ public class addHabitEventFragment extends DialogFragment{
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.edit_habit_event_fragment, null);
 
         // Display the calendar
-        habitTitle = view.findViewById(R.id.habit_title);
         completed = view.findViewById(R.id.checkBox_completed);
         //not_completed = view.findViewById(R.id.checkBox_notCompleted);
         optional_comment = view.findViewById(R.id.editText_comment);

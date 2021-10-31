@@ -19,7 +19,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
 
-public class UserCalendar extends AppCompatActivity implements addHabitEventFragment.OnFragmentInteractionListener {
+public class UserCalendar extends AppCompatActivity implements addHabitEventFragment.OnFragmentInteractionListener,editHabitEventFragment.OnFragmentInteractionListener {
     private ListView toDoEventsList;
     private ListView completedEventsList;
 
@@ -80,6 +80,17 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
                 selectedCompletedEvent = completedEvents.get(i);
                 int pos = Integer.parseInt(selectedCompletedEvent.split("[)]")[0]);
 
+                HabitInstance instanceToEdit = null;
+                for (int k = 0; k < habitEvents_list.size(); k++) {
+                    instanceToEdit = habitEvents_list.get(k);
+                    if (instanceToEdit.getUniqueId() == pos) {
+                        break;
+                    }
+                }
+
+                editHabitEventFragment values =
+                        new editHabitEventFragment().newInstance(pos, instanceToEdit);
+                values.show(getSupportFragmentManager(), "VIEW/EDIT");
             }
         });
     }
@@ -138,6 +149,22 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
         habitEvents_list.add(habitInstance);
 
         displayCompletedEvents();
+    }
+
+    @Override
+    public void onEditSavePressed(HabitInstance instance, int position) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate doneDate = LocalDate.parse(instance.getDate(), formatter);
+        String formattedDate = doneDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG));
+
+        habitEvents_list.set(position-1, instance);
+
+        String toDisplay = instance.getUniqueId() + ") " + instance.getOpt_comment() + " @ " + formattedDate
+                + " for " + String.valueOf(instance.getDuration()) + " mins";
+
+        completedEvents.set(position-1, toDisplay);
+
+        completedEventAdapter.notifyDataSetChanged();
     }
 
 }
