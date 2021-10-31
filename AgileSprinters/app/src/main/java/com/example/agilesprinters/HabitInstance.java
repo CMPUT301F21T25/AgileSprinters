@@ -3,12 +3,14 @@ package com.example.agilesprinters;
 import java.util.Date;
 
 public class HabitInstance {
+    private int uniqueId;
     private boolean status; //completed or not
     private String opt_comment;
     private String date;
     private int duration;
 
-    public HabitInstance(boolean status, String opt_comment, String date, int duration) {
+    public HabitInstance(int uniqueId, boolean status, String opt_comment, String date, int duration) {
+        this.uniqueId = uniqueId;
         this.status = status;
         this.opt_comment = opt_comment;
         this.date = date;
@@ -16,6 +18,15 @@ public class HabitInstance {
     }
 
     // Getters and setters
+
+    public int getUniqueId() {
+        return uniqueId;
+    }
+
+    public void setUniqueId(int uniqueId) {
+        this.uniqueId = uniqueId;
+    }
+
     public boolean isStatus() {
         return status;
     }

@@ -18,7 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
 
-public class UserCalendar extends AppCompatActivity {
+public class UserCalendar extends AppCompatActivity implements editHabitEventFragment.OnFragmentInteractionListener{
     private ListView toDoEventsList;
     private ListView completedEventsList;
 
@@ -35,7 +35,6 @@ public class UserCalendar extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_calendar);
 
-        FloatingActionButton addButton = findViewById(R.id.addEventButton);
         TextView title1 = findViewById(R.id.title1);
 
         // Getting present date and day of the week
@@ -69,66 +68,6 @@ public class UserCalendar extends AppCompatActivity {
                 new editHabitEventFragment().show(getSupportFragmentManager(), "EDIT");
             }
         });
-
-
-        /**
-        // Display the calendar
-
-        // When a date is clicked, display the date
-        List<String> months = Arrays.asList("January", "February", "March", "April", "May", "June",
-                "July", "August", "September", "October", "November", "December");
-
-
-        // get habits here from the database
-        ArrayList<String> days = new ArrayList<>();
-        days.add("MONDAY");
-        days.add("WEDNESDAY");
-        days.add("FRIDAY");
-        Habit habit1 = new Habit("Running", "To run a 5k", "2021-10-27",
-                days,"Private");
-        days.remove("Friday");
-        Habit habit2 = new Habit("Walking", "To stay healthy", "2021-11-05",
-                days,"Private");
-
-        ArrayList<Habit> habits = new ArrayList<>();
-        habits.add(habit1);
-        //habits.add(habit2);
-
-        // Display it on the calendar using the start date and weekdays
-        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-            @Override
-            public void onSelectedDayChange(@NonNull CalendarView calendarView, int year, int month, int day) {
-
-
-                String curr_habit_date = habits.get(0).getDateToStart();
-                String[] parts = curr_habit_date.split("-");
-                //String dates = "2011-12-31";
-                //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                LocalDate date = LocalDate.of(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]) - 1, Integer.parseInt(parts[2]));
-                //LocalDate chosenDate = LocalDate.parse(dates, formatter);
-                LocalDate chosenDate = LocalDate.of(year, month, day);
-
-                if(chosenDate.compareTo(date)>0){
-                    if (habits.get(0).getWeekdays().contains(chosenDate.getDayOfWeek().toString())) {
-                        textView.setText(months.get(month) + " " + String.valueOf(day) + ", "
-                                + String.valueOf(year) + "Todays schedule" + chosenDate.getDayOfWeek().toString());
-                    } else {
-                        textView.setText(months.get(month) + " " + String.valueOf(day) + ", "
-                                + String.valueOf(year));
-                    }
-                }else if(chosenDate.compareTo(date)<0){
-                    textView.setText(months.get(month) + " " + String.valueOf(day) + ", "
-                            + String.valueOf(year));
-                }else if(chosenDate.compareTo(date)==0){
-                    textView.setText(months.get(month) + " " + String.valueOf(day) + ", "
-                            + String.valueOf(year));
-                }else{
-                    textView.setText("How to get here?");
-                }
-
-            }
-        });
-         **/
     }
 
     public ArrayList<Habit> createHabits() {
@@ -161,5 +100,14 @@ public class UserCalendar extends AppCompatActivity {
         }
 
         toDoEventAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onSavePressed(HabitInstance habitInstance) {
+        habitEvents_list.add(habitInstance);
+
+        String completed = habitInstance.getOpt_comment() + " " + habitInstance.getDate();
+        completedEvents.add(completed);
+        completedEventAdapter.notifyDataSetChanged();
     }
 }
