@@ -1,0 +1,3 @@
+
+rootProject.name = "AgileSprinters"
+include ':app'
