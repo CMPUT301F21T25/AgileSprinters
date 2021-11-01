@@ -2,7 +2,9 @@ package com.example.agilesprinters;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -10,11 +12,14 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
 public class Home extends AppCompatActivity implements addHabitFragment.OnFragmentInteractionListener,
         viewEditHabitFragment.OnFragmentInteractionListener{
+    private FirebaseAuth auth;
     ArrayList<Habit> habitArrayList;
     ListView habitList;
     ArrayAdapter<Habit> habitAdapter;
@@ -76,5 +81,11 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         original.setWeekdays(habit.getWeekdays());
         habitAdapter.notifyDataSetChanged();
     }
+
+    public void LoginRedirect(){
+        Intent intent = new Intent(Home.this, Login.class);
+        if (null!=intent) startActivity(intent);
+    }
+
 
 }
