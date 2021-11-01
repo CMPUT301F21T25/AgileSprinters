@@ -36,6 +36,7 @@ public class editHabitEventFragment extends DialogFragment {
 
     public interface OnFragmentInteractionListener {
         void onEditSavePressed(HabitInstance instance, int position);
+        void onDeletePressed(HabitInstance instance);
     }
 
 
@@ -79,7 +80,11 @@ public class editHabitEventFragment extends DialogFragment {
         return builder
                 .setView(view)
                 .setTitle("View/Edit Habit Event")
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        listener.onDeletePressed(habitInstance);
+                    }
+                })
                 .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

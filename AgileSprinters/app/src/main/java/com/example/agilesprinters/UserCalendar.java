@@ -1,6 +1,7 @@
 package com.example.agilesprinters;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -155,6 +157,14 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
     public void onEditSavePressed(HabitInstance instance, int position) {
 
         habitEvents_list.set(position, instance);
+
+        displayCompletedEvents();
+    }
+
+    @Override
+    public void onDeletePressed(HabitInstance instance) {
+
+        habitEvents_list.remove(instance);
 
         displayCompletedEvents();
     }
