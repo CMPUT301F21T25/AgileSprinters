@@ -252,8 +252,8 @@ public class viewEditHabitFragment extends DialogFragment{
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         return builder
                 .setView(view)
-                .setTitle("Add Habit")
-                .setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+                .setTitle("View/Edit Habit")
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         listener.onEditViewCancelPressed(habit, position);

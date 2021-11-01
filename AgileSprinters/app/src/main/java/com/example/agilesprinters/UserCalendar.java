@@ -1,11 +1,13 @@
 package com.example.agilesprinters;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -14,16 +16,24 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class UserCalendar extends AppCompatActivity implements addHabitEventFragment.OnFragmentInteractionListener,editHabitEventFragment.OnFragmentInteractionListener {
     private ListView toDoEventsList;
     private ListView completedEventsList;
+    FirebaseFirestore db;
+    private static final String TAG = "Instance";
 
     private final ArrayList<String> toDoEvents = new ArrayList<>();
     private final ArrayList<String> completedEvents = new ArrayList<>();
@@ -149,7 +159,7 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
     @Override
     public void onSavePressed(HabitInstance habitInstance) {
         habitEvents_list.add(habitInstance);
-
+        addHabitEventDatabase(habitInstance);
         displayCompletedEvents();
     }
 
@@ -167,6 +177,38 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
         habitEvents_list.remove(instance);
 
         displayCompletedEvents();
+    }
+
+    public void addHabitEventDatabase(HabitInstance instance){
+        db  =  FirebaseFirestore.getInstance();
+        final CollectionReference collectionReference  =  db.collection("Instances");
+        DocumentReference newInstanceRef = db.collection("Instances").document();
+        //String HabitId = instance.getHabitId;
+        String instanceId = newInstanceRef.getId();
+        HashMap<String, String> data = new HashMap<>();
+
+        if (instanceId != null){
+            data.put("Date", instance.getDate());
+            data.put("Opt_comment",instance.getOpt_comment());
+            data.put("Duration",String.valueOf(instance.getDuration()));
+            collectionReference
+                    .document(instanceId)
+                    .set(data)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            // These are a method which gets executed when the task is succeeded
+                            Log. d (TAG, "Data has been added successfully!");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            // These are a method which gets executed if there’s any problem
+                            Log. d (TAG, "Data could not be added!" + e.toString());
+                        }
+                    });
+        }
     }
 
 }

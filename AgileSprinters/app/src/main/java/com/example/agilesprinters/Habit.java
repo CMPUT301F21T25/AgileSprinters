@@ -12,6 +12,7 @@ public class Habit implements Serializable {
     private ArrayList<String> weekdays;
     private String privacySetting;
 
+
     public Habit(String title, String reason, String dateToStart, ArrayList<String> weekdays, String privacySetting) {
         this.title = title;
         this.reason = reason;

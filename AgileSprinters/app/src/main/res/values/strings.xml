@@ -10,4 +10,8 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
+    <string name="userId_text">User Id</string>
+    <string name="test">TEST</string>
+    <string name="followers_text">Followers</string>
+    <string name="following_text">Following</string>
 </resources>
