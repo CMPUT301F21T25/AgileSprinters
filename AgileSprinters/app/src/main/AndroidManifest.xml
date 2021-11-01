@@ -17,6 +17,15 @@
             android:exported="true" />
         <activity android:name=".Home"
             android:exported="true"/>
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.REGISTER" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".Home"
+            android:exported="true"/>
     </application>
 
 </manifest>
