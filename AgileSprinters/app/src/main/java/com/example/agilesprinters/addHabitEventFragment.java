@@ -15,8 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-public class editHabitEventFragment extends DialogFragment {
-    private int position;
+public class addHabitEventFragment extends DialogFragment{
     private CheckBox completed;
     private CheckBox not_completed;
     private EditText optional_comment;
@@ -25,31 +24,23 @@ public class editHabitEventFragment extends DialogFragment {
     private TextView habitTitle;
     private String title;
 
-    private editHabitEventFragment.OnFragmentInteractionListener listener;
-
-    public static editHabitEventFragment newInstance(int position, HabitInstance habitInstance) {
-        editHabitEventFragment fragment = new editHabitEventFragment();
-        Bundle args = new Bundle();
-        args.putInt("position", position);
-        args.putSerializable("Habit instance", habitInstance);
-        fragment.setArguments(args);
-
-        return fragment;
-    }
+    private addHabitEventFragment.OnFragmentInteractionListener listener;
 
     public interface OnFragmentInteractionListener {
-        void onEditSavePressed(HabitInstance instance, int position);
+        void onSavePressed(HabitInstance habitInstance);
     }
 
+    public void setValue(String title) {
+        this.title = title;
+    }
 
     @Override
-    public void onAttach(Context context){
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
-        if (context instanceof addHabitEventFragment.OnFragmentInteractionListener){
-            listener = (editHabitEventFragment.OnFragmentInteractionListener) context;
-        }
-        else{
+        if (context instanceof OnFragmentInteractionListener) {
+            listener = (OnFragmentInteractionListener) context;
+        } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
@@ -68,21 +59,11 @@ public class editHabitEventFragment extends DialogFragment {
         input_date = view.findViewById(R.id.editText_date);
         input_duration = view.findViewById(R.id.editText_duration);
 
-        HabitInstance habitInstance = (HabitInstance) getArguments().getSerializable("Habit instance");
-        position = getArguments().getInt("position");
-
-        if (habitInstance.isStatus()) {
-            completed.setChecked(true);
-        }
-
-        optional_comment.setText(habitInstance.getOpt_comment());
-        input_date.setText(habitInstance.getDate());
-        input_duration.setText(String.valueOf(habitInstance.getDuration()));
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         return builder
                 .setView(view)
-                .setTitle("View/Edit Habit Event")
+                .setTitle("Add Habit Event")
                 .setNegativeButton("Cancel", null)
                 .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
@@ -92,9 +73,10 @@ public class editHabitEventFragment extends DialogFragment {
                         String date = input_date.getText().toString();
                         int duration = Integer.parseInt(input_duration.getText().toString());
 
-                        listener.onEditSavePressed(new HabitInstance(position, checked, comment, date, duration), position);
+                        listener.onSavePressed(new HabitInstance(1, checked, comment, date, duration));
                     }
                 }).create();
 
     }
+
 }

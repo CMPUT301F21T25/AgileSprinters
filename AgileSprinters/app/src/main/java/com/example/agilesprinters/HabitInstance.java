@@ -1,8 +1,9 @@
 package com.example.agilesprinters;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class HabitInstance {
+public class HabitInstance implements Serializable {
     private int uniqueId;
     private boolean status; //completed or not
     private String opt_comment;

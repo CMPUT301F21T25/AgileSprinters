@@ -19,6 +19,8 @@
         <entry key="..\:/Users/rasaz/AndroidStudioProjects/AgileSprinters/AgileSprinters/app/src/main/res/layout/view_edit_habit_fragment.xml" value="0.2" />
         <entry key="app/src/main/res/layout/activity_register.xml" value="0.23385416666666667" />
         <entry key="app/src/main/res/layout/calendar.xml" value="0.23385416666666667" />
+        <entry key="app/src/main/res/layout/edit_habit_event_fragment.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/view_habit_event_fragment.xml" value="0.47503626867360005" />
       </map>
     </option>
   </component>
