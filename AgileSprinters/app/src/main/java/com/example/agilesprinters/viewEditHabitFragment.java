@@ -43,6 +43,7 @@ public class viewEditHabitFragment extends DialogFragment{
     private HashMap<String,Boolean> weekdays;
     private viewEditHabitFragment.OnFragmentInteractionListener listener;
 
+
     /**
      * This function saves the values sent to the fragment for future manipulation
      * @param position is the item position that was tapped within the list
@@ -134,7 +135,6 @@ public class viewEditHabitFragment extends DialogFragment{
 
         // Set weekday buttons to proper colors based on the habit object passed in
         // and initialize the trackers for buttons pressed
-
         if(weekdays.get("SUNDAY")) {
             sunday.setBackgroundColor(Color.parseColor("#e27c65"));
         }
@@ -219,7 +219,7 @@ public class viewEditHabitFragment extends DialogFragment{
                     weekdays.replace("THURSDAY", false, true);
                 } else {
                     thursday.setBackgroundColor(Color.parseColor("#808080"));
-                    weekdays.replace("THURSDAY", false, true);
+                    weekdays.replace("THURSDAY", true, false);
                 }
             }
         });
@@ -306,7 +306,15 @@ public class viewEditHabitFragment extends DialogFragment{
                     if (privacySetting.matches("")) {
                         readyToClose = false;
                     }
-                    if (weekdays.isEmpty()) {
+
+                    Boolean weekdayCheck = false;
+                    for(String i : weekdays.keySet()){
+                        if (weekdays.get(i)){
+                            weekdayCheck = true;
+                            break;
+                        }
+                    }
+                    if (!weekdayCheck) {
                         readyToClose = false;
                         buttonError.setText("Please choose which days you would like this event to occur.");
                     }

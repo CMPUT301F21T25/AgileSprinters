@@ -202,7 +202,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
                     weekdays.replace("THURSDAY", false, true);
                 } else {
                     thursday.setBackgroundColor(Color.parseColor("#808080"));
-                    weekdays.replace("THURSDAY", false, true);
+                    weekdays.replace("THURSDAY", true, false);
                 }
             }
         });
@@ -288,14 +288,21 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
                         readyToClose = false;
                         date_editText.setError("This field cannot be blank");
                     }
-                    if (weekdays.isEmpty()) {
+
+                    Boolean weekdayCheck = false;
+                    for(String i : weekdays.keySet()){
+                        if (weekdays.get(i)){
+                            weekdayCheck = true;
+                            break;
+                        }
+                    }
+                    if (!weekdayCheck) {
                         readyToClose = false;
                         buttonError.setText("Please choose which days you would like this event to occur.");
                     }
 
                     // If everything has been filled out, call the listener and send the edited
                     // habit back to the Home class and dismiss the dialog.
-                    if(readyToClose) positive.setEnabled(true);
                     if(readyToClose){
                         listener.onAddPressed(new Habit(habit_title,habit_reason,date, weekdays, privacySetting));
                         dialog.dismiss();
