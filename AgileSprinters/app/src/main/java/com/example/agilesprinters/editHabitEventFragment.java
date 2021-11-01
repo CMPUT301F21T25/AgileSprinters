@@ -18,12 +18,9 @@ import androidx.fragment.app.DialogFragment;
 public class editHabitEventFragment extends DialogFragment {
     private int position;
     private CheckBox completed;
-    private CheckBox not_completed;
     private EditText optional_comment;
     private EditText input_date;
     private EditText input_duration;
-    private TextView habitTitle;
-    private String title;
 
     private editHabitEventFragment.OnFragmentInteractionListener listener;
 
@@ -63,7 +60,6 @@ public class editHabitEventFragment extends DialogFragment {
 
         // Display the calendar
         completed = view.findViewById(R.id.checkBox_completed);
-        //not_completed = view.findViewById(R.id.checkBox_notCompleted);
         optional_comment = view.findViewById(R.id.editText_comment);
         input_date = view.findViewById(R.id.editText_date);
         input_duration = view.findViewById(R.id.editText_duration);

@@ -89,7 +89,7 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
                 }
 
                 editHabitEventFragment values =
-                        new editHabitEventFragment().newInstance(pos, instanceToEdit);
+                        new editHabitEventFragment().newInstance(i, instanceToEdit);
                 values.show(getSupportFragmentManager(), "VIEW/EDIT");
             }
         });
@@ -121,7 +121,7 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
             LocalDate startDate = LocalDate.parse(currentHabit.getDateToStart(), formatter);
 
             if (startDate.isBefore(todayDate) && currentHabit.getWeekdays().contains(todayDay)) {
-                toDoEvents.add(currentHabit.getTitle());
+                toDoEvents.add((i+1) + ") " + currentHabit.getTitle());
             }
         }
 
@@ -129,15 +129,15 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
     }
 
     public void displayCompletedEvents() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        completedEvents.clear();
+        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         for (int i = 0; i < habitEvents_list.size(); i++) {
             HabitInstance currentHabit = habitEvents_list.get(i);
             currentHabit.setUniqueId(i+1);
 
-            LocalDate doneDate = LocalDate.parse(currentHabit.getDate(), formatter);
-            String formattedDate = doneDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG));
-            String toDisplay = currentHabit.getUniqueId() + ") Running" + " @ " + formattedDate
-                    + " for " + String.valueOf(currentHabit.getDuration()) + " mins";
+            //LocalDate doneDate = LocalDate.parse(currentHabit.getDate(), formatter);
+            //String formattedDate = doneDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG));
+            String toDisplay = currentHabit.getUniqueId() + ") " + currentHabit.getOpt_comment();
             completedEvents.add(toDisplay);
         }
 
@@ -153,18 +153,10 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
 
     @Override
     public void onEditSavePressed(HabitInstance instance, int position) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate doneDate = LocalDate.parse(instance.getDate(), formatter);
-        String formattedDate = doneDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG));
 
-        habitEvents_list.set(position-1, instance);
+        habitEvents_list.set(position, instance);
 
-        String toDisplay = instance.getUniqueId() + ") " + instance.getOpt_comment() + " @ " + formattedDate
-                + " for " + String.valueOf(instance.getDuration()) + " mins";
-
-        completedEvents.set(position-1, toDisplay);
-
-        completedEventAdapter.notifyDataSetChanged();
+        displayCompletedEvents();
     }
 
 }
