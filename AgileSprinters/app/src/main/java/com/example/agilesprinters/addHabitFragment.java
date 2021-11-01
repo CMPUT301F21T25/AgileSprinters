@@ -20,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 
 /**
  * This class is a dialog fragment that allows the user to add a new habit.
@@ -37,24 +38,10 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
     private Button friday;
     private Button saturday;
     private String date = "";
+    private HashMap <String,Boolean> weekdays;
     private Spinner privacy;
-    private ArrayList<String> weekdays;
     private addHabitFragment.OnFragmentInteractionListener listener;
 
-    /**
-     * This function maintains the arraylist of weekdays for which days a habit is planned to occur.
-     * When one of the buttons containing a day is called, it sends a string with he corresponding
-     * day for this function to save.
-     * @param day
-     */
-    public void addWeekday(String day){
-        if (!weekdays.isEmpty() && weekdays.contains(day)){
-            weekdays.remove(day);
-        }
-        else{
-            weekdays.add(day);
-        }
-    }
 
     /**
      * This function captures the date chosen by the user once they press ok on the datePicker
@@ -121,7 +108,15 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
         //inflate the layout for this fragment
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.add_habit_fragment, null);
 
-        weekdays = new ArrayList<String>();
+        weekdays = new HashMap<String, Boolean>();
+        weekdays.put("MONDAY", false);
+        weekdays.put("TUESDAY", false);
+        weekdays.put("WEDNESDAY", false);
+        weekdays.put("THURSDAY", false);
+        weekdays.put("FRIDAY", false);
+        weekdays.put("SATURDAY", false);
+        weekdays.put("SUNDAY", false);
+
         habitTitle = view.findViewById(R.id.habit_title_editText);
         habitReason = view.findViewById(R.id.habit_reason_editText);
         date_editText = view.findViewById(R.id.Date);
@@ -146,107 +141,94 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
             }
         });
 
-        final int[] setSunday = {0};
         sunday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addWeekday("SUNDAY");
-                if (setSunday[0] == 0) {
+                if(weekdays.get("SUNDAY") == false){
                     sunday.setBackgroundColor(Color.parseColor("#e27c65"));
-                    setSunday[0] = 1;
-                } else {
+                    weekdays.replace("SUNDAY", false, true);
+                }
+                else{
                     sunday.setBackgroundColor(Color.parseColor("#808080"));
-                    setSunday[0] = 0;
+                    weekdays.replace("SUNDAY", true, false);
                 }
             }
         });
 
-        final int[] setMonday = {0};
         monday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addWeekday("MONDAY");
-                if (setMonday[0] == 0){
+                if (weekdays.get("MONDAY") == false){
                     monday.setBackgroundColor(Color.parseColor("#e27c65"));
-                    setMonday[0] = 1;
+                    weekdays.replace("MONDAY", false, true);
                 } else {
                     monday.setBackgroundColor(Color.parseColor("#808080"));
-                    setMonday[0] = 0;
+                    weekdays.replace("MONDAY", true, false);
                 }
             }
         });
 
-        final int[] setTuesday = {0};
         tuesday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addWeekday("TUESDAY");
-                if (setTuesday[0] == 0){
+                if (weekdays.get("TUESDAY") == false){
                     tuesday.setBackgroundColor(Color.parseColor("#e27c65"));
-                    setTuesday[0] = 1;
+                    weekdays.replace("TUESDAY", false, true);
                 } else {
                     tuesday.setBackgroundColor(Color.parseColor("#808080"));
-                    setTuesday[0] = 0;
+                    weekdays.replace("TUESDAY", true, false);
                 }
             }
         });
 
-        final int[] setWednesday = {0};
         wednesday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addWeekday("WEDNESDAY");
-                if (setWednesday[0] == 0){
+                if (weekdays.get("WEDNESDAY") == false){
                     wednesday.setBackgroundColor(Color.parseColor("#e27c65"));
-                    setWednesday[0] = 1;
+                    weekdays.replace("WEDNESDAY", false, true);
                 } else {
                     wednesday.setBackgroundColor(Color.parseColor("#808080"));
-                    setWednesday[0] = 0;
+                    weekdays.replace("WEDNESDAY", true, false);
                 }
             }
         });
 
-        final int[] setThurs = {0};
         thursday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addWeekday("THURSDAY");
-                if (setThurs[0] == 0){
+                if (weekdays.get("THURSDAY") == false){
                     thursday.setBackgroundColor(Color.parseColor("#e27c65"));
-                    setThurs[0] = 1;
+                    weekdays.replace("THURSDAY", false, true);
                 } else {
                     thursday.setBackgroundColor(Color.parseColor("#808080"));
-                    setThurs[0] = 0;
+                    weekdays.replace("THURSDAY", false, true);
                 }
             }
         });
 
-        final int[] setFriday = {0};
         friday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addWeekday("FRIDAY");
-                if (setFriday[0] == 0){
+                if (weekdays.get("FRIDAY") == false){
                     friday.setBackgroundColor(Color.parseColor("#e27c65"));
-                    setFriday[0] = 1;
+                    weekdays.replace("FRIDAY", false, true);
                 } else {
                     friday.setBackgroundColor(Color.parseColor("#808080"));
-                    setFriday[0] = 0;
+                    weekdays.replace("FRIDAY", true, false);
                 }
             }
         });
 
-        final int[] setSat = {0};
         saturday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addWeekday("SATURDAY");
-                if (setSat[0] == 0){
+                if (weekdays.get("SATURDAY") == false){
                     saturday.setBackgroundColor(Color.parseColor("#e27c65"));
-                    setSat[0] = 1;
+                    weekdays.replace("SATURDAY", false, true);
                 } else {
                     saturday.setBackgroundColor(Color.parseColor("#808080"));
-                    setSat[0] = 0;
+                    weekdays.replace("SATURDAY", true, false);
                 }
             }
         });

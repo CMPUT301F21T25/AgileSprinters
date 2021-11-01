@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -35,7 +36,7 @@ public class habitListAdapter extends ArrayAdapter<Habit> {
         String reason = getItem(position).getReason();
         String dateStarted = getItem(position).getDateToStart();
         String privacy = getItem(position).getPrivacySetting();
-        ArrayList<String> weekdays = getItem(position).getWeekdays();
+        HashMap<String,Boolean> weekdays = getItem(position).getWeekdays();
 
         //create habit object with that information
         Habit habit = new Habit(title, reason, dateStarted, weekdays, privacy);
