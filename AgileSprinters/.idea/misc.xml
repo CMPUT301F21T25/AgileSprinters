@@ -3,22 +3,25 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/Leen/Desktop/Habit/AgileSprinters/AgileSprinters/app/src/main/res/layout/activity_login.xml" value="0.264" />
         <entry key="..\:/Users/haric_ff7o5th/GitRepo/Project/AgileSprinters/AgileSprinters/app/src/main/res/layout-w1240dp/activity_login.xml" value="0.4054421768707483" />
         <entry key="..\:/Users/haric_ff7o5th/GitRepo/Project/AgileSprinters/AgileSprinters/app/src/main/res/layout-w936dp/activity_login.xml" value="0.2328125" />
         <entry key="..\:/Users/haric_ff7o5th/GitRepo/Project/AgileSprinters/AgileSprinters/app/src/main/res/layout/activity_login.xml" value="0.24682971014492755" />
         <entry key="..\:/Users/haric_ff7o5th/GitRepo/Project/AgileSprinters/AgileSprinters/app/src/main/res/layout/activity_main.xml" value="0.3651041666666667" />
         <entry key="..\:/Users/haric_ff7o5th/GitRepo/Project/AgileSprinters/AgileSprinters/app/src/main/res/layout/activity_register.xml" value="0.28854166666666664" />
-        <entry key="..\:/Users/rose3/Documents/GitHub/AgileSprinters/AgileSprinters/app/src/main/res/drawable/circular_button.xml" value="0.19583333333333333" />
-        <entry key="..\:/Users/rose3/Documents/GitHub/AgileSprinters/AgileSprinters/app/src/main/res/layout/activity_home.xml" value="0.12" />
-        <entry key="..\:/Users/rose3/Documents/GitHub/AgileSprinters/AgileSprinters/app/src/main/res/layout/add_habit_fragment.xml" value="0.3333333333333333" />
-        <entry key="..\:/Users/rose3/Documents/GitHub/AgileSprinters/AgileSprinters/app/src/main/res/layout/date_picker_fragment.xml" value="0.1" />
-        <entry key="..\:/Users/rose3/Documents/GitHub/AgileSprinters/AgileSprinters/app/src/main/res/layout/home_list.xml" value="0.3333333333333333" />
-        <entry key="..\:/Users/rose3/Documents/GitHub/AgileSprinters/AgileSprinters/app/src/main/res/layout/home_list_content.xml" value="0.4466666666666667" />
-        <entry key="..\:/Users/rose3/Documents/GitHub/AgileSprinters/AgileSprinters/app/src/main/res/layout/spinner_privacy_options.xml" value="0.1796875" />
-        <entry key="..\:/Users/rose3/Documents/GitHub/AgileSprinters/AgileSprinters/app/src/main/res/layout/view_edit_habit.xml" value="0.1796875" />
-        <entry key="..\:/Users/rose3/Documents/GitHub/AgileSprinters/AgileSprinters/app/src/main/res/layout/view_edit_habit_fragment.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/activity_home.xml" value="0.335" />
+        <entry key="..\:/Users/rasaz/AndroidStudioProjects/AgileSprinters/AgileSprinters/app/src/main/res/layout/activity_home.xml" value="0.2" />
+        <entry key="..\:/Users/rasaz/AndroidStudioProjects/AgileSprinters/AgileSprinters/app/src/main/res/layout/add_habit_fragment.xml" value="0.22" />
+        <entry key="..\:/Users/rasaz/AndroidStudioProjects/AgileSprinters/AgileSprinters/app/src/main/res/layout/cal.xml" value="0.3333333333333333" />
+        <entry key="..\:/Users/rasaz/AndroidStudioProjects/AgileSprinters/AgileSprinters/app/src/main/res/layout/calendar_content.xml" value="0.2" />
+        <entry key="..\:/Users/rasaz/AndroidStudioProjects/AgileSprinters/AgileSprinters/app/src/main/res/layout/edit_habit_event_fragment.xml" value="0.22" />
+        <entry key="..\:/Users/rasaz/AndroidStudioProjects/AgileSprinters/AgileSprinters/app/src/main/res/layout/home_list_content.xml" value="0.2" />
+        <entry key="..\:/Users/rasaz/AndroidStudioProjects/AgileSprinters/AgileSprinters/app/src/main/res/layout/past_events_dialog.xml" value="0.16666666666666666" />
+        <entry key="..\:/Users/rasaz/AndroidStudioProjects/AgileSprinters/AgileSprinters/app/src/main/res/layout/user_cal.xml" value="0.3333333333333333" />
+        <entry key="..\:/Users/rasaz/AndroidStudioProjects/AgileSprinters/AgileSprinters/app/src/main/res/layout/user_calendar.xml" value="0.22" />
+        <entry key="..\:/Users/rasaz/AndroidStudioProjects/AgileSprinters/AgileSprinters/app/src/main/res/layout/view_edit_habit_fragment.xml" value="0.2" />
+        <entry key="app/src/main/res/layout/activity_register.xml" value="0.23385416666666667" />
+        <entry key="app/src/main/res/layout/calendar.xml" value="0.23385416666666667" />
+        <entry key="app/src/main/res/layout/edit_habit_event_fragment.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/view_habit_event_fragment.xml" value="0.47503626867360005" />
       </map>
     </option>
   </component>
