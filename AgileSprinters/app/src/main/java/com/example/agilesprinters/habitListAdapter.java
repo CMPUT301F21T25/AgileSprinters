@@ -20,42 +20,37 @@ import java.util.List;
  */
 public class habitListAdapter extends ArrayAdapter<Habit> {
     private Context mContext;
-    int mResource;
+    private ArrayList<Habit> habits;
 
-    public habitListAdapter(Context context, int resource, ArrayList<Habit> objects) {
-        super(context, resource, objects);
-        mContext = context;
-        mResource = resource;
+    public habitListAdapter(Context context,  ArrayList<Habit> objects) {
+        super(context,0, objects);
+        this.habits = objects;
+        this.mContext = context;
     }
 
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        //Get information about the habit
-        String title = getItem(position).getTitle();
-        String reason = getItem(position).getReason();
-        String dateStarted = getItem(position).getDateToStart();
-        String privacy = getItem(position).getPrivacySetting();
-        HashMap<String,Boolean> weekdays = getItem(position).getWeekdays();
+        View view = convertView;
 
-        //create habit object with that information
-        Habit habit = new Habit(title, reason, dateStarted, weekdays, privacy);
+        if(view == null){
+            view = LayoutInflater.from(mContext).inflate(R.layout.home_list_content, parent, false);
+        }
 
-        LayoutInflater inflater = LayoutInflater.from(mContext);
-        convertView = inflater.inflate(mResource, parent, false);
+        Habit habit = habits.get(position);
 
         //attach variables to the textViews in the list
-        TextView tvDate = (TextView) convertView.findViewById(R.id.habit_date_textView);
-        TextView tvPrivacy = (TextView) convertView.findViewById(R.id.privacy_setting_list);
-        TextView tvTitle = (TextView) convertView.findViewById(R.id.habit_list_title_textView);
-        TextView tvReason = (TextView) convertView.findViewById(R.id.habit_list_reason_textView);
+        TextView tvDate = view.findViewById(R.id.habit_date_textView);
+        TextView tvPrivacy = view.findViewById(R.id.privacy_setting_list);
+        TextView tvTitle = view.findViewById(R.id.habit_list_title_textView);
+        TextView tvReason = view.findViewById(R.id.habit_list_reason_textView);
 
         //pass values to variables
-        tvDate.setText("  Date Started: " + String.valueOf(dateStarted));
-        tvTitle.setText(String.valueOf(title));
-        tvPrivacy.setText(String.valueOf(privacy));
-        tvReason.setText(String.valueOf(reason));
+        tvDate.setText("  Date Started: " + habit.getDateToStart());
+        tvTitle.setText(habit.getTitle());
+        tvPrivacy.setText(habit.getPrivacySetting());
+        tvReason.setText(habit.getReason());
 
-        return convertView; //return the converted view
+        return view;
     }
 }
