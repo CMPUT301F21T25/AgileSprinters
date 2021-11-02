@@ -357,14 +357,14 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
         DocumentReference newInstanceRef = db.collection("Instances").document();
 
         String instanceId = newInstanceRef.getId();
-        HashMap<String, String> data = new HashMap<>();
+        HashMap<String, Object> data = new HashMap<>();
 
         if (instanceId != null){
             data.put("UID", instance.getUID());
             data.put("HID", instance.getHID());
             data.put("Date", instance.getDate());
             data.put("Opt_comment",instance.getOpt_comment());
-            data.put("Duration",String.valueOf(instance.getDuration()));
+            data.put("Duration",instance.getDuration());
             collectionReference
                     .document(instanceId)
                     .set(data)

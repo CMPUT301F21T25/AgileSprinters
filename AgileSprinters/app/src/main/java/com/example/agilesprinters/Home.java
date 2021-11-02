@@ -31,8 +31,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 public class Home extends AppCompatActivity implements addHabitFragment.OnFragmentInteractionListener,
-        viewEditHabitFragment.OnFragmentInteractionListener, BottomNavigationView.OnNavigationItemSelectedListener{
-        viewEditHabitFragment.OnFragmentInteractionListener, deleteHabitFragment.OnFragmentInteractionListener{
+        viewEditHabitFragment.OnFragmentInteractionListener, BottomNavigationView.OnNavigationItemSelectedListener,
+        deleteHabitFragment.OnFragmentInteractionListener{
     ArrayList<Habit> habitArrayList;
     ListView habitList;
     ArrayAdapter<Habit> habitAdapter;
@@ -153,13 +153,18 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     }
 
     public void addHabitDatabase(Habit habit){
+        /**
+         * This function takes the given habit and add it to the database
+         * Input : Habit
+         * Output: none
+         */
         db  =  FirebaseFirestore.getInstance();
         final CollectionReference collectionReference  =  db.collection("Habit");
+        // Creating a unique Id for the Habit that is being added
         DocumentReference newHabitRef = db.collection("Habit").document();
         String Uid = getIntent().getStringExtra("userId");
         String HabitId = newHabitRef.getId();
         HashMap<String, Object> data = new HashMap<>();
-        System.out.println(habit.getWeekdays().toString());
 
         if (HabitId != null){
             data.put("UID", Uid);
