@@ -20,8 +20,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+//import com.google.firebase.database.DatabaseReference;
+//import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -39,6 +39,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     BottomNavigationView bottomNavigationView;
     FirebaseFirestore db;
     private static final String TAG = "Habit";
+    private String user_id = getIntent().getStringExtra("userId");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,6 +143,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             case R.id.calendar:
                 Intent intent = new Intent(this, UserCalendar.class);
                 //add bundle to send data if need
+                intent.putExtra("User_ID", user_id);
                 startActivity(intent);
                 break;
 
