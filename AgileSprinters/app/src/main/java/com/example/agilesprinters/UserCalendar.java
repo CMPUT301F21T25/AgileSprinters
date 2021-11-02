@@ -3,12 +3,16 @@ package com.example.agilesprinters;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -27,9 +31,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 
-public class UserCalendar extends AppCompatActivity implements addHabitEventFragment.OnFragmentInteractionListener,editHabitEventFragment.OnFragmentInteractionListener {
+public class UserCalendar extends AppCompatActivity
+        implements addHabitEventFragment.OnFragmentInteractionListener,
+        editHabitEventFragment.OnFragmentInteractionListener,
+        DatePickerDialog.OnDateSetListener {
 
     private static final String TAG = "Instance";
 
@@ -41,21 +49,12 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
     private ArrayAdapter<HabitInstance> completedEventAdapter;
     private ArrayList<HabitInstance> completedEvents = new ArrayList<>();
     private ArrayList<String> completedEventIds = new ArrayList<>();
+    private ArrayList<String> toDoEventIds = new ArrayList<>();
 
     private TextView title1;
+    private Button calendar_button;
     FirebaseFirestore db;
     private String loggedInId = "nXmcIP2McwOw89GpWW10xt02JzG2";
-
-
-    /**
-    private ListView toDoEventsList;
-    private ListView completedEventsList;
-
-    private final ArrayList<String> toDoEvents = new ArrayList<>();
-    private final ArrayList<String> completedEvents = new ArrayList<>();
-
-    private ArrayAdapter<String> toDoEventAdapter;
-    private ArrayAdapter<String> completedEventAdapter; **/
 
     private final ArrayList<HabitInstance> habitEvents_list = new ArrayList<>();
 
@@ -64,6 +63,7 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
     private Habit selectedHabit;
     private HabitInstance selectedHabitInstance;
     private String selectedHabitInstanceId;
+    LocalDate currentDate = LocalDate.now();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,22 +74,22 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
         completedEventsList = findViewById(R.id.completedEventsList);
 
         title1 = findViewById(R.id.title1);
+        calendar_button = findViewById(R.id.calendar_button);
 
         db = FirebaseFirestore.getInstance();
 
-        // Getting present date and day of the week
-        LocalDate todayDate = LocalDate.now();
-
-        screenSetup(todayDate);
-        completedEventsScreenSetup(todayDate);
+        screenSetup();
+        completedEventsScreenSetup();
 
         toDoEventsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedHabit = toDoEvents.get(i);
+                selectedHabitInstanceId = toDoEventIds.get(i);
 
+                // get hid here
                 addHabitEventFragment values =
-                        new addHabitEventFragment().newInstance(i, loggedInId, "aGubwR1JjHVgiJxzWlJs");
+                        new addHabitEventFragment().newInstance(i, loggedInId, selectedHabitInstanceId);
                 values.show(getSupportFragmentManager(), "ADD");
             }
         });
@@ -106,82 +106,38 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
             }
         });
 
+        calendar_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogFragment datePicker = new datePickerCalendar();
+                datePicker.show(getSupportFragmentManager(), "date picker");
+            }
+        });
+
         toDoEventAdapter = new toDoEventsListAdapter(this, toDoEvents);
         completedEventAdapter = new completedEventsListAdapter(this, R.layout.completed_habits_content, completedEvents);
 
         toDoEventsList.setAdapter(toDoEventAdapter);
         completedEventsList.setAdapter(completedEventAdapter);
-
-        System.out.println("Reached here 2");
-        /**
-        // Setting the current date to the first text view
-        String formattedDate = todayDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG));
-        title1.setText(formattedDate + ")");
-
-
-        // Create a list of habit events and initialize an adapter
-        toDoEventsList = findViewById(R.id.toDoEventsList);
-        completedEventsList = findViewById(R.id.completedEventsList);
-
-        toDoEventAdapter = new ArrayAdapter<>(
-                this, R.layout.calendar_content, toDoEvents);
-        completedEventAdapter = new ArrayAdapter<>(
-                this, R.layout.calendar_content, completedEvents);
-
-        toDoEventsList.setAdapter(toDoEventAdapter);
-        completedEventsList.setAdapter(completedEventAdapter);
-
-        // Creating habits
-        ArrayList<Habit> habits = createHabits();
-
-        initialScreen(habits, todayDate, todayDay);
-
-        toDoEventsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                addHabitEventFragment dialog = new addHabitEventFragment();
-                //dialog.setValue("Running");
-                dialog.show(getSupportFragmentManager(), "EDIT");
-            }
-        });
-
-        completedEventsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedCompletedEvent = completedEvents.get(i);
-                int pos = Integer.parseInt(selectedCompletedEvent.split("[)]")[0]);
-
-                HabitInstance instanceToEdit = null;
-                for (int k = 0; k < habitEvents_list.size(); k++) {
-                    instanceToEdit = habitEvents_list.get(k);
-                    if (instanceToEdit.getUniqueId() == pos) {
-                        break;
-                    }
-                }
-
-                editHabitEventFragment values =
-                        new editHabitEventFragment().newInstance(i, instanceToEdit);
-                values.show(getSupportFragmentManager(), "VIEW/EDIT");
-            }
-        });**/
     }
 
-    public void setDate(LocalDate current_date) {
-        String formattedDate = current_date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG));
+    public void setDate() {
+        String formattedDate = currentDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG));
         title1.setText(formattedDate + ")");
     }
 
-    public void screenSetup(LocalDate dateToDisplay) {
+    public void screenSetup() {
         HashMap<String, Boolean > days = new HashMap<>();
         days.put("MONDAY", true);
         days.put("WEDNESDAY", false);
         days.put("SUNDAY", true);
-        setDate(dateToDisplay);
+        setDate();
+
 
         // get habits to do today (need to use habits collection to do this)
 
         // Gives the day of the week
-        String todayDay = dateToDisplay.getDayOfWeek().toString();
+        String todayDay = currentDate.getDayOfWeek().toString();
 
         // Get a list of habits
         // of the user logged in, start date before today
@@ -191,16 +147,19 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 toDoEvents.clear();
+                toDoEventIds.clear();
                 for(QueryDocumentSnapshot doc: value) {
                     Log.d(TAG, String.valueOf(doc.getData().get("Title")));
 
-                    LocalDate startDate = LocalDate.parse(doc.getData().get("Data to Start").toString(), formatter);
+                    // Gives the start date
+                    LocalDate startDate = LocalDate.parse(doc.getString("Data to Start"), formatter);
 
                     if (doc.getString("UID").equals(loggedInId)
-                            && (startDate.isBefore(dateToDisplay) || startDate.isEqual(dateToDisplay)) ){
+                            && (startDate.isBefore(currentDate) || startDate.isEqual(currentDate)) ){
                         Habit newHabit = new Habit(doc.getString("Title"), doc.getString("Reason"),
                                 doc.getString("Data to Start"), days, doc.getString("PrivacySetting"));
                         toDoEvents.add(newHabit); // Adding habits from Firestore
+                        toDoEventIds.add(doc.getId());
                     }
                 }
 
@@ -210,7 +169,7 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
 
     }
 
-    public void completedEventsScreenSetup(LocalDate todayDate) {
+    public void completedEventsScreenSetup() {
         //completedEvents.clear();
         // get completed habits for today (need to use habit instances collection to do this)
 
@@ -225,9 +184,9 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
                 for(QueryDocumentSnapshot doc: value) {
                     Log.d(TAG, String.valueOf(doc.getData().get("Opt_comment")));
 
-                    LocalDate eventDate = LocalDate.parse(doc.getData().get("Date").toString(), formatter);
+                    LocalDate eventDate = LocalDate.parse(doc.getString("Date"), formatter);
 
-                    if (doc.getString("UID").equals(loggedInId) && (eventDate.isEqual(todayDate)) ){
+                    if (doc.getString("UID").equals(loggedInId) && (eventDate.isEqual(currentDate)) ){
                         HabitInstance newInstance = new HabitInstance(doc.getString("UID"), doc.getString("HID"),
                                 doc.getString("Opt_comment"), doc.getString("Date"), Integer.parseInt(doc.getString("Duration")));
                         completedEventAdapter.add(newInstance);
@@ -240,63 +199,13 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
         });
     }
 
-    /**
-    public ArrayList<Habit> createHabits() {
-        ArrayList<String> days = new ArrayList<>();
-        days.add("MONDAY");
-        days.add("WEDNESDAY");
-        days.add("SUNDAY");
-
-        Habit habit1 = new Habit("Running", "To run a 5k", "2021-10-27", days, "Private");
-        Habit habit2 = new Habit("Walking", "To stay healthy", "2021-10-05", days, "Private");
-
-        ArrayList<Habit> habits = new ArrayList<>();
-        habits.add(habit1);
-        habits.add(habit2);
-
-        return habits;
-    }
-
-    public void initialScreen(ArrayList<Habit> habits, LocalDate todayDate, String todayDay) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-        for (int i = 0; i < habits.size(); i++) {
-            Habit currentHabit = habits.get(i);
-
-            // Checking if there are any habits assigned for today
-            LocalDate startDate = LocalDate.parse(currentHabit.getDateToStart(), formatter);
-
-            if (startDate.isBefore(todayDate) && currentHabit.getWeekdays().contains(todayDay)) {
-                toDoEvents.add((i+1) + ") " + currentHabit.getTitle());
-            }
-        }
-
-        toDoEventAdapter.notifyDataSetChanged();
-    }
-
-    public void displayCompletedEvents() {
-        completedEvents.clear();
-        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        for (int i = 0; i < habitEvents_list.size(); i++) {
-            HabitInstance currentHabit = habitEvents_list.get(i);
-            currentHabit.setUniqueId(i+1);
-
-            //LocalDate doneDate = LocalDate.parse(currentHabit.getDate(), formatter);
-            //String formattedDate = doneDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG));
-            String toDisplay = currentHabit.getUniqueId() + ") " + currentHabit.getOpt_comment();
-            completedEvents.add(toDisplay);
-        }
-
-        completedEventAdapter.notifyDataSetChanged();
-    }**/
-
     @Override
     public void onSavePressed(HabitInstance habitInstance) {
 
         addHabitEventDatabase(habitInstance);
         LocalDate todayDate = LocalDate.now();
 
-        completedEventsScreenSetup(todayDate);
+        completedEventsScreenSetup();
 
     }
 
@@ -326,7 +235,7 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
                 });
 
         LocalDate todayDate = LocalDate.now();
-        completedEventsScreenSetup(todayDate);
+        completedEventsScreenSetup();
     }
 
     @Override
@@ -349,7 +258,7 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
                 });
 
         LocalDate todayDate = LocalDate.now();
-        completedEventsScreenSetup(todayDate);
+        completedEventsScreenSetup();
     }
 
     public void addHabitEventDatabase(HabitInstance instance){
@@ -385,4 +294,27 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
         }
     }
 
+    @Override
+    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.YEAR, year);
+        c.set(Calendar.MONTH, month);
+        c.set(Calendar.DAY_OF_MONTH, day);
+
+        //make sure date is empty before setting it to the date picked
+        String date = "";
+
+        if(month+1 < 10) date+= "0";
+        date += String.valueOf(month + 1) + "/";
+
+        if (day < 10 ) date += "0";
+        date += String.valueOf(day + "/");
+
+        date += String.valueOf(year);
+
+        currentDate = LocalDate.parse(date, formatter);
+        setDate();
+        screenSetup();
+        completedEventsScreenSetup();
+    }
 }

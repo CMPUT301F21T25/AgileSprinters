@@ -1,13 +1,16 @@
 package com.example.agilesprinters;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -15,12 +18,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-public class editHabitEventFragment extends DialogFragment {
+import java.util.Calendar;
+
+public class editHabitEventFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener{
     private int position;
     private CheckBox completed;
     private EditText optional_comment;
     private EditText input_date;
     private EditText input_duration;
+    private String UID;
+    private String HID;
+
+    private String date = "";
 
     private editHabitEventFragment.OnFragmentInteractionListener listener;
 
@@ -32,6 +41,23 @@ public class editHabitEventFragment extends DialogFragment {
         fragment.setArguments(args);
 
         return fragment;
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.YEAR, year);
+        c.set(Calendar.MONTH, month);
+        c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+        //make sure date is empty before setting it to the date picked
+        date = "";
+        if(month+1 < 10) date+= "0";
+        date += String.valueOf(month + 1) + "/";
+        if (dayOfMonth < 10 ) date += "0";
+        date += String.valueOf(dayOfMonth + "/");
+        date += String.valueOf(year);
+        input_date.setText(date);
     }
 
     public interface OnFragmentInteractionListener {
@@ -70,6 +96,18 @@ public class editHabitEventFragment extends DialogFragment {
         optional_comment.setText(habitInstance.getOpt_comment());
         input_date.setText(habitInstance.getDate());
         input_duration.setText(String.valueOf(habitInstance.getDuration()));
+        date = habitInstance.getDate();
+
+        input_date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogFragment datePicker = new datePickerFragment();
+                datePicker.show(getChildFragmentManager(), "DATE PICKER");
+            }
+        });
+
+        UID = habitInstance.getUID();
+        HID = habitInstance.getHID();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         return builder
@@ -83,13 +121,53 @@ public class editHabitEventFragment extends DialogFragment {
                 .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        String comment = optional_comment.getText().toString();
-                        String date = input_date.getText().toString();
-                        int duration = Integer.parseInt(input_duration.getText().toString());
 
-                        listener.onEditSavePressed(new HabitInstance(habitInstance.getUID(),habitInstance.getHID(),comment, date, duration));
                     }
                 }).create();
 
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        final AlertDialog dialog = (AlertDialog) getDialog();
+        if(dialog != null){
+            Button positive = (Button) dialog.getButton(Dialog.BUTTON_POSITIVE);
+
+            positive.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // Boolean tracks when the all the fields have been filled out. Will turn to false
+                    // if anything has been left blank.
+                    Boolean readyToClose = true;
+
+                    String comment = optional_comment.getText().toString();
+                    //String date = input_date.getText().toString();
+                    String duration = input_duration.getText().toString();
+
+                    if (optional_comment.length() > 20) {
+                        readyToClose = false;
+                        input_date.setError("This field cannot have more than 20 chars");
+                    }
+
+                    if (date.matches("")) {
+                        readyToClose = false;
+                        input_date.setError("This field cannot be blank");
+                    }
+                    if (duration.matches("")) {
+                        readyToClose = false;
+                        input_duration.setError("This field cannot be blank");
+                    }
+
+                    // If everything has been filled out, call the listener and send the edited
+                    // habit back to the Home class and dismiss the dialog.
+                    if(readyToClose){
+                        listener.onEditSavePressed(new HabitInstance(UID,HID,comment, date, Integer.parseInt(duration)));
+                        dialog.dismiss();
+                    }
+                }
+            });
+        }
     }
 }
