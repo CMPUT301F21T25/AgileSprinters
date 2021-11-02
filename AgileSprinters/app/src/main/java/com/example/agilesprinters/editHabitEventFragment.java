@@ -68,9 +68,6 @@ public class editHabitEventFragment extends DialogFragment {
         HabitInstance habitInstance = (HabitInstance) getArguments().getSerializable("Habit instance");
         position = getArguments().getInt("position");
 
-        if (habitInstance.isStatus()) {
-            completed.setChecked(true);
-        }
 
         optional_comment.setText(habitInstance.getOpt_comment());
         input_date.setText(habitInstance.getDate());
@@ -93,7 +90,7 @@ public class editHabitEventFragment extends DialogFragment {
                         String date = input_date.getText().toString();
                         int duration = Integer.parseInt(input_duration.getText().toString());
 
-                        listener.onEditSavePressed(new HabitInstance(position, checked, comment, date, duration), position);
+                        listener.onEditSavePressed(new HabitInstance(comment, date, duration), position);
                     }
                 }).create();
 

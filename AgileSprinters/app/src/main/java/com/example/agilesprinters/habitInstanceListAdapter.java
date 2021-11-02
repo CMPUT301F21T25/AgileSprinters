@@ -14,48 +14,31 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
-public class habitInstanceListAdapter {
-    /**
-    private Context mContext;
-    int mResource;
+public class habitInstanceListAdapter extends ArrayAdapter<Habit> {
 
-    public habitInstanceListAdapter(Context context, int resource, ArrayList<HabitInstance> objects) {
-        super(context, resource, objects);
-        mContext = context;
-        mResource = resource;
+    private Context mContext;
+    private ArrayList<Habit> habits;
+
+    public habitInstanceListAdapter(Context context, ArrayList<Habit> habits) {
+        super(context, 0, habits);
+        this.mContext = context;
+        this.habits = habits;
     }
 
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        //Get information about the habit event
-        int uniqueID = getItem(position).getUniqueId();
-        boolean status = getItem(position).isStatus();
-        String opt_comment = getItem(position).getOpt_comment();
-        String date = getItem(position).getDate();
-        int duration = getItem(position).getDuration();
 
-        //create habit instance object with that information
-        HabitInstance habitInstance = new HabitInstance(uniqueID, status, opt_comment, date, duration);
-
-        LayoutInflater inflater = LayoutInflater.from(mContext);
-        convertView = inflater.inflate(mResource, parent, false);
-
-        //attach variables to the textViews in the list
-        CheckBox box_status = (CheckBox) convertView.findViewById(R.id.checkBox_completed);
-        EditText comment = (EditText) convertView.findViewById(R.id.editText_comment);
-        EditText box_date = (EditText) convertView.findViewById(R.id.editText_date);
-        EditText box_duration = (EditText) convertView.findViewById(R.id.editText_duration);
-
-        //pass values to variables
-        if (status) {
-            box_status.setChecked(true);
+        if(convertView == null){
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.todo_habits_content, parent,false);
         }
 
-        comment.setText(String.valueOf(opt_comment));
-        box_date.setText(String.valueOf(date));
-        box_duration.setText(String.valueOf(duration));
+        Habit habit = habits.get(position);
 
-        return convertView; //return the converted view
-    }**/
+        TextView habitTitle = convertView.findViewById(R.id.habit_text);
+
+        habitTitle.setText(habit.getTitle().toString());
+
+        return convertView;
+    }
 }

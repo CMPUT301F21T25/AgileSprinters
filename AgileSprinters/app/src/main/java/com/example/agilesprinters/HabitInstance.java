@@ -4,15 +4,15 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class HabitInstance implements Serializable {
-    private int uniqueId;
-    private boolean status; //completed or not
+    private String UID;
+    private String HID;
     private String opt_comment;
     private String date;
     private int duration;
 
-    public HabitInstance(int uniqueId, boolean status, String opt_comment, String date, int duration) {
-        this.uniqueId = uniqueId;
-        this.status = status;
+    public HabitInstance(String UID, String HID, String opt_comment, String date, int duration) {
+        this.UID = UID;
+        this.HID = HID;
         this.opt_comment = opt_comment;
         this.date = date;
         this.duration = duration;
@@ -20,20 +20,20 @@ public class HabitInstance implements Serializable {
 
     // Getters and setters
 
-    public int getUniqueId() {
-        return uniqueId;
+    public String getUID() {
+        return UID;
     }
 
-    public void setUniqueId(int uniqueId) {
-        this.uniqueId = uniqueId;
+    public void setUID(String UID) {
+        this.UID = UID;
     }
 
-    public boolean isStatus() {
-        return status;
+    public String getHID() {
+        return HID;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
+    public void setHID(String HID) {
+        this.HID = HID;
     }
 
     public String getOpt_comment() {

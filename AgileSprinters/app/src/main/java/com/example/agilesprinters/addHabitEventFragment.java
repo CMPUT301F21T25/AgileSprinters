@@ -65,7 +65,7 @@ public class addHabitEventFragment extends DialogFragment{
                         String date = input_date.getText().toString();
                         int duration = Integer.parseInt(input_duration.getText().toString());
 
-                        listener.onSavePressed(new HabitInstance(1, checked, comment, date, duration));
+                        listener.onSavePressed(new HabitInstance(comment, date, duration));
                     }
                 }).create();
 
