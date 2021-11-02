@@ -60,7 +60,6 @@ public class editHabitEventFragment extends DialogFragment {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.edit_habit_event_fragment, null);
 
         // Display the calendar
-        completed = view.findViewById(R.id.checkBox_completed);
         optional_comment = view.findViewById(R.id.editText_comment);
         input_date = view.findViewById(R.id.editText_date);
         input_duration = view.findViewById(R.id.editText_duration);
@@ -90,7 +89,7 @@ public class editHabitEventFragment extends DialogFragment {
                         String date = input_date.getText().toString();
                         int duration = Integer.parseInt(input_duration.getText().toString());
 
-                        listener.onEditSavePressed(new HabitInstance(comment, date, duration), position);
+                        listener.onEditSavePressed(new HabitInstance("","",comment, date, duration), position);
                     }
                 }).create();
 

@@ -14,12 +14,12 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
-public class habitInstanceListAdapter extends ArrayAdapter<Habit> {
+public class toDoEventsListAdapter extends ArrayAdapter<Habit> {
 
     private Context mContext;
     private ArrayList<Habit> habits;
 
-    public habitInstanceListAdapter(Context context, ArrayList<Habit> habits) {
+    public toDoEventsListAdapter(Context context, ArrayList<Habit> habits) {
         super(context, 0, habits);
         this.mContext = context;
         this.habits = habits;

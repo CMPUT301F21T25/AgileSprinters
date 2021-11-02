@@ -2,26 +2,21 @@ package com.example.agilesprinters;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -40,15 +35,16 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
 
     private ListView toDoEventsList;
     private ArrayAdapter<Habit> toDoEventAdapter;
-    private final ArrayList<Habit> toDoEvents = new ArrayList<>();
+    private ArrayList<Habit> toDoEvents = new ArrayList<>();
 
     private ListView completedEventsList;
     private ArrayAdapter<HabitInstance> completedEventAdapter;
-    private ArrayList<HabitInstance> completedEvents;
+    private ArrayList<HabitInstance> completedEvents = new ArrayList<>();
 
     private TextView title1;
     FirebaseFirestore db;
     private String loggedInId = "nXmcIP2McwOw89GpWW10xt02JzG2";
+
 
     /**
     private ListView toDoEventsList;
@@ -83,24 +79,28 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
 
         // Getting present date and day of the week
         LocalDate todayDate = LocalDate.now();
+
         screenSetup(todayDate);
-
-        toDoEventAdapter = new habitInstanceListAdapter(this, toDoEvents);
-
-        toDoEventsList.setAdapter(toDoEventAdapter);
-        toDoEventAdapter.notifyDataSetChanged();
+        completedEventsScreenSetup(todayDate);
 
         toDoEventsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedHabit = toDoEvents.get(i);
 
-                addHabitEventFragment dialog = new addHabitEventFragment();
-                dialog.show(getSupportFragmentManager(), "ADD");
+                addHabitEventFragment values =
+                        new addHabitEventFragment().newInstance(i, loggedInId, "aGubwR1JjHVgiJxzWlJs");
+                values.show(getSupportFragmentManager(), "ADD");
             }
         });
 
+        toDoEventAdapter = new toDoEventsListAdapter(this, toDoEvents);
+        completedEventAdapter = new completedEventsListAdapter(this, R.layout.completed_habits_content, completedEvents);
 
+        toDoEventsList.setAdapter(toDoEventAdapter);
+        completedEventsList.setAdapter(completedEventAdapter);
+
+        System.out.println("Reached here 2");
         /**
         // Setting the current date to the first text view
         String formattedDate = todayDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG));
@@ -178,6 +178,7 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
         db.collection("Habit").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                toDoEvents.clear();
                 for(QueryDocumentSnapshot doc: value) {
                     Log.d(TAG, String.valueOf(doc.getData().get("Title")));
 
@@ -195,6 +196,34 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
             }
         });
         
+    }
+
+    public void completedEventsScreenSetup(LocalDate todayDate) {
+        //completedEvents.clear();
+        // get completed habits for today (need to use habit instances collection to do this)
+
+        // Get a list of habit events
+        // of the user logged in, on this day
+
+        db.collection("Instances").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                completedEvents.clear();
+                for(QueryDocumentSnapshot doc: value) {
+                    Log.d(TAG, String.valueOf(doc.getData().get("Opt_comment")));
+
+                    LocalDate eventDate = LocalDate.parse(doc.getData().get("Date").toString(), formatter);
+
+                    if (doc.getString("UID").equals(loggedInId) && (eventDate.isEqual(todayDate)) ){
+                        HabitInstance newInstance = new HabitInstance(doc.getString("UID"), doc.getString("HID"),
+                                doc.getString("Opt_comment"), doc.getString("Date"), Integer.parseInt(doc.getString("Duration")));
+                        completedEventAdapter.add(newInstance); // Adding habit events from Firestore
+                    }
+                }
+
+                completedEventAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     /**
@@ -249,9 +278,13 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
 
     @Override
     public void onSavePressed(HabitInstance habitInstance) {
-        habitEvents_list.add(habitInstance);
 
+        addHabitEventDatabase(habitInstance);
+        LocalDate todayDate = LocalDate.now();
+        completedEventsScreenSetup(todayDate);
+        //System.out.println("Reached here 1");
         //displayCompletedEvents();
+
     }
 
     @Override
@@ -268,6 +301,40 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
         habitEvents_list.remove(instance);
 
         //displayCompletedEvents();
+    }
+
+    public void addHabitEventDatabase(HabitInstance instance){
+        //db  =  FirebaseFirestore.getInstance();
+        final CollectionReference collectionReference  =  db.collection("Instances");
+        DocumentReference newInstanceRef = db.collection("Instances").document();
+
+        String instanceId = newInstanceRef.getId();
+        HashMap<String, String> data = new HashMap<>();
+
+        if (instanceId != null){
+            data.put("UID", instance.getUID());
+            data.put("HID", instance.getHID());
+            data.put("Date", instance.getDate());
+            data.put("Opt_comment",instance.getOpt_comment());
+            data.put("Duration",String.valueOf(instance.getDuration()));
+            collectionReference
+                    .document(instanceId)
+                    .set(data)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            // These are a method which gets executed when the task is succeeded
+                            Log. d (TAG, "Data has been added successfully!");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            // These are a method which gets executed if there’s any problem
+                            Log. d (TAG, "Data could not be added!" + e.toString());
+                        }
+                    });
+        }
     }
 
 }
