@@ -32,6 +32,7 @@ import java.util.HashMap;
 
 public class Home extends AppCompatActivity implements addHabitFragment.OnFragmentInteractionListener,
         viewEditHabitFragment.OnFragmentInteractionListener, BottomNavigationView.OnNavigationItemSelectedListener{
+        viewEditHabitFragment.OnFragmentInteractionListener, deleteHabitFragment.OnFragmentInteractionListener{
     ArrayList<Habit> habitArrayList;
     ListView habitList;
     ArrayAdapter<Habit> habitAdapter;
@@ -53,15 +54,13 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
         habitAdapter = new habitListAdapter(this, R.layout.home_list_content, habitArrayList);
         habitList.setAdapter(habitAdapter);
-        ArrayList<String> list = new ArrayList<>();
 
 
         habitList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Habit habit = (Habit) adapterView.getItemAtPosition(i);
-                viewEditHabitFragment values =
-                        new viewEditHabitFragment().newInstance(i, habit);
+                viewEditHabitFragment values = new viewEditHabitFragment().newInstance(i, habit);
                 values.show(getSupportFragmentManager(), "VIEW/EDIT");
             }
         });
@@ -75,12 +74,29 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             }
         });
 
+        habitList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                deleteHabitFragment delete = new deleteHabitFragment().newInstance(i);
+                delete.show(getSupportFragmentManager(), "DELETE");
+
+                // return true so that it overrides a regular item click and the view/edit fragment does not pop up
+                return true;
+            }
+        });
+
     }
 
+    /**
+     * This function adds a habit to the list once the user clicks add on the addHabitFragment
+     * dialog fragment
+     * @param habit The habit object created by the addHabitFragment
+     */
     @Override
     public void onAddPressed(Habit habit) {
         addHabitDatabase(habit);
         habitAdapter.add(habit);
+
         habitAdapter.notifyDataSetChanged();
     }
 
@@ -173,4 +189,15 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         }
     }
 
+    /**
+     * This function deletes the object selected by the user in the list after a user clicks "Yes"
+     * in the deleteHabitFragment dialog fragment.
+     * @param position The position of the object clicked in the list.
+     */
+    @Override
+    public void onDeleteHabitYesPressed(int position) {
+        Habit habit = habitAdapter.getItem(position);
+        habitAdapter.remove(habit);
+        habitAdapter.notifyDataSetChanged();
+    }
 }
