@@ -49,6 +49,7 @@ public class UserCalendar extends AppCompatActivity
     private ArrayAdapter<HabitInstance> completedEventAdapter;
     private ArrayList<HabitInstance> completedEvents = new ArrayList<>();
     private ArrayList<String> completedEventIds = new ArrayList<>();
+    private ArrayList<String> toDoEventIds = new ArrayList<>();
 
     private TextView title1;
     private Button calendar_button;
@@ -95,9 +96,11 @@ public class UserCalendar extends AppCompatActivity
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedHabit = toDoEvents.get(i);
+                selectedHabitInstanceId = toDoEventIds.get(i);
 
+                // get hid here
                 addHabitEventFragment values =
-                        new addHabitEventFragment().newInstance(i, loggedInId, "aGubwR1JjHVgiJxzWlJs");
+                        new addHabitEventFragment().newInstance(i, loggedInId, selectedHabitInstanceId);
                 values.show(getSupportFragmentManager(), "ADD");
             }
         });
@@ -127,8 +130,6 @@ public class UserCalendar extends AppCompatActivity
 
         toDoEventsList.setAdapter(toDoEventAdapter);
         completedEventsList.setAdapter(completedEventAdapter);
-
-        System.out.println("Reached here 2");
         /**
         // Setting the current date to the first text view
         String formattedDate = todayDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG));
@@ -208,6 +209,7 @@ public class UserCalendar extends AppCompatActivity
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 toDoEvents.clear();
+                toDoEventIds.clear();
                 for(QueryDocumentSnapshot doc: value) {
                     Log.d(TAG, String.valueOf(doc.getData().get("Title")));
 
@@ -218,6 +220,7 @@ public class UserCalendar extends AppCompatActivity
                         Habit newHabit = new Habit(doc.getString("Title"), doc.getString("Reason"),
                                 doc.getString("Data to Start"), days, doc.getString("PrivacySetting"));
                         toDoEvents.add(newHabit); // Adding habits from Firestore
+                        toDoEventIds.add(doc.getId());
                     }
                 }
 
@@ -242,7 +245,7 @@ public class UserCalendar extends AppCompatActivity
                 for(QueryDocumentSnapshot doc: value) {
                     Log.d(TAG, String.valueOf(doc.getData().get("Opt_comment")));
 
-                    LocalDate eventDate = LocalDate.parse(doc.getData().get("Date").toString(), formatter);
+                    LocalDate eventDate = LocalDate.parse(doc.getString("Date"), formatter);
 
                     if (doc.getString("UID").equals(loggedInId) && (eventDate.isEqual(currentDate)) ){
                         HabitInstance newInstance = new HabitInstance(doc.getString("UID"), doc.getString("HID"),
