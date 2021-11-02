@@ -111,6 +111,7 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
         ArrayList<String> days = new ArrayList<>();
         days.add("MONDAY");
         days.add("WEDNESDAY");
+        days.add("THURSDAY");
         days.add("SUNDAY");
 
         Habit habit1 = new Habit("Running", "To run a 5k", "2021-10-27", days, "Private");
