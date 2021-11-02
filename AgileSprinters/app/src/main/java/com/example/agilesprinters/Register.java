@@ -3,6 +3,7 @@ package com.example.agilesprinters;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
@@ -12,16 +13,23 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
 
 public class Register extends AppCompatActivity {
     private FirebaseAuth auth;
     private static final String TAG = "EmailPassword";
+    FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +42,8 @@ public class Register extends AppCompatActivity {
         EditText password = findViewById(R.id.TextPassword);
         EditText confirmPassword = findViewById(R.id.TextConfirmPassword);
         EditText email = findViewById(R.id.EditTextEmail);
+        EditText FirstName = findViewById(R.id.FirstName);
+        EditText LastName = findViewById(R.id.LastName);
         Button createAccountBtn = findViewById(R.id.createAccBtn);
 
         createAccountBtn.setOnClickListener(new View.OnClickListener() {
@@ -42,26 +52,37 @@ public class Register extends AppCompatActivity {
                 final String emailStr = email.getText().toString();
                 final String passwordStr = password.getText().toString();
                 final String passwordConfirmStr = confirmPassword.getText().toString();
-                Log.d("j", passwordConfirmStr+passwordStr);
-                if(passwordStr.equals(passwordConfirmStr) ){
+                final String firstNameStr = FirstName.getText().toString();
+                final String lastNameStr = LastName.getText().toString();
+
+                emailStr.trim();
+                passwordStr.trim();
+                passwordConfirmStr.trim();
+                firstNameStr.trim();
+                lastNameStr.trim();
+
+                if(emailStr.isEmpty()){
+                    String err = "email can not be empty";
+                    updateUI(null, err);
+                } else if(!passwordStr.equals(passwordConfirmStr)){
+                    String err = "passwords do not match";
+                    updateUI(null, err);
+                } else if(passwordStr.isEmpty() || passwordConfirmStr.isEmpty()){
+                    String err = "passwords can not be empty";
+                    updateUI(null, err);
+                } else if(firstNameStr.isEmpty() || lastNameStr.isEmpty()){
+                    String err = "first name and last name can not be empty";
+                    updateUI(null, err);
+                } else if (passwordStr.equals(passwordConfirmStr)){
                     Log.d("j", passwordConfirmStr+emailStr);
-                    CreateAccount(emailStr, passwordConfirmStr);
+                    CreateAccount(emailStr, passwordConfirmStr, firstNameStr, lastNameStr);
                 }
             }
         });
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        FirebaseUser currentUser = auth.getCurrentUser();
-        if(currentUser != null){
-            //reload();
-        }
-    }
 
-
-    private void CreateAccount(String email, String password){
+    private void CreateAccount(String email, String password, String firstName, String lastName){
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -70,15 +91,59 @@ public class Register extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = auth.getCurrentUser();
-                            //updateUI(user);
+                            System.out.println(user.getUid().toString());
+                            createUserDoc(user, firstName, lastName);
+                            updateUI(user, "success");
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(Register.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                            //updateUI(null);
+                            String err = task.getException().getLocalizedMessage();
+                            updateUI(null, err);
                         }
                     }
                 });
     }
+
+    public void updateUI(FirebaseUser user, String errOutput){
+        if (user == null) {
+            Toast.makeText(Register.this, errOutput,
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            Intent intent = new Intent(Register.this, Login.class);
+            if (null!=intent) startActivity(intent);
+        }
+    }
+
+    public void createUserDoc(FirebaseUser user, String firstName, String lastName){
+        db  =  FirebaseFirestore.getInstance();
+        final CollectionReference collectionReference  =  db.collection("users");
+
+        String Uid = user.getUid();
+        String emailID = user.getEmail();
+        HashMap<String, String> data = new HashMap<>();
+
+        if (Uid != null){
+            data.put("Email ID", emailID);
+            data.put("First Name", firstName);
+            data.put("Last Name", lastName);
+            collectionReference
+                    .document(Uid)
+                    .set(data)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            // These are a method which gets executed when the task is succeeded
+                            Log. d (TAG, "Data has been added successfully!");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            // These are a method which gets executed if there’s any problem
+                            Log. d (TAG, "Data could not be added!" + e.toString());
+                        }
+                    });
+        }
+    }
 }
+

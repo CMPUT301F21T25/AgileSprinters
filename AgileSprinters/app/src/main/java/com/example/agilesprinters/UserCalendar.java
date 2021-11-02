@@ -166,7 +166,7 @@ public class UserCalendar extends AppCompatActivity
                 toDoEventAdapter.notifyDataSetChanged();
             }
         });
-        
+
     }
 
     public void completedEventsScreenSetup() {
