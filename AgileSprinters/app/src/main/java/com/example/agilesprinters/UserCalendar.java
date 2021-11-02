@@ -40,6 +40,7 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
     private ListView completedEventsList;
     private ArrayAdapter<HabitInstance> completedEventAdapter;
     private ArrayList<HabitInstance> completedEvents = new ArrayList<>();
+    private ArrayList<String> completedEventIds = new ArrayList<>();
 
     private TextView title1;
     FirebaseFirestore db;
@@ -61,6 +62,8 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
     private Habit selectedHabit;
+    private HabitInstance selectedHabitInstance;
+    private String selectedHabitInstanceId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,9 +76,6 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
         title1 = findViewById(R.id.title1);
 
         db = FirebaseFirestore.getInstance();
-        //final CollectionReference collectionReference = db.collection("Instances");
-
-        //toDoEvents = new ArrayList<>();
 
         // Getting present date and day of the week
         LocalDate todayDate = LocalDate.now();
@@ -91,6 +91,18 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
                 addHabitEventFragment values =
                         new addHabitEventFragment().newInstance(i, loggedInId, "aGubwR1JjHVgiJxzWlJs");
                 values.show(getSupportFragmentManager(), "ADD");
+            }
+        });
+
+        completedEventsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedHabitInstance = completedEvents.get(i);
+                selectedHabitInstanceId = completedEventIds.get(i);
+
+                editHabitEventFragment values =
+                        new editHabitEventFragment().newInstance(i, selectedHabitInstance);
+                values.show(getSupportFragmentManager(), "VIEW/EDIT");
             }
         });
 
@@ -209,6 +221,7 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 completedEvents.clear();
+                completedEventIds.clear();
                 for(QueryDocumentSnapshot doc: value) {
                     Log.d(TAG, String.valueOf(doc.getData().get("Opt_comment")));
 
@@ -217,7 +230,8 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
                     if (doc.getString("UID").equals(loggedInId) && (eventDate.isEqual(todayDate)) ){
                         HabitInstance newInstance = new HabitInstance(doc.getString("UID"), doc.getString("HID"),
                                 doc.getString("Opt_comment"), doc.getString("Date"), Integer.parseInt(doc.getString("Duration")));
-                        completedEventAdapter.add(newInstance); // Adding habit events from Firestore
+                        completedEventAdapter.add(newInstance);
+                        completedEventIds.add(doc.getId()); // Adding habit events from Firestore
                     }
                 }
 
@@ -281,30 +295,64 @@ public class UserCalendar extends AppCompatActivity implements addHabitEventFrag
 
         addHabitEventDatabase(habitInstance);
         LocalDate todayDate = LocalDate.now();
+
         completedEventsScreenSetup(todayDate);
-        //System.out.println("Reached here 1");
-        //displayCompletedEvents();
 
     }
 
     @Override
-    public void onEditSavePressed(HabitInstance instance, int position) {
+    public void onEditSavePressed(HabitInstance instance) {
+        HashMap<String, String> data = new HashMap<>();
+        data.put("UID", instance.getUID());
+        data.put("HID", instance.getHID());
+        data.put("Date", instance.getDate());
+        data.put("Opt_comment",instance.getOpt_comment());
+        data.put("Duration",String.valueOf(instance.getDuration()));
 
-        habitEvents_list.set(position, instance);
+        db.collection("Instances")
+                .document(selectedHabitInstanceId)
+                .set(data)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error updating document", e);
+                    }
+                });
 
-        //displayCompletedEvents();
+        LocalDate todayDate = LocalDate.now();
+        completedEventsScreenSetup(todayDate);
     }
 
     @Override
     public void onDeletePressed(HabitInstance instance) {
 
-        habitEvents_list.remove(instance);
+        db.collection("Instances")
+                .document(selectedHabitInstanceId)
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error deleting document", e);
+                    }
+                });
 
-        //displayCompletedEvents();
+        LocalDate todayDate = LocalDate.now();
+        completedEventsScreenSetup(todayDate);
     }
 
     public void addHabitEventDatabase(HabitInstance instance){
-        //db  =  FirebaseFirestore.getInstance();
         final CollectionReference collectionReference  =  db.collection("Instances");
         DocumentReference newInstanceRef = db.collection("Instances").document();
 

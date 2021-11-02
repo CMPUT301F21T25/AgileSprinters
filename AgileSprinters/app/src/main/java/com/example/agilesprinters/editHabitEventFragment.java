@@ -35,7 +35,7 @@ public class editHabitEventFragment extends DialogFragment {
     }
 
     public interface OnFragmentInteractionListener {
-        void onEditSavePressed(HabitInstance instance, int position);
+        void onEditSavePressed(HabitInstance instance);
         void onDeletePressed(HabitInstance instance);
     }
 
@@ -67,7 +67,6 @@ public class editHabitEventFragment extends DialogFragment {
         HabitInstance habitInstance = (HabitInstance) getArguments().getSerializable("Habit instance");
         position = getArguments().getInt("position");
 
-
         optional_comment.setText(habitInstance.getOpt_comment());
         input_date.setText(habitInstance.getDate());
         input_duration.setText(String.valueOf(habitInstance.getDuration()));
@@ -84,12 +83,11 @@ public class editHabitEventFragment extends DialogFragment {
                 .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        boolean checked = completed.isChecked();
                         String comment = optional_comment.getText().toString();
                         String date = input_date.getText().toString();
                         int duration = Integer.parseInt(input_duration.getText().toString());
 
-                        listener.onEditSavePressed(new HabitInstance("","",comment, date, duration), position);
+                        listener.onEditSavePressed(new HabitInstance(habitInstance.getUID(),habitInstance.getHID(),comment, date, duration));
                     }
                 }).create();
 
