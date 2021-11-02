@@ -108,11 +108,7 @@ public class addHabitEventFragment extends DialogFragment
                 .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        //String comment = optional_comment.getText().toString();
-                        //String date = input_date.getText().toString();
-                        //int duration = Integer.parseInt(input_duration.getText().toString());
 
-                        //listener.onSavePressed(new HabitInstance(UID, HID, comment, date, duration));
                     }
                 }).create();
 

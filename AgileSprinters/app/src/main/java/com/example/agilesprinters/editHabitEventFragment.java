@@ -96,6 +96,7 @@ public class editHabitEventFragment extends DialogFragment implements DatePicker
         optional_comment.setText(habitInstance.getOpt_comment());
         input_date.setText(habitInstance.getDate());
         input_duration.setText(String.valueOf(habitInstance.getDuration()));
+        date = habitInstance.getDate();
 
         input_date.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,11 +121,7 @@ public class editHabitEventFragment extends DialogFragment implements DatePicker
                 .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        //String comment = optional_comment.getText().toString();
-                        //String date = input_date.getText().toString();
-                        //int duration = Integer.parseInt(input_duration.getText().toString());
 
-                        //listener.onEditSavePressed(new HabitInstance(habitInstance.getUID(),habitInstance.getHID(),comment, date, duration));
                     }
                 }).create();
 
