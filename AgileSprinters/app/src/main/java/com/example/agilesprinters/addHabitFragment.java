@@ -20,11 +20,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 
-/**
- * This class is a dialog fragment that allows the user to add a new habit.
- */
+
 public class addHabitFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener{
     private EditText habitTitle;
     private EditText habitReason;
@@ -38,19 +35,19 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
     private Button friday;
     private Button saturday;
     private String date = "";
-    private HashMap <String,Boolean> weekdays;
     private Spinner privacy;
+    private ArrayList<String> weekdays;
     private addHabitFragment.OnFragmentInteractionListener listener;
 
+    public void addWeekday(String day){
+        if (!weekdays.isEmpty() && weekdays.contains(day)){
+            weekdays.remove(day);
+        }
+        else{
+            weekdays.add(day);
+        }
+    }
 
-    /**
-     * This function captures the date chosen by the user once they press ok on the datePicker
-     * fragment.
-     * @param view the datePicker dialog view
-     * @param year year of the date chosen by the user
-     * @param month month of the date chosen by the user
-     * @param dayOfMonth day of the month of the date chosen by the user
-     */
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
         Calendar c = Calendar.getInstance();
@@ -68,20 +65,10 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
         date_editText.setText(date);
     }
 
-    /**
-     * This interface listens for when dialog is ended and sends the information and the function
-     * to the Home class for it to implement.
-     */
     public interface OnFragmentInteractionListener {
         void onAddPressed(Habit habit);
     }
 
-    /**
-     * This function attaches the fragment to the activity and keeps track of the context of the
-     * fragment so the listener knows what to listen to. Ensures that the proper methods are
-     * implemented by the Home class.
-     * @param context
-     */
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
@@ -96,27 +83,13 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
     }
 
 
-    /**
-     * This function creates the actual dialog on the screen and listens for user input, returning
-     * the information through the listener based on which button is clicked.
-     * @param savedInstanceState
-     * @return
-     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         //inflate the layout for this fragment
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.add_habit_fragment, null);
 
-        weekdays = new HashMap<String, Boolean>();
-        weekdays.put("MONDAY", false);
-        weekdays.put("TUESDAY", false);
-        weekdays.put("WEDNESDAY", false);
-        weekdays.put("THURSDAY", false);
-        weekdays.put("FRIDAY", false);
-        weekdays.put("SATURDAY", false);
-        weekdays.put("SUNDAY", false);
-
+        weekdays = new ArrayList<String>();
         habitTitle = view.findViewById(R.id.habit_title_editText);
         habitReason = view.findViewById(R.id.habit_reason_editText);
         date_editText = view.findViewById(R.id.Date);
@@ -137,98 +110,111 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
             @Override
             public void onClick(View view) {
                 DialogFragment datePicker = new datePickerFragment();
-                datePicker.show(getChildFragmentManager(), "DATE PICKER");
+                datePicker.show(getChildFragmentManager(), "date picker");
             }
         });
 
+        final int[] setSunday = {0};
         sunday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(weekdays.get("SUNDAY") == false){
+                addWeekday("SUNDAY");
+                if (setSunday[0] == 0) {
                     sunday.setBackgroundColor(Color.parseColor("#e27c65"));
-                    weekdays.replace("SUNDAY", false, true);
-                }
-                else{
+                    setSunday[0] = 1;
+                } else {
                     sunday.setBackgroundColor(Color.parseColor("#808080"));
-                    weekdays.replace("SUNDAY", true, false);
+                    setSunday[0] = 0;
                 }
             }
         });
 
+        final int[] setMonday = {0};
         monday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (weekdays.get("MONDAY") == false){
+                addWeekday("MONDAY");
+                if (setMonday[0] == 0){
                     monday.setBackgroundColor(Color.parseColor("#e27c65"));
-                    weekdays.replace("MONDAY", false, true);
+                    setMonday[0] = 1;
                 } else {
                     monday.setBackgroundColor(Color.parseColor("#808080"));
-                    weekdays.replace("MONDAY", true, false);
+                    setMonday[0] = 0;
                 }
             }
         });
 
+        final int[] setTuesday = {0};
         tuesday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (weekdays.get("TUESDAY") == false){
+                addWeekday("TUESDAY");
+                if (setTuesday[0] == 0){
                     tuesday.setBackgroundColor(Color.parseColor("#e27c65"));
-                    weekdays.replace("TUESDAY", false, true);
+                    setTuesday[0] = 1;
                 } else {
                     tuesday.setBackgroundColor(Color.parseColor("#808080"));
-                    weekdays.replace("TUESDAY", true, false);
+                    setTuesday[0] = 0;
                 }
             }
         });
 
+        final int[] setWednesday = {0};
         wednesday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (weekdays.get("WEDNESDAY") == false){
+                addWeekday("WEDNESDAY");
+                if (setWednesday[0] == 0){
                     wednesday.setBackgroundColor(Color.parseColor("#e27c65"));
-                    weekdays.replace("WEDNESDAY", false, true);
+                    setWednesday[0] = 1;
                 } else {
                     wednesday.setBackgroundColor(Color.parseColor("#808080"));
-                    weekdays.replace("WEDNESDAY", true, false);
+                    setWednesday[0] = 0;
                 }
             }
         });
 
+        final int[] setThurs = {0};
         thursday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (weekdays.get("THURSDAY") == false){
+                addWeekday("THURSDAY");
+                if (setThurs[0] == 0){
                     thursday.setBackgroundColor(Color.parseColor("#e27c65"));
-                    weekdays.replace("THURSDAY", false, true);
+                    setThurs[0] = 1;
                 } else {
                     thursday.setBackgroundColor(Color.parseColor("#808080"));
-                    weekdays.replace("THURSDAY", true, false);
+                    setThurs[0] = 0;
                 }
             }
         });
 
+        final int[] setFriday = {0};
         friday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (weekdays.get("FRIDAY") == false){
+                addWeekday("FRIDAY");
+                if (setFriday[0] == 0){
                     friday.setBackgroundColor(Color.parseColor("#e27c65"));
-                    weekdays.replace("FRIDAY", false, true);
+                    setFriday[0] = 1;
                 } else {
                     friday.setBackgroundColor(Color.parseColor("#808080"));
-                    weekdays.replace("FRIDAY", true, false);
+                    setFriday[0] = 0;
                 }
             }
         });
 
+        final int[] setSat = {0};
         saturday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (weekdays.get("SATURDAY") == false){
+                addWeekday("SATURDAY");
+                if (setSat[0] == 0){
                     saturday.setBackgroundColor(Color.parseColor("#e27c65"));
-                    weekdays.replace("SATURDAY", false, true);
+                    setSat[0] = 1;
                 } else {
                     saturday.setBackgroundColor(Color.parseColor("#808080"));
-                    weekdays.replace("SATURDAY", true, false);
+                    setSat[0] = 0;
                 }
             }
         });
@@ -241,19 +227,12 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
                 .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        /* Do not implement anything here in order to override the button
-                         * to only call the listener once all the information required has been
-                         * filled out and display error messages if they have been left blank.
-                         */
+
                     }
                 }).create();
 
     }
 
-    /**
-     * This function overrides the buttons clicked in order to only allow the dialog to be dismissed
-     * when all requirements have been met.
-     */
     @Override
     public void onResume(){
         super.onResume();
@@ -265,10 +244,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
             positive.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // Boolean tracks when the all the fields have been filled out. Will turn to false
-                    // if anything has been left blank.
                     Boolean readyToClose = true;
-
                     String habit_title = habitTitle.getText().toString();
                     String habit_reason = habitReason.getText().toString();
                     String privacySetting = privacy.getSelectedItem().toString();
@@ -288,21 +264,12 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
                         readyToClose = false;
                         date_editText.setError("This field cannot be blank");
                     }
-
-                    Boolean weekdayCheck = false;
-                    for(String i : weekdays.keySet()){
-                        if (weekdays.get(i)){
-                            weekdayCheck = true;
-                            break;
-                        }
-                    }
-                    if (!weekdayCheck) {
+                    if (weekdays.isEmpty()) {
                         readyToClose = false;
                         buttonError.setText("Please choose which days you would like this event to occur.");
                     }
 
-                    // If everything has been filled out, call the listener and send the edited
-                    // habit back to the Home class and dismiss the dialog.
+                    if(readyToClose) positive.setEnabled(true);
                     if(readyToClose){
                         listener.onAddPressed(new Habit(habit_title,habit_reason,date, weekdays, privacySetting));
                         dialog.dismiss();
@@ -311,4 +278,5 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
             });
         }
     }
+
 }
