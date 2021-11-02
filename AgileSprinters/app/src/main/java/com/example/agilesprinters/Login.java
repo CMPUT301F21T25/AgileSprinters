@@ -2,9 +2,6 @@ package com.example.agilesprinters;
 
 import static android.content.ContentValues.TAG;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +10,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -75,6 +75,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = auth.getCurrentUser();
         if ( currentUser != null){
+            System.out.println("HOW?!"+currentUser.getUid());
             //Do anything here which needs to be done after user is set is complete
             updateUI(currentUser);
         }
@@ -90,43 +91,35 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
 
-        auth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithEmail:success");
-                            FirebaseUser user = auth.getCurrentUser();
-                            if (user !=  null) {updateUI(user);}
-                        } else {
-                            //exception: email field is empty
-                            if (email.equals("")){
-                                errMsg(task,"Email field is empty");
-                            } //exception: password field is empty
-                            else if (password.equals("")){
-                               errMsg(task,"Password field is empty");
-                            } // If sign in fails due to a wrong password or email
-                            else {
-                                errMsg(task,"Email or password entered is incorrect");
+        //throw a message if the email is empty
+        if (email.equals("")){
+            Toast.makeText(Login.this, "Email is required",
+                    Toast.LENGTH_SHORT).show();
+        } //throw a message if the password is empty
+        else if (password.equals("")){
+            Toast.makeText(Login.this, "Password is required",
+                    Toast.LENGTH_SHORT).show();
+        }else {
+            auth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                // Sign in success, update UI with the signed-in user's information
+                                Log.d(TAG, "signInWithEmail:success");
+                                FirebaseUser user = auth.getCurrentUser();
+                                if (user != null) {
+                                    updateUI(user);
+                                }
+                            } else {
+                                // If sign in fails due to a wrong password or email
+                                Log.w(TAG, "signInWithEmail:failure", task.getException());
+                                Toast.makeText(Login.this, "Email or password entered is incorrect",
+                                        Toast.LENGTH_SHORT).show();
                             }
                         }
-                    }
-                });
-        // [END sign_in_with_email]
-    }
-
-    /**
-     * This function displays to the user an error message when sign in fails
-     * @param task
-     * an API to represent if the sign in succeeded or the exception thrown {@link Task<AuthResult>}
-     * @param errStr
-     * Give the string you want displayed to the user {@link String}
-     */
-    private void errMsg(@NonNull Task<AuthResult> task, String errStr){
-        Log.w(TAG, "signInWithEmail:failure", task.getException());
-        Toast.makeText(Login.this, errStr,
-                Toast.LENGTH_SHORT).show();
+                    });
+        }
     }
 
     /**
