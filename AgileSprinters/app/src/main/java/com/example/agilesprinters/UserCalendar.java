@@ -6,8 +6,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -19,6 +21,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
@@ -37,9 +40,10 @@ import java.util.HashMap;
 public class UserCalendar extends AppCompatActivity
         implements addHabitEventFragment.OnFragmentInteractionListener,
         editHabitEventFragment.OnFragmentInteractionListener,
-        DatePickerDialog.OnDateSetListener {
+        DatePickerDialog.OnDateSetListener, BottomNavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "Instance";
+    BottomNavigationView bottomNavigationView;
 
     private ListView toDoEventsList;
     private ArrayAdapter<Habit> toDoEventAdapter;
@@ -54,7 +58,7 @@ public class UserCalendar extends AppCompatActivity
     private TextView title1;
     private Button calendar_button;
     FirebaseFirestore db;
-    private String loggedInId = "nXmcIP2McwOw89GpWW10xt02JzG2";
+    //private String loggedInId = "nXmcIP2McwOw89GpWW10xt02JzG2";
 
     private final ArrayList<HabitInstance> habitEvents_list = new ArrayList<>();
 
@@ -64,11 +68,17 @@ public class UserCalendar extends AppCompatActivity
     private HabitInstance selectedHabitInstance;
     private String selectedHabitInstanceId;
     LocalDate currentDate = LocalDate.now();
+    private String loggedInId = getIntent().getStringExtra("User_Id");
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_calendar);
+
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setOnNavigationItemSelectedListener(this);
+        bottomNavigationView.setSelectedItemId(R.id.home);
 
         toDoEventsList = findViewById(R.id.toDoEventsList);
         completedEventsList = findViewById(R.id.completedEventsList);
@@ -316,5 +326,34 @@ public class UserCalendar extends AppCompatActivity
         setDate();
         screenSetup();
         completedEventsScreenSetup();
+    }
+
+    //click logic for navigation bar
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        //Context context = getApplicationContext();
+        switch (item.getItemId()) {
+            case R.id.home:
+                Intent intent = new Intent(this, Home.class);
+                //add bundle to send data if need
+                startActivity(intent);
+                break;
+
+            case R.id.calendar:
+                if(this instanceof UserCalendar){
+                    return true;
+                }
+                else {
+                    Intent intent2 = new Intent(this, UserCalendar.class);
+                    //add bundle to send data if need
+                    startActivity(intent2);
+                    break;
+                }
+
+            case R.id.forumn:
+                break;
+
+        }
+        return false;
     }
 }
