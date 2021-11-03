@@ -18,6 +18,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 
 public class addHabitEventFragment extends DialogFragment
@@ -29,7 +31,7 @@ public class addHabitEventFragment extends DialogFragment
     private String date = "";
 
     private EditText optional_comment;
-    private EditText input_date;
+    private TextView input_date;
     private EditText input_duration;
 
     private addHabitEventFragment.OnFragmentInteractionListener listener;
@@ -133,18 +135,32 @@ public class addHabitEventFragment extends DialogFragment
                     Boolean readyToClose = true;
 
                     String comment = optional_comment.getText().toString();
-                    //String date = input_date.getText().toString();
+                    //String date_entry = input_date.getText().toString();
                     String duration = input_duration.getText().toString();
 
-                    if (optional_comment.length() > 20) {
+                    if (comment.length() > 20) {
                         readyToClose = false;
-                        input_date.setError("This field cannot have more than 20 chars");
+                        optional_comment.setError("This field cannot have more than 20 chars");
+                    }
+
+                    if (comment.matches("")) {
+                        readyToClose = false;
+                        optional_comment.setError("This field cannot be empty");
                     }
 
                     if (date.matches("")) {
                         readyToClose = false;
                         input_date.setError("This field cannot be blank");
                     }
+
+                    LocalDate currentDate = LocalDate.now();
+                    LocalDate eventDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+
+                    if (!eventDate.isEqual(currentDate)) {
+                        readyToClose = false;
+                        input_date.setError("The date has to be today's date");
+                    }
+
                     if (duration.matches("")) {
                         readyToClose = false;
                         input_duration.setError("This field cannot be blank");
