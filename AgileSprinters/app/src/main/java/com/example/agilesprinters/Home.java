@@ -97,8 +97,8 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             }
         });
 
-        final FloatingActionButton addMedicineButton = findViewById(R.id.add_habit_button);
-        addMedicineButton.setOnClickListener(new View.OnClickListener() {
+        final FloatingActionButton addHabitButton = findViewById(R.id.add_habit_button);
+        addHabitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 new addHabitFragment().show(getSupportFragmentManager(), "ADD");
