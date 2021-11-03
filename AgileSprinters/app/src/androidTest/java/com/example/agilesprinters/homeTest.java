@@ -15,6 +15,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+/**
+ * This class provides testing for the home activity
+ */
 public class homeTest {
     private Solo solo;
 

@@ -35,6 +35,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+/**
+ * The home class is an activity which displays the habits of a user upon login. From here a user
+ * may click the floating button to add a habit, tap on a habit to edit or view a habit, or long
+ * click on a habit to delete it. There is a navigation bar on the bottom that the user may click
+ * to go to either calendar, forum, or notifications.
+ */
 public class Home extends AppCompatActivity implements addHabitFragment.OnFragmentInteractionListener,
         viewEditHabitFragment.OnFragmentInteractionListener, BottomNavigationView.OnNavigationItemSelectedListener,
         deleteHabitFragment.OnFragmentInteractionListener{
