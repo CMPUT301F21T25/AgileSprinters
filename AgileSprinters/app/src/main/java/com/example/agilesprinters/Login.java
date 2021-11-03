@@ -24,6 +24,7 @@ import com.google.firebase.auth.FirebaseUser;
 /**
  *
  * This class represents a login activity, it is the first page for users who are not signed it
+ *
  * @author Leen Alzebdeh
  * ccid alzebdeh
  * lab section
