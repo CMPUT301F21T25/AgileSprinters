@@ -23,6 +23,7 @@ import java.util.Calendar;
 public class addHabitEventFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener{
     private int position;
+    private String EID;
     private String UID;
     private String HID;
     private String date = "";
@@ -33,12 +34,13 @@ public class addHabitEventFragment extends DialogFragment
 
     private addHabitEventFragment.OnFragmentInteractionListener listener;
 
-    public static addHabitEventFragment newInstance(int position, String UID, String HID) {
+    public static addHabitEventFragment newInstance(int position, String UID, String HID, String EID) {
         addHabitEventFragment fragment = new addHabitEventFragment();
         Bundle args = new Bundle();
         args.putInt("position", position);
         args.putString("UID", UID);
         args.putString("HID", HID);
+        args.putString("EID", EID);
         fragment.setArguments(args);
 
         return fragment;
@@ -91,6 +93,7 @@ public class addHabitEventFragment extends DialogFragment
         position = getArguments().getInt("position");
         UID = getArguments().getString("UID");
         HID = getArguments().getString("HID");
+        EID = getArguments().getString("EID");
 
         input_date.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,7 +153,7 @@ public class addHabitEventFragment extends DialogFragment
                     // If everything has been filled out, call the listener and send the edited
                     // habit back to the Home class and dismiss the dialog.
                     if(readyToClose){
-                        listener.onSavePressed(new HabitInstance(UID, HID, comment, date, Integer.parseInt(duration)));
+                        listener.onSavePressed(new HabitInstance(EID, UID, HID, comment, date, Integer.parseInt(duration)));
                         dialog.dismiss();
                     }
                 }

@@ -22,10 +22,10 @@ import java.util.Calendar;
 
 public class editHabitEventFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener{
     private int position;
-    private CheckBox completed;
     private EditText optional_comment;
     private EditText input_date;
     private EditText input_duration;
+    private String EID;
     private String UID;
     private String HID;
 
@@ -91,7 +91,6 @@ public class editHabitEventFragment extends DialogFragment implements DatePicker
         input_duration = view.findViewById(R.id.editText_duration);
 
         HabitInstance habitInstance = (HabitInstance) getArguments().getSerializable("Habit instance");
-        position = getArguments().getInt("position");
 
         optional_comment.setText(habitInstance.getOpt_comment());
         input_date.setText(habitInstance.getDate());
@@ -106,6 +105,7 @@ public class editHabitEventFragment extends DialogFragment implements DatePicker
             }
         });
 
+        EID = habitInstance.getEID();
         UID = habitInstance.getUID();
         HID = habitInstance.getHID();
 
@@ -148,7 +148,7 @@ public class editHabitEventFragment extends DialogFragment implements DatePicker
 
                     if (optional_comment.length() > 20) {
                         readyToClose = false;
-                        input_date.setError("This field cannot have more than 20 chars");
+                        optional_comment.setError("This field cannot have more than 20 chars");
                     }
 
                     if (date.matches("")) {
@@ -163,7 +163,7 @@ public class editHabitEventFragment extends DialogFragment implements DatePicker
                     // If everything has been filled out, call the listener and send the edited
                     // habit back to the Home class and dismiss the dialog.
                     if(readyToClose){
-                        listener.onEditSavePressed(new HabitInstance(UID,HID,comment, date, Integer.parseInt(duration)));
+                        listener.onEditSavePressed(new HabitInstance(EID,UID,HID,comment, date, Integer.parseInt(duration)));
                         dialog.dismiss();
                     }
                 }

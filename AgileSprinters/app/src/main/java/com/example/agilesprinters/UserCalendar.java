@@ -33,6 +33,8 @@ import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class UserCalendar extends AppCompatActivity
         implements addHabitEventFragment.OnFragmentInteractionListener,
@@ -87,9 +89,12 @@ public class UserCalendar extends AppCompatActivity
                 selectedHabit = toDoEvents.get(i);
                 selectedHabitInstanceId = toDoEventIds.get(i);
 
+                DocumentReference newInstanceRef = db.collection("HabitEvents").document();
+                String instanceId = newInstanceRef.getId();
+
                 // get hid here
                 addHabitEventFragment values =
-                        new addHabitEventFragment().newInstance(i, loggedInId, selectedHabitInstanceId);
+                        new addHabitEventFragment().newInstance(i, loggedInId, selectedHabitInstanceId, instanceId);
                 values.show(getSupportFragmentManager(), "ADD");
             }
         });
@@ -123,7 +128,21 @@ public class UserCalendar extends AppCompatActivity
 
     public void setDate() {
         String formattedDate = currentDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG));
-        title1.setText(formattedDate + ")");
+        title1.setText("Tasks for " + formattedDate + ")");
+    }
+
+    public ArrayList<String> getHabitDays(Map<String, Object> weekdays) {
+        String[] days = {"MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"};
+        ArrayList<String> habitDays = new ArrayList<>();
+
+        for (int i = 0; i < days.length; i++) {
+            if (weekdays.get(days[i]).equals(true)) {
+                habitDays.add(days[i]);
+                System.out.println("The habits are " + days[i]);
+            }
+        }
+
+        return habitDays;
     }
 
     public void screenSetup() {
@@ -149,13 +168,19 @@ public class UserCalendar extends AppCompatActivity
                 toDoEvents.clear();
                 toDoEventIds.clear();
                 for(QueryDocumentSnapshot doc: value) {
-                    Log.d(TAG, String.valueOf(doc.getData().get("Title")));
+                    Log.d(TAG, "Habits to do today " + String.valueOf(doc.getData().get("Title")));
 
                     // Gives the start date
                     LocalDate startDate = LocalDate.parse(doc.getString("Data to Start"), formatter);
+                    Map<String, Object> weekdays = (Map<String, Object>) doc.getData().get("Weekdays");
+
+                    ArrayList<String> habitDays = getHabitDays(weekdays);
+                    String todayDay = currentDate.getDayOfWeek().toString();
+
 
                     if (doc.getString("UID").equals(loggedInId)
-                            && (startDate.isBefore(currentDate) || startDate.isEqual(currentDate)) ){
+                            && (startDate.isBefore(currentDate) || startDate.isEqual(currentDate))
+                            && (habitDays.contains(todayDay))){
                         Habit newHabit = new Habit(doc.getString("Title"), doc.getString("Reason"),
                                 doc.getString("Data to Start"), days, doc.getString("PrivacySetting"));
                         toDoEvents.add(newHabit); // Adding habits from Firestore
@@ -176,7 +201,7 @@ public class UserCalendar extends AppCompatActivity
         // Get a list of habit events
         // of the user logged in, on this day
 
-        db.collection("Instances").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        db.collection("HabitEvents").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 completedEvents.clear();
@@ -184,11 +209,11 @@ public class UserCalendar extends AppCompatActivity
                 for(QueryDocumentSnapshot doc: value) {
                     Log.d(TAG, String.valueOf(doc.getData().get("Opt_comment")));
 
-                    LocalDate eventDate = LocalDate.parse(doc.getString("Date"), formatter);
+                    LocalDate eventDate = LocalDate.parse(doc.get("Date").toString(), formatter);
 
                     if (doc.getString("UID").equals(loggedInId) && (eventDate.isEqual(currentDate)) ){
-                        HabitInstance newInstance = new HabitInstance(doc.getString("UID"), doc.getString("HID"),
-                                doc.getString("Opt_comment"), doc.getString("Date"), Integer.parseInt(doc.getString("Duration")));
+                        HabitInstance newInstance = new HabitInstance(doc.getString("EID"), doc.getString("UID"), doc.getString("HID"),
+                                doc.getString("Opt_comment"), doc.getString("Date"), Integer.parseInt(doc.get("Duration").toString()));
                         completedEventAdapter.add(newInstance);
                         completedEventIds.add(doc.getId()); // Adding habit events from Firestore
                     }
@@ -203,7 +228,6 @@ public class UserCalendar extends AppCompatActivity
     public void onSavePressed(HabitInstance habitInstance) {
 
         addHabitEventDatabase(habitInstance);
-        LocalDate todayDate = LocalDate.now();
 
         completedEventsScreenSetup();
 
@@ -212,13 +236,14 @@ public class UserCalendar extends AppCompatActivity
     @Override
     public void onEditSavePressed(HabitInstance instance) {
         HashMap<String, String> data = new HashMap<>();
+        data.put("EID", instance.getEID());
         data.put("UID", instance.getUID());
         data.put("HID", instance.getHID());
         data.put("Date", instance.getDate());
         data.put("Opt_comment",instance.getOpt_comment());
         data.put("Duration",String.valueOf(instance.getDuration()));
 
-        db.collection("Instances")
+        db.collection("HabitEvents")
                 .document(selectedHabitInstanceId)
                 .set(data)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -234,15 +259,14 @@ public class UserCalendar extends AppCompatActivity
                     }
                 });
 
-        LocalDate todayDate = LocalDate.now();
         completedEventsScreenSetup();
     }
 
     @Override
     public void onDeletePressed(HabitInstance instance) {
 
-        db.collection("Instances")
-                .document(selectedHabitInstanceId)
+        db.collection("HabitEvents")
+                .document(instance.getEID())
                 .delete()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -257,18 +281,18 @@ public class UserCalendar extends AppCompatActivity
                     }
                 });
 
-        LocalDate todayDate = LocalDate.now();
         completedEventsScreenSetup();
     }
 
     public void addHabitEventDatabase(HabitInstance instance){
-        final CollectionReference collectionReference  =  db.collection("Instances");
-        DocumentReference newInstanceRef = db.collection("Instances").document();
+        final CollectionReference collectionReference  =  db.collection("HabitEvents");
+        //DocumentReference newInstanceRef = db.collection("HabitEvents").document();
 
-        String instanceId = newInstanceRef.getId();
+        String instanceId = instance.getEID();
         HashMap<String, Object> data = new HashMap<>();
 
         if (instanceId != null){
+            data.put("EID", instance.getEID());
             data.put("UID", instance.getUID());
             data.put("HID", instance.getHID());
             data.put("Date", instance.getDate());
