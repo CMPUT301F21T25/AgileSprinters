@@ -24,7 +24,11 @@ import com.google.firebase.auth.FirebaseUser;
 //import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,6 +44,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     FirebaseFirestore db;
     FirebaseAuth auth;
     private static final String TAG = "Habit";
+    private String tempId = "nXmcIP2McwOw89GpWW10xt02JzG2";
 
 
     @Override
@@ -52,11 +57,36 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         bottomNavigationView.setSelectedItemId(R.id.home);
 
         habitList = findViewById(R.id.habit_list);
-        habitArrayList = new ArrayList<Habit>();
+        habitArrayList = new ArrayList<>();
 
-        habitAdapter = new habitListAdapter(this, R.layout.home_list_content, habitArrayList);
+        habitAdapter = new habitListAdapter(this, habitArrayList);
         habitList.setAdapter(habitAdapter);
+        db  =  FirebaseFirestore.getInstance();
+        final CollectionReference collectionReference  =  db.collection("Habit");
 
+        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
+                    FirebaseFirestoreException error) {
+                // Clear the old list
+                habitArrayList.clear();
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    Log.d(TAG, String.valueOf(doc.getData().get("UID")));
+                    if(/*auth.getCurrentUser().getUid() USE ONCE SET UP JUST COMPARE WITH TEMP ID FOR NOW*/
+                           tempId.matches((String) doc.getData().get("UID"))){
+                        String title = (String) doc.getData().get("Title");
+                        String reason = (String) doc.getData().get("Reason");
+                        String dateToStart = (String) doc.getData().get("Data to Start");
+                        HashMap<String,Boolean> weekdays = (HashMap<String, Boolean>) doc.getData().get("Weekdays");
+                        String privacySetting = (String) doc.getData().get("PrivacySetting");
+
+                        habitArrayList.add(new Habit(title,reason,dateToStart,weekdays,privacySetting));
+                    }
+                }
+                habitAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
+                // from the cloud
+            }
+        });
 
         habitList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -144,7 +174,6 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             case R.id.calendar:
                 Intent intent = new Intent(this, UserCalendar.class);
                 //add bundle to send data if need
-                intent.putExtra("User_ID", user_id);
                 startActivity(intent);
                 break;
 
