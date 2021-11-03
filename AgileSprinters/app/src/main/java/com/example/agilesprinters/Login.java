@@ -72,10 +72,11 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     @Override
     public void onStart() {
         super.onStart();
+        System.out.println("HOW?!");
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = auth.getCurrentUser();
         if ( currentUser != null){
-            System.out.println("HOW?!"+currentUser.getUid());
+            System.out.println(currentUser.getUid());
             //Do anything here which needs to be done after user is set is complete
             updateUI(currentUser);
         }

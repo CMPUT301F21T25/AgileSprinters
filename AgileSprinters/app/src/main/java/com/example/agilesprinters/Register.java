@@ -1,26 +1,23 @@
 package com.example.agilesprinters;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -91,6 +88,7 @@ public class Register extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = auth.getCurrentUser();
+
                             System.out.println(user.getUid().toString());
                             createUserDoc(user, firstName, lastName);
                             updateUI(user, "success");
@@ -109,6 +107,7 @@ public class Register extends AppCompatActivity {
             Toast.makeText(Register.this, errOutput,
                     Toast.LENGTH_SHORT).show();
         } else {
+            auth.signOut();
             Intent intent = new Intent(Register.this, Login.class);
             if (null!=intent) startActivity(intent);
         }

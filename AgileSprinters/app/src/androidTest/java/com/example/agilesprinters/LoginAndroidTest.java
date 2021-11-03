@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import android.app.Activity;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
@@ -78,40 +79,51 @@ public class LoginAndroidTest {
     }
 
     /**
-
+     * Function registers a new user then tests if they can be logged in successfully
+     * tests it with an incorrect and then correct password
+     */
     @Test
     public void registerSignInTest(){
         //Asserts that the current activity is the Login Activity. Otherwise, show “Wrong Activity”
         solo.assertCurrentActivity("Wrong Activity", Login.class);
 
+        //click register button
         TextView register = (TextView) solo.getView("register");
         solo.clickOnView(register); //Select register text
-
+        //Asserts that the current activity is the Register Activity. Otherwise, show “Wrong Activity”
         solo.assertCurrentActivity("Wrong Activity", Register.class);
 
         //add this to strings.xml
+        //register a test user
         solo.enterText((EditText) solo.getView(R.id.LastName), "User");
         solo.enterText((EditText) solo.getView(R.id.FirstName), "Test");
         solo.enterText((EditText) solo.getView(R.id.EditTextEmail), "test@email.com");
         solo.enterText((EditText) solo.getView(R.id.TextPassword), "testPassword");
         solo.enterText((EditText) solo.getView(R.id.TextConfirmPassword), "testPassword");
+
         Button createAcc = (Button) solo.getView("createAccBtn");
         solo.clickOnView(createAcc); //Select register text
+        //Asserts that the current activity is the Login Activity. Otherwise, show “Wrong Activity”
         solo.assertCurrentActivity("Wrong Activity", Login.class);
-        //add this to strings.xml
+
+        //login the user (using the wrong password)
         solo.enterText((EditText) solo.getView(R.id.email), "test@email.com");
         solo.enterText((EditText) solo.getView(R.id.password), "WrongTestPassword");
 
         Button signInBtn = (Button) solo.getView("loginBtn");
         solo.clickOnView(signInBtn); //Select SIGN IN Button
+        /* True if there is a text: Email or password entered is incorrect
+        , wait at least 2 seconds and find one minimum match. */
         assertTrue(solo.waitForText("Email or password entered is incorrect", 1, 2000));
 
-        solo.clearEditText((EditText) solo.getView(R.id.password)); //Clear the EditText
-        solo.enterText((EditText) solo.getView(R.id.password), "TestPassword");
+        solo.clearEditText((EditText) solo.getView(R.id.password)); //Clear the password EditText
+        solo.enterText((EditText) solo.getView(R.id.password), "testPassword");  //enter the correct password
+        solo.clickOnView(signInBtn); //Select SIGN IN Button (switches to home)
+        //Asserts that the current activity is the Home Activity. Otherwise, show “Wrong Activity”
         solo.assertCurrentActivity("Wrong Activity", Home.class);
 
     }
-    **/
+
     /**
      * Close activity after each test
      * @throws Exception
