@@ -16,12 +16,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
@@ -43,18 +45,18 @@ public class UserCalendar extends AppCompatActivity
         DatePickerDialog.OnDateSetListener, BottomNavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "Instance";
-    BottomNavigationView bottomNavigationView;
 
     private ListView toDoEventsList;
     private ArrayAdapter<Habit> toDoEventAdapter;
     private ArrayList<Habit> toDoEvents = new ArrayList<>();
+    private FirebaseAuth auth;
 
     private ListView completedEventsList;
     private ArrayAdapter<HabitInstance> completedEventAdapter;
     private ArrayList<HabitInstance> completedEvents = new ArrayList<>();
     private ArrayList<String> completedEventIds = new ArrayList<>();
     private ArrayList<String> toDoEventIds = new ArrayList<>();
-
+    BottomNavigationView bottomNavigationView;
     private TextView title1;
     private Button calendar_button;
     FirebaseFirestore db;
@@ -69,6 +71,9 @@ public class UserCalendar extends AppCompatActivity
     private String selectedHabitInstanceId;
     LocalDate currentDate = LocalDate.now();
     private String loggedInId = getIntent().getStringExtra("User_Id");
+
+    private String tempId = auth.getCurrentUser().getUid();
+
 
 
     @Override

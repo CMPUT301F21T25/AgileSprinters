@@ -109,6 +109,7 @@ public class Register extends AppCompatActivity {
             Toast.makeText(Register.this, errOutput,
                     Toast.LENGTH_SHORT).show();
         } else {
+            auth.signOut();
             Intent intent = new Intent(Register.this, Login.class);
             if (null!=intent) startActivity(intent);
         }

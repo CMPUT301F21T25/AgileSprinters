@@ -38,6 +38,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     ArrayAdapter<Habit> habitAdapter;
     BottomNavigationView bottomNavigationView;
     FirebaseFirestore db;
+    FirebaseAuth auth;
     private static final String TAG = "Habit";
     private String user_id = getIntent().getStringExtra("userId");
 
@@ -154,12 +155,11 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         return false;
     }
 
+    /**
+     * This function adds
+     * @param habit The habit that needs to be added to the database.
+     */
     public void addHabitDatabase(Habit habit){
-        /**
-         * This function takes the given habit and add it to the database
-         * Input : Habit
-         * Output: none
-         */
         db  =  FirebaseFirestore.getInstance();
         final CollectionReference collectionReference  =  db.collection("Habit");
         // Creating a unique Id for the Habit that is being added
@@ -207,4 +207,5 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         habitAdapter.remove(habit);
         habitAdapter.notifyDataSetChanged();
     }
+
 }
