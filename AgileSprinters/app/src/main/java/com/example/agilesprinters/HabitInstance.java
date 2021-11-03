@@ -4,13 +4,15 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class HabitInstance implements Serializable {
-    private String UID;
-    private String HID;
+    private String EID;
+    private String UID; // self ID
+    private String HID; // parent ID
     private String opt_comment;
     private String date;
     private int duration;
 
-    public HabitInstance(String UID, String HID, String opt_comment, String date, int duration) {
+    public HabitInstance(String EID, String UID, String HID, String opt_comment, String date, int duration) {
+        this.EID = EID;
         this.UID = UID;
         this.HID = HID;
         this.opt_comment = opt_comment;
@@ -19,6 +21,13 @@ public class HabitInstance implements Serializable {
     }
 
     // Getters and setters
+    public String getEID() {
+        return EID;
+    }
+
+    public void setEID(String EID) {
+        this.EID = EID;
+    }
 
     public String getUID() {
         return UID;

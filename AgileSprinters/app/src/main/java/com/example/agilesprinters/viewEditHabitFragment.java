@@ -51,14 +51,13 @@ public class viewEditHabitFragment extends DialogFragment{
 
     /**
      * This function saves the values sent to the fragment for future manipulation
-     * @param position is the item position that was tapped within the list
+
      * @param habit is the item that was tapped within the list
      * @return returns the fragment with the bundled parameters
      */
-    public static viewEditHabitFragment newInstance(int position, Habit habit) {
+    public static viewEditHabitFragment newInstance(Habit habit) {
         viewEditHabitFragment frag = new viewEditHabitFragment();
         Bundle args = new Bundle();
-        args.putInt("position", position);
         args.putSerializable("habit", habit);
         frag.setArguments(args);
 
@@ -70,8 +69,8 @@ public class viewEditHabitFragment extends DialogFragment{
      * to the Home class for it to implement.
      */
     public interface OnFragmentInteractionListener {
-        void onEditViewSaveChangesPressed(Habit habit, int position);
-        void onEditViewCancelPressed(Habit habit, int position);
+        void onEditViewSaveChangesPressed(Habit habit);
+        void onEditViewCancelPressed(Habit habit);
     }
 
     /**
@@ -331,7 +330,7 @@ public class viewEditHabitFragment extends DialogFragment{
                     // If everything has been filled out, call the listener and send the edited
                     // habit back to the Home class and dismiss the dialog.
                     if(readyToClose){
-                        listener.onEditViewSaveChangesPressed(new Habit(HID,UID,habit_title,habit_reason,date, weekdays, privacySetting), position);
+                        listener.onEditViewSaveChangesPressed(new Habit(HID,UID,habit_title,habit_reason,date, weekdays, privacySetting));
                         dialog.dismiss();
                     }
                 }

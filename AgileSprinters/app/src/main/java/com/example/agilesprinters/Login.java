@@ -27,6 +27,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private EditText emailEditText;
     private EditText passwordEditText;
     private Button login;
+    private User user1 = new User();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,7 +114,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         String uId = user.getUid();
         bundle.putString("userId", uId);
         intent.putExtras(bundle);
-
+        user1.setUser(uId);
         startActivity(intent);
     }
 
