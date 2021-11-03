@@ -22,6 +22,7 @@ public class habitListAdapter extends ArrayAdapter<Habit> {
     private Context mContext;
     int mResource;
 
+
     public habitListAdapter(Context context, int resource, ArrayList<Habit> objects) {
         super(context, resource, objects);
         mContext = context;
@@ -39,7 +40,7 @@ public class habitListAdapter extends ArrayAdapter<Habit> {
         HashMap<String,Boolean> weekdays = getItem(position).getWeekdays();
 
         //create habit object with that information
-        Habit habit = new Habit(title, reason, dateStarted, weekdays, privacy);
+        Habit habit = new Habit(HID, UID, title, reason, dateStarted, weekdays, privacy);
 
         LayoutInflater inflater = LayoutInflater.from(mContext);
         convertView = inflater.inflate(mResource, parent, false);

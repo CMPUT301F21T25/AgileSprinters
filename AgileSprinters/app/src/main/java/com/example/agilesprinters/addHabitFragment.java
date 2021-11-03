@@ -18,6 +18,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -41,6 +46,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
     private HashMap <String,Boolean> weekdays;
     private Spinner privacy;
     private addHabitFragment.OnFragmentInteractionListener listener;
+    FirebaseFirestore db;
 
 
     /**
@@ -304,7 +310,9 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
                     // If everything has been filled out, call the listener and send the edited
                     // habit back to the Home class and dismiss the dialog.
                     if(readyToClose){
-                        listener.onAddPressed(new Habit(habit_title,habit_reason,date, weekdays, privacySetting));
+                        User user = new User();
+                        DocumentReference newHabitRef = db.collection("Habit").document();
+                        listener.onAddPressed(new Habit(newHabitRef.getId(),user.getUser().getUid(),habit_title,habit_reason,date, weekdays, privacySetting));
                         dialog.dismiss();
                     }
                 }

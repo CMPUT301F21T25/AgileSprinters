@@ -17,6 +17,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -42,6 +45,8 @@ public class viewEditHabitFragment extends DialogFragment{
     private ArrayList<String> originalWeekdays;
     private HashMap<String,Boolean> weekdays;
     private viewEditHabitFragment.OnFragmentInteractionListener listener;
+    private String HID;
+    private String UID;
 
 
     /**
@@ -119,6 +124,10 @@ public class viewEditHabitFragment extends DialogFragment{
         // Get the arguments that were stored in the bundle
         Habit habit = (Habit) getArguments().getSerializable("habit");
         position = getArguments().getInt("position");
+
+        HID = habit.getHID();
+        UID = habit.getUID();
+
 
         // Set all of the screen elements to their original habit values for viewing
         habitTitle.setText(habit.getTitle());
@@ -322,7 +331,7 @@ public class viewEditHabitFragment extends DialogFragment{
                     // If everything has been filled out, call the listener and send the edited
                     // habit back to the Home class and dismiss the dialog.
                     if(readyToClose){
-                        listener.onEditViewSaveChangesPressed(new Habit(habit_title,habit_reason,date, weekdays, privacySetting), position);
+                        listener.onEditViewSaveChangesPressed(new Habit(HID,UID,habit_title,habit_reason,date, weekdays, privacySetting), position);
                         dialog.dismiss();
                     }
                 }

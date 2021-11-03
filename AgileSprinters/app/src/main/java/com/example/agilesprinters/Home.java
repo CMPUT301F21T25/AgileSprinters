@@ -40,7 +40,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     FirebaseFirestore db;
     FirebaseAuth auth;
     private static final String TAG = "Habit";
-    private String user_id = getIntent().getStringExtra("userId");
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,6 +160,73 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
      * @param habit The habit that needs to be added to the database.
      */
     public void addHabitDatabase(Habit habit){
+        db  =  FirebaseFirestore.getInstance();
+        final CollectionReference collectionReference  =  db.collection("Habit");
+        // Creating a unique Id for the Habit that is being added
+        DocumentReference newHabitRef = db.collection("Habit").document();
+        String Uid = getIntent().getStringExtra("userId");
+        String HabitId = newHabitRef.getId();
+        HashMap<String, Object> data = new HashMap<>();
+
+        if (HabitId != null){
+            data.put("UID", Uid);
+            data.put("Title", habit.getTitle());
+            data.put("Reason",habit.getReason());
+            data.put("PrivacySetting",habit.getPrivacySetting());
+            data.put("Data to Start",habit.getDateToStart());
+            data.put("Weekdays", habit.getWeekdays());
+
+            collectionReference
+                    .document(HabitId)
+                    .set(data)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            // These are a method which gets executed when the task is succeeded
+                            Log. d (TAG, "Data has been added successfully!");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            // These are a method which gets executed if there’s any problem
+                            Log. d (TAG, "Data could not be added!" + e.toString());
+                        }
+                    });
+        }
+    }
+
+    public void updateHabitDatabase(Habit habit){
+        HashMap<String, Object> data = new HashMap<>();
+
+        data.put("UID", Uid);
+        data.put("Title", habit.getTitle());
+        data.put("Reason",habit.getReason());
+        data.put("PrivacySetting",habit.getPrivacySetting());
+        data.put("Data to Start",habit.getDateToStart());
+        data.put("Weekdays", habit.getWeekdays());
+
+        collectionReference
+                .document(HabitId)
+                .set(data)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // These are a method which gets executed when the task is succeeded
+                        Log. d (TAG, "Data has been added successfully!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // These are a method which gets executed if there’s any problem
+                        Log. d (TAG, "Data could not be added!" + e.toString());
+                    }
+                });
+        }
+    }
+
+    public void deleteHabitDatabase(Habit habit){
         db  =  FirebaseFirestore.getInstance();
         final CollectionReference collectionReference  =  db.collection("Habit");
         // Creating a unique Id for the Habit that is being added
