@@ -69,4 +69,12 @@ public class HabitInstance implements Serializable {
     public int getDuration() {
         return duration;
     }
+
+    public void setOpt_comment(String opt_comment) {
+        this.opt_comment = opt_comment;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
 }

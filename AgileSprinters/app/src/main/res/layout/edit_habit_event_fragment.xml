@@ -32,6 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
+            android:inputType="number"
             android:hint="Duration of the event\n(in minutes)"
             android:minHeight="48dp"
             android:layout_margin="10dp"/>
