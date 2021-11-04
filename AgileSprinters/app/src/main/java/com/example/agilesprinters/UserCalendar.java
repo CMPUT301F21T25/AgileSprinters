@@ -360,6 +360,7 @@ public class UserCalendar extends AppCompatActivity
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
         //Context context = getApplicationContext();
         switch (item.getItemId()) {
             case R.id.home:

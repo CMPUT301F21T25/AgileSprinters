@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -112,9 +113,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         Bundle bundle = new Bundle();
         //pass in the unique user ID to home page
         String uId = user.getUid();
-        bundle.putString("userId", uId);
-        intent.putExtras(bundle);
         user1.setUser(uId);
+        intent.putExtra("user", user1);
+
         startActivity(intent);
     }
 

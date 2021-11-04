@@ -37,17 +37,16 @@ import java.util.HashMap;
 
 public class Home extends AppCompatActivity implements addHabitFragment.OnFragmentInteractionListener,
         viewEditHabitFragment.OnFragmentInteractionListener, BottomNavigationView.OnNavigationItemSelectedListener,
-        deleteHabitFragment.OnFragmentInteractionListener{
+        deleteHabitFragment.OnFragmentInteractionListener {
     ArrayList<Habit> habitArrayList;
     ListView habitList;
     ArrayAdapter<Habit> habitAdapter;
     BottomNavigationView bottomNavigationView;
     FirebaseFirestore db;
 
-
     private static final String TAG = "Habit";
-    private User user = new User();
-    String UID = user.getUser();
+    String UID;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,16 +59,17 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
         habitList = findViewById(R.id.habit_list);
         habitArrayList = new ArrayList<>();
-
-
-
-
-        System.out.println(UID);
         habitAdapter = new habitListAdapter(this, habitArrayList);
         habitList.setAdapter(habitAdapter);
         db  =  FirebaseFirestore.getInstance();
         final CollectionReference collectionReference  =  db.collection("Habit");
-        System.out.println("user"+UID);
+
+        if (UID == null){
+            User user = (User) getIntent().getSerializableExtra("user");
+            UID = user.getUser();
+        }
+
+        System.out.println("User"+UID);
 
         collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -264,40 +264,21 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
 
     public void deleteHabitDatabase(Habit habit){
-        db  =  FirebaseFirestore.getInstance();
-        final CollectionReference collectionReference  =  db.collection("Habit");
-        // Creating a unique Id for the Habit that is being added
-        DocumentReference newHabitRef = db.collection("Habit").document();
-        String Uid = getIntent().getStringExtra("userId");
-        String HabitId = newHabitRef.getId();
-        HashMap<String, Object> data = new HashMap<>();
-
-        if (HabitId != null){
-            data.put("UID", Uid);
-            data.put("Title", habit.getTitle());
-            data.put("Reason",habit.getReason());
-            data.put("PrivacySetting",habit.getPrivacySetting());
-            data.put("Data to Start",habit.getDateToStart());
-            data.put("Weekdays", habit.getWeekdays());
-
-            collectionReference
-                    .document(HabitId)
-                    .set(data)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            // These are a method which gets executed when the task is succeeded
-                            Log. d (TAG, "Data has been added successfully!");
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            // These are a method which gets executed if there’s any problem
-                            Log. d (TAG, "Data could not be added!" + e.toString());
-                        }
-                    });
-        }
+        db.collection("Habits")
+                .document(habit.getHID())
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error deleting document", e);
+                    }
+                });
     }
 
     /**
@@ -308,7 +289,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     @Override
     public void onDeleteHabitYesPressed(int position) {
         Habit habit = habitAdapter.getItem(position);
-        habitAdapter.remove(habit);
+        deleteHabitDatabase(habit);
         habitAdapter.notifyDataSetChanged();
     }
 
