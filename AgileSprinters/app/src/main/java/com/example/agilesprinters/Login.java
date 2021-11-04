@@ -2,6 +2,7 @@ package com.example.agilesprinters;
 
 import static android.content.ContentValues.TAG;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -24,7 +26,6 @@ import com.google.firebase.auth.FirebaseUser;
 /**
  *
  * This class represents a login activity, it is the first page for users who are not signed it
- *
  * @author Leen Alzebdeh
  * ccid alzebdeh
  * lab section
@@ -32,19 +33,24 @@ import com.google.firebase.auth.FirebaseUser;
 public class Login extends AppCompatActivity implements View.OnClickListener {
 
     /**
-     * This variable contains
+     * This variable contains an instance of FirebaseAuth
      */
-
     private FirebaseAuth auth;
     /**
-     * this variable contains
+     * this variable contains the edit text of the email field
      */
     private EditText emailEditText;
     /**
-     * this variable contains
+     * this variable contains the edit text of the password field
      */
     private EditText passwordEditText;
 
+
+    /**
+     * This function is called when the login activity starts
+     * @param savedInstanceState
+     *   a reference to Bundle object that is passed into the onCreate method {@link Bundle }
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         TextView register;
@@ -57,35 +63,71 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance();
 
+        // if the register text is clicked
         register = (TextView)findViewById(R.id.register);
         register.setOnClickListener(this);
 
+        // link the edit text vars to UI
         emailEditText = (EditText) findViewById(R.id.email);
         passwordEditText = (EditText) findViewById(R.id.password);
 
+        // if the login button is clicked
         loginBtn = (Button) findViewById(R.id.loginBtn);
         loginBtn.setOnClickListener(this);
 
         resetPassword = findViewById(R.id.resetPassword);
-
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        System.out.println("HOW?!");
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = auth.getCurrentUser();
-        if ( currentUser != null){
-            System.out.println(currentUser.getUid());
-            //Do anything here which needs to be done after user is set is complete
-            updateUI(currentUser);
-        }
+        resetPassword.setOnClickListener(this);
 
     }
 
     /**
-     * This function handles sign in when the user clicks the sign in button
+     * This function handles sign in/ authentication when the user clicks the sign in button,
+     * email and password fields must be non-empty
+     */
+    private void sendPassReset() {
+
+        AlertDialog.Builder resetDialog = new AlertDialog.Builder(Login.this);
+        resetDialog.setTitle(getString(R.string.password_reset_request));
+
+        final EditText emailInput = new EditText(Login.this);
+        resetDialog.setView(emailInput);
+
+        resetDialog.setPositiveButton(getString(R.string.send_email), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String resetEmail = emailInput.getText().toString();
+                sendPasswordReset(resetEmail);
+            }
+        });
+        resetDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        resetDialog.show();
+    }
+
+    public void sendPasswordReset(String emailAddress) {
+        // [START send_password_reset]
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+
+        auth.sendPasswordResetEmail(emailAddress)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "Email sent.");
+                            Toast.makeText(Login.this, getString(R.string.email_sent),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+        // [END send_password_reset]
+    }
+    /**
+     * This function handles sign in/ authentication when the user clicks the sign in button,
+     * email and password fields must be non-empty
      */
     private void signIn() {
 
@@ -95,13 +137,13 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         //throw a message if the email is empty
         if (email.equals("")){
-            Toast.makeText(Login.this, "Email is required",
+            Toast.makeText(Login.this, getString(R.string.empty_email),
                     Toast.LENGTH_SHORT).show();
         } //throw a message if the password is empty
         else if (password.equals("")){
-            Toast.makeText(Login.this, "Password is required",
+            Toast.makeText(Login.this, getString(R.string.empty_password),
                     Toast.LENGTH_SHORT).show();
-        }else {
+        } else {
             auth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
@@ -116,13 +158,15 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                             } else {
                                 // If sign in fails due to a wrong password or email
                                 Log.w(TAG, "signInWithEmail:failure", task.getException());
-                                Toast.makeText(Login.this, "Email or password entered is incorrect",
+                                Toast.makeText(Login.this, getString(R.string.login_failed),
                                         Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
         }
     }
+
+
 
     /**
      * This function directs the user to the home page
@@ -138,6 +182,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         String UId = user.getUid();
         bundle.putString("userId", UId);
         intent.putExtras(bundle);
+
         //go to home page and finish the login activity
         startActivity(intent);
         finish();
@@ -145,22 +190,22 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
 
     /**
-     *
-     * should I??
-     *
+     * This function handles different cases of view clicks
+     * @param v
+     *  Give the view that is clicked {@link View}
      */
     @Override
     public void onClick(View v) {
         Intent intent = null;
         switch(v.getId()){
-            case R.id.register:
+            case R.id.register:  //if the register text is clicked, direct to the register page
                 intent = new Intent(Login.this, Register.class);
                 break;
-            case R.id.loginBtn:
+            case R.id.loginBtn:  //if the login button is clicked, attempt to sign in
                 signIn();
                 break;
             case R.id.resetPassword:
-                //resetPassword();
+                sendPassReset();
                 break;
             default:
                 break;

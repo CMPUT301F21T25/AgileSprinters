@@ -49,14 +49,14 @@ public class LoginAndroidTest {
     @Test
     public void checkEmptySignIn() {
         //Asserts that the current activity is the Login Activity. Otherwise, show “Wrong Activity”
-        solo.assertCurrentActivity("Wrong Activity", Login.class);
+        solo.assertCurrentActivity(solo.getString(R.string.wrong_activity), Login.class);
 
         //click the login button when email and password fields are empty
-        trySignIn(-1, "", "Email is required");
+        trySignIn(-1, "", solo.getString(R.string.empty_email));
         //enter text into email then click the login button while the password field is empty
-        trySignIn(R.id.email, "null", "Password is required");
+        trySignIn(R.id.email, "null", solo.getString(R.string.empty_password));
         //enter text into password then click the login button while the info given does not match a user
-        trySignIn(R.id.password, "null", "Email or password entered is incorrect");
+        trySignIn(R.id.password, "null", solo.getString(R.string.login_failed));
     }
 
     /**
@@ -97,18 +97,18 @@ public class LoginAndroidTest {
         solo.clickOnButton(signInStr);  //click the login button
 
         //Asserts that the current activity is the Home Activity. Otherwise, show “Wrong Activity”
-        solo.assertCurrentActivity("Wrong Activity", Home.class);
+        solo.assertCurrentActivity(solo.getString(R.string.wrong_activity), Home.class);
     }
 
     //will move or import from register
     private void registerTestUser() {
         //Asserts that the current activity is the Login Activity. Otherwise, show “Wrong Activity”
-        solo.assertCurrentActivity("Wrong Activity", Login.class);
+        solo.assertCurrentActivity(solo.getString(R.string.wrong_activity), Login.class);
 
         //click register button
         solo.clickOnText(solo.getString(R.string.action_register));
         //Asserts that the current activity is the Register Activity. Otherwise, show “Wrong Activity”
-        solo.assertCurrentActivity("Wrong Activity", Register.class);
+        solo.assertCurrentActivity(solo.getString(R.string.wrong_activity), Register.class);
 
         //register a test user
         solo.enterText((EditText) solo.getView(R.id.LastName), solo.getString(R.string.last_test));
@@ -119,7 +119,7 @@ public class LoginAndroidTest {
 
         solo.clickOnButton(solo.getString(R.string.create_account)); //Select register text
         //Asserts that the current activity is the Login Activity. Otherwise, show “Wrong Activity”
-        solo.assertCurrentActivity("Wrong Activity", Login.class);
+        solo.assertCurrentActivity(solo.getString(R.string.wrong_activity), Login.class);
     }
 
 
