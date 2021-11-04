@@ -24,6 +24,7 @@
                 android:layout_weight="50"
                 android:gravity="left"
                 android:text="Date"
+
                 />
 
             <TextView
@@ -31,9 +32,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
                 android:layout_weight="50"
-                android:gravity="left"
-                android:text="Tags to be added later"
-                />
+                android:gravity="left"/>
+            <!--                android:text="Tags to be added later"-->
+
         </LinearLayout>
 
         <TextView
@@ -42,16 +43,18 @@
             android:layout_height="30dp"
             android:layout_marginLeft="6dp"
             android:text="Habit Title"
-            android:textSize="20sp"/>
+            android:textSize="18sp"/>
 
 
         <TextView
             android:id="@+id/habit_list_reason_textView"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="30dp"
             android:layout_marginLeft="6dp"
             android:text="Habit Reason"
-            android:textSize="18sp"
+            android:layout_gravity="right"
+            android:textStyle="italic"
+            android:textSize="16sp"
             />
 
         <LinearLayout
@@ -78,6 +81,7 @@
                 android:layout_weight="50"
                 android:gravity="left"
                 />
+
         </LinearLayout>
 
     </LinearLayout>

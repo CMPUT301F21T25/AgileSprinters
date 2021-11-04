@@ -20,16 +20,13 @@ import androidx.fragment.app.DialogFragment;
 
 import java.util.Calendar;
 
-public class editHabitEventFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener{
-    private int position;
+public class editHabitEventFragment extends DialogFragment{
     private EditText optional_comment;
     private TextView input_date;
     private EditText input_duration;
     private String EID;
     private String UID;
     private String HID;
-
-    private String date = "";
 
     private editHabitEventFragment.OnFragmentInteractionListener listener;
 
@@ -41,23 +38,6 @@ public class editHabitEventFragment extends DialogFragment implements DatePicker
         fragment.setArguments(args);
 
         return fragment;
-    }
-
-    @Override
-    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.YEAR, year);
-        c.set(Calendar.MONTH, month);
-        c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
-        //make sure date is empty before setting it to the date picked
-        date = "";
-        if(month+1 < 10) date+= "0";
-        date += String.valueOf(month + 1) + "/";
-        if (dayOfMonth < 10 ) date += "0";
-        date += String.valueOf(dayOfMonth + "/");
-        date += String.valueOf(year);
-        input_date.setText(date);
     }
 
     public interface OnFragmentInteractionListener {
@@ -95,15 +75,6 @@ public class editHabitEventFragment extends DialogFragment implements DatePicker
         optional_comment.setText(habitInstance.getOpt_comment());
         input_date.setText(habitInstance.getDate());
         input_duration.setText(String.valueOf(habitInstance.getDuration()));
-        date = habitInstance.getDate();
-
-        input_date.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                DialogFragment datePicker = new datePickerFragment();
-                datePicker.show(getChildFragmentManager(), "DATE PICKER");
-            }
-        });
 
         EID = habitInstance.getEID();
         UID = habitInstance.getUID();
@@ -143,7 +114,7 @@ public class editHabitEventFragment extends DialogFragment implements DatePicker
                     Boolean readyToClose = true;
 
                     String comment = optional_comment.getText().toString();
-                    //String date = input_date.getText().toString();
+                    String date = input_date.getText().toString();
                     String duration = input_duration.getText().toString();
 
                     if (optional_comment.length() > 20) {
@@ -155,6 +126,7 @@ public class editHabitEventFragment extends DialogFragment implements DatePicker
                         readyToClose = false;
                         input_date.setError("This field cannot be blank");
                     }
+
                     if (duration.matches("")) {
                         readyToClose = false;
                         input_duration.setError("This field cannot be blank");

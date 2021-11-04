@@ -49,7 +49,7 @@ public class habitListAdapter extends ArrayAdapter<Habit> {
         tvDate.setText("  Date Started: " + habit.getDateToStart());
         tvTitle.setText(habit.getTitle());
         tvPrivacy.setText(habit.getPrivacySetting());
-        tvReason.setText(habit.getReason());
+        tvReason.setText("\t\t" +habit.getReason());
 
         return view;
     }

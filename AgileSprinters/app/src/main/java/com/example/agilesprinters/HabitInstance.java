@@ -3,15 +3,36 @@ package com.example.agilesprinters;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * This class represents a habit instance/event
+ */
 public class HabitInstance implements Serializable {
-    private String EID;
-    private String UID; // self ID
+    private String EID; // self ID
+    private String UID; // grandparent ID
     private String HID; // parent ID
     private String opt_comment;
     private String date;
     private int duration;
 
-    public HabitInstance(String EID, String UID, String HID, String opt_comment, String date, int duration) {
+    /**
+     * This is a constructor that takes the eventID, habitID, userID,
+     * optional comment, date of the event, duration of the event as input
+     * to create a habit instance
+     * @param EID
+     *  event ID given as string
+     * @param HID
+     *  habit ID given as string
+     * @param UID
+     *  user ID given as string
+     * @param opt_comment
+     *  optional comment given as string
+     * @param date
+     *  date of the event given as string
+     * @param duration
+     *  duration of the event given as an int
+     */
+    public HabitInstance(String EID, String UID, String HID,
+                         String opt_comment, String date, int duration) {
         this.EID = EID;
         this.UID = UID;
         this.HID = HID;
@@ -25,32 +46,16 @@ public class HabitInstance implements Serializable {
         return EID;
     }
 
-    public void setEID(String EID) {
-        this.EID = EID;
-    }
-
     public String getUID() {
         return UID;
-    }
-
-    public void setUID(String UID) {
-        this.UID = UID;
     }
 
     public String getHID() {
         return HID;
     }
 
-    public void setHID(String HID) {
-        this.HID = HID;
-    }
-
     public String getOpt_comment() {
         return opt_comment;
-    }
-
-    public void setOpt_comment(String opt_comment) {
-        this.opt_comment = opt_comment;
     }
 
     public String getDate() {
@@ -63,9 +68,5 @@ public class HabitInstance implements Serializable {
 
     public int getDuration() {
         return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
     }
 }
