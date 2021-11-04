@@ -110,7 +110,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         Intent intent = new Intent(Login.this, Home.class);
 
-        Bundle bundle = new Bundle();
+
         //pass in the unique user ID to home page
         String uId = user.getUid();
         user1.setUser(uId);

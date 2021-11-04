@@ -37,7 +37,7 @@ import java.util.HashMap;
 
 public class Home extends AppCompatActivity implements addHabitFragment.OnFragmentInteractionListener,
         viewEditHabitFragment.OnFragmentInteractionListener, BottomNavigationView.OnNavigationItemSelectedListener,
-        deleteHabitFragment.OnFragmentInteractionListener{
+        deleteHabitFragment.OnFragmentInteractionListener {
     ArrayList<Habit> habitArrayList;
     ListView habitList;
     ArrayAdapter<Habit> habitAdapter;
@@ -45,7 +45,8 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     FirebaseFirestore db;
 
     private static final String TAG = "Habit";
-    String UID;
+    private String UID;
+    private User user;
 
 
     @Override
@@ -61,15 +62,15 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         habitArrayList = new ArrayList<>();
         habitAdapter = new habitListAdapter(this, habitArrayList);
         habitList.setAdapter(habitAdapter);
-        db  =  FirebaseFirestore.getInstance();
-        final CollectionReference collectionReference  =  db.collection("Habit");
+        db = FirebaseFirestore.getInstance();
+        final CollectionReference collectionReference = db.collection("Habit");
 
-        if (UID == null){
-            User user = (User) getIntent().getSerializableExtra("user");
+        if (user == null) {
+            user = (User) getIntent().getSerializableExtra("user");
             UID = user.getUser();
         }
 
-        System.out.println("User"+UID);
+        System.out.println("User" + UID);
 
         collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -79,15 +80,15 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 habitArrayList.clear();
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     Log.d(TAG, String.valueOf(doc.getData().get("UID")));
-                    if(/*auth.getCurrentUser().getUid() USE ONCE SET UP JUST COMPARE WITH TEMP ID FOR NOW*/
-                           UID.matches((String) doc.getData().get("UID"))){
+                    if (/*auth.getCurrentUser().getUid() USE ONCE SET UP JUST COMPARE WITH TEMP ID FOR NOW*/
+                            UID.matches((String) doc.getData().get("UID"))) {
                         String title = (String) doc.getData().get("Title");
                         String reason = (String) doc.getData().get("Reason");
                         String dateToStart = (String) doc.getData().get("Data to Start");
-                        HashMap<String,Boolean> weekdays = (HashMap<String, Boolean>) doc.getData().get("Weekdays");
+                        HashMap<String, Boolean> weekdays = (HashMap<String, Boolean>) doc.getData().get("Weekdays");
                         String privacySetting = (String) doc.getData().get("PrivacySetting");
 
-                        habitArrayList.add(new Habit(doc.getId(),UID,title,reason,dateToStart,weekdays,privacySetting));
+                        habitArrayList.add(new Habit(doc.getId(), UID, title, reason, dateToStart, weekdays, privacySetting));
                     }
                 }
                 habitAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
@@ -135,6 +136,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     /**
      * This function adds a habit to the list once the user clicks add on the addHabitFragment
      * dialog fragment
+     *
      * @param habit The habit object created by the addHabitFragment
      */
     @Override
@@ -167,10 +169,9 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         //Context context = getApplicationContext();
         switch (item.getItemId()) {
             case R.id.home:
-                if(this instanceof Home){
+                if (this instanceof Home) {
                     return true;
-                }
-                else{
+                } else {
                     Intent intent = new Intent(this, Home.class);
                     //add bundle to send data if need
                     startActivity(intent);
@@ -179,6 +180,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
             case R.id.calendar:
                 Intent intent = new Intent(this, UserCalendar.class);
+                intent.putExtra("user", user);
                 //add bundle to send data if need
                 startActivity(intent);
                 break;
@@ -192,23 +194,24 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
     /**
      * This function adds
+     *
      * @param habit The habit that needs to be added to the database.
      */
-    public void addHabitDatabase(Habit habit){
-        db  =  FirebaseFirestore.getInstance();
-        final CollectionReference collectionReference  =  db.collection("Habit");
+    public void addHabitDatabase(Habit habit) {
+        db = FirebaseFirestore.getInstance();
+        final CollectionReference collectionReference = db.collection("Habit");
         // Creating a unique Id for the Habit that is being added
         DocumentReference newHabitRef = db.collection("Habit").document();
         String Uid = getIntent().getStringExtra("userId");
         String HabitId = newHabitRef.getId();
         HashMap<String, Object> data = new HashMap<>();
 
-        if (HabitId != null){
+        if (HabitId != null) {
             data.put("UID", UID);
             data.put("Title", habit.getTitle());
-            data.put("Reason",habit.getReason());
-            data.put("PrivacySetting",habit.getPrivacySetting());
-            data.put("Data to Start",habit.getDateToStart());
+            data.put("Reason", habit.getReason());
+            data.put("PrivacySetting", habit.getPrivacySetting());
+            data.put("Data to Start", habit.getDateToStart());
             data.put("Weekdays", habit.getWeekdays());
 
             collectionReference
@@ -218,29 +221,29 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                         @Override
                         public void onSuccess(Void aVoid) {
                             // These are a method which gets executed when the task is succeeded
-                            Log. d (TAG, "Data has been added successfully!");
+                            Log.d(TAG, "Data has been added successfully!");
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             // These are a method which gets executed if there’s any problem
-                            Log. d (TAG, "Data could not be added!" + e.toString());
+                            Log.d(TAG, "Data could not be added!" + e.toString());
                         }
                     });
         }
     }
 
-    public void updateHabitDatabase(Habit habit){
-        db  =  FirebaseFirestore.getInstance();
-        final CollectionReference collectionReference  =  db.collection("Habit");
+    public void updateHabitDatabase(Habit habit) {
+        db = FirebaseFirestore.getInstance();
+        final CollectionReference collectionReference = db.collection("Habit");
         HashMap<String, Object> data = new HashMap<>();
 
         data.put("UID", UID);
         data.put("Title", habit.getTitle());
-        data.put("Reason",habit.getReason());
-        data.put("PrivacySetting",habit.getPrivacySetting());
-        data.put("Data to Start",habit.getDateToStart());
+        data.put("Reason", habit.getReason());
+        data.put("PrivacySetting", habit.getPrivacySetting());
+        data.put("Data to Start", habit.getDateToStart());
         data.put("Weekdays", habit.getWeekdays());
 
         collectionReference
@@ -250,21 +253,22 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                     @Override
                     public void onSuccess(Void aVoid) {
                         // These are a method which gets executed when the task is succeeded
-                        Log. d (TAG, "Data has been added successfully!");
+                        Log.d(TAG, "Data has been added successfully!");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         // These are a method which gets executed if there’s any problem
-                        Log. d (TAG, "Data could not be added!" + e.toString());
+                        Log.d(TAG, "Data could not be added!" + e.toString());
                     }
                 });
     }
 
 
-    public void deleteHabitDatabase(Habit habit){
-        db.collection("Habits")
+    public void deleteHabitDatabase(Habit habit) {
+        deleteHabitInstances(habit);
+        db.collection("Habit")
                 .document(habit.getHID())
                 .delete()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -284,6 +288,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     /**
      * This function deletes the object selected by the user in the list after a user clicks "Yes"
      * in the deleteHabitFragment dialog fragment.
+     *
      * @param position The position of the object clicked in the list.
      */
     @Override
@@ -293,4 +298,40 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         habitAdapter.notifyDataSetChanged();
     }
 
+    public void deleteHabitInstances(Habit habit) {
+        CollectionReference collectionReference = db.collection("HabitEvents");
+        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
+                    FirebaseFirestoreException error) {
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    Log.d(TAG, String.valueOf(doc.getData().get("UID")));
+                    if (habit.getHID().matches((String) doc.getData().get("HID"))) {
+                        if(doc.getId() == null){
+                            return;
+                        } else {
+                            db.collection("HabitEvents")
+                                    .document(doc.getId())
+                                    .delete()
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.w(TAG, "Error deleting document", e);
+                                        }
+                                    });
+                        }
+                    }
+                }
+                habitAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
+                // from the cloud
+            }
+        });
+        return;
+    }
 }

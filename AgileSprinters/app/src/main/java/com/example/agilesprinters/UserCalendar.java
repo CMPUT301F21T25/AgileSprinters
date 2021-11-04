@@ -63,7 +63,8 @@ public class UserCalendar extends AppCompatActivity
     private TextView title1;
     private Button calendar_button;
     FirebaseFirestore db;
-    private String loggedInId = "nXmcIP2McwOw89GpWW10xt02JzG2";
+    private String UID;
+    private User user;
 
     private final ArrayList<HabitInstance> habitEvents_list = new ArrayList<>();
 
@@ -79,8 +80,11 @@ public class UserCalendar extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_calendar);
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        loggedInId = user.getUid();
+
+        if (UID == null){
+            user = (User) getIntent().getSerializableExtra("user");
+            UID = user.getUser();
+        }
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView2);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
@@ -109,7 +113,7 @@ public class UserCalendar extends AppCompatActivity
 
                     // get hid here
                     addHabitEventFragment values =
-                            new addHabitEventFragment().newInstance(i, loggedInId, selectedHabitInstanceId, instanceId);
+                            new addHabitEventFragment().newInstance(i, UID, selectedHabitInstanceId, instanceId);
                     values.show(getSupportFragmentManager(), "ADD");
 
                 }
@@ -194,7 +198,7 @@ public class UserCalendar extends AppCompatActivity
                     ArrayList<String> habitDays = getHabitDays(weekdays);
                     String todayDay = currentDate.getDayOfWeek().toString();
 
-                    if (doc.getString("UID").equals(loggedInId)
+                    if (doc.getString("UID").equals(UID)
                             && (startDate.isBefore(currentDate) || startDate.isEqual(currentDate))
                             && (habitDays.contains(todayDay))){
                         Habit newHabit = new Habit(doc.getId(),doc.getString("UID"),doc.getString("Title"), doc.getString("Reason"),
@@ -227,7 +231,7 @@ public class UserCalendar extends AppCompatActivity
 
                     LocalDate eventDate = LocalDate.parse(doc.get("Date").toString(), formatter);
 
-                    if (doc.getString("UID").equals(loggedInId) && (eventDate.isEqual(currentDate)) ){
+                    if (doc.getString("UID").equals(UID) && (eventDate.isEqual(currentDate)) ){
                         HabitInstance newInstance = new HabitInstance(doc.getString("EID"), doc.getString("UID"), doc.getString("HID"),
                                 doc.getString("Opt_comment"), doc.getString("Date"), Integer.parseInt(doc.get("Duration").toString()));
                         completedEventAdapter.add(newInstance);
@@ -366,6 +370,7 @@ public class UserCalendar extends AppCompatActivity
         switch (item.getItemId()) {
             case R.id.home:
                 Intent intent = new Intent(this, Home.class);
+                intent.putExtra("user", user);
                 //add bundle to send data if need
                 startActivity(intent);
                 break;
