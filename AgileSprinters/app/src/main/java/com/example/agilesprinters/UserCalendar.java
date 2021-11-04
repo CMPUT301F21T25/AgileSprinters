@@ -24,6 +24,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
@@ -44,8 +45,7 @@ import java.util.Map;
 public class UserCalendar extends AppCompatActivity
         implements addHabitEventFragment.OnFragmentInteractionListener,
         editHabitEventFragment.OnFragmentInteractionListener,
-        DatePickerDialog.OnDateSetListener,
-        BottomNavigationView.OnNavigationItemSelectedListener{
+        DatePickerDialog.OnDateSetListener, BottomNavigationView.OnNavigationItemSelectedListener{
 
     private static final String TAG = "Instance";
 
@@ -79,9 +79,11 @@ public class UserCalendar extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_calendar);
 
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        loggedInId = user.getUid();
+
+        bottomNavigationView = findViewById(R.id.bottomNavigationView2);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
-        bottomNavigationView.setSelectedItemId(R.id.home);
 
         toDoEventsList = findViewById(R.id.toDoEventsList);
         completedEventsList = findViewById(R.id.completedEventsList);
@@ -360,7 +362,6 @@ public class UserCalendar extends AppCompatActivity
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
         //Context context = getApplicationContext();
         switch (item.getItemId()) {
             case R.id.home:
@@ -372,18 +373,19 @@ public class UserCalendar extends AppCompatActivity
             case R.id.calendar:
                 if(this instanceof UserCalendar){
                     return true;
-                }
-                else{
+                } else {
                     Intent intent2 = new Intent(this, UserCalendar.class);
                     //add bundle to send data if need
                     startActivity(intent2);
+                    break;
                 }
-                break;
 
-            //case R.id.forumn:
-                //break;
+            case R.id.forumn:
+                break;
 
         }
         return false;
     }
+
+
 }

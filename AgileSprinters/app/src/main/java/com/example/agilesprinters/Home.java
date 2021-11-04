@@ -37,7 +37,7 @@ import java.util.HashMap;
 
 public class Home extends AppCompatActivity implements addHabitFragment.OnFragmentInteractionListener,
         viewEditHabitFragment.OnFragmentInteractionListener, BottomNavigationView.OnNavigationItemSelectedListener,
-        deleteHabitFragment.OnFragmentInteractionListener {
+        deleteHabitFragment.OnFragmentInteractionListener{
     ArrayList<Habit> habitArrayList;
     ListView habitList;
     ArrayAdapter<Habit> habitAdapter;
@@ -204,7 +204,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         HashMap<String, Object> data = new HashMap<>();
 
         if (HabitId != null){
-            data.put("UID", Uid);
+            data.put("UID", UID);
             data.put("Title", habit.getTitle());
             data.put("Reason",habit.getReason());
             data.put("PrivacySetting",habit.getPrivacySetting());

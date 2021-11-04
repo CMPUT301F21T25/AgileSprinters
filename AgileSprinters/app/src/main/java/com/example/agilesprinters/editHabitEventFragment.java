@@ -23,7 +23,7 @@ import java.util.Calendar;
 public class editHabitEventFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener{
     private int position;
     private EditText optional_comment;
-    private EditText input_date;
+    private TextView input_date;
     private EditText input_duration;
     private String EID;
     private String UID;
