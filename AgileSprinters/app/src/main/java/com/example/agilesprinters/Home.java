@@ -105,7 +105,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
         /**
          * This is an on item click listener which listens for when a user taps on an item in the
-         * habit list. nce clicked it will open the viewEditHabitFragment
+         * habit list. Once clicked it will open the viewEditHabitFragment
          */
         habitList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
