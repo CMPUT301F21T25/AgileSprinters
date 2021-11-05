@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "498186280887",
+    "project_id": "agilesprinters-7249d",
+    "storage_bucket": "agilesprinters-7249d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:498186280887:android:bef6c5d72e46e6c2aed232",
+        "android_client_info": {
+          "package_name": "com.CMPUT301F21T25.HabitTracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "498186280887-hegmgvof9hsucfs8vmmqrqj8k69fdtrp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDbfVv4MbPW4wu7-cwtpoLbB4_f7CUU-zc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "498186280887-hegmgvof9hsucfs8vmmqrqj8k69fdtrp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
