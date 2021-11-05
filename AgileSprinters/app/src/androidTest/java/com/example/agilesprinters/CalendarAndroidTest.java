@@ -11,8 +11,10 @@ import androidx.test.rule.ActivityTestRule;
 import com.robotium.solo.Solo;
 
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 import java.time.LocalDate;
 
@@ -23,6 +25,7 @@ import java.time.LocalDate;
  * going to the home page after a single sign in on the device.
  */
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 // Implementing our test cases
 public class CalendarAndroidTest {
     // Instantiate obj from Solo class, to perform UI activities like tapping, writing
@@ -46,7 +49,7 @@ public class CalendarAndroidTest {
      * that user logs in happens successfully
      */
     @Test
-    public void test1() {
+    public void stage1_checkLogIn() {
 
         // checks to make sure we are in the right activity
         solo.assertCurrentActivity("Wrong", Login.class);
@@ -66,7 +69,7 @@ public class CalendarAndroidTest {
      * when a habit is added it shows up in the list
      */
     @Test
-    public void test2() {
+    public void stage2_checkAddHabit() {
 
         // checks to make sure we are in the right activity
         solo.assertCurrentActivity("Wrong", Login.class);
@@ -153,7 +156,7 @@ public class CalendarAndroidTest {
      * if adding an habit event will be stored or not  (User Story 2.01.01, 2.02.01)
      */
     @Test
-    public void test3() {
+    public void stage3_checkAddHabitEvent() {
         solo.assertCurrentActivity("Wrong", Login.class);
 
         // Logging In to test account
@@ -194,7 +197,7 @@ public class CalendarAndroidTest {
      * (User Story 2.04.01, 2.05.01)
      */
     @Test
-    public void test4() {
+    public void stage4_checkEditHabitEvent() {
         solo.assertCurrentActivity("Wrong", Login.class);
 
         // Logging In to test account
@@ -238,7 +241,7 @@ public class CalendarAndroidTest {
      * (2.04.01, 2.05.01, 2.06.01)
      */
     @Test
-    public void test5() {
+    public void stage5_checkViewHabitEvents() {
         solo.assertCurrentActivity("Wrong", Login.class);
 
         // Logging In to test account
@@ -283,13 +286,12 @@ public class CalendarAndroidTest {
     }
 
     /**
-     * This test will check to see the planned
-     * and completed events in the past. This will also check the
-     * deletion of a habit event
-     * (2.04.01, 2.05.01, 2.06.01)
+     * This test will check to see if deleting a habit will delete
+     * all of its events as well
+     * (2.06.01)
      */
     @Test
-    public void test6() {
+    public void stage6_checkDeleteHabitEvents() {
         solo.assertCurrentActivity("Wrong", Login.class);
 
         // Logging In to test account
@@ -312,6 +314,8 @@ public class CalendarAndroidTest {
         solo.waitForDialogToClose(1000);
 
         solo.clickOnView(solo.getView(R.id.calendar));
+
+        // checks to see if the
         assertTrue(solo.waitForActivity(UserCalendar.class));
 
         // checks if deleting the habit will remove it from to do list
