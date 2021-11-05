@@ -3,15 +3,40 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
+    <string name="create_account">Create Account</string>
     <string name="action_sign_in">Sign in</string>
     <string name="action_register"><u>Click to register</u></string>
 
+    <string name="reset_password"><u>Reset password</u></string>
     <string name="welcome">"Welcome !"</string>
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
-    <string name="login_failed">"Login failed"</string>
+    <string name="empty_email"><u>Email is required</u></string>
+    <string name="empty_password"><u>Password is required</u></string>
+    <string name="login_failed">Email or password entered is incorrect</string>
     <string name="userId_text">User Id</string>
     <string name="test">TEST</string>
     <string name="followers_text">Followers</string>
     <string name="following_text">Following</string>
+    <string name="wrong_activity">Wrong Activity</string>
+    <string name="first_test">Test</string>
+    <string name="last_test">User</string>
+    <string name="email_test">test@email.com</string>
+    <string name="password_test">testPassword</string>
+    <string name="email_reset_password">Enter email to send the reset link</string>
+    <string name="reset_password_button">Reset Password</string>
+    <string name="email_sent">Email Sent</string>
+    <string name="password_reset_request">Email Sent</string>
+    <string name="send_email">Send email</string>
+    <string name="password_match">passwords do not match</string>
+    <string name="firstNameErr">First name can not be empty</string>
+    <string name="lastNameErr">Last name can not be empty</string>
+    <string name="passwordErr">password can not be empty</string>
+    <string name="confirmPasswordErr">confirm password can not be empty</string>
+    <string name="emailErr" >email can not be empty</string>
+    <string name="passwordMatchErr" type="id">passwords do not match</string>
+    <string name="emptyString">empty</string>
+    <string name="userExistsErr">The email address is already in use by another account</string>
+
+
 </resources>

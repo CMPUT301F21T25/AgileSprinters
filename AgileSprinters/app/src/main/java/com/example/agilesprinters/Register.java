@@ -1,26 +1,23 @@
 package com.example.agilesprinters;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -61,17 +58,23 @@ public class Register extends AppCompatActivity {
                 firstNameStr.trim();
                 lastNameStr.trim();
 
-                if(emailStr.isEmpty()){
+                if(firstNameStr.isEmpty()){
+                    String err = "First name can not be empty";
+                    updateUI(null, err);
+                } else if(lastNameStr.isEmpty()) {
+                    String err = "Last name can not be empty";
+                    updateUI(null, err);
+                } else if(emailStr.isEmpty()) {
                     String err = "email can not be empty";
                     updateUI(null, err);
-                } else if(!passwordStr.equals(passwordConfirmStr)){
+                } else if(passwordStr.isEmpty()){
+                    String err = "password can not be empty";
+                    updateUI(null, err);
+                } else if(passwordConfirmStr.isEmpty()){
+                    String err = "confirm password can not be empty";
+                    updateUI(null, err);
+                } else if(!passwordStr.equals(passwordConfirmStr)) {
                     String err = "passwords do not match";
-                    updateUI(null, err);
-                } else if(passwordStr.isEmpty() || passwordConfirmStr.isEmpty()){
-                    String err = "passwords can not be empty";
-                    updateUI(null, err);
-                } else if(firstNameStr.isEmpty() || lastNameStr.isEmpty()){
-                    String err = "first name and last name can not be empty";
                     updateUI(null, err);
                 } else if (passwordStr.equals(passwordConfirmStr)){
                     Log.d("j", passwordConfirmStr+emailStr);
@@ -91,6 +94,7 @@ public class Register extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = auth.getCurrentUser();
+
                             System.out.println(user.getUid().toString());
                             createUserDoc(user, firstName, lastName);
                             updateUI(user, "success");
