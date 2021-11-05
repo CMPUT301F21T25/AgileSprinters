@@ -48,7 +48,7 @@ public class viewEditHabitFragment extends DialogFragment {
 
     /**
      * This function saves the values sent to the fragment for future manipulation
-     *
+
      * @param habit is the item that was tapped within the list
      * @return returns the fragment with the bundled parameters
      */
@@ -67,8 +67,7 @@ public class viewEditHabitFragment extends DialogFragment {
      */
     public interface OnFragmentInteractionListener {
         void onEditViewSaveChangesPressed(Habit habit);
-
-        void onEditViewCancelPressed(Habit habit);
+        void onEditViewCancelPressed();
     }
 
     /**

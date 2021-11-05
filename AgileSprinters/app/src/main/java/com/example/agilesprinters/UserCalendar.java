@@ -16,7 +16,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 
@@ -24,7 +23,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
@@ -39,38 +37,30 @@ import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class UserCalendar extends AppCompatActivity
         implements addHabitEventFragment.OnFragmentInteractionListener,
         editHabitEventFragment.OnFragmentInteractionListener,
-        DatePickerDialog.OnDateSetListener, BottomNavigationView.OnNavigationItemSelectedListener {
+        DatePickerDialog.OnDateSetListener, BottomNavigationView.OnNavigationItemSelectedListener{
 
     private static final String TAG = "Instance";
 
-    private ListView toDoEventsList;
     private ArrayAdapter<Habit> toDoEventAdapter;
-    private ArrayList<Habit> toDoEvents = new ArrayList<>();
-    private FirebaseAuth auth;
+    private final ArrayList<Habit> toDoEvents = new ArrayList<>();
 
-    private ListView completedEventsList;
     private ArrayAdapter<HabitInstance> completedEventAdapter;
-    private ArrayList<HabitInstance> completedEvents = new ArrayList<>();
-    private ArrayList<String> completedEventIds = new ArrayList<>();
-    private ArrayList<String> toDoEventIds = new ArrayList<>();
+    private final ArrayList<HabitInstance> completedEvents = new ArrayList<>();
+    private final ArrayList<String> completedEventIds = new ArrayList<>();
+    private final ArrayList<String> toDoEventIds = new ArrayList<>();
     BottomNavigationView bottomNavigationView;
     private TextView title1;
-    private Button calendar_button;
     FirebaseFirestore db;
     private String UID;
     private User user;
 
-    private final ArrayList<HabitInstance> habitEvents_list = new ArrayList<>();
-
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
-    private Habit selectedHabit;
     private HabitInstance selectedHabitInstance;
     private String selectedHabitInstanceId;
     LocalDate currentDate = LocalDate.now();
@@ -89,34 +79,30 @@ public class UserCalendar extends AppCompatActivity
         bottomNavigationView = findViewById(R.id.bottomNavigationView2);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
 
-        toDoEventsList = findViewById(R.id.toDoEventsList);
-        completedEventsList = findViewById(R.id.completedEventsList);
+        ListView toDoEventsList = findViewById(R.id.toDoEventsList);
+        ListView completedEventsList = findViewById(R.id.completedEventsList);
 
         title1 = findViewById(R.id.title1);
-        calendar_button = findViewById(R.id.calendar_button);
+        Button calendar_button = findViewById(R.id.calendar_button);
 
         db = FirebaseFirestore.getInstance();
 
         screenSetup();
         completedEventsScreenSetup();
 
-        toDoEventsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        toDoEventsList.setOnItemClickListener((adapterView, view, i, l) -> {
 
-                if (currentDate.isEqual(LocalDate.now())) {
-                    selectedHabit = toDoEvents.get(i);
-                    selectedHabitInstanceId = toDoEventIds.get(i);
+            if (currentDate.isEqual(LocalDate.now())) {
+                selectedHabitInstanceId = toDoEventIds.get(i);
 
-                    DocumentReference newInstanceRef = db.collection("HabitEvents").document();
-                    String instanceId = newInstanceRef.getId();
+                DocumentReference newInstanceRef = db.collection("HabitEvents").document();
+                String instanceId = newInstanceRef.getId();
 
-                    // get hid here
-                    addHabitEventFragment values =
-                            new addHabitEventFragment().newInstance(i, UID, selectedHabitInstanceId, instanceId);
-                    values.show(getSupportFragmentManager(), "ADD");
+                // get hid here
+                addHabitEventFragment values =
+                        new addHabitEventFragment().newInstance(i, UID, selectedHabitInstanceId, instanceId);
+                values.show(getSupportFragmentManager(), "ADD");
 
-                }
             }
         });
 
@@ -156,10 +142,10 @@ public class UserCalendar extends AppCompatActivity
         String[] days = {"MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"};
         ArrayList<String> habitDays = new ArrayList<>();
 
-        for (int i = 0; i < days.length; i++) {
-            if (weekdays.get(days[i]).equals(true)) {
-                habitDays.add(days[i]);
-                System.out.println("The habits are " + days[i]);
+        for (String day : days) {
+            if (weekdays.get(day).equals(true)) {
+                habitDays.add(day);
+                System.out.println("The habits are " + day);
             }
         }
 
@@ -167,10 +153,6 @@ public class UserCalendar extends AppCompatActivity
     }
 
     public void screenSetup() {
-        HashMap<String, Boolean> days = new HashMap<>();
-        days.put("MONDAY", true);
-        days.put("WEDNESDAY", false);
-        days.put("SUNDAY", true);
         setDate();
 
 
@@ -188,20 +170,19 @@ public class UserCalendar extends AppCompatActivity
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 toDoEvents.clear();
                 toDoEventIds.clear();
-                for (QueryDocumentSnapshot doc : value) {
+                for(QueryDocumentSnapshot doc: value) {
                     Log.d(TAG, "Habits to do today " + String.valueOf(doc.getData().get("Title")));
 
                     // Gives the start date
                     LocalDate startDate = LocalDate.parse(doc.getString("Data to Start"), formatter);
                     Map<String, Object> weekdays = (Map<String, Object>) doc.getData().get("Weekdays");
-                    HashMap<String, Boolean> weekdays2 = (HashMap<String, Boolean>) doc.getData().get("Weekdays");
+                    HashMap<String,Boolean> weekdays2 = (HashMap<String, Boolean>) doc.getData().get("Weekdays");
                     ArrayList<String> habitDays = getHabitDays(weekdays);
-                    String todayDay = currentDate.getDayOfWeek().toString();
 
                     if (doc.getString("UID").equals(UID)
                             && (startDate.isBefore(currentDate) || startDate.isEqual(currentDate))
-                            && (habitDays.contains(todayDay))) {
-                        Habit newHabit = new Habit(doc.getId(), doc.getString("UID"), doc.getString("Title"), doc.getString("Reason"),
+                            && (habitDays.contains(todayDay))){
+                        Habit newHabit = new Habit(doc.getId(),doc.getString("UID"),doc.getString("Title"), doc.getString("Reason"),
                                 doc.getString("Data to Start"), weekdays2, doc.getString("PrivacySetting"));
                         toDoEvents.add(newHabit); // Adding habits from Firestore
                         toDoEventIds.add(doc.getId());
@@ -211,7 +192,7 @@ public class UserCalendar extends AppCompatActivity
                 toDoEventAdapter.notifyDataSetChanged();
             }
         });
-
+        
     }
 
     public void completedEventsScreenSetup() {
@@ -226,12 +207,12 @@ public class UserCalendar extends AppCompatActivity
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 completedEvents.clear();
                 completedEventIds.clear();
-                for (QueryDocumentSnapshot doc : value) {
+                for(QueryDocumentSnapshot doc: value) {
                     Log.d(TAG, String.valueOf(doc.getData().get("Opt_comment")));
 
                     LocalDate eventDate = LocalDate.parse(doc.get("Date").toString(), formatter);
 
-                    if (doc.getString("UID").equals(UID) && (eventDate.isEqual(currentDate))) {
+                    if (doc.getString("UID").equals(UID) && (eventDate.isEqual(currentDate)) ){
                         HabitInstance newInstance = new HabitInstance(doc.getString("EID"), doc.getString("UID"), doc.getString("HID"),
                                 doc.getString("Opt_comment"), doc.getString("Date"), Integer.parseInt(doc.get("Duration").toString()));
                         completedEventAdapter.add(newInstance);
@@ -248,7 +229,6 @@ public class UserCalendar extends AppCompatActivity
     public void onSavePressed(HabitInstance habitInstance) {
 
         addHabitEventDatabase(habitInstance);
-        LocalDate todayDate = LocalDate.now();
 
         completedEventsScreenSetup();
 
@@ -261,8 +241,8 @@ public class UserCalendar extends AppCompatActivity
         data.put("UID", instance.getUID());
         data.put("HID", instance.getHID());
         data.put("Date", instance.getDate());
-        data.put("Opt_comment", instance.getOpt_comment());
-        data.put("Duration", String.valueOf(instance.getDuration()));
+        data.put("Opt_comment",instance.getOpt_comment());
+        data.put("Duration",String.valueOf(instance.getDuration()));
 
         db.collection("HabitEvents")
                 .document(selectedHabitInstanceId)
@@ -280,7 +260,6 @@ public class UserCalendar extends AppCompatActivity
                     }
                 });
 
-        LocalDate todayDate = LocalDate.now();
         completedEventsScreenSetup();
     }
 
@@ -306,20 +285,19 @@ public class UserCalendar extends AppCompatActivity
         completedEventsScreenSetup();
     }
 
-    public void addHabitEventDatabase(HabitInstance instance) {
-        final CollectionReference collectionReference = db.collection("HabitEvents");
-        //DocumentReference newInstanceRef = db.collection("HabitEvents").document();
+    public void addHabitEventDatabase(HabitInstance instance){
+        final CollectionReference collectionReference  =  db.collection("HabitEvents");
 
         String instanceId = instance.getEID();
         HashMap<String, Object> data = new HashMap<>();
 
-        if (instanceId != null) {
+        if (instanceId != null){
             data.put("EID", instance.getEID());
             data.put("UID", instance.getUID());
             data.put("HID", instance.getHID());
             data.put("Date", instance.getDate());
-            data.put("Opt_comment", instance.getOpt_comment());
-            data.put("Duration", instance.getDuration());
+            data.put("Opt_comment",instance.getOpt_comment());
+            data.put("Duration",instance.getDuration());
             collectionReference
                     .document(instanceId)
                     .set(data)
@@ -327,14 +305,14 @@ public class UserCalendar extends AppCompatActivity
                         @Override
                         public void onSuccess(Void aVoid) {
                             // These are a method which gets executed when the task is succeeded
-                            Log.d(TAG, "Data has been added successfully!");
+                            Log. d (TAG, "Data has been added successfully!");
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             // These are a method which gets executed if there’s any problem
-                            Log.d(TAG, "Data could not be added!" + e.toString());
+                            Log. d (TAG, "Data could not be added!" + e.toString());
                         }
                     });
         }
@@ -350,10 +328,10 @@ public class UserCalendar extends AppCompatActivity
         //make sure date is empty before setting it to the date picked
         String date = "";
 
-        if (month + 1 < 10) date += "0";
+        if(month+1 < 10) date+= "0";
         date += String.valueOf(month + 1) + "/";
 
-        if (day < 10) date += "0";
+        if (day < 10 ) date += "0";
         date += String.valueOf(day + "/");
 
         date += String.valueOf(year);
@@ -366,7 +344,6 @@ public class UserCalendar extends AppCompatActivity
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        //Context context = getApplicationContext();
         switch (item.getItemId()) {
             case R.id.home:
                 Intent intent = new Intent(this, Home.class);
@@ -376,7 +353,7 @@ public class UserCalendar extends AppCompatActivity
                 break;
 
             case R.id.calendar:
-                if (this instanceof UserCalendar) {
+                if(this instanceof UserCalendar){
                     return true;
                 } else {
                     Intent intent2 = new Intent(this, UserCalendar.class);

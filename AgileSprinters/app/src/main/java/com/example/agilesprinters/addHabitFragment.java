@@ -19,9 +19,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
@@ -43,17 +45,30 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
     private String date = "";
     private HashMap<String, Boolean> weekdays;
     private Spinner privacy;
+    private String UID;
     private addHabitFragment.OnFragmentInteractionListener listener;
     FirebaseFirestore db;
 
+    /**
+     * This function saves the values sent to the fragment for future manipulation
+     * @param UID is the id of the user
+     * @return returns the fragment with the bundled parameters
+     */
+    public static addHabitFragment newInstance(String UID) {
+        addHabitFragment frag = new addHabitFragment();
+        Bundle args = new Bundle();
+        args.putString("UID", UID);
+        frag.setArguments(args);
+
+        return frag;
+    }
 
     /**
      * This function captures the date chosen by the user once they press ok on the datePicker
      * fragment.
-     *
-     * @param view       the datePicker dialog view
-     * @param year       year of the date chosen by the user
-     * @param month      month of the date chosen by the user
+     * @param view the datePicker dialog view
+     * @param year year of the date chosen by the user
+     * @param month month of the date chosen by the user
      * @param dayOfMonth day of the month of the date chosen by the user
      */
     @Override
@@ -65,9 +80,9 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
 
         //make sure date is empty before setting it to the date picked
         date = "";
-        if (month + 1 < 10) date += "0";
+        if(month+1 < 10) date+= "0";
         date += String.valueOf(month + 1) + "/";
-        if (dayOfMonth < 10) date += "0";
+        if (dayOfMonth < 10 ) date += "0";
         date += String.valueOf(dayOfMonth + "/");
         date += String.valueOf(year);
         date_editText.setText(date);
@@ -85,16 +100,16 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
      * This function attaches the fragment to the activity and keeps track of the context of the
      * fragment so the listener knows what to listen to. Ensures that the proper methods are
      * implemented by the Home class.
-     *
      * @param context
      */
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(Context context){
         super.onAttach(context);
 
-        if (context instanceof OnFragmentInteractionListener) {
+        if (context instanceof OnFragmentInteractionListener){
             listener = (OnFragmentInteractionListener) context;
-        } else {
+        }
+        else{
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
@@ -104,15 +119,17 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
     /**
      * This function creates the actual dialog on the screen and listens for user input, returning
      * the information through the listener based on which button is clicked.
-     *
      * @param savedInstanceState
      * @return
+     * Returns the Dialog created
      */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         //inflate the layout for this fragment
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.add_habit_fragment, null);
+
+        UID = getArguments().getString("UID");
 
         String[] weekdayStrArray = new String[]{ getString(R.string.mondayStr), getString(R.string.tuesdayStr),
                 getString(R.string.wednesdayStr), getString(R.string.thursdayStr), getString(R.string.fridayStr),
@@ -129,7 +146,6 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
         date_editText = view.findViewById(R.id.Date);
         privacy = view.findViewById(R.id.privacy_spinner);
         buttonError = view.findViewById(R.id.add_habit_button_error);
-
 
         //set weekday buttons
         sunday = view.findViewById(R.id.button_sunday);
@@ -242,7 +258,8 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
                         User user = new User();
                         db = FirebaseFirestore.getInstance();
                         DocumentReference newHabitRef = db.collection("Habit").document();
-                        listener.onAddPressed(new Habit(newHabitRef.getId(), user.getUser(), habit_title, habit_reason, date, weekdays, privacySetting));
+                        listener.onAddPressed(new Habit(newHabitRef.getId(),user.getUser(),habit_title
+                                ,habit_reason,date, weekdays, privacySetting));
                         dialog.dismiss();
                     }
                 }

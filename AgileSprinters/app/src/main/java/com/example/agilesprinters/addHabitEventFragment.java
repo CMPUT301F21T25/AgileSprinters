@@ -21,8 +21,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 
-public class addHabitEventFragment extends DialogFragment
-        implements DatePickerDialog.OnDateSetListener {
+public class addHabitEventFragment extends DialogFragment{
     private int position;
     private String EID;
     private String UID;
@@ -32,6 +31,8 @@ public class addHabitEventFragment extends DialogFragment
     private EditText optional_comment;
     private TextView input_date;
     private EditText input_duration;
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(getString(R.string.dateFormatStr));
 
     private addHabitEventFragment.OnFragmentInteractionListener listener;
 
@@ -47,22 +48,6 @@ public class addHabitEventFragment extends DialogFragment
         return fragment;
     }
 
-    @Override
-    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.YEAR, year);
-        c.set(Calendar.MONTH, month);
-        c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
-        //make sure date is empty before setting it to the date picked
-        date = "";
-        if (month + 1 < 10) date += "0";
-        date += String.valueOf(month + 1) + "/";
-        if (dayOfMonth < 10) date += "0";
-        date += String.valueOf(dayOfMonth + "/");
-        date += String.valueOf(year);
-        input_date.setText(date);
-    }
 
     public interface OnFragmentInteractionListener {
         void onSavePressed(HabitInstance habitInstance);
@@ -96,24 +81,16 @@ public class addHabitEventFragment extends DialogFragment
         HID = getArguments().getString(getString(R.string.hidKey));
         EID = getArguments().getString(getString(R.string.eidKey));
 
-        input_date.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                DialogFragment datePicker = new datePickerFragment();
-                datePicker.show(getChildFragmentManager(), getString(R.string.datePickerTag));
-            }
-        });
+        LocalDate currentDate = LocalDate.now();
+        input_date.setText(currentDate.format(formatter));
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         return builder
                 .setView(view)
-                .setTitle(getString(R.string.AddHabitInstanceFragmentTitle))
-                .setNegativeButton(R.string.cancelBtnStr, null)
-                .setPositiveButton(getString(R.string.saveBtnStr), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                .setTitle("Add Habit Event")
+                .setNegativeButton("Cancel", null)
+                .setPositiveButton("Save", (dialogInterface, i) -> {
 
-                    }
                 }).create();
 
     }
@@ -134,41 +111,29 @@ public class addHabitEventFragment extends DialogFragment
                     Boolean readyToClose = true;
 
                     String comment = optional_comment.getText().toString();
-                    //String date_entry = input_date.getText().toString();
+                    String date_entry = input_date.getText().toString();
                     String duration = input_duration.getText().toString();
 
                     if (comment.length() > 20) {
                         readyToClose = false;
-                        optional_comment.setError(getString(R.string.optCmtLenErr));
+                        optional_comment.setError("This field cannot have more than 20 chars");
                     }
 
-                    if (comment.matches("")) {
+                    if (date_entry.matches("")) {
                         readyToClose = false;
-                        optional_comment.setError(getString(R.string.fieldEmptyErr));
+                        input_date.setError("This field cannot be blank");
                     }
 
-                    if (date.matches("")) {
-                        readyToClose = false;
-                        input_date.setError(getString(R.string.fieldEmptyErr));
-                    }
-
-                    LocalDate currentDate = LocalDate.now();
-                    LocalDate eventDate = LocalDate.parse(date, DateTimeFormatter.ofPattern(getString(R.string.dateFormatStr)));
-
-                    if (!eventDate.isEqual(currentDate)) {
-                        readyToClose = false;
-                        input_date.setError(getString(R.string.currentDateErr));
-                    }
 
                     if (duration.matches("")) {
                         readyToClose = false;
-                        input_duration.setError(getString(R.string.fieldEmptyErr));
+                        input_duration.setError("This field cannot be blank");
                     }
 
                     // If everything has been filled out, call the listener and send the edited
                     // habit back to the Home class and dismiss the dialog.
-                    if (readyToClose) {
-                        listener.onSavePressed(new HabitInstance(EID, UID, HID, comment, date, Integer.parseInt(duration)));
+                    if(readyToClose){
+                        listener.onSavePressed(new HabitInstance(EID, UID, HID, comment, date_entry, Integer.parseInt(duration)));
                         dialog.dismiss();
                     }
                 }
