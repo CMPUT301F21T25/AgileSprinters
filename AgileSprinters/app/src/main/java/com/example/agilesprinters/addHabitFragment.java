@@ -45,9 +45,23 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
     private String date = "";
     private HashMap <String,Boolean> weekdays;
     private Spinner privacy;
+    private String UID;
     private addHabitFragment.OnFragmentInteractionListener listener;
     FirebaseFirestore db;
 
+    /**
+     * This function saves the values sent to the fragment for future manipulation
+     * @param UID is the id of the user
+     * @return returns the fragment with the bundled parameters
+     */
+    public static addHabitFragment newInstance(String UID) {
+        addHabitFragment frag = new addHabitFragment();
+        Bundle args = new Bundle();
+        args.putString("UID", UID);
+        frag.setArguments(args);
+
+        return frag;
+    }
 
     /**
      * This function captures the date chosen by the user once they press ok on the datePicker
@@ -79,7 +93,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
      * to the Home class for it to implement.
      */
     public interface OnFragmentInteractionListener {
-        void onAddPressed(Habit habit);
+        void onAddPressed(Habit habit, String UID);
     }
 
     /**
@@ -113,6 +127,8 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         //inflate the layout for this fragment
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.add_habit_fragment, null);
+
+        UID = getArguments().getString("UID");
 
         weekdays = new HashMap<String, Boolean>();
         weekdays.put("MONDAY", false);
@@ -313,7 +329,8 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
                         User user = new User();
                         db  =  FirebaseFirestore.getInstance();
                         DocumentReference newHabitRef = db.collection("Habit").document();
-                        listener.onAddPressed(new Habit(newHabitRef.getId(),user.getUser(),habit_title,habit_reason,date, weekdays, privacySetting));
+                        listener.onAddPressed(new Habit(newHabitRef.getId(),user.getUser(),habit_title
+                                ,habit_reason,date, weekdays, privacySetting), UID);
                         dialog.dismiss();
                     }
                 }

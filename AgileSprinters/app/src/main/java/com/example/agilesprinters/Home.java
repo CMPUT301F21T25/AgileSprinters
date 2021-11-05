@@ -44,9 +44,9 @@ import java.util.HashMap;
 public class Home extends AppCompatActivity implements addHabitFragment.OnFragmentInteractionListener,
         viewEditHabitFragment.OnFragmentInteractionListener, BottomNavigationView.OnNavigationItemSelectedListener,
         deleteHabitFragment.OnFragmentInteractionListener {
-    ArrayList<Habit> habitArrayList;
-    ListView habitList;
-    ArrayAdapter<Habit> habitAdapter;
+    private ArrayList<Habit> habitArrayList;
+    private ListView habitList;
+    private ArrayAdapter<Habit> habitAdapter;
     BottomNavigationView bottomNavigationView;
     FirebaseFirestore db;
 
@@ -86,8 +86,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 habitArrayList.clear();
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     Log.d(TAG, String.valueOf(doc.getData().get("UID")));
-                    if (/*auth.getCurrentUser().getUid() USE ONCE SET UP JUST COMPARE WITH TEMP ID FOR NOW*/
-                            UID.matches((String) doc.getData().get("UID"))) {
+                    if (UID.matches((String) doc.getData().get("UID"))) {
                         String title = (String) doc.getData().get("Title");
                         String reason = (String) doc.getData().get("Reason");
                         String dateToStart = (String) doc.getData().get("Data to Start");
@@ -115,7 +114,8 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new addHabitFragment().show(getSupportFragmentManager(), "ADD");
+                addHabitFragment values = new addHabitFragment().newInstance(UID);
+                values.show(getSupportFragmentManager(), "ADD");
                 System.out.println(getIntent());
             }
         });
@@ -146,8 +146,8 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
      * @param habit The habit object created by the addHabitFragment
      */
     @Override
-    public void onAddPressed(Habit habit) {
-        addHabitDatabase(habit);
+    public void onAddPressed(Habit habit, String userId) {
+        addHabitDatabase(habit, userId);
         habitAdapter.notifyDataSetChanged();
     }
 
@@ -201,17 +201,16 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
      *
      * @param habit The habit that needs to be added to the database.
      */
-    public void addHabitDatabase(Habit habit) {
+    public void addHabitDatabase(Habit habit, String userId) {
         db = FirebaseFirestore.getInstance();
         final CollectionReference collectionReference = db.collection("Habit");
         // Creating a unique Id for the Habit that is being added
         DocumentReference newHabitRef = db.collection("Habit").document();
-        String Uid = getIntent().getStringExtra("userId");
         String HabitId = newHabitRef.getId();
         HashMap<String, Object> data = new HashMap<>();
 
         if (HabitId != null) {
-            data.put("UID", UID);
+            data.put("UID", userId);
             data.put("Title", habit.getTitle());
             data.put("Reason", habit.getReason());
             data.put("PrivacySetting", habit.getPrivacySetting());
@@ -243,7 +242,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         final CollectionReference collectionReference = db.collection("Habit");
         HashMap<String, Object> data = new HashMap<>();
 
-        data.put("UID", UID);
+        data.put("UID", habit.getUID());
         data.put("Title", habit.getTitle());
         data.put("Reason", habit.getReason());
         data.put("PrivacySetting", habit.getPrivacySetting());
