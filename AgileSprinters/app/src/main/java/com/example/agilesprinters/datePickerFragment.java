@@ -17,7 +17,8 @@ import androidx.fragment.app.DialogFragment;
 import java.util.Calendar;
 
 /**
- * This class is a dialog fragment that allows a user to choose a date to begin a habit
+ * This class is a dialog fragment that allows a user to choose a date to go back and check past
+ * habit events
  */
 public class datePickerFragment extends DialogFragment {
 

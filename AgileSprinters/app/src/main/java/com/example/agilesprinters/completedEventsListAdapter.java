@@ -24,6 +24,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class provides a custom layout for items in the completed events list on the user calendar page.
+ */
 public class completedEventsListAdapter extends ArrayAdapter<HabitInstance> {
 
     private Context mContext;
@@ -46,9 +49,11 @@ public class completedEventsListAdapter extends ArrayAdapter<HabitInstance> {
         LayoutInflater inflater = LayoutInflater.from(mContext);
         convertView = inflater.inflate(mResource, parent, false);
 
+        // attach and pass variables to the textviews in the list
         TextView event_content = convertView.findViewById(R.id.EventContent);
         TextView duration_content = convertView.findViewById(R.id.duration_content);
 
+        // Check if optional comment is empty or not and pass the content to TextView accordingly
         db = FirebaseFirestore.getInstance();
         if (habitInstance.getOpt_comment().matches("")) {
             db.collection("Habit").addSnapshotListener((value, error) -> {
@@ -62,7 +67,7 @@ public class completedEventsListAdapter extends ArrayAdapter<HabitInstance> {
             event_content.setText(habitInstance.getOpt_comment());
         }
 
-        duration_content.setText(String.valueOf(habitInstance.getDuration()) + " minutes");
+        duration_content.setText(habitInstance.getDuration() + " minutes");
 
         return convertView;
     }

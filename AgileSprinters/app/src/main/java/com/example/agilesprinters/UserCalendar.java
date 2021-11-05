@@ -39,6 +39,14 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The user calendar class is an activity which displays the habits planned by the user for that day.
+ * From here a user may click on the habit to add a completed habit event, tap on the event to edit,
+ * view or delete it. There is also a 'past view events' button, through which the user can see
+ * what habits were actually planned for a specific day in the past and what events were completed
+ * regarding that. There is a navigation bar on the bottom that the user may click
+ * to go to either home, forum, or notifications.
+ */
 public class UserCalendar extends AppCompatActivity
         implements addHabitEventFragment.OnFragmentInteractionListener,
         editHabitEventFragment.OnFragmentInteractionListener,
@@ -65,6 +73,10 @@ public class UserCalendar extends AppCompatActivity
     private String selectedHabitInstanceId;
     LocalDate currentDate = LocalDate.now();
 
+    /**
+     * This function creates the UI on the screen and listens for user input
+     * @param savedInstanceState the instance state
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,6 +102,10 @@ public class UserCalendar extends AppCompatActivity
         screenSetup();
         completedEventsScreenSetup();
 
+        /**
+         * When a item in the to do events is clicked,
+         * input is taken, a habit event object is created and added to the database
+         */
         toDoEventsList.setOnItemClickListener((adapterView, view, i, l) -> {
 
             if (currentDate.isEqual(LocalDate.now())) {
@@ -106,6 +122,10 @@ public class UserCalendar extends AppCompatActivity
             }
         });
 
+        /**
+         * When a item in the completed events is clicked,
+         * updated input is taken, or an event object is deleted
+         */
         completedEventsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -118,6 +138,10 @@ public class UserCalendar extends AppCompatActivity
             }
         });
 
+        /**
+         * When the past events button is clicked, it asks for a date input and shows
+         * habits planned for that day and events actually completed
+         */
         calendar_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -133,11 +157,22 @@ public class UserCalendar extends AppCompatActivity
         completedEventsList.setAdapter(completedEventAdapter);
     }
 
+    /**
+     * This function sets the date on the UI according to the date selected by the user
+     */
     public void setDate() {
         String formattedDate = currentDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG));
         title1.setText("Tasks for " + formattedDate + ")");
     }
 
+    /**
+     * This function checks which day of the week is true
+     * to see the habit days planned by the user
+     * @param weekdays
+     * This is a candidate map to check for the positive days
+     * @return
+     * Return a ArrayList of strings
+     */
     public ArrayList<String> getHabitDays(Map<String, Object> weekdays) {
         String[] days = {"MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"};
         ArrayList<String> habitDays = new ArrayList<>();
@@ -152,6 +187,10 @@ public class UserCalendar extends AppCompatActivity
         return habitDays;
     }
 
+    /**
+     * This function sets the to-do tasks part of the screen on the UI
+     * according to the habits retrieved from the database
+     */
     public void screenSetup() {
         setDate();
 
@@ -195,6 +234,10 @@ public class UserCalendar extends AppCompatActivity
         
     }
 
+    /**
+     * This function sets the completed tasks part of the screen on the UI
+     * according to the habit events retrieved from the database
+     */
     public void completedEventsScreenSetup() {
         //completedEvents.clear();
         // get completed habits for today (need to use habit instances collection to do this)
@@ -225,6 +268,12 @@ public class UserCalendar extends AppCompatActivity
         });
     }
 
+    /**
+     * This function passes a habit instance to be added to the database once
+     * the user clicks save on the addHabitEventFragment dialog fragment
+     *
+     * @param habitInstance The instance object created by the addHabitEventFragment
+     */
     @Override
     public void onSavePressed(HabitInstance habitInstance) {
 
@@ -234,6 +283,11 @@ public class UserCalendar extends AppCompatActivity
 
     }
 
+    /**
+     * This function passes a habit instance to be updated once a user clicks
+     * Save in the editHabitEventFragment dialog fragment.
+     * @param instance The habit instance object changed in the editHabitEventFragment
+     */
     @Override
     public void onEditSavePressed(HabitInstance instance) {
         HashMap<String, String> data = new HashMap<>();
@@ -263,6 +317,11 @@ public class UserCalendar extends AppCompatActivity
         completedEventsScreenSetup();
     }
 
+    /**
+     * This function deletes a habit instance object from the database once a user clicks
+     * Delete in the editHabitEventFragment dialog fragment.
+     * @param instance The habit instance object deleted in the editHabitEventFragment
+     */
     @Override
     public void onDeletePressed(HabitInstance instance) {
 
@@ -285,6 +344,10 @@ public class UserCalendar extends AppCompatActivity
         completedEventsScreenSetup();
     }
 
+    /**
+     * This function adds a habit event/instance object to the database.
+     * @param instance The habit instance that needs to be added to the database.
+     */
     public void addHabitEventDatabase(HabitInstance instance){
         final CollectionReference collectionReference  =  db.collection("HabitEvents");
 
@@ -318,6 +381,14 @@ public class UserCalendar extends AppCompatActivity
         }
     }
 
+    /**
+     * This function captures the date chosen by the user once they press ok on the datePicker
+     * fragment.
+     * @param datePicker the datePicker dialog view
+     * @param year year of the date chosen by the user
+     * @param month month of the date chosen by the user
+     * @param day day of the month of the date chosen by the user
+     */
     @Override
     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
         Calendar c = Calendar.getInstance();
@@ -342,6 +413,14 @@ public class UserCalendar extends AppCompatActivity
         completedEventsScreenSetup();
     }
 
+    /**
+     * This method contains the logic for switching screens by selecting an item from the navigation
+     * bar.
+     * @param item This is the item selected by the user
+     * @return
+     * Returns a boolean based on which activity the user is currently in and which item was
+     * clicked.
+     */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {

@@ -14,6 +14,9 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
+/**
+ * This class provides a custom layout for items in the to do habit list on the user calendar page.
+ */
 public class toDoEventsListAdapter extends ArrayAdapter<Habit> {
 
     private Context mContext;
@@ -35,9 +38,9 @@ public class toDoEventsListAdapter extends ArrayAdapter<Habit> {
 
         Habit habit = habits.get(position);
 
+        // attach and pass variables to the textviews in the list
         TextView habitTitle = convertView.findViewById(R.id.habit_text);
-
-        habitTitle.setText(habit.getTitle().toString());
+        habitTitle.setText(habit.getTitle());
 
         return convertView;
     }

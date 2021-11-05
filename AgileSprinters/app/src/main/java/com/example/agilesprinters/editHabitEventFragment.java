@@ -20,6 +20,10 @@ import androidx.fragment.app.DialogFragment;
 
 import java.util.Calendar;
 
+/**
+ * This class is a fragment allows a user to view all the details of a habit and edit any details
+ * they wish to change.
+ */
 public class editHabitEventFragment extends DialogFragment{
     private EditText optional_comment;
     private TextView input_date;
@@ -30,6 +34,12 @@ public class editHabitEventFragment extends DialogFragment{
 
     private editHabitEventFragment.OnFragmentInteractionListener listener;
 
+    /**
+     * This function saves the values sent to the fragment for future manipulation
+     * @param habitInstance is the item that was tapped within the list
+     * @param position is the position of the tapped item within the list
+     * @return returns the fragment with the bundled parameters
+     */
     public static editHabitEventFragment newInstance(int position, HabitInstance habitInstance) {
         editHabitEventFragment fragment = new editHabitEventFragment();
         Bundle args = new Bundle();
@@ -40,12 +50,21 @@ public class editHabitEventFragment extends DialogFragment{
         return fragment;
     }
 
+    /**
+     * This interface listens for when dialog is ended and sends the information and the function
+     * to the user calendar class for it to implement.
+     */
     public interface OnFragmentInteractionListener {
         void onEditSavePressed(HabitInstance instance);
         void onDeletePressed(HabitInstance instance);
     }
 
-
+    /**
+     * This function attaches the fragment to the activity and keeps track of the context of the
+     * fragment so the listener knows what to listen to. Ensures that the proper methods are
+     * implemented by the Home class.
+     * @param context context of the current fragment
+     */
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
@@ -59,6 +78,12 @@ public class editHabitEventFragment extends DialogFragment{
         }
     }
 
+    /**
+     * This function creates the actual dialog on the screen and listens for user input, returning
+     * the information through the listener based on which button is clicked.
+     * @param savedInstanceState
+     * @return
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -92,12 +117,19 @@ public class editHabitEventFragment extends DialogFragment{
                 .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-
+                        /* Do not implement anything here in order to override the button
+                         * to only call the listener once all the information required has been
+                         * filled out and display error messages if they have been left blank.
+                         */
                     }
                 }).create();
 
     }
 
+    /**
+     * This function overrides the buttons clicked in order to only allow the dialog to be dismissed
+     * when all requirements have been met.
+     */
     @Override
     public void onResume(){
         super.onResume();
