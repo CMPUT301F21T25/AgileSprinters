@@ -52,7 +52,7 @@ public class LoginAndroidTest {
         solo.assertCurrentActivity(solo.getString(R.string.wrong_activity), Login.class);
 
         //click the login button when email and password fields are empty
-        trySignIn(-1, "", solo.getString(R.string.empty_email));
+        trySignIn(R.id.email, "", solo.getString(R.string.empty_email));
         //enter text into email then click the login button while the password field is empty
         trySignIn(R.id.email, "null", solo.getString(R.string.empty_password));
         //enter text into password then click the login button while the info given does not match a user
@@ -72,10 +72,7 @@ public class LoginAndroidTest {
      */
     private void trySignIn(int id, String input, String resultText){
         String signInStr = solo.getString(R.string.action_sign_in);  //string of sign in button
-
-        if (id!=-1) {
-            solo.enterText((EditText) solo.getView(id), input);  //enter input into edit text
-        }
+        solo.enterText((EditText) solo.getView(id), input);  //enter input into edit text
         solo.clickOnButton(signInStr);
         /* True if there is a text as given in input on the screen
         , wait at least 2 seconds and find one minimum match. */

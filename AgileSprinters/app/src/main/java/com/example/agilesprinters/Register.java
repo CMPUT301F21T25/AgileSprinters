@@ -58,17 +58,23 @@ public class Register extends AppCompatActivity {
                 firstNameStr.trim();
                 lastNameStr.trim();
 
-                if(emailStr.isEmpty()){
+                if(firstNameStr.isEmpty()){
+                    String err = "First name can not be empty";
+                    updateUI(null, err);
+                } else if(lastNameStr.isEmpty()) {
+                    String err = "Last name can not be empty";
+                    updateUI(null, err);
+                } else if(emailStr.isEmpty()) {
                     String err = "email can not be empty";
                     updateUI(null, err);
-                } else if(!passwordStr.equals(passwordConfirmStr)){
+                } else if(passwordStr.isEmpty()){
+                    String err = "password can not be empty";
+                    updateUI(null, err);
+                } else if(passwordConfirmStr.isEmpty()){
+                    String err = "confirm password can not be empty";
+                    updateUI(null, err);
+                } else if(!passwordStr.equals(passwordConfirmStr)) {
                     String err = "passwords do not match";
-                    updateUI(null, err);
-                } else if(passwordStr.isEmpty() || passwordConfirmStr.isEmpty()){
-                    String err = "passwords can not be empty";
-                    updateUI(null, err);
-                } else if(firstNameStr.isEmpty() || lastNameStr.isEmpty()){
-                    String err = "first name and last name can not be empty";
                     updateUI(null, err);
                 } else if (passwordStr.equals(passwordConfirmStr)){
                     Log.d("j", passwordConfirmStr+emailStr);

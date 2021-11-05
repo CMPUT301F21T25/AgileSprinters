@@ -13,4 +13,9 @@
 .externalNativeBuild
 .cxx
 local.properties
+<<<<<<< HEAD
 /.idea
+=======
+/.idea
+../.idea
+>>>>>>> origin/Hari-merge

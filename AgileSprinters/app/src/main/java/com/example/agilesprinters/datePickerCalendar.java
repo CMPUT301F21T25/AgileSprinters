@@ -19,7 +19,7 @@ import java.util.Calendar;
 /**
  * This class is a dialog fragment that allows a user to choose a date to begin a habit
  */
-public class datePickerFragment extends DialogFragment {
+public class datePickerCalendar extends DialogFragment {
 
     /**
      * This function creates the dialog screen and listens for the date the user chooses
@@ -33,7 +33,7 @@ public class datePickerFragment extends DialogFragment {
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
-        return new DatePickerDialog(getActivity(), (DatePickerDialog.OnDateSetListener) getParentFragment(), year, month, day);
+        return new DatePickerDialog(getActivity(), (DatePickerDialog.OnDateSetListener) getActivity(), year, month, day);
     }
 
 }

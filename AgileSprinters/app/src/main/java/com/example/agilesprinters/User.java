@@ -1,7 +1,16 @@
 package com.example.agilesprinters;
 
-public class User {
-    private String username;
-    private String password;
-    private String userData;
+import java.io.Serializable;
+
+public class User implements Serializable {
+
+    private String userID;
+
+    public String getUser() {
+        return userID;
+    }
+
+    public void setUser(String user) {
+        this.userID = user;
+    }
 }

@@ -9,7 +9,7 @@
     <string name="action_register"><u>Click to register!</u></string>
     <string name="welcome">"Welcome !"</string>
     <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="invalid_password">Password must be at least 6 characters</string>
     <string name="empty_email"><u>Email is required</u></string>
     <string name="empty_password"><u>Password is required</u></string>
     <string name="login_failed">Email or password entered is incorrect</string>
@@ -27,6 +27,12 @@
     <string name="email_sent">Email Sent</string>
     <string name="password_reset_request">Email Sent</string>
     <string name="send_email">Send email</string>
-
-
+    <string name="firstNameErr">First name can not be empty</string>
+    <string name="lastNameErr">Last name can not be empty</string>
+    <string name="passwordErr">password can not be empty</string>
+    <string name="confirmPasswordErr">confirm password can not be empty</string>
+    <string name="emailErr" >email can not be empty</string>
+    <string name="passwordMatchErr" type="id">passwords do not match</string>
+    <string name="emptyString">empty</string>
+    <string name="userExistsErr">The email address is already in use by another account</string>
 </resources>
