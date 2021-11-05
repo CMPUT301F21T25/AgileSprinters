@@ -1,10 +1,5 @@
 package com.example.agilesprinters;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
-
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,11 +13,14 @@ import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
@@ -139,7 +137,9 @@ public class UserCalendar extends AppCompatActivity
     }
 
     public ArrayList<String> getHabitDays(Map<String, Object> weekdays) {
-        String[] days = {"MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"};
+        String[] days = new String[]{ getString(R.string.mondayStr), getString(R.string.tuesdayStr),
+                getString(R.string.wednesdayStr), getString(R.string.thursdayStr), getString(R.string.fridayStr),
+                getString(R.string.saturdayStr), getString(R.string.sundayStr)};
         ArrayList<String> habitDays = new ArrayList<>();
 
         for (String day : days) {

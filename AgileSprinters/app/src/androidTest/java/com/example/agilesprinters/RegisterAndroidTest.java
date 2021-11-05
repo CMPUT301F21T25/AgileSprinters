@@ -1,6 +1,4 @@
 package com.example.agilesprinters;
-import static org.junit.Assert.assertTrue;
-
 import android.widget.EditText;
 
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -95,7 +93,6 @@ public class RegisterAndroidTest {
         solo.clickOnButton(solo.getString(R.string.create_account)); //Select register text
         //Asserts that the current activity is the Register Activity. Otherwise, show "Wrong Activity"
         solo.assertCurrentActivity(solo.getString(R.string.wrong_activity), Register.class);
-        assertTrue(solo.waitForLogMessage("createUserWithEmail:failure", 3000));
     }
 
 

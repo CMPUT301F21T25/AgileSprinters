@@ -1,9 +1,11 @@
 package com.example.agilesprinters;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.Assert.assertTrue;
+
 import org.junit.jupiter.api.Test;
+
 import java.util.HashMap;
 
 /**
