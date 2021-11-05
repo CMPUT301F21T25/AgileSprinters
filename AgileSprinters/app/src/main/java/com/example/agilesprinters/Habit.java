@@ -6,6 +6,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * This is an object class called Habit. It is responsible for creating habits and storing their information
+ */
 public class Habit implements Serializable {
     private String UID;
     private String HID;

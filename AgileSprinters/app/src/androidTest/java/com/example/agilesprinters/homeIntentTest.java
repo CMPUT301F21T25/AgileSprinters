@@ -77,27 +77,46 @@ public class homeIntentTest {
         //wait for add habit fragment to open
         solo.waitForDialogToOpen(1000);
 
-        //check that dialog does not close if spinner is not set
-        solo.enterText((EditText) solo.getView(R.id.habit_title_editText), "Running");
+        //enter values for everything but title
         solo.enterText((EditText) solo.getView(R.id.habit_reason_editText), "Run 3 hrs each week");
-        solo.clickOnButton("Add");
-        assertFalse(solo.waitForDialogToClose(1000));
-        solo.enterText((EditText) solo.getView(R.id.habit_title_editText), "Running");
-        solo.enterText((EditText) solo.getView(R.id.habit_reason_editText), "Run 3 hrs each week");
-        solo.clickOnView(solo.getView(R.id.privacy_spinner));
-        solo.pressSpinnerItem(0, 0);
-
-        //make sure that spinner is set to item selected
-        assertTrue(solo.isSpinnerTextSelected(0, "Public"));
         solo.clickOnView(solo.getView(R.id.Date));
-
         //wait for datePicker dialog to open
         solo.waitForDialogToOpen(1000);
         solo.setDatePicker(0, 2021, 11,10);
         solo.clickOnButton("OK");
         solo.waitForDialogToClose(1000);
+        solo.clickOnView(solo.getView(R.id.button_monday));
 
-        //make sure that if a field is left empty that you will be presented with an error message
+        //set spinner
+        solo.clickOnView(solo.getView(R.id.privacy_spinner));
+        solo.pressSpinnerItem(0, 0);
+        //make sure that spinner is set to item selected
+        assertTrue(solo.isSpinnerTextSelected(0, "Public"));
+
+        //check that dialog doesn't close if title is left empty
+        solo.clickOnButton("Add");
+        assertFalse(solo.waitForDialogToClose(1000));
+
+        //reset title and clear reason to check dialog doesn't close if it's empty
+        solo.enterText((EditText) solo.getView(R.id.habit_title_editText), "Running");
+        solo.clearEditText((EditText) solo.getView(R.id.habit_reason_editText));
+        solo.clickOnButton("Add");
+        assertFalse(solo.waitForDialogToClose(1000));
+
+        //reset reason and clear the date to check dialog doesn't close when empty
+        solo.enterText((EditText) solo.getView(R.id.habit_reason_editText), "Run 3 hrs each week");
+        solo.clearEditText((EditText) solo.getView(R.id.Date));
+        solo.clickOnButton("Add");
+        assertFalse(solo.waitForDialogToClose(1000));
+
+        //reset date and clear days of the week to check dialog doesn't closed when no days are selected
+        solo.clickOnView(solo.getView(R.id.Date));
+        //wait for datePicker dialog to open
+        solo.waitForDialogToOpen(1000);
+        solo.setDatePicker(0, 2021, 11,10);
+        solo.clickOnButton("OK");
+        solo.waitForDialogToClose(1000);
+        solo.clickOnView(solo.getView(R.id.button_monday));
         solo.clickOnButton("Add");
         assertTrue(solo.waitForText("Please choose which days you would like this event to occur.", 1, 1000));
 
@@ -111,6 +130,11 @@ public class homeIntentTest {
 
         //make sure habit shows up in list
         assertTrue(solo.waitForText("Running", 1, 1000));
+
+        //delete the habit created
+        solo.clickLongInList(1);
+        solo.waitForDialogToOpen(1000);
+        solo.clickOnButton("Yes");
     }
 
     /**
@@ -153,21 +177,44 @@ public class homeIntentTest {
         //click on the running habit
         solo.clickInList(1);
 
-        //wait for viewEditHabitFragment to open and change the reason
+        //wait for viewEditHabitFragment to open and change the reason to blank and make sure dialog
+        //will not close if save changes is pressed
         solo.waitForDialogToOpen(1000);
         solo.clearEditText((EditText) solo.getView(R.id.view_edit_habit_reason_editText));
+        solo.clickOnButton("Save Changes");
+        assertFalse(solo.waitForDialogToClose(1000));
+
+        //make sure dialog does not close if reason is made blank
         solo.enterText((EditText) solo.getView(R.id.view_edit_habit_reason_editText), "Run 1.5 hours per week");
+        solo.clearEditText((EditText) solo.getView(R.id.view_edit_habit_title_editText));
+        solo.clickOnButton("Save Changes");
+        assertFalse(solo.waitForDialogToClose(1000));
+
+        //make sure dialog doesn't close if days are made blank
+        solo.enterText((EditText) solo.getView(R.id.view_edit_habit_title_editText), "Running");
+        solo.clickOnView(solo.getView(R.id.view_edit_button_monday));
+        solo.clickOnView(solo.getView(R.id.view_edit_button_wednesday));
+        solo.clickOnView(solo.getView(R.id.view_edit_button_friday));
+        solo.clickOnButton("Save Changes");
+        assertFalse(solo.waitForDialogToClose(1000));
+
+        solo.clickOnView(solo.getView(R.id.view_edit_button_monday));
+        solo.clickOnView(solo.getView(R.id.view_edit_button_wednesday));
+        solo.clickOnView(solo.getView(R.id.view_edit_button_friday));
         solo.clickOnButton("Save Changes");
         solo.waitForDialogToClose(1000);
 
         //make sure reason was actually changed and shows in the list
         assertTrue(solo.waitForText("Run 1.5 hours per week"));
+
+        solo.clickLongInList(1);
+        solo.waitForDialogToOpen(1000);
+        solo.clickOnButton("Yes");
     }
 
-    /*
     /**
-     * This test makes sure that a habit is deleted
-
+     * This test makes sure that a user can delete an item in the list.
+     */
     @Test
     public void deleteHabit(){
         //Login to test account
@@ -190,7 +237,7 @@ public class homeIntentTest {
 
         solo.waitForDialogToOpen(1000);
         solo.setDatePicker(0, 2021, 11,10);
-        solo.clickOnButton("Ok");
+        solo.clickOnButton("OK");
         solo.waitForDialogToClose(1000);
 
         solo.clickOnView(solo.getView(R.id.button_monday));
@@ -205,14 +252,23 @@ public class homeIntentTest {
         //long click on habit
         solo.clickLongInList(1);
 
+        solo.waitForDialogToOpen(1000);
+        solo.clickOnButton("No");
+        solo.waitForDialogToClose(1000);
+
+        assertTrue(solo.waitForText("Running",1,1000));
+
+        //long click on habit
+        solo.clickLongInList(1);
+
         //wait for deleteHabitFragment to open
         solo.waitForDialogToOpen(1000);
         solo.clickOnButton("Yes");
-
+        solo.waitForDialogToClose(1000);
         // make sure that the deleted habit is no longer on screen
-        assertTrue(solo.waitForText("Running", 0, 1000));
+        assertFalse(solo.waitForText("Running", 1, 1000));
     }
-    */
+
 
 
     /**

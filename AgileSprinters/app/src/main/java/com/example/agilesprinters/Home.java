@@ -54,7 +54,10 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     private String UID;
     private User user;
 
-
+    /**
+     * This function creates the UI on the screen and listens for user input
+     * @param savedInstanceState the instance state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -140,17 +143,22 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     }
 
     /**
-     * This function adds a habit to the list once the user clicks add on the addHabitFragment
-     * dialog fragment
+     * This function passes a habit to be added to the list once the user clicks add on the
+     * addHabitFragment dialog fragment
      *
      * @param habit The habit object created by the addHabitFragment
      */
     @Override
-    public void onAddPressed(Habit habit, String userId) {
-        addHabitDatabase(habit, userId);
+    public void onAddPressed(Habit habit) {
+        addHabitDatabase(habit);
         habitAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * This function passes a habit to be updated once a user clicks Save Changes in the
+     * viewEditHabitFragment dialog fragment.
+     * @param habit The habit object changed in the viewEditHabitFragment
+     */
     @Override
     public void onEditViewSaveChangesPressed(Habit habit) {
         updateHabitDatabase(habit);
@@ -163,11 +171,18 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     }
 
 
-    //onclick for follow and followers
+    //onclick for follow and followers. Not to be implemented until after the halfway checkpoint
     public void follow(View view) {
     }
 
-    //click logic for navigation bar
+    /**
+     * This method contains the logic for switching screens by selecting an item from the navigation
+     * bar.
+     * @param item This is the item selected by the user
+     * @return
+     * Returns a boolean based on which activity the user is currently in and which item was
+     * clicked.
+     */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         //Context context = getApplicationContext();
@@ -197,11 +212,10 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     }
 
     /**
-     * This function adds
-     *
+     * This function adds a habit to the database.
      * @param habit The habit that needs to be added to the database.
      */
-    public void addHabitDatabase(Habit habit, String userId) {
+    public void addHabitDatabase(Habit habit) {
         db = FirebaseFirestore.getInstance();
         final CollectionReference collectionReference = db.collection("Habit");
         // Creating a unique Id for the Habit that is being added
@@ -210,7 +224,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         HashMap<String, Object> data = new HashMap<>();
 
         if (HabitId != null) {
-            data.put("UID", userId);
+            data.put("UID", UID);
             data.put("Title", habit.getTitle());
             data.put("Reason", habit.getReason());
             data.put("PrivacySetting", habit.getPrivacySetting());
@@ -237,6 +251,11 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         }
     }
 
+    /**
+     * This is a method that updates a habit selected by the user in the database based with the
+     * fields entered in the viewEditHabitFragment
+     * @param habit
+     */
     public void updateHabitDatabase(Habit habit) {
         db = FirebaseFirestore.getInstance();
         final CollectionReference collectionReference = db.collection("Habit");
@@ -268,7 +287,10 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 });
     }
 
-
+    /**
+     * This method deletes a habit selected by the user from the database
+     * @param habit this is the habit object selected by the user to be deleted
+     */
     public void deleteHabitDatabase(Habit habit) {
         deleteHabitInstances(habit);
         db.collection("Habit")
@@ -289,7 +311,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     }
 
     /**
-     * This function deletes the object selected by the user in the list after a user clicks "Yes"
+     * This function deletes the habit selected by the user in the list after a user clicks "Yes"
      * in the deleteHabitFragment dialog fragment.
      *
      * @param position The position of the object clicked in the list.
@@ -301,6 +323,10 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         habitAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * This method deletes habit events from the database based on the habit object passed to it.
+     * @param habit this is the habit object the user wishes to be deleted
+     */
     public void deleteHabitInstances(Habit habit) {
         CollectionReference collectionReference = db.collection("HabitEvents");
         collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {

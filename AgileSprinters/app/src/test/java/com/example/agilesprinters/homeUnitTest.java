@@ -6,6 +6,10 @@ import static org.junit.Assert.assertTrue;
 import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 
+/**
+ * This class provides unit testing for a mock habit list. We tried to get this to work with the
+ * database but could not figure out how
+ */
 public class homeUnitTest {
     /**
      * This method creates a mock list for the test cases to work from

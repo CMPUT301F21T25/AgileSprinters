@@ -93,7 +93,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
      * to the Home class for it to implement.
      */
     public interface OnFragmentInteractionListener {
-        void onAddPressed(Habit habit, String UID);
+        void onAddPressed(Habit habit);
     }
 
     /**
@@ -121,6 +121,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
      * the information through the listener based on which button is clicked.
      * @param savedInstanceState
      * @return
+     * Returns the Dialog created
      */
     @NonNull
     @Override
@@ -330,7 +331,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
                         db  =  FirebaseFirestore.getInstance();
                         DocumentReference newHabitRef = db.collection("Habit").document();
                         listener.onAddPressed(new Habit(newHabitRef.getId(),user.getUser(),habit_title
-                                ,habit_reason,date, weekdays, privacySetting), UID);
+                                ,habit_reason,date, weekdays, privacySetting));
                         dialog.dismiss();
                     }
                 }

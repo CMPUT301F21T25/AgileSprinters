@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 
+/**
+ * This is a class which tests the Habit object class
+ */
 public class habitUnitTest {
     private String UID = "23456789";
     private String HID = "123456789";
@@ -15,6 +18,10 @@ public class habitUnitTest {
     private HashMap<String, Boolean> weekdays = new HashMap<>();
     private String privacySetting = "Private";
 
+    /**
+     * This method creates a mock Habit object for testing
+     * @return returns a habit object
+     */
     private Habit mockHabit(){
         weekdays.put("MONDAY", true);
         weekdays.put("TUESDAY", false);
@@ -29,6 +36,10 @@ public class habitUnitTest {
         return habit;
     }
 
+    /**
+     * This is a test that checks if the getters in the Habit class are returning the same values
+     * that their parameters were set to
+     */
     @Test
     void testHabitGetters(){
         Habit habit = mockHabit();
@@ -41,6 +52,10 @@ public class habitUnitTest {
         assertEquals(dateToStart, habit.getDateToStart());
     }
 
+    /**
+     * This is a method which tests if the setters in the Habit class actually set the parameters
+     * called to the values given
+     */
     @Test
     void testHabitSetters(){
         Habit habit = mockHabit();
