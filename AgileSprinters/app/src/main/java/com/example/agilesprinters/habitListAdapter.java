@@ -17,6 +17,8 @@ import java.util.List;
 
 /**
  * This class provides a custom layout for items in the habit list on the home page.
+ *
+ * @author Hannah Desmarais
  */
 public class habitListAdapter extends ArrayAdapter<Habit> {
     private Context mContext;

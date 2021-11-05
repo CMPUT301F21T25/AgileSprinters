@@ -14,6 +14,8 @@ import androidx.fragment.app.DialogFragment;
 
 /**
  * This class is a fragment that asks the user if they wish to delete a habit and all of its events.
+ *
+ * @author Hannah Desmarais
  */
 public class deleteHabitFragment extends DialogFragment {
     private deleteHabitFragment.OnFragmentInteractionListener listener;

@@ -19,6 +19,8 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * This class is a dialog fragment that allows the user to add a new habit event.
+ *
+ * @author Sai Rasazna Ajerla and Riyaben Patel
  */
 public class addHabitEventFragment extends DialogFragment{
     private int position;

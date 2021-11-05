@@ -23,6 +23,8 @@ import java.util.HashMap;
 /**
  * This class is a fragment allows a user to view all the details of a habit and edit any details
  * they wish to change.
+ *
+ * @author Hannah Desmarais and Hari Bheesetti
  */
 public class viewEditHabitFragment extends DialogFragment {
     private int position;

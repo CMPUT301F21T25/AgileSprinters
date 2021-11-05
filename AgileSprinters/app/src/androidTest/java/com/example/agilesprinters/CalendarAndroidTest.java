@@ -23,6 +23,8 @@ import java.time.LocalDate;
  * Please note that tests must be ran individually
  * and the cache must be cleared between each for them to work due to the app automatically
  * going to the home page after a single sign in on the device.
+ *
+ * @author Sai Rasazna Ajerla
  */
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -57,7 +59,7 @@ public class CalendarAndroidTest {
         // Logging In to test account
         solo.enterText((EditText) solo.getView(R.id.email), "test10@email.com");
         solo.enterText((EditText) solo.getView(R.id.password), "test10");
-        solo.clickOnView(solo.getView(R.id.login));
+        solo.clickOnView(solo.getView(R.id.loginBtn));
 
         // checks to make sure the activity has switched to the Home activity
         solo.assertCurrentActivity("Wrong", Home.class);
@@ -77,7 +79,7 @@ public class CalendarAndroidTest {
         // Logging In to test account
         solo.enterText((EditText) solo.getView(R.id.email), "test10@email.com");
         solo.enterText((EditText) solo.getView(R.id.password), "test10");
-        solo.clickOnView(solo.getView(R.id.login));
+        solo.clickOnView(solo.getView(R.id.loginBtn));
 
         solo.clickOnView(solo.getView(R.id.add_habit_button));
 
@@ -162,7 +164,7 @@ public class CalendarAndroidTest {
         // Logging In to test account
         solo.enterText((EditText) solo.getView(R.id.email), "test10@email.com");
         solo.enterText((EditText) solo.getView(R.id.password), "test10");
-        solo.clickOnView(solo.getView(R.id.login));
+        solo.clickOnView(solo.getView(R.id.loginBtn));
 
         // check to make sure the activity is switched to calendar activity
         solo.clickOnView(solo.getView(R.id.calendar));
@@ -203,7 +205,7 @@ public class CalendarAndroidTest {
         // Logging In to test account
         solo.enterText((EditText) solo.getView(R.id.email), "test10@email.com");
         solo.enterText((EditText) solo.getView(R.id.password), "test10");
-        solo.clickOnView(solo.getView(R.id.login));
+        solo.clickOnView(solo.getView(R.id.loginBtn));
 
         // check to make sure the activity is switched to calendar activity
         solo.clickOnView(solo.getView(R.id.calendar));
@@ -247,7 +249,7 @@ public class CalendarAndroidTest {
         // Logging In to test account
         solo.enterText((EditText) solo.getView(R.id.email), "test10@email.com");
         solo.enterText((EditText) solo.getView(R.id.password), "test10");
-        solo.clickOnView(solo.getView(R.id.login));
+        solo.clickOnView(solo.getView(R.id.loginBtn));
 
         // check to make sure the activity is switched to calendar activity
         solo.clickOnView(solo.getView(R.id.calendar));
@@ -297,7 +299,7 @@ public class CalendarAndroidTest {
         // Logging In to test account
         solo.enterText((EditText) solo.getView(R.id.email), "test10@email.com");
         solo.enterText((EditText) solo.getView(R.id.password), "test10");
-        solo.clickOnView(solo.getView(R.id.login));
+        solo.clickOnView(solo.getView(R.id.loginBtn));
 
         solo.clickLongInList(1);
 

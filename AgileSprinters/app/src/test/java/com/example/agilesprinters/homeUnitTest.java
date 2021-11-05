@@ -11,6 +11,8 @@ import java.util.HashMap;
 /**
  * This class provides unit testing for a mock habit list. We tried to get this to work with the
  * database but could not figure out how
+ *
+ * @author Hannah Desmarais
  */
 public class homeUnitTest {
     /**

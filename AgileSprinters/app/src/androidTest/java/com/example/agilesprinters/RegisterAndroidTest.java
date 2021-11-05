@@ -11,6 +11,12 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+/**
+ * This is a test class for the Register activity class. Provides various UI tests to ensure all
+ * functions and UI elements work as intended.
+ *
+ * @author Hari Bheesetti
+ */
 public class RegisterAndroidTest {
     private Solo solo;
 

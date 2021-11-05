@@ -14,6 +14,8 @@ import java.util.ArrayList;
 
 /**
  * This class provides a custom layout for items in the to do habit list on the user calendar page.
+ *
+ * @author Sai Rasazna Ajerla and Riyaben Patel
  */
 public class toDoEventsListAdapter extends ArrayAdapter<Habit> {
 

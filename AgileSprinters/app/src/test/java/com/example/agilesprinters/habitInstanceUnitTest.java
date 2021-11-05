@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 
 /**
  * This is a class which tests the Habit Instance object class
+ *
+ * @author Riyaben Patel
  */
 public class habitInstanceUnitTest {
     private String EID = "34567890";

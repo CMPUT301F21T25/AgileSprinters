@@ -42,6 +42,8 @@ import java.util.Map;
  * what habits were actually planned for a specific day in the past and what events were completed
  * regarding that. There is a navigation bar on the bottom that the user may click
  * to go to either home, forum, or notifications.
+ *
+ * @author Sai Rasazna Ajerla and Riyaben Patel
  */
 public class UserCalendar extends AppCompatActivity
         implements addHabitEventFragment.OnFragmentInteractionListener,

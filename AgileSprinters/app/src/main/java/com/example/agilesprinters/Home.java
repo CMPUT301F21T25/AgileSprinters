@@ -33,6 +33,8 @@ import java.util.HashMap;
  * may click the floating button to add a habit, tap on a habit to edit or view a habit, or long
  * click on a habit to delete it. There is a navigation bar on the bottom that the user may click
  * to go to either calendar, forum, or notifications.
+ *
+ * @author Hannah Desmarais, Hari Bheesetti, and Gurick Kooner
  */
 public class Home extends AppCompatActivity implements addHabitFragment.OnFragmentInteractionListener,
         viewEditHabitFragment.OnFragmentInteractionListener, BottomNavigationView.OnNavigationItemSelectedListener,
