@@ -2,9 +2,9 @@ name: Android CI
 
 on:
   push:
-    branches: [ origin/Hannah ]
+    branches: [ Hannah ]
   pull_request:
-    branches: [ main ]
+    branches: [ Hannah ]
 
 jobs:
   build:
