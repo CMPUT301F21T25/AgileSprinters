@@ -23,8 +23,9 @@ public class datePickerFragment extends DialogFragment {
 
     /**
      * This function creates the dialog screen and listens for the date the user chooses
-     * @param savedInstanceState
+     * @param savedInstanceState Is the instance state of the fragment.
      * @return
+     * Returns the dialog of the fragment
      */
     @NonNull
     @Override
