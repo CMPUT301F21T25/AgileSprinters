@@ -70,7 +70,7 @@ public class viewEditHabitFragment extends DialogFragment{
      */
     public interface OnFragmentInteractionListener {
         void onEditViewSaveChangesPressed(Habit habit);
-        void onEditViewCancelPressed(Habit habit);
+        void onEditViewCancelPressed();
     }
 
     /**

@@ -81,6 +81,10 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
         System.out.println("User" + UID);
 
+        /**
+         * This is a database listener. Each time the Home page is created, it will read the contents
+         * of the database and put it in our listview.
+         */
         collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
@@ -104,6 +108,10 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             }
         });
 
+        /**
+         * This is an on item click listener which listens for when a user taps on an item in the
+         * habit list. nce clicked it will open the viewEditHabitFragment
+         */
         habitList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -113,6 +121,10 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             }
         });
 
+        /**
+         * This is a floating action button which listens for when a user taps it. If tapped it will
+         * begin the addHabitFragment.
+         */
         final FloatingActionButton addButton = findViewById(R.id.add_habit_button);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,6 +135,10 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             }
         });
 
+        /**
+         * This is a long item click listener which overrides the regular item click listener.
+         * When an item is long clicked, it will begin the deleteHabitFragment
+         */
         habitList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -136,11 +152,6 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-    }
 
     /**
      * This function passes a habit to be added to the list once the user clicks add on the
@@ -164,10 +175,12 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         updateHabitDatabase(habit);
     }
 
+    /**
+     * This method is called when the user presses cancel on the editViewCancel fragment. Will not
+     * change the habit.
+     */
     @Override
-    public void onEditViewCancelPressed(Habit habit) {
-        //original.setWeekdays(habit.getWeekdays());
-        //habitAdapter.notifyDataSetChanged();
+    public void onEditViewCancelPressed() {
     }
 
 
