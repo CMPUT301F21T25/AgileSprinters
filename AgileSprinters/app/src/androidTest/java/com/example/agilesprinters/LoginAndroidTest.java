@@ -16,14 +16,16 @@ import org.junit.Test;
 
 /**
  * Test class for Login Activity. All the UI tests are written here. Robotium test framework is
- used.
- @author Leen Alzebdeh
- The tests being run are:
-    1. checkEmptySignIn: Tests that the activity correctly handles empty email/ password fields (throws a message) <br>
- then checks handling of information that does not match any user.
-    2. correctInfoTest: enters the information of a user that exists and ensures the activity signs the user in correctly. <br>
- Note: There is no dedicated unit test class for the login activity as the Android test class is sufficient for <br>
-    what needs to be checked.
+ *  used.
+ *  @author Leen Alzebdeh
+ *  The tests being run are:
+ *  1. checkEmptySignIn: Tests that the activity correctly handles empty email/ password fields (throws a message) <br>
+ *  then checks handling of information that does not match any user.
+ *  2. correctInfoTest: enters the information of a user that exists and ensures the activity signs the user in correctly. <br>
+ *  Note: There is no dedicated unit test class for the login activity as the Android test class is sufficient for <br>
+ *  what needs to be checked.
+ *
+ *  Before running the test cache and the storage in the app info needs to be cleared.
  */
 public class LoginAndroidTest {
     private Solo solo;
@@ -48,15 +50,15 @@ public class LoginAndroidTest {
      */
     @Test
     public void checkEmptySignIn() {
-        //Asserts that the current activity is the Login Activity. Otherwise, show “Wrong Activity”
+        //Asserts that the current activity is the Login Activity. Otherwise, show "Wrong Activity"
         solo.assertCurrentActivity(solo.getString(R.string.wrong_activity), Login.class);
 
         //click the login button when email and password fields are empty
-        trySignIn(-1, "", solo.getString(R.string.empty_email));
+        trySignIn(R.id.email, "", solo.getString(R.string.empty_email));
         //enter text into email then click the login button while the password field is empty
-        trySignIn(R.id.email, "null", solo.getString(R.string.empty_password));
+        trySignIn(R.id.email, solo.getString(R.string.emptyString), solo.getString(R.string.empty_password));
         //enter text into password then click the login button while the info given does not match a user
-        trySignIn(R.id.password, "null", solo.getString(R.string.login_failed));
+        trySignIn(R.id.password, solo.getString(R.string.emptyString), solo.getString(R.string.login_failed));
     }
 
     /**
@@ -72,10 +74,7 @@ public class LoginAndroidTest {
      */
     private void trySignIn(int id, String input, String resultText){
         String signInStr = solo.getString(R.string.action_sign_in);  //string of sign in button
-
-        if (id!=-1) {
-            solo.enterText((EditText) solo.getView(id), input);  //enter input into edit text
-        }
+        solo.enterText((EditText) solo.getView(id), input);  //enter input into edit text
         solo.clickOnButton(signInStr);
         /* True if there is a text as given in input on the screen
         , wait at least 2 seconds and find one minimum match. */
@@ -83,50 +82,29 @@ public class LoginAndroidTest {
     }
 
     /**
-     * Function registers a test user then tests if they can be logged in successfully
+     * Function registers a test user then tests if firebase can login a user that already exists successfully
+     * Need to cache before running the test
      */
     @Test
     public void correctInfoTest(){
         String signInStr = solo.getString(R.string.action_sign_in);  //string of sign in button
-
-        registerTestUser();  //register a test user
 
         //enter the log in info of the test user
         solo.enterText((EditText) solo.getView(R.id.email), solo.getString(R.string.email_test));
         solo.enterText((EditText) solo.getView(R.id.password), solo.getString(R.string.password_test));
         solo.clickOnButton(signInStr);  //click the login button
 
-        //Asserts that the current activity is the Home Activity. Otherwise, show “Wrong Activity”
+        //Asserts that the current activity is the Login Activity. Otherwise, show "Wrong Activity"
         solo.assertCurrentActivity(solo.getString(R.string.wrong_activity), Home.class);
-    }
-
-    //will move or import from register
-    private void registerTestUser() {
-        //Asserts that the current activity is the Login Activity. Otherwise, show “Wrong Activity”
-        solo.assertCurrentActivity(solo.getString(R.string.wrong_activity), Login.class);
-
-        //click register button
-        solo.clickOnText(solo.getString(R.string.action_register));
-        //Asserts that the current activity is the Register Activity. Otherwise, show “Wrong Activity”
-        solo.assertCurrentActivity(solo.getString(R.string.wrong_activity), Register.class);
-
-        //register a test user
-        solo.enterText((EditText) solo.getView(R.id.LastName), solo.getString(R.string.last_test));
-        solo.enterText((EditText) solo.getView(R.id.FirstName), solo.getString(R.string.first_test));
-        solo.enterText((EditText) solo.getView(R.id.EditTextEmail), solo.getString(R.string.email_test));
-        solo.enterText((EditText) solo.getView(R.id.TextPassword), solo.getString(R.string.password_test));
-        solo.enterText((EditText) solo.getView(R.id.TextConfirmPassword), solo.getString(R.string.password_test));
-
-        solo.clickOnButton(solo.getString(R.string.create_account)); //Select register text
-        //Asserts that the current activity is the Login Activity. Otherwise, show “Wrong Activity”
-        solo.assertCurrentActivity(solo.getString(R.string.wrong_activity), Login.class);
+        assertTrue(solo.waitForLogMessage("signInWithEmail:success", 2000));
     }
 
 
-        /**
-         * Close activity after each test
-         * @throws Exception
-         */
+
+    /**
+     * Close activity after each test
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception{
         solo.finishOpenedActivities();

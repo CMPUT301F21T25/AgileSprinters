@@ -23,7 +23,7 @@
     <string name="confirmPasswordErr">confirm password can not be empty</string>
     <string name="emailErr" >email can not be empty</string>
     <string name="passwordMatchErr" type="id">passwords do not match</string>
-    <string name="emptyString">empty</string>
+    <string name="emptyString">dummy</string>
     <string name="userExistsErr">The email address is already in use by another account</string>
     <string name="first_test">Test</string>
     <string name="last_test">User</string>
@@ -54,5 +54,7 @@
     <string name="fridayStr">FRIDAY</string>
     <string name="saturdayStr">SATURDAY</string>
     <string name="sundayStr">SUNDAY</string>
+    <string name="orangeHexCode">#e27c65</string>
+    <string name="greyHexCode">#808080</string>
 
 </resources>

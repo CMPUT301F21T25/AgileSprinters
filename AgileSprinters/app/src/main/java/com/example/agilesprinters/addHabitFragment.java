@@ -19,11 +19,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
@@ -142,26 +140,6 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
         friday = view.findViewById(R.id.button_friday);
         saturday = view.findViewById(R.id.button_saturday);
 
-        /*
-        Button[]  weekdayButtonArray = new Button[]{sunday, monday, tuesday, wednesday, thursday, friday, saturday};
-
-        for( int i = 0; i < weekdayButtonArray.length; i++){
-            int finalI = i;
-            weekdayButtonArray[i].setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (weekdays.get("SUNDAY") == false) {
-                        weekdayButtonArray[finalI].setBackgroundColor(Color.parseColor("#e27c65"));
-                        weekdays.replace("SUNDAY", false, true);
-                    } else {
-                        sunday.setBackgroundColor(Color.parseColor("#808080"));
-                        weekdays.replace("SUNDAY", true, false);
-                    }
-                }
-            });
-        }
-         */
-
         //set on click listeners for all weekday buttons and the editText for the date started
         date_editText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -171,96 +149,24 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
             }
         });
 
-        sunday.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (weekdays.get("SUNDAY") == false) {
-                    sunday.setBackgroundColor(Color.parseColor("#e27c65"));
-                    weekdays.replace("SUNDAY", false, true);
-                } else {
-                    sunday.setBackgroundColor(Color.parseColor("#808080"));
-                    weekdays.replace("SUNDAY", true, false);
-                }
-            }
-        });
+        Button[]  weekdayButtonArray = new Button[]{sunday, monday, tuesday, wednesday, thursday, friday, saturday};
 
-        monday.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (weekdays.get("MONDAY") == false) {
-                    monday.setBackgroundColor(Color.parseColor("#e27c65"));
-                    weekdays.replace("MONDAY", false, true);
-                } else {
-                    monday.setBackgroundColor(Color.parseColor("#808080"));
-                    weekdays.replace("MONDAY", true, false);
+        for( int i = 0; i < weekdayButtonArray.length; i++){
+            int finalI = i;
+            int finalI1 = i;
+            weekdayButtonArray[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (weekdays.get(weekdayStrArray[finalI1]) == false) {
+                        weekdayButtonArray[finalI].setBackgroundColor(Color.parseColor(getString(R.string.orangeHexCode)));
+                        weekdays.replace(weekdayStrArray[finalI1], false, true);
+                    } else {
+                        weekdayButtonArray[finalI].setBackgroundColor(Color.parseColor(getString(R.string.greyHexCode)));
+                        weekdays.replace(weekdayStrArray[finalI1], true, false);
+                    }
                 }
-            }
-        });
-
-        tuesday.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (weekdays.get("TUESDAY") == false) {
-                    tuesday.setBackgroundColor(Color.parseColor("#e27c65"));
-                    weekdays.replace("TUESDAY", false, true);
-                } else {
-                    tuesday.setBackgroundColor(Color.parseColor("#808080"));
-                    weekdays.replace("TUESDAY", true, false);
-                }
-            }
-        });
-
-        wednesday.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (weekdays.get("WEDNESDAY") == false) {
-                    wednesday.setBackgroundColor(Color.parseColor("#e27c65"));
-                    weekdays.replace("WEDNESDAY", false, true);
-                } else {
-                    wednesday.setBackgroundColor(Color.parseColor("#808080"));
-                    weekdays.replace("WEDNESDAY", true, false);
-                }
-            }
-        });
-
-        thursday.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (weekdays.get("THURSDAY") == false) {
-                    thursday.setBackgroundColor(Color.parseColor("#e27c65"));
-                    weekdays.replace("THURSDAY", false, true);
-                } else {
-                    thursday.setBackgroundColor(Color.parseColor("#808080"));
-                    weekdays.replace("THURSDAY", true, false);
-                }
-            }
-        });
-
-        friday.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (weekdays.get("FRIDAY") == false) {
-                    friday.setBackgroundColor(Color.parseColor("#e27c65"));
-                    weekdays.replace("FRIDAY", false, true);
-                } else {
-                    friday.setBackgroundColor(Color.parseColor("#808080"));
-                    weekdays.replace("FRIDAY", true, false);
-                }
-            }
-        });
-
-        saturday.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (weekdays.get("SATURDAY") == false) {
-                    saturday.setBackgroundColor(Color.parseColor("#e27c65"));
-                    weekdays.replace("SATURDAY", false, true);
-                } else {
-                    saturday.setBackgroundColor(Color.parseColor("#808080"));
-                    weekdays.replace("SATURDAY", true, false);
-                }
-            }
-        });
+            });
+        }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         return builder

@@ -29,18 +29,15 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 
+/**
+ * This class takes the user input validates it and creates a user in the database.
+ *
+ * @author Hari Bheesetti
+ */
+
 public class Register extends AppCompatActivity {
-    /**
-     *
-     */
     private FirebaseAuth auth;
-    /**
-     *
-     */
     private static final String TAG = "EmailPassword";
-    /**
-     *
-     */
     FirebaseFirestore db;
 
     @Override
