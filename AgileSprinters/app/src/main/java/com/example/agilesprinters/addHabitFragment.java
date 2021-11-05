@@ -30,7 +30,7 @@ import java.util.HashMap;
 /**
  * This class is a dialog fragment that allows the user to add a new habit.
  */
-public class addHabitFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener{
+public class addHabitFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
     private EditText habitTitle;
     private EditText habitReason;
     private EditText date_editText;
@@ -43,7 +43,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
     private Button friday;
     private Button saturday;
     private String date = "";
-    private HashMap <String,Boolean> weekdays;
+    private HashMap<String, Boolean> weekdays;
     private Spinner privacy;
     private addHabitFragment.OnFragmentInteractionListener listener;
     FirebaseFirestore db;
@@ -52,9 +52,10 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
     /**
      * This function captures the date chosen by the user once they press ok on the datePicker
      * fragment.
-     * @param view the datePicker dialog view
-     * @param year year of the date chosen by the user
-     * @param month month of the date chosen by the user
+     *
+     * @param view       the datePicker dialog view
+     * @param year       year of the date chosen by the user
+     * @param month      month of the date chosen by the user
      * @param dayOfMonth day of the month of the date chosen by the user
      */
     @Override
@@ -66,9 +67,9 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
 
         //make sure date is empty before setting it to the date picked
         date = "";
-        if(month+1 < 10) date+= "0";
+        if (month + 1 < 10) date += "0";
         date += String.valueOf(month + 1) + "/";
-        if (dayOfMonth < 10 ) date += "0";
+        if (dayOfMonth < 10) date += "0";
         date += String.valueOf(dayOfMonth + "/");
         date += String.valueOf(year);
         date_editText.setText(date);
@@ -86,16 +87,16 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
      * This function attaches the fragment to the activity and keeps track of the context of the
      * fragment so the listener knows what to listen to. Ensures that the proper methods are
      * implemented by the Home class.
+     *
      * @param context
      */
     @Override
-    public void onAttach(Context context){
+    public void onAttach(Context context) {
         super.onAttach(context);
 
-        if (context instanceof OnFragmentInteractionListener){
+        if (context instanceof OnFragmentInteractionListener) {
             listener = (OnFragmentInteractionListener) context;
-        }
-        else{
+        } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
@@ -105,6 +106,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
     /**
      * This function creates the actual dialog on the screen and listens for user input, returning
      * the information through the listener based on which button is clicked.
+     *
      * @param savedInstanceState
      * @return
      */
@@ -114,20 +116,22 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
         //inflate the layout for this fragment
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.add_habit_fragment, null);
 
+        String[] weekdayStrArray = new String[]{ getString(R.string.mondayStr), getString(R.string.tuesdayStr),
+                getString(R.string.wednesdayStr), getString(R.string.thursdayStr), getString(R.string.fridayStr),
+                getString(R.string.saturdayStr), getString(R.string.sundayStr)};
+
         weekdays = new HashMap<String, Boolean>();
-        weekdays.put("MONDAY", false);
-        weekdays.put("TUESDAY", false);
-        weekdays.put("WEDNESDAY", false);
-        weekdays.put("THURSDAY", false);
-        weekdays.put("FRIDAY", false);
-        weekdays.put("SATURDAY", false);
-        weekdays.put("SUNDAY", false);
+
+        for(int i = 0; i < weekdayStrArray.length; i++){
+            weekdays.put(weekdayStrArray[i], false);
+        }
 
         habitTitle = view.findViewById(R.id.habit_title_editText);
         habitReason = view.findViewById(R.id.habit_reason_editText);
         date_editText = view.findViewById(R.id.Date);
         privacy = view.findViewById(R.id.privacy_spinner);
         buttonError = view.findViewById(R.id.add_habit_button_error);
+
 
         //set weekday buttons
         sunday = view.findViewById(R.id.button_sunday);
@@ -137,6 +141,26 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
         thursday = view.findViewById(R.id.button_thursday);
         friday = view.findViewById(R.id.button_friday);
         saturday = view.findViewById(R.id.button_saturday);
+
+        /*
+        Button[]  weekdayButtonArray = new Button[]{sunday, monday, tuesday, wednesday, thursday, friday, saturday};
+
+        for( int i = 0; i < weekdayButtonArray.length; i++){
+            int finalI = i;
+            weekdayButtonArray[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (weekdays.get("SUNDAY") == false) {
+                        weekdayButtonArray[finalI].setBackgroundColor(Color.parseColor("#e27c65"));
+                        weekdays.replace("SUNDAY", false, true);
+                    } else {
+                        sunday.setBackgroundColor(Color.parseColor("#808080"));
+                        weekdays.replace("SUNDAY", true, false);
+                    }
+                }
+            });
+        }
+         */
 
         //set on click listeners for all weekday buttons and the editText for the date started
         date_editText.setOnClickListener(new View.OnClickListener() {
@@ -150,11 +174,10 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
         sunday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(weekdays.get("SUNDAY") == false){
+                if (weekdays.get("SUNDAY") == false) {
                     sunday.setBackgroundColor(Color.parseColor("#e27c65"));
                     weekdays.replace("SUNDAY", false, true);
-                }
-                else{
+                } else {
                     sunday.setBackgroundColor(Color.parseColor("#808080"));
                     weekdays.replace("SUNDAY", true, false);
                 }
@@ -164,7 +187,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
         monday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (weekdays.get("MONDAY") == false){
+                if (weekdays.get("MONDAY") == false) {
                     monday.setBackgroundColor(Color.parseColor("#e27c65"));
                     weekdays.replace("MONDAY", false, true);
                 } else {
@@ -177,7 +200,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
         tuesday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (weekdays.get("TUESDAY") == false){
+                if (weekdays.get("TUESDAY") == false) {
                     tuesday.setBackgroundColor(Color.parseColor("#e27c65"));
                     weekdays.replace("TUESDAY", false, true);
                 } else {
@@ -190,7 +213,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
         wednesday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (weekdays.get("WEDNESDAY") == false){
+                if (weekdays.get("WEDNESDAY") == false) {
                     wednesday.setBackgroundColor(Color.parseColor("#e27c65"));
                     weekdays.replace("WEDNESDAY", false, true);
                 } else {
@@ -203,7 +226,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
         thursday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (weekdays.get("THURSDAY") == false){
+                if (weekdays.get("THURSDAY") == false) {
                     thursday.setBackgroundColor(Color.parseColor("#e27c65"));
                     weekdays.replace("THURSDAY", false, true);
                 } else {
@@ -216,7 +239,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
         friday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (weekdays.get("FRIDAY") == false){
+                if (weekdays.get("FRIDAY") == false) {
                     friday.setBackgroundColor(Color.parseColor("#e27c65"));
                     weekdays.replace("FRIDAY", false, true);
                 } else {
@@ -229,7 +252,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
         saturday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (weekdays.get("SATURDAY") == false){
+                if (weekdays.get("SATURDAY") == false) {
                     saturday.setBackgroundColor(Color.parseColor("#e27c65"));
                     weekdays.replace("SATURDAY", false, true);
                 } else {
@@ -240,7 +263,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
         });
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-         return builder
+        return builder
                 .setView(view)
                 .setTitle("Add Habit")
                 .setNegativeButton("Cancel", null)
@@ -261,11 +284,11 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
      * when all requirements have been met.
      */
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
 
         final AlertDialog dialog = (AlertDialog) getDialog();
-        if(dialog != null){
+        if (dialog != null) {
             Button positive = (Button) dialog.getButton(Dialog.BUTTON_POSITIVE);
 
             positive.setOnClickListener(new View.OnClickListener() {
@@ -296,8 +319,8 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
                     }
 
                     Boolean weekdayCheck = false;
-                    for(String i : weekdays.keySet()){
-                        if (weekdays.get(i)){
+                    for (String i : weekdays.keySet()) {
+                        if (weekdays.get(i)) {
                             weekdayCheck = true;
                             break;
                         }
@@ -309,11 +332,11 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
 
                     // If everything has been filled out, call the listener and send the edited
                     // habit back to the Home class and dismiss the dialog.
-                    if(readyToClose){
+                    if (readyToClose) {
                         User user = new User();
-                        db  =  FirebaseFirestore.getInstance();
+                        db = FirebaseFirestore.getInstance();
                         DocumentReference newHabitRef = db.collection("Habit").document();
-                        listener.onAddPressed(new Habit(newHabitRef.getId(),user.getUser(),habit_title,habit_reason,date, weekdays, privacySetting));
+                        listener.onAddPressed(new Habit(newHabitRef.getId(), user.getUser(), habit_title, habit_reason, date, weekdays, privacySetting));
                         dialog.dismiss();
                     }
                 }

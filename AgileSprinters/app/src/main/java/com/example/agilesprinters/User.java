@@ -1,3 +1,9 @@
+/**
+ * This activity is used when a user is signing up for the app. It takes the user details and
+ * creates an account fo them in the authentication database.
+ *
+ * @author Hari Bheesetti
+ */
 package com.example.agilesprinters;
 
 import android.util.Log;

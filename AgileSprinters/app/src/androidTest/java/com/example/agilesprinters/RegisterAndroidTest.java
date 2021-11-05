@@ -1,5 +1,4 @@
 package com.example.agilesprinters;
-
 import android.widget.EditText;
 
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -44,7 +43,7 @@ public class RegisterAndroidTest {
         tryRegister(R.id.LastName, "");
         tryRegister(R.id.EditTextEmail, "");
         tryRegister(R.id.TextPassword, "");
-        tryRegister(R.id.TextConfirmPassword, "null");
+        tryRegister(R.id.TextConfirmPassword, "");
     }
 
     /**
@@ -88,7 +87,6 @@ public class RegisterAndroidTest {
 
         solo.clickOnButton(solo.getString(R.string.create_account)); //Select register text
         //Asserts that the current activity is the Register Activity. Otherwise, show "Wrong Activity"
-        //assertTrue(solo.waitForText(solo.getString(R.string.userExistsErr), 1, 2000));
         solo.assertCurrentActivity(solo.getString(R.string.wrong_activity), Register.class);
     }
 

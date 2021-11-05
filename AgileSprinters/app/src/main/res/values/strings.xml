@@ -3,7 +3,6 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
-    <string name="create_account">Create Account</string>
     <string name="action_sign_in">Sign in</string>
     <string name="action_register"><u>Click to register</u></string>
 
@@ -18,17 +17,6 @@
     <string name="test">TEST</string>
     <string name="followers_text">Followers</string>
     <string name="following_text">Following</string>
-    <string name="wrong_activity">Wrong Activity</string>
-    <string name="first_test">Test</string>
-    <string name="last_test">User</string>
-    <string name="email_test">test@email.com</string>
-    <string name="password_test">testPassword</string>
-    <string name="email_reset_password">Enter email to send the reset link</string>
-    <string name="reset_password_button">Reset Password</string>
-    <string name="email_sent">Email Sent</string>
-    <string name="password_reset_request">Email Sent</string>
-    <string name="send_email">Send email</string>
-    <string name="password_match">passwords do not match</string>
     <string name="firstNameErr">First name can not be empty</string>
     <string name="lastNameErr">Last name can not be empty</string>
     <string name="passwordErr">password can not be empty</string>
@@ -37,6 +25,34 @@
     <string name="passwordMatchErr" type="id">passwords do not match</string>
     <string name="emptyString">empty</string>
     <string name="userExistsErr">The email address is already in use by another account</string>
-
+    <string name="first_test">Test</string>
+    <string name="last_test">User</string>
+    <string name="email_test">test@email.com</string>
+    <string name="password_test">testPassword</string>
+    <string name="create_account">Create Account</string>
+    <string name="wrong_activity">Wrong Activity</string>
+    <string name="password_reset_request">Reset Password</string>
+    <string name="send_email">Send</string>
+    <string name="email_sent">Email Sent</string>
+    <string name="onFragmentImplementErr">must implement OnFragmentInteractionListener</string>
+    <string name="positionKey">position</string>
+    <string name="uidKey">UID</string>
+    <string name="hidKey">HID</string>
+    <string name="eidKey">EID</string>
+    <string name="datePickerTag">DATE PICKER</string>
+    <string name="AddHabitInstanceFragmentTitle">Add Habit Event</string>
+    <string name="cancelBtnStr">Cancel</string>
+    <string name="saveBtnStr">Save</string>
+    <string name="optCmtLenErr">This field cannot have more than 20 chars</string>
+    <string name="fieldEmptyErr">This field cannot be empty</string>
+    <string name="dateFormatStr">MM/dd/yyyy</string>
+    <string name="currentDateErr">The date has to be today\'s date</string>
+    <string name="mondayStr">MONDAY</string>
+    <string name="tuesdayStr">TUESDAY</string>
+    <string name="wednesdayStr">WEDNESDAY</string>
+    <string name="thursdayStr">THURSDAY</string>
+    <string name="fridayStr">FRIDAY</string>
+    <string name="saturdayStr">SATURDAY</string>
+    <string name="sundayStr">SUNDAY</string>
 
 </resources>

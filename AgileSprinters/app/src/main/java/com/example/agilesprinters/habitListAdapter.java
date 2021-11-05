@@ -22,8 +22,8 @@ public class habitListAdapter extends ArrayAdapter<Habit> {
     private Context mContext;
     private ArrayList<Habit> habits;
 
-    public habitListAdapter(Context context,  ArrayList<Habit> objects) {
-        super(context,0, objects);
+    public habitListAdapter(Context context, ArrayList<Habit> objects) {
+        super(context, 0, objects);
         this.habits = objects;
         this.mContext = context;
     }
@@ -33,7 +33,7 @@ public class habitListAdapter extends ArrayAdapter<Habit> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View view = convertView;
 
-        if(view == null){
+        if (view == null) {
             view = LayoutInflater.from(mContext).inflate(R.layout.home_list_content, parent, false);
         }
 

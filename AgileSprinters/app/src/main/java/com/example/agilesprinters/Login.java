@@ -44,14 +44,16 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
      * this variable contains the edit text of the password field
      */
     private EditText passwordEditText;
-    private Button login;
-    private User user1 = new User();
-
+    /**
+     * this variable contains the current user
+     */
+    private final User currentUser = new User();
 
     /**
      * This function is called when the login activity starts
      * @param savedInstanceState
-     *   a reference to Bundle object that is passed into the onCreate method {@link Bundle }
+     *   a reference to Bundle object that is passed into the onCreate method {@link Bundle } <br>
+     *   if null is passed an exception is thrown
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,15 +68,15 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         auth = FirebaseAuth.getInstance();
 
         // if the register text is clicked
-        register = (TextView)findViewById(R.id.register);
+        register = findViewById(R.id.register);
         register.setOnClickListener(this);
 
         // link the edit text vars to UI
-        emailEditText = (EditText) findViewById(R.id.email);
-        passwordEditText = (EditText) findViewById(R.id.password);
+        emailEditText = findViewById(R.id.email);
+        passwordEditText = findViewById(R.id.password);
 
         // if the login button is clicked
-        loginBtn = (Button) findViewById(R.id.loginBtn);
+        loginBtn = findViewById(R.id.loginBtn);
         loginBtn.setOnClickListener(this);
 
         resetPassword = findViewById(R.id.resetPassword);
@@ -82,11 +84,22 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if ( currentUser != null){
+            //Do anything here which needs to be done after user is set is complete
+            updateUI(currentUser);
+        }
+    }
+
     /**
      * This function handles sign in/ authentication when the user clicks the sign in button,
      * email and password fields must be non-empty
      */
-    private void sendPassReset() {
+    private void sendPassResetAlert() {
 
         AlertDialog.Builder resetDialog = new AlertDialog.Builder(Login.this);
         resetDialog.setTitle(getString(R.string.password_reset_request));
@@ -110,8 +123,13 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         resetDialog.show();
     }
 
-    public void sendPasswordReset(String emailAddress) {
-        // [START send_password_reset]
+    /**
+     * This function sends an email to let the user update their password
+     * @param emailAddress
+     *  Give the email you want to send the email to <br>
+     *      if null is passed, no email is sent {@link String}
+     */
+    private void sendPasswordReset(String emailAddress) {
         FirebaseAuth auth = FirebaseAuth.getInstance();
 
         auth.sendPasswordResetEmail(emailAddress)
@@ -125,7 +143,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                         }
                     }
                 });
-        // [END send_password_reset]
     }
     /**
      * This function handles sign in/ authentication when the user clicks the sign in button,
@@ -168,33 +185,28 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         }
     }
 
-
-
     /**
      * This function directs the user to the home page
      * @param user
-     * Give the firebase user that is logged in {@link FirebaseUser}
+     * Give the firebase user that is logged in, if null is passed {@link FirebaseUser}
      */
     private void updateUI(FirebaseUser user) {
-
         Intent intent = new Intent(Login.this, Home.class);
-
 
         //pass in the unique user ID to home page
         String uId = user.getUid();
-        user1.setUser(uId);
-        intent.putExtra("user", user1);
+        currentUser.setUser(uId);
+        intent.putExtra("user", currentUser);
 
         //go to home page and finish the login activity
         startActivity(intent);
         finish();
     }
 
-
     /**
      * This function handles different cases of view clicks
      * @param v
-     *  Give the view that is clicked {@link View}
+     *  Give the view that is clicked <br> if null is passed nothing happens {@link View}
      */
     @Override
     public void onClick(View v) {
@@ -207,7 +219,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 signIn();
                 break;
             case R.id.resetPassword:
-                sendPassReset();
+                sendPassResetAlert();
                 break;
             default:
                 break;

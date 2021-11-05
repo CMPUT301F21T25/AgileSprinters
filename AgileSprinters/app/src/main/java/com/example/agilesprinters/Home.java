@@ -70,8 +70,6 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             UID = user.getUser();
         }
 
-        System.out.println("User" + UID);
-
         collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
@@ -307,7 +305,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     Log.d(TAG, String.valueOf(doc.getData().get("UID")));
                     if (habit.getHID().matches((String) doc.getData().get("HID"))) {
-                        if(doc.getId() == null){
+                        if (doc.getId() == null) {
                             return;
                         } else {
                             db.collection("HabitEvents")

@@ -20,7 +20,7 @@ import androidx.fragment.app.DialogFragment;
 
 import java.util.Calendar;
 
-public class editHabitEventFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener{
+public class editHabitEventFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
     private int position;
     private EditText optional_comment;
     private TextView input_date;
@@ -52,9 +52,9 @@ public class editHabitEventFragment extends DialogFragment implements DatePicker
 
         //make sure date is empty before setting it to the date picked
         date = "";
-        if(month+1 < 10) date+= "0";
+        if (month + 1 < 10) date += "0";
         date += String.valueOf(month + 1) + "/";
-        if (dayOfMonth < 10 ) date += "0";
+        if (dayOfMonth < 10) date += "0";
         date += String.valueOf(dayOfMonth + "/");
         date += String.valueOf(year);
         input_date.setText(date);
@@ -62,18 +62,18 @@ public class editHabitEventFragment extends DialogFragment implements DatePicker
 
     public interface OnFragmentInteractionListener {
         void onEditSavePressed(HabitInstance instance);
+
         void onDeletePressed(HabitInstance instance);
     }
 
 
     @Override
-    public void onAttach(Context context){
+    public void onAttach(Context context) {
         super.onAttach(context);
 
-        if (context instanceof addHabitEventFragment.OnFragmentInteractionListener){
+        if (context instanceof addHabitEventFragment.OnFragmentInteractionListener) {
             listener = (editHabitEventFragment.OnFragmentInteractionListener) context;
-        }
-        else{
+        } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
@@ -128,11 +128,11 @@ public class editHabitEventFragment extends DialogFragment implements DatePicker
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
 
         final AlertDialog dialog = (AlertDialog) getDialog();
-        if(dialog != null){
+        if (dialog != null) {
             Button positive = (Button) dialog.getButton(Dialog.BUTTON_POSITIVE);
 
             positive.setOnClickListener(new View.OnClickListener() {
@@ -162,8 +162,8 @@ public class editHabitEventFragment extends DialogFragment implements DatePicker
 
                     // If everything has been filled out, call the listener and send the edited
                     // habit back to the Home class and dismiss the dialog.
-                    if(readyToClose){
-                        listener.onEditSavePressed(new HabitInstance(EID,UID,HID,comment, date, Integer.parseInt(duration)));
+                    if (readyToClose) {
+                        listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date, Integer.parseInt(duration)));
                         dialog.dismiss();
                     }
                 }

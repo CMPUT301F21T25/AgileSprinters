@@ -1,3 +1,9 @@
+/**
+ * This activity is used when a user is signing up for the app. It takes the user details and
+ * creates an account fo them in the authentication database.
+ *
+ * @author Hari Bheesetti
+ */
 package com.example.agilesprinters;
 
 import java.io.Serializable;
@@ -31,7 +37,7 @@ public class Habit implements Serializable {
         this.HID = HID;
     }
 
-    public Habit(String HID,String UID, String title, String reason, String dateToStart, HashMap<String,Boolean> weekdays, String privacySetting) {
+    public Habit(String HID, String UID, String title, String reason, String dateToStart, HashMap<String, Boolean> weekdays, String privacySetting) {
         this.UID = UID;
         this.HID = HID;
         this.title = title;
@@ -54,7 +60,7 @@ public class Habit implements Serializable {
         return weekdays;
     }
 
-    public void setWeekdays(HashMap<String,Boolean> weekdays) {
+    public void setWeekdays(HashMap<String, Boolean> weekdays) {
         this.weekdays = weekdays;
     }
 
