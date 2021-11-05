@@ -12,10 +12,6 @@
     <string name="login_failed">"Login failed"</string>
     <string name="userId_text">User Id</string>
     <string name="test">TEST</string>
-    <string name="followers_text">Followers</string>
-    <string name="following_text">Following</string>
-    <string name="first_test">Test</string>
-    <string name="last_test">User</string>
-    <string name="email_test">test@email.com</string>
-    <string name="password_test">testPassword</string>
+    <string name="followers_text">Followers\n0</string>
+    <string name="following_text">Following\n0</string>
 </resources>
