@@ -1,7 +1,6 @@
 package com.example.agilesprinters;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -9,16 +8,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-
-import java.util.Calendar;
 
 /**
  * This class is a fragment allows a user to view all the details of a habit and edit any details
@@ -66,7 +61,7 @@ public class editHabitEventFragment extends DialogFragment{
      * @param context context of the current fragment
      */
     @Override
-    public void onAttach(Context context){
+    public void onAttach(@NonNull Context context){
         super.onAttach(context);
 
         if (context instanceof addHabitEventFragment.OnFragmentInteractionListener){
@@ -81,8 +76,8 @@ public class editHabitEventFragment extends DialogFragment{
     /**
      * This function creates the actual dialog on the screen and listens for user input, returning
      * the information through the listener based on which button is clicked.
-     * @param savedInstanceState
-     * @return
+     * @param savedInstanceState is the reference to the most recent object
+     * @return the dialog of the fragment
      */
     @NonNull
     @Override
@@ -109,19 +104,12 @@ public class editHabitEventFragment extends DialogFragment{
         return builder
                 .setView(view)
                 .setTitle("View/Edit Habit Event")
-                .setNegativeButton("Delete", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        listener.onDeletePressed(habitInstance);
-                    }
-                })
-                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        /* Do not implement anything here in order to override the button
-                         * to only call the listener once all the information required has been
-                         * filled out and display error messages if they have been left blank.
-                         */
-                    }
+                .setNegativeButton("Delete", (dialog, id) -> listener.onDeletePressed(habitInstance))
+                .setPositiveButton("Save", (dialogInterface, i) -> {
+                    /* Do not implement anything here in order to override the button
+                     * to only call the listener once all the information required has been
+                     * filled out and display error messages if they have been left blank.
+                     */
                 }).create();
 
     }
@@ -136,40 +124,37 @@ public class editHabitEventFragment extends DialogFragment{
 
         final AlertDialog dialog = (AlertDialog) getDialog();
         if(dialog != null){
-            Button positive = (Button) dialog.getButton(Dialog.BUTTON_POSITIVE);
+            Button positive = dialog.getButton(Dialog.BUTTON_POSITIVE);
 
-            positive.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // Boolean tracks when the all the fields have been filled out. Will turn to false
-                    // if anything has been left blank.
-                    Boolean readyToClose = true;
+            positive.setOnClickListener(view -> {
+                // Boolean tracks when the all the fields have been filled out. Will turn to false
+                // if anything has been left blank.
+                boolean readyToClose = true;
 
-                    String comment = optional_comment.getText().toString();
-                    String date = input_date.getText().toString();
-                    String duration = input_duration.getText().toString();
+                String comment = optional_comment.getText().toString();
+                String date = input_date.getText().toString();
+                String duration = input_duration.getText().toString();
 
-                    if (optional_comment.length() > 20) {
-                        readyToClose = false;
-                        optional_comment.setError("This field cannot have more than 20 chars");
-                    }
+                if (optional_comment.length() > 20) {
+                    readyToClose = false;
+                    optional_comment.setError("This field cannot have more than 20 chars");
+                }
 
-                    if (date.matches("")) {
-                        readyToClose = false;
-                        input_date.setError("This field cannot be blank");
-                    }
+                if (date.matches("")) {
+                    readyToClose = false;
+                    input_date.setError("This field cannot be blank");
+                }
 
-                    if (duration.matches("")) {
-                        readyToClose = false;
-                        input_duration.setError("This field cannot be blank");
-                    }
+                if (duration.matches("")) {
+                    readyToClose = false;
+                    input_duration.setError("This field cannot be blank");
+                }
 
-                    // If everything has been filled out, call the listener and send the edited
-                    // habit back to the Home class and dismiss the dialog.
-                    if(readyToClose){
-                        listener.onEditSavePressed(new HabitInstance(EID,UID,HID,comment, date, Integer.parseInt(duration)));
-                        dialog.dismiss();
-                    }
+                // If everything has been filled out, call the listener and send the edited
+                // habit back to the Home class and dismiss the dialog.
+                if(readyToClose){
+                    listener.onEditSavePressed(new HabitInstance(EID,UID,HID,comment, date, Integer.parseInt(duration)));
+                    dialog.dismiss();
                 }
             });
         }

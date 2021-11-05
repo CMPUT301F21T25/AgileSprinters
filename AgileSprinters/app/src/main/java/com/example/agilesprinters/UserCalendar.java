@@ -18,11 +18,7 @@ import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.TextView;
 
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
@@ -102,10 +98,8 @@ public class UserCalendar extends AppCompatActivity
         screenSetup();
         completedEventsScreenSetup();
 
-        /**
-         * When a item in the to do events is clicked,
-         * input is taken, a habit event object is created and added to the database
-         */
+        // When a item in the to do events is clicked, input is taken,
+        // a habit event object is created and added to the database
         toDoEventsList.setOnItemClickListener((adapterView, view, i, l) -> {
 
             if (currentDate.isEqual(LocalDate.now())) {
@@ -122,10 +116,8 @@ public class UserCalendar extends AppCompatActivity
             }
         });
 
-        /**
-         * When a item in the completed events is clicked,
-         * updated input is taken, or an event object is deleted
-         */
+        // When a item in the completed events is clicked updated input is taken,
+        // or an event object is deleted
         completedEventsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -138,10 +130,8 @@ public class UserCalendar extends AppCompatActivity
             }
         });
 
-        /**
-         * When the past events button is clicked, it asks for a date input and shows
-         * habits planned for that day and events actually completed
-         */
+        // When the past events button is clicked, it asks for a date input and shows
+        // habits planned for that day and events actually completed
         calendar_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -194,42 +184,33 @@ public class UserCalendar extends AppCompatActivity
     public void screenSetup() {
         setDate();
 
-
-        // get habits to do today (need to use habits collection to do this)
-
         // Gives the day of the week
         String todayDay = currentDate.getDayOfWeek().toString();
 
-        // Get a list of habits
-        // of the user logged in, start date before today
-        // add days properly
+        // Display the habits which are scheduled for the current day (checking date and day)
+        db.collection("Habit").addSnapshotListener((value, error) -> {
+            toDoEvents.clear();
+            toDoEventIds.clear();
+            for(QueryDocumentSnapshot doc: value) {
+                Log.d(TAG, "Habits to do today " + String.valueOf(doc.getData().get("Title")));
 
-        db.collection("Habit").addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                toDoEvents.clear();
-                toDoEventIds.clear();
-                for(QueryDocumentSnapshot doc: value) {
-                    Log.d(TAG, "Habits to do today " + String.valueOf(doc.getData().get("Title")));
+                // Gives the start date
+                LocalDate startDate = LocalDate.parse(doc.getString("Data to Start"), formatter);
+                Map<String, Object> weekdays = (Map<String, Object>) doc.getData().get("Weekdays");
+                HashMap<String,Boolean> weekdays2 = (HashMap<String, Boolean>) doc.getData().get("Weekdays");
+                ArrayList<String> habitDays = getHabitDays(weekdays);
 
-                    // Gives the start date
-                    LocalDate startDate = LocalDate.parse(doc.getString("Data to Start"), formatter);
-                    Map<String, Object> weekdays = (Map<String, Object>) doc.getData().get("Weekdays");
-                    HashMap<String,Boolean> weekdays2 = (HashMap<String, Boolean>) doc.getData().get("Weekdays");
-                    ArrayList<String> habitDays = getHabitDays(weekdays);
-
-                    if (doc.getString("UID").equals(UID)
-                            && (startDate.isBefore(currentDate) || startDate.isEqual(currentDate))
-                            && (habitDays.contains(todayDay))){
-                        Habit newHabit = new Habit(doc.getId(),doc.getString("UID"),doc.getString("Title"), doc.getString("Reason"),
-                                doc.getString("Data to Start"), weekdays2, doc.getString("PrivacySetting"));
-                        toDoEvents.add(newHabit); // Adding habits from Firestore
-                        toDoEventIds.add(doc.getId());
-                    }
+                if (doc.getString("UID").equals(UID)
+                        && (startDate.isBefore(currentDate) || startDate.isEqual(currentDate))
+                        && (habitDays.contains(todayDay))){
+                    Habit newHabit = new Habit(doc.getId(),doc.getString("UID"),doc.getString("Title"), doc.getString("Reason"),
+                            doc.getString("Data to Start"), weekdays2, doc.getString("PrivacySetting"));
+                    toDoEvents.add(newHabit); // Adding habits from Firestore
+                    toDoEventIds.add(doc.getId());
                 }
-
-                toDoEventAdapter.notifyDataSetChanged();
             }
+
+            toDoEventAdapter.notifyDataSetChanged();
         });
         
     }
@@ -239,12 +220,7 @@ public class UserCalendar extends AppCompatActivity
      * according to the habit events retrieved from the database
      */
     public void completedEventsScreenSetup() {
-        //completedEvents.clear();
-        // get completed habits for today (need to use habit instances collection to do this)
-
-        // Get a list of habit events
-        // of the user logged in, on this day
-
+        // Get a list of habit events of the user logged in on the current day
         db.collection("HabitEvents").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -301,18 +277,8 @@ public class UserCalendar extends AppCompatActivity
         db.collection("HabitEvents")
                 .document(selectedHabitInstanceId)
                 .set(data)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully updated!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error updating document", e);
-                    }
-                });
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
 
         completedEventsScreenSetup();
     }
@@ -328,18 +294,8 @@ public class UserCalendar extends AppCompatActivity
         db.collection("HabitEvents")
                 .document(instance.getEID())
                 .delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error deleting document", e);
-                    }
-                });
+                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully deleted!"))
+                .addOnFailureListener(e -> Log.w(TAG, "Error deleting document", e));
 
         completedEventsScreenSetup();
     }
@@ -364,19 +320,13 @@ public class UserCalendar extends AppCompatActivity
             collectionReference
                     .document(instanceId)
                     .set(data)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            // These are a method which gets executed when the task is succeeded
-                            Log. d (TAG, "Data has been added successfully!");
-                        }
+                    .addOnSuccessListener(aVoid -> {
+                        // These are a method which gets executed when the task is succeeded
+                        Log. d (TAG, "Data has been added successfully!");
                     })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            // These are a method which gets executed if there’s any problem
-                            Log. d (TAG, "Data could not be added!" + e.toString());
-                        }
+                    .addOnFailureListener(e -> {
+                        // These are a method which gets executed if there’s any problem
+                        Log. d (TAG, "Data could not be added!" + e.toString());
                     });
         }
     }
@@ -400,10 +350,10 @@ public class UserCalendar extends AppCompatActivity
         String date = "";
 
         if(month+1 < 10) date+= "0";
-        date += String.valueOf(month + 1) + "/";
+        date += (month + 1) + "/";
 
         if (day < 10 ) date += "0";
-        date += String.valueOf(day + "/");
+        date += day + "/";
 
         date += String.valueOf(year);
 

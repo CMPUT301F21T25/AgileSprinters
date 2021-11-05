@@ -1,17 +1,10 @@
 package com.example.agilesprinters;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.DatePicker;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import java.util.Calendar;
@@ -24,8 +17,8 @@ public class datePickerFragment extends DialogFragment {
 
     /**
      * This function creates the dialog screen and listens for the date the user chooses
-     * @param savedInstanceState
-     * @return
+     * @param savedInstanceState is a reference to the most recent object
+     * @return Dialog
      */
     @NonNull
     @Override

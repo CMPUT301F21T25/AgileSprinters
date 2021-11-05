@@ -14,4 +14,5 @@
     <string name="test">TEST</string>
     <string name="followers_text">Followers\n0</string>
     <string name="following_text">Following\n0</string>
+
 </resources>

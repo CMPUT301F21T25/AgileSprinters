@@ -1,7 +1,6 @@
 package com.example.agilesprinters;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * This class represents a habit instance/event

@@ -1,16 +1,12 @@
 package com.example.agilesprinters;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -20,13 +16,11 @@ import androidx.fragment.app.DialogFragment;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 
 /**
  * This class is a dialog fragment that allows the user to add a new habit event.
  */
 public class addHabitEventFragment extends DialogFragment{
-    private int position;
     private String EID;
     private String UID;
     private String HID;
@@ -71,7 +65,7 @@ public class addHabitEventFragment extends DialogFragment{
      * This function attaches the fragment to the activity and keeps track of the context of the
      * fragment so the listener knows what to listen to. Ensures that the proper methods are
      * implemented by the User calendar class.
-     * @param context
+     * @param context is the current screen
      */
     @Override
     public void onAttach(@NonNull Context context) {
@@ -88,7 +82,7 @@ public class addHabitEventFragment extends DialogFragment{
     /**
      * This function creates the actual dialog on the screen and listens for user input, returning
      * the information through the listener based on which button is clicked.
-     * @param savedInstanceState
+     * @param savedInstanceState is a reference to the most recent object
      * @return
      * Returns the Dialog created
      */
@@ -103,7 +97,6 @@ public class addHabitEventFragment extends DialogFragment{
         input_date = view.findViewById(R.id.editText_date);
         input_duration = view.findViewById(R.id.editText_duration);
 
-        position = getArguments().getInt("position");
         UID = getArguments().getString("UID");
         HID = getArguments().getString("HID");
         EID = getArguments().getString("EID");
@@ -135,42 +128,39 @@ public class addHabitEventFragment extends DialogFragment{
 
         final AlertDialog dialog = (AlertDialog) getDialog();
         if(dialog != null){
-            Button positive = (Button) dialog.getButton(Dialog.BUTTON_POSITIVE);
+            Button positive = dialog.getButton(Dialog.BUTTON_POSITIVE);
 
-            positive.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // Boolean tracks when the all the fields have been filled out. Will turn to false
-                    // if anything has been left blank.
-                    Boolean readyToClose = true;
+            positive.setOnClickListener(view -> {
+                // Boolean tracks when the all the fields have been filled out. Will turn to false
+                // if anything has been left blank.
+                boolean readyToClose = true;
 
-                    String comment = optional_comment.getText().toString();
-                    String date_entry = input_date.getText().toString();
-                    String duration = input_duration.getText().toString();
+                String comment = optional_comment.getText().toString();
+                String date_entry = input_date.getText().toString();
+                String duration = input_duration.getText().toString();
 
-                    if (comment.length() > 20) {
-                        readyToClose = false;
-                        optional_comment.setError("This field cannot have more than 20 chars");
-                    }
+                if (comment.length() > 20) {
+                    readyToClose = false;
+                    optional_comment.setError("This field cannot have more than 20 chars");
+                }
 
-                    if (date_entry.matches("")) {
-                        readyToClose = false;
-                        input_date.setError("This field cannot be blank");
-                    }
+                if (date_entry.matches("")) {
+                    readyToClose = false;
+                    input_date.setError("This field cannot be blank");
+                }
 
 
-                    if (duration.matches("")) {
-                        readyToClose = false;
-                        input_duration.setError("This field cannot be blank");
-                    }
+                if (duration.matches("")) {
+                    readyToClose = false;
+                    input_duration.setError("This field cannot be blank");
+                }
 
-                    // If everything has been filled out, call the listener and send the edited
-                    // habit back to the Home class and dismiss the dialog.
-                    if(readyToClose){
-                        listener.onSavePressed(new HabitInstance(EID, UID, HID, comment, date_entry,
-                                Integer.parseInt(duration)));
-                        dialog.dismiss();
-                    }
+                // If everything has been filled out, call the listener and send the edited
+                // habit back to the Home class and dismiss the dialog.
+                if(readyToClose){
+                    listener.onSavePressed(new HabitInstance(EID, UID, HID, comment, date_entry,
+                            Integer.parseInt(duration)));
+                    dialog.dismiss();
                 }
             });
         }

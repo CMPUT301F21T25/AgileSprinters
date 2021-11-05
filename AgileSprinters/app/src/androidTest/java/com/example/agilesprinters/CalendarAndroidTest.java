@@ -113,9 +113,7 @@ public class CalendarAndroidTest {
         assertTrue(solo.waitForText("Walking", 1, 1000));
 
 
-        /**
-         * Adding another habit here
-         */
+        //Adding another habit here
         solo.clickOnView(solo.getView(R.id.add_habit_button));
 
         // wait for add habit fragment to open
