@@ -167,11 +167,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
     @Override
     public void onEditViewCancelPressed(Habit habit) {
-        //original.setWeekdays(habit.getWeekdays());
-        //habitAdapter.notifyDataSetChanged();
-    }
-
-
+        gg
     //onclick for follow and followers
     public void follow(View view) {
     }

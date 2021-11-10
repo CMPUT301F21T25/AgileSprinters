@@ -44,13 +44,16 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
      * this variable contains the edit text of the password field
      */
     private EditText passwordEditText;
-
+    /**
+     * this variable contains the current user
+     */
     private final User currentUser = new User();
 
     /**
      * This function is called when the login activity starts
      * @param savedInstanceState
-     *   a reference to Bundle object that is passed into the onCreate method {@link Bundle }
+     *   a reference to Bundle object that is passed into the onCreate method {@link Bundle } <br>
+     *   if null is passed an exception is thrown
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,9 +123,13 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         resetDialog.show();
     }
 
-
+    /**
+     * This function sends an email to let the user update their password
+     * @param emailAddress
+     *  Give the email you want to send the email to <br>
+     *      if null is passed, no email is sent {@link String}
+     */
     private void sendPasswordReset(String emailAddress) {
-        // [START send_password_reset]
         FirebaseAuth auth = FirebaseAuth.getInstance();
 
         auth.sendPasswordResetEmail(emailAddress)
@@ -136,7 +143,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                         }
                     }
                 });
-        // [END send_password_reset]
     }
     /**
      * This function handles sign in/ authentication when the user clicks the sign in button,
@@ -182,7 +188,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     /**
      * This function directs the user to the home page
      * @param user
-     * Give the firebase user that is logged in {@link FirebaseUser}
+     * Give the firebase user that is logged in, if null is passed {@link FirebaseUser}
      */
     private void updateUI(FirebaseUser user) {
         Intent intent = new Intent(Login.this, Home.class);
@@ -200,7 +206,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     /**
      * This function handles different cases of view clicks
      * @param v
-     *  Give the view that is clicked {@link View}
+     *  Give the view that is clicked <br> if null is passed nothing happens {@link View}
      */
     @Override
     public void onClick(View v) {
