@@ -51,7 +51,8 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
     /**
      * This function creates the UI on the screen and listens for user input
-     * @param savedInstanceState the instance state
+     * @param savedInstanceState
+     *  instance state {@link Bundle}
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,11 +75,9 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             UID = user.getUser();
         }
 
-        System.out.println("User" + UID);
-
-        /**
-         * This is a database listener. Each time the Home page is created, it will read the contents
-         * of the database and put it in our listview.
+        /*
+          This is a database listener. Each time the Home page is created, it will read the contents
+          of the database and put it in our listview.
          */
         collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -103,9 +102,9 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             }
         });
 
-        /**
-         * This is an on item click listener which listens for when a user taps on an item in the
-         * habit list. Once clicked it will open the viewEditHabitFragment
+        /*
+          This is an on item click listener which listens for when a user taps on an item in the
+          habit list. Once clicked it will open the viewEditHabitFragment
          */
         habitList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -116,9 +115,9 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             }
         });
 
-        /**
-         * This is a floating action button which listens for when a user taps it. If tapped it will
-         * begin the addHabitFragment.
+        /*
+          This is a floating action button which listens for when a user taps it. If tapped it will
+          begin the addHabitFragment.
          */
         final FloatingActionButton addButton = findViewById(R.id.add_habit_button);
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -130,9 +129,9 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             }
         });
 
-        /**
-         * This is a long item click listener which overrides the regular item click listener.
-         * When an item is long clicked, it will begin the deleteHabitFragment
+        /*
+          This is a long item click listener which overrides the regular item click listener.
+          When an item is long clicked, it will begin the deleteHabitFragment
          */
         habitList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -152,7 +151,8 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
      * This function passes a habit to be added to the list once the user clicks add on the
      * addHabitFragment dialog fragment
      *
-     * @param habit The habit object created by the addHabitFragment
+     * @param habit
+     *  The habit object created by the addHabitFragment {@link Habit}
      */
     @Override
     public void onAddPressed(Habit habit) {
@@ -163,7 +163,8 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     /**
      * This function passes a habit to be updated once a user clicks Save Changes in the
      * viewEditHabitFragment dialog fragment.
-     * @param habit The habit object changed in the viewEditHabitFragment
+     * @param habit
+     *  The habit object changed in the viewEditHabitFragment {@link Habit}
      */
     @Override
     public void onEditViewSaveChangesPressed(Habit habit) {
@@ -186,10 +187,11 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     /**
      * This method contains the logic for switching screens by selecting an item from the navigation
      * bar.
-     * @param item This is the item selected by the user
+     * @param item
+     *  This is the item selected by the user {@link MenuItem}
      * @return
      * Returns a boolean based on which activity the user is currently in and which item was
-     * clicked.
+     * clicked
      */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -214,14 +216,16 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
             case R.id.forumn:
                 break;
-
+            default:
+                break;
         }
         return false;
     }
 
     /**
      * This function adds a habit to the database.
-     * @param habit The habit that needs to be added to the database.
+     * @param habit
+     *  The habit that needs to be added to the database {@link Habit}
      */
     public void addHabitDatabase(Habit habit) {
         db = FirebaseFirestore.getInstance();
@@ -263,6 +267,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
      * This is a method that updates a habit selected by the user in the database based with the
      * fields entered in the viewEditHabitFragment
      * @param habit
+     *  Give habit to be updated {@link Habit}
      */
     public void updateHabitDatabase(Habit habit) {
         db = FirebaseFirestore.getInstance();
@@ -322,7 +327,8 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
      * This function deletes the habit selected by the user in the list after a user clicks "Yes"
      * in the deleteHabitFragment dialog fragment.
      *
-     * @param position The position of the object clicked in the list.
+     * @param position
+     *  The position of the object clicked in the list.
      */
     @Override
     public void onDeleteHabitYesPressed(int position) {
@@ -333,7 +339,8 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
     /**
      * This method deletes habit events from the database based on the habit object passed to it.
-     * @param habit this is the habit object the user wishes to be deleted
+     * @param habit
+     * this is the habit object the user wishes to be deleted {@link Habit}
      */
     public void deleteHabitInstances(Habit habit) {
         CollectionReference collectionReference = db.collection("HabitEvents");
@@ -369,6 +376,5 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 // from the cloud
             }
         });
-        return;
     }
 }
