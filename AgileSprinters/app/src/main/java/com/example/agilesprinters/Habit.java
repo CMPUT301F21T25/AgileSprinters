@@ -1,10 +1,7 @@
 package com.example.agilesprinters;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * This is an object class called Habit. It is responsible for creating habits and storing their information

@@ -28,7 +28,7 @@ public class deleteHabitFragment extends DialogFragment {
         //Keep track of item the user wishes to delete.
         deleteHabitFragment frag = new deleteHabitFragment();
         Bundle args = new Bundle();
-        args.putInt("position", position);
+        args.putInt(String.valueOf(R.string.POSITION_TEXT), position);
         frag.setArguments(args);
 
         return frag;
@@ -57,7 +57,7 @@ public class deleteHabitFragment extends DialogFragment {
             listener = (deleteHabitFragment.OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + getString(R.string.FRAG_ERROR_MSG));
         }
     }
 
@@ -75,13 +75,13 @@ public class deleteHabitFragment extends DialogFragment {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.delete_habit_fragment, null);
 
         // Get arguments from the bundle
-        int position = getArguments().getInt("position");
+        int position = getArguments().getInt(getString(R.string.POSITION_TEXT));
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         return builder
                 .setView(view)
-                .setNegativeButton("No", null)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getString(R.string.NO_STR), null)
+                .setPositiveButton(getString(R.string.YES_STR), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         listener.onDeleteHabitYesPressed(position);
