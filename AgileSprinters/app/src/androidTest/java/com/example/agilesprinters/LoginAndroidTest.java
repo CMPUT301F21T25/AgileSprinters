@@ -36,10 +36,9 @@ public class LoginAndroidTest {
 
     /**
      * Runs before all tests and creates solo instance.
-     * @throws Exception
      */
     @Before
-    public void setUp() throws Exception{
+    public void setUp() {
         solo = new Solo(InstrumentationRegistry.getInstrumentation(),rule.getActivity());
     }
 
@@ -56,9 +55,9 @@ public class LoginAndroidTest {
         //click the login button when email and password fields are empty
         trySignIn(R.id.email, "", solo.getString(R.string.empty_email));
         //enter text into email then click the login button while the password field is empty
-        trySignIn(R.id.email, solo.getString(R.string.emptyString), solo.getString(R.string.empty_password));
+        trySignIn(R.id.email, solo.getString(R.string.empty_string), solo.getString(R.string.empty_password));
         //enter text into password then click the login button while the info given does not match a user
-        trySignIn(R.id.password, solo.getString(R.string.emptyString), solo.getString(R.string.login_failed));
+        trySignIn(R.id.password, solo.getString(R.string.empty_string), solo.getString(R.string.login_failed));
     }
 
     /**
@@ -103,10 +102,9 @@ public class LoginAndroidTest {
 
     /**
      * Close activity after each test
-     * @throws Exception
      */
     @After
-    public void tearDown() throws Exception{
+    public void tearDown() {
         solo.finishOpenedActivities();
     }
 
