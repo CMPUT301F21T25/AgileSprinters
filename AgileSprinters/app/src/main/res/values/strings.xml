@@ -5,7 +5,6 @@
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in</string>
     <string name="action_register"><u>Click to register</u></string>
-
     <string name="reset_password"><u>Reset password</u></string>
     <string name="welcome">"Welcome !"</string>
     <string name="invalid_username">Not a valid username</string>
@@ -36,9 +35,6 @@
     <string name="email_sent">Email Sent</string>
     <string name="onFragmentImplementErr">must implement OnFragmentInteractionListener</string>
     <string name="positionKey">position</string>
-    <string name="uidKey">UID</string>
-    <string name="hidKey">HID</string>
-    <string name="eidKey">EID</string>
     <string name="datePickerTag">DATE PICKER</string>
     <string name="AddHabitInstanceFragmentTitle">Add Habit Event</string>
     <string name="cancelBtnStr">Cancel</string>
@@ -56,4 +52,23 @@
     <string name="sundayStr">SUNDAY</string>
     <string name="orangeHexCode">#e27c65</string>
     <string name="greyHexCode">#808080</string>
+    <string name="currentUser">user</string>
+    <string name="habitTitle">Title</string>
+    <string name="habitReason">Reason</string>
+    <string name="habitStartDate">Date to Start</string>
+    <string name="habitWeekdays">Weekdays</string>
+    <string name="habitPrivacySetting">PrivacySetting</string>
+    <string name="HID">HID</string>
+    <string name="UID">UID</string>
+    <string name="EID">EID</string>
+    <string name="habit">Habit</string>
+    <string name="HabitEvents">HabitEvents</string>
+    <string name="delDocErr">Error deleting document</string>
+    <string name="delDocSuccess">DocumentSnapshot successfully deleted!</string>
+    <string name="dataAddSuccess">Data has been added successfully!</string>
+    <string name="dataAddErr">Data could not be added!</string>
+    <string name="delFrag">DELETE</string>
+    <string name="addFrag">ADD</string>
+    <string name="viewEditFrag">VIEW/EDIT</string>
+    <string name="dateStarted">\"  Date Started: \"</string>
 </resources>
