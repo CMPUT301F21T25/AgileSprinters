@@ -11,6 +11,6 @@
         android:layout_margin="16dp"
         android:textSize="20sp"
         android:ems="10"
-        android:text="Would you like to delete this habit and all it's corresponding events?"/>
+        android:text="@string/DELETE_HABIT_CONFIRM_STR"/>
 
 </LinearLayout>

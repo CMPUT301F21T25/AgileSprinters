@@ -70,4 +70,8 @@
     <string name="ADD_HABIT_FRAG_TITLE">Add Habit</string>
     <string name="ADD_BTN_STR">Add</string>
     <string name="HABIT_COLLECTION_PATH">Habit</string>
+    <string name="TITLE_STR">Title</string>
+    <string name="REASON_STR">Reason</string>
+    <string name="DELETE_HABIT_CONFIRM_STR">Would you like to delete this habit and all it\'s corresponding events?</string>
+    <string name="RED_HEX_CODE">#ff0000</string>
 </resources>
