@@ -167,7 +167,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
     @Override
     public void onEditViewCancelPressed(Habit habit) {
-        gg
+    }
     //onclick for follow and followers
     public void follow(View view) {
     }
