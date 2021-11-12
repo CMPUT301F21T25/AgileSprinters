@@ -1,7 +1,23 @@
+/**
+ * This activity is used when a user is signing up for the app. It takes the user details and
+ * creates an account fo them in the authentication database.
+ *
+ * @author Hari Bheesetti
+ */
 package com.example.agilesprinters;
+
+import android.util.Log;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.io.Serializable;
 
+/**
+ * This is an object class for a user called User. It is responsible for storing user information.
+ *
+ * @author Hari Bheesetti
+ */
 public class User implements Serializable {
 
     private String userID;

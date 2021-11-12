@@ -14,12 +14,15 @@ import androidx.fragment.app.DialogFragment;
 
 /**
  * This class is a fragment that asks the user if they wish to delete a habit and all of its events.
+ *
+ * @author Hannah Desmarais
  */
 public class deleteHabitFragment extends DialogFragment {
     private deleteHabitFragment.OnFragmentInteractionListener listener;
 
     /**
      * This function saves the position sent to the fragment for future manipulation
+     *
      * @param position is the item position that was tapped within the list
      * @return returns the fragment with the bundled parameters
      */
@@ -45,16 +48,16 @@ public class deleteHabitFragment extends DialogFragment {
      * This function attaches the fragment to the activity and keeps track of the context of the
      * fragment so the listener knows what to listen to. Ensures that the proper methods are
      * implemented by the Home class.
+     *
      * @param context context of the current fragment
      */
     @Override
-    public void onAttach(Context context){
+    public void onAttach(Context context) {
         super.onAttach(context);
 
-        if (context instanceof deleteHabitFragment.OnFragmentInteractionListener){
+        if (context instanceof deleteHabitFragment.OnFragmentInteractionListener) {
             listener = (deleteHabitFragment.OnFragmentInteractionListener) context;
-        }
-        else{
+        } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
@@ -63,6 +66,7 @@ public class deleteHabitFragment extends DialogFragment {
     /**
      * This function creates the actual dialog on the screen and listens for user input, returning
      * the information through the listener based on which button is clicked.
+     *
      * @param savedInstanceState
      * @return
      */

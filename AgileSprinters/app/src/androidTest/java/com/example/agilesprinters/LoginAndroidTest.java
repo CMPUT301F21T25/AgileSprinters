@@ -16,14 +16,16 @@ import org.junit.Test;
 
 /**
  * Test class for Login Activity. All the UI tests are written here. Robotium test framework is
- used.
- @author Leen Alzebdeh
- The tests being run are:
-    1. checkEmptySignIn: Tests that the activity correctly handles empty email/ password fields (throws a message) <br>
- then checks handling of information that does not match any user.
-    2. correctInfoTest: enters the information of a user that exists and ensures the activity signs the user in correctly. <br>
- Note: There is no dedicated unit test class for the login activity as the Android test class is sufficient for <br>
-    what needs to be checked.
+ *  used.
+ *  @author Leen Alzebdeh
+ *  The tests being run are:
+ *  1. checkEmptySignIn: Tests that the activity correctly handles empty email/ password fields (throws a message) <br>
+ *  then checks handling of information that does not match any user.
+ *  2. correctInfoTest: enters the information of a user that exists and ensures the activity signs the user in correctly. <br>
+ *  Note: There is no dedicated unit test class for the login activity as the Android test class is sufficient for <br>
+ *  what needs to be checked.
+ *
+ *  Before running the test cache and the storage in the app info needs to be cleared.
  */
 public class LoginAndroidTest {
     private Solo solo;
@@ -48,7 +50,7 @@ public class LoginAndroidTest {
      */
     @Test
     public void checkEmptySignIn() {
-        //Asserts that the current activity is the Login Activity. Otherwise, show “Wrong Activity”
+        //Asserts that the current activity is the Login Activity. Otherwise, show "Wrong Activity"
         solo.assertCurrentActivity(solo.getString(R.string.wrong_activity), Login.class);
 
         //click the login button when email and password fields are empty
@@ -81,6 +83,7 @@ public class LoginAndroidTest {
 
     /**
      * Function registers a test user then tests if firebase can login a user that already exists successfully
+     * Need to cache before running the test
      */
     @Test
     public void correctInfoTest(){
@@ -91,16 +94,17 @@ public class LoginAndroidTest {
         solo.enterText((EditText) solo.getView(R.id.password), solo.getString(R.string.password_test));
         solo.clickOnButton(signInStr);  //click the login button
 
-        //Asserts that the current activity is the Login Activity. Otherwise, show “Wrong Activity”
+        //Asserts that the current activity is the Login Activity. Otherwise, show "Wrong Activity"
         solo.assertCurrentActivity(solo.getString(R.string.wrong_activity), Home.class);
         assertTrue(solo.waitForLogMessage("signInWithEmail:success", 2000));
     }
 
 
-        /**
-         * Close activity after each test
-         * @throws Exception
-         */
+
+    /**
+     * Close activity after each test
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception{
         solo.finishOpenedActivities();

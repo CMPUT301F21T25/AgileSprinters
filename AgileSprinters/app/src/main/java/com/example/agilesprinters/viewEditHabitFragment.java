@@ -17,17 +17,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
  * This class is a fragment allows a user to view all the details of a habit and edit any details
- * they wish to change.
+ * they wish to change.There is a bug in the viewEditHabitFragment. If a user presses buttons for
+ * the days of the week and then presses cancel, the changes do not get made to the habit or the
+ * database but if the same object is the list is pressed again, the buttons are still colored with
+ * the buttons pressed before hitting cancel. This will be fixed by the final checkpoint.
+ *
+ * @author Hannah Desmarais and Hari Bheesetti
  */
-public class viewEditHabitFragment extends DialogFragment{
+public class viewEditHabitFragment extends DialogFragment {
     private int position;
     private String date;
     private EditText habitTitle;
@@ -43,7 +45,7 @@ public class viewEditHabitFragment extends DialogFragment{
     private Button saturday;
     private Spinner privacy;
     private ArrayList<String> originalWeekdays;
-    private HashMap<String,Boolean> weekdays;
+    private HashMap<String, Boolean> weekdays;
     private viewEditHabitFragment.OnFragmentInteractionListener listener;
     private String HID;
     private String UID;
@@ -70,23 +72,23 @@ public class viewEditHabitFragment extends DialogFragment{
      */
     public interface OnFragmentInteractionListener {
         void onEditViewSaveChangesPressed(Habit habit);
-        void onEditViewCancelPressed(Habit habit);
+        void onEditViewCancelPressed();
     }
 
     /**
      * This function attaches the fragment to the activity and keeps track of the context of the
      * fragment so the listener knows what to listen to. Ensures that the proper methods are
      * implemented by the Home class.
+     *
      * @param context context of the current fragment
      */
     @Override
-    public void onAttach(Context context){
+    public void onAttach(Context context) {
         super.onAttach(context);
 
-        if (context instanceof addHabitFragment.OnFragmentInteractionListener){
+        if (context instanceof addHabitFragment.OnFragmentInteractionListener) {
             listener = (viewEditHabitFragment.OnFragmentInteractionListener) context;
-        }
-        else{
+        } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
@@ -95,6 +97,7 @@ public class viewEditHabitFragment extends DialogFragment{
     /**
      * This function creates the actual dialog on the screen and listens for user input, returning
      * the information through the listener based on which button is clicked.
+     *
      * @param savedInstanceState
      * @return
      */
@@ -137,126 +140,41 @@ public class viewEditHabitFragment extends DialogFragment{
 
 
         // Make sure spinner for privacy settings is set to the correct option
-        if(habit.getPrivacySetting().equals("Private")){
+        if (habit.getPrivacySetting().equals("Private")) {
             privacy.setSelection(1);
         }
+        // Array with all the Edit buttons for weekdays
+        Button[]  weekdayEditButtonArray = new Button[]{sunday, monday, tuesday, wednesday, thursday, friday, saturday};
+        // Array with all the string values for weekdays
+        String[] weekdayStrArray = new String[]{ getString(R.string.mondayStr), getString(R.string.tuesdayStr),
+                getString(R.string.wednesdayStr), getString(R.string.thursdayStr), getString(R.string.fridayStr),
+                getString(R.string.saturdayStr), getString(R.string.sundayStr)};
 
         // Set weekday buttons to proper colors based on the habit object passed in
         // and initialize the trackers for buttons pressed
-        if(weekdays.get("SUNDAY")) {
-            sunday.setBackgroundColor(Color.parseColor("#e27c65"));
-        }
-        if(weekdays.get("MONDAY")) {
-            monday.setBackgroundColor(Color.parseColor("#e27c65"));
-        }
-        if(weekdays.get("TUESDAY")) {
-            tuesday.setBackgroundColor(Color.parseColor("#e27c65"));
-        }
-        if(weekdays.get("WEDNESDAY")) {
-            wednesday.setBackgroundColor(Color.parseColor("#e27c65"));
-        }
-        if(weekdays.get("THURSDAY")) {
-            thursday.setBackgroundColor(Color.parseColor("#e27c65"));
-        }
-        if(weekdays.get("FRIDAY")) {
-            friday.setBackgroundColor(Color.parseColor("#e27c65"));
-        }
-        if(weekdays.get("SATURDAY")) {
-            saturday.setBackgroundColor(Color.parseColor("#e27c65"));
+        for(int i = 0; i < weekdayStrArray.length; i++){
+            if(weekdays.get(weekdayStrArray[i])) {
+                weekdayEditButtonArray[i].setBackgroundColor(Color.parseColor(getString(R.string.orangeHexCode)));
+            }
         }
 
         //Set on click listeners for all weekday buttons
-        sunday.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(weekdays.get("SUNDAY") == false){
-                    sunday.setBackgroundColor(Color.parseColor("#e27c65"));
-                    weekdays.replace("SUNDAY", false, true);
+        for( int i = 0; i < weekdayEditButtonArray.length; i++){
+            int finalI = i;
+            int finalI1 = i;
+            weekdayEditButtonArray[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (weekdays.get(weekdayStrArray[finalI1]) == false) {
+                        weekdayEditButtonArray[finalI].setBackgroundColor(Color.parseColor(getString(R.string.orangeHexCode)));
+                        weekdays.replace(weekdayStrArray[finalI1], false, true);
+                    } else {
+                        weekdayEditButtonArray[finalI].setBackgroundColor(Color.parseColor(getString(R.string.greyHexCode)));
+                        weekdays.replace(weekdayStrArray[finalI1], true, false);
+                    }
                 }
-                else{
-                    sunday.setBackgroundColor(Color.parseColor("#808080"));
-                    weekdays.replace("SUNDAY", true, false);
-                }
-            }
-        });
-
-        monday.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (weekdays.get("MONDAY") == false){
-                    monday.setBackgroundColor(Color.parseColor("#e27c65"));
-                    weekdays.replace("MONDAY", false, true);
-                } else {
-                    monday.setBackgroundColor(Color.parseColor("#808080"));
-                    weekdays.replace("MONDAY", true, false);
-                }
-            }
-        });
-
-        tuesday.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (weekdays.get("TUESDAY") == false){
-                    tuesday.setBackgroundColor(Color.parseColor("#e27c65"));
-                    weekdays.replace("TUESDAY", false, true);
-                } else {
-                    tuesday.setBackgroundColor(Color.parseColor("#808080"));
-                    weekdays.replace("TUESDAY", true, false);
-                }
-            }
-        });
-
-        wednesday.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (weekdays.get("WEDNESDAY") == false){
-                    wednesday.setBackgroundColor(Color.parseColor("#e27c65"));
-                    weekdays.replace("WEDNESDAY", false, true);
-                } else {
-                    wednesday.setBackgroundColor(Color.parseColor("#808080"));
-                    weekdays.replace("WEDNESDAY", true, false);
-                }
-            }
-        });
-
-        thursday.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (weekdays.get("THURSDAY") == false){
-                    thursday.setBackgroundColor(Color.parseColor("#e27c65"));
-                    weekdays.replace("THURSDAY", false, true);
-                } else {
-                    thursday.setBackgroundColor(Color.parseColor("#808080"));
-                    weekdays.replace("THURSDAY", true, false);
-                }
-            }
-        });
-
-        friday.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (weekdays.get("FRIDAY") == false){
-                    friday.setBackgroundColor(Color.parseColor("#e27c65"));
-                    weekdays.replace("FRIDAY", false, true);
-                } else {
-                    friday.setBackgroundColor(Color.parseColor("#808080"));
-                    weekdays.replace("FRIDAY", true, false);
-                }
-            }
-        });
-
-        saturday.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (weekdays.get("SATURDAY") == false){
-                    saturday.setBackgroundColor(Color.parseColor("#e27c65"));
-                    weekdays.replace("SATURDAY", false, true);
-                } else {
-                    saturday.setBackgroundColor(Color.parseColor("#808080"));
-                    weekdays.replace("SATURDAY", true, false);
-                }
-            }
-        });
+            });
+        }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         return builder
@@ -274,7 +192,7 @@ public class viewEditHabitFragment extends DialogFragment{
                         /* Do not implement anything here in order to override the button
                          * to only call the listener once all the information required has been
                          * filled out and display error messages if they have been left blank.
-                        */
+                         */
                     }
                 }).create();
 
@@ -285,11 +203,11 @@ public class viewEditHabitFragment extends DialogFragment{
      * when all requirements have been met.
      */
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
 
         final AlertDialog dialog = (AlertDialog) getDialog();
-        if(dialog != null){
+        if (dialog != null) {
             Button positive = (Button) dialog.getButton(Dialog.BUTTON_POSITIVE);
 
             positive.setOnClickListener(new View.OnClickListener() {
@@ -316,8 +234,8 @@ public class viewEditHabitFragment extends DialogFragment{
                     }
 
                     Boolean weekdayCheck = false;
-                    for(String i : weekdays.keySet()){
-                        if (weekdays.get(i)){
+                    for (String i : weekdays.keySet()) {
+                        if (weekdays.get(i)) {
                             weekdayCheck = true;
                             break;
                         }
@@ -329,8 +247,8 @@ public class viewEditHabitFragment extends DialogFragment{
 
                     // If everything has been filled out, call the listener and send the edited
                     // habit back to the Home class and dismiss the dialog.
-                    if(readyToClose){
-                        listener.onEditViewSaveChangesPressed(new Habit(HID,UID,habit_title,habit_reason,date, weekdays, privacySetting));
+                    if (readyToClose) {
+                        listener.onEditViewSaveChangesPressed(new Habit(HID, UID, habit_title, habit_reason, date, weekdays, privacySetting));
                         dialog.dismiss();
                     }
                 }

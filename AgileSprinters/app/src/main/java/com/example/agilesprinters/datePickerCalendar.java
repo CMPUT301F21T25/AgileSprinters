@@ -18,11 +18,14 @@ import java.util.Calendar;
 
 /**
  * This class is a dialog fragment that allows a user to choose a date to begin a habit
+ *
+ * @author Riyaben Patel
  */
 public class datePickerCalendar extends DialogFragment {
 
     /**
      * This function creates the dialog screen and listens for the date the user chooses
+     *
      * @param savedInstanceState
      * @return
      */
