@@ -288,11 +288,12 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
     /**
      * This method puts the given habit's information (UID, title, reason, privacy setting, start date, weekdays) <br>
-     *     into a hashmap that is passed to the database
-     * @param habit     Give the habit whose info will be put into the hashmap {@link Habit}
-     * @return      hashmap to be passed to database {@link HashMap}
+     * into a hashmap that is passed to the database
+     *
+     * @param habit Give the habit whose info will be put into the hashmap {@link Habit}
+     * @return hashmap to be passed to database {@link HashMap}
      */
-    private HashMap<String, Object> putHabitDatababse(Habit habit){
+    private HashMap<String, Object> putHabitDatababse(Habit habit) {
         HashMap<String, Object> habitData = new HashMap<>();
         habitData.put(getString(R.string.UID), UID);
         habitData.put(getString(R.string.habitTitle), habit.getTitle());

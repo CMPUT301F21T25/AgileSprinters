@@ -18,8 +18,8 @@ import java.util.ArrayList;
  * @author Hannah Desmarais
  */
 public class habitListAdapter extends ArrayAdapter<Habit> {
-    private Context mContext;
-    private ArrayList<Habit> habitArrayList;
+    private final Context mContext;
+    private final ArrayList<Habit> habitArrayList;
 
     /**
      * This function initializes the array list of habits and the context of the screen.
