@@ -74,7 +74,7 @@
         app:layout_constraintTop_toBottomOf="@id/habit_list"
         app:srcCompat="@android:drawable/ic_input_add"
         tools:ignore="SpeakableTextPresentCheck"
-        android:contentDescription="TODO" />
+        android:contentDescription="@string/addhabitBtn" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"

@@ -71,4 +71,5 @@
     <string name="addFrag">ADD</string>
     <string name="viewEditFrag">VIEW/EDIT</string>
     <string name="dateStarted">\"  Date Started: \"</string>
+    <string name="addhabitBtn">addHabitBtn</string>
 </resources>
