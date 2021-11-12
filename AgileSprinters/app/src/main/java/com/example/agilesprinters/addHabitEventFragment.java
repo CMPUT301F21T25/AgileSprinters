@@ -100,9 +100,9 @@ public class addHabitEventFragment extends DialogFragment{
         input_date = view.findViewById(R.id.editText_date);
         input_duration = view.findViewById(R.id.editText_duration);
 
-        UID = getArguments().getString(getString(R.string.uidKey));
-        HID = getArguments().getString(getString(R.string.hidKey));
-        EID = getArguments().getString(getString(R.string.eidKey));
+        UID = getArguments().getString(getString(R.string.UID));
+        HID = getArguments().getString(getString(R.string.HID));
+        EID = getArguments().getString(getString(R.string.EID));
 
         LocalDate currentDate = LocalDate.now();
         input_date.setText(currentDate.format(formatter));
