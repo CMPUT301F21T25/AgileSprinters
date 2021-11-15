@@ -155,9 +155,9 @@ public class UserCalendar extends AppCompatActivity
      * @return Return a ArrayList of strings
      */
     public ArrayList<String> getHabitDays(Map<String, Object> weekdays) {
-        String[] days = new String[]{getString(R.string.mondayStr), getString(R.string.tuesdayStr),
-                getString(R.string.wednesdayStr), getString(R.string.thursdayStr), getString(R.string.fridayStr),
-                getString(R.string.saturdayStr), getString(R.string.sundayStr)};
+        String[] days = new String[]{getString(R.string.MONDAY_STR), getString(R.string.TUESDAY_STR),
+                getString(R.string.WEDNESDAY_STR), getString(R.string.THURSDAY_STR), getString(R.string.FRIDAY_STR),
+                getString(R.string.SATURDAY_STR), getString(R.string.SUNDAY_STR)};
         ArrayList<String> habitDays = new ArrayList<>();
 
         for (String day : days) {
