@@ -3,6 +3,8 @@ import java.util.ArrayList;
 import java.util.List;
 /**
  * This is a class that keeps track of a list of habit instance objects
+ *
+ * @author Sai Rasazna Ajerla
  */
 public class HabitInstanceList {
     private final List<HabitInstance> instances = new ArrayList<>();

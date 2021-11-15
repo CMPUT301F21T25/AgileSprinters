@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 /**
  * This class represents a habit instance/event
+ *
+ * @author Riyaben Patel
  */
 public class HabitInstance implements Serializable {
     private String EID; // self ID

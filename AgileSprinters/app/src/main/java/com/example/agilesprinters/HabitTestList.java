@@ -7,6 +7,8 @@ import java.util.List;
 /**
  * This class is specifically for testing as testing with the firestore was not working. It tracks
  * and modifies a list of habits.
+ *
+ * @author Hannah Desmarais
  */
 public class HabitTestList {
     private ArrayList<Habit> habitList = new ArrayList<>();

@@ -22,7 +22,12 @@ import java.util.HashMap;
 
 /**
  * This class is a fragment allows a user to view all the details of a habit and edit any details
- * they wish to change.
+ * they wish to change.There is a bug in the viewEditHabitFragment. If a user presses buttons for
+ * the days of the week and then presses cancel, the changes do not get made to the habit or the
+ * database but if the same object is the list is pressed again, the buttons are still colored with
+ * the buttons pressed before hitting cancel. This will be fixed by the final checkpoint.
+ *
+ * @author Hannah Desmarais and Hari Bheesetti
  */
 public class viewEditHabitFragment extends DialogFragment {
     private int position;

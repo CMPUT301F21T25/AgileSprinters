@@ -13,6 +13,11 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.io.Serializable;
 
+/**
+ * This is an object class for a user called User. It is responsible for storing user information.
+ *
+ * @author Hari Bheesetti
+ */
 public class User implements Serializable {
 
     private String userID;

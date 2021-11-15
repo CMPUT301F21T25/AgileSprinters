@@ -18,6 +18,8 @@ import androidx.fragment.app.DialogFragment;
 /**
  * This class is a fragment allows a user to view all the details of a habit and edit any details
  * they wish to change.
+ *
+ * @author Sai Rasazna Ajerla and Riyaben Patel
  */
 public class editHabitEventFragment extends DialogFragment{
     private EditText optional_comment;

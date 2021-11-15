@@ -23,6 +23,7 @@ import org.junit.runners.MethodSorters;
  * and the cache must be cleared between each for them to work due to the app automatically going
  * to the home page after a single sign in on the device.
  *
+ * @author Hannah Desmarais
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class homeIntentTest {

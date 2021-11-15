@@ -8,6 +8,8 @@ import java.util.HashMap;
 
 /**
  * This is a class which tests the Habit object class
+ *
+ * @author Hannah Desmarais
  */
 public class habitUnitTest {
     private String UID = "23456789";

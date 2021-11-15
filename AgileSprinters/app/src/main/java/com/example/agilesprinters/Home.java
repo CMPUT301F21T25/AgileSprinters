@@ -33,6 +33,8 @@ import java.util.HashMap;
  * may click the floating button to add a habit, tap on a habit to edit or view a habit, or long
  * click on a habit to delete it. There is a navigation bar on the bottom that the user may click
  * to go to either calendar, forum, or notifications.
+ *
+ * @author Hannah Desmarais, Hari Bheesetti, and Gurick Kooner
  */
 public class Home extends AppCompatActivity implements addHabitFragment.OnFragmentInteractionListener,
         viewEditHabitFragment.OnFragmentInteractionListener, BottomNavigationView.OnNavigationItemSelectedListener,
@@ -103,7 +105,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
         /**
          * This is an on item click listener which listens for when a user taps on an item in the
-         * habit list. nce clicked it will open the viewEditHabitFragment
+         * habit list. Once clicked it will open the viewEditHabitFragment
          */
         habitList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

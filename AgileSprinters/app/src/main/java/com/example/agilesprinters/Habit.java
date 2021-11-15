@@ -4,7 +4,10 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 /**
- * This is an object class called Habit. It is responsible for creating habits and storing their information
+ * This is an object class called Habit. It is responsible for creating habits and storing their
+ * information
+ *
+ * @author Hannah Desmarais and Hari Bheesetti
  */
 public class Habit implements Serializable {
     private String UID;
