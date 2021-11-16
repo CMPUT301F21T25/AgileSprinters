@@ -1,10 +1,11 @@
 package com.example.agilesprinters;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * This class represents a habit instance/event
+ *
+ * @author Riyaben Patel
  */
 public class HabitInstance implements Serializable {
     private String EID; // self ID
@@ -41,40 +42,99 @@ public class HabitInstance implements Serializable {
         this.duration = duration;
     }
 
-    // Getters and setters
+    /**
+     * This function is used to get the self ID of the instance
+     * @return
+     *  returns the self ID as a string
+     */
     public String getEID() {
         return EID;
     }
 
+    /**
+     * This function is used to get the user ID of the instance
+     * @return
+     *  returns the user ID as a string
+     */
     public String getUID() {
         return UID;
     }
 
+    /**
+     * This function is used to get the habit ID of the instance
+     * @return
+     *  returns the habit ID as a string
+     */
     public String getHID() {
         return HID;
     }
 
+    /**
+     * This function is used to get the optional comment entered in habit event
+     * @return
+     *  returns the optional comment as a string
+     */
     public String getOpt_comment() {
         return opt_comment;
     }
 
+    /**
+     * This function is used to get the date on which the event happened
+     * @return
+     *  returns the event date as a string
+     */
     public String getDate() {
         return date;
     }
 
+    /**
+     * This function is used to set the date of the event
+     */
     public void setDate(String date) {
         this.date = date;
     }
 
+    /**
+     * This function is used to get the duration of the event
+     * @return
+     *  returns the event duration as a int
+     */
     public int getDuration() {
         return duration;
     }
 
+    /**
+     * This function is used to set the comment for the event
+     */
     public void setOpt_comment(String opt_comment) {
         this.opt_comment = opt_comment;
     }
 
+    /**
+     * This function is used to set the duration of the event
+     */
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    /**
+     * This function is used to set the self ID of the instance
+     */
+    public void setEID(String EID) {
+        this.EID = EID;
+    }
+
+    /**
+     * This function is used to set the user ID of the instance
+     */
+    public void setUID(String UID) {
+        this.UID = UID;
+    }
+
+    /**
+     * This function is used to set the habit ID of the instance
+     */
+    public void setHID(String HID) {
+        this.HID = HID;
     }
 }

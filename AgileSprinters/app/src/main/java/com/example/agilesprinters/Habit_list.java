@@ -7,6 +7,8 @@ import java.util.List;
 
 /**
  * This is a class that keeps track of a list of habit objects
+ *
+ * @author Sai Rasazna Ajerla
  */
 public class Habit_list {
     private final List<Habit> habits = new ArrayList<>();

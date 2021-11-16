@@ -7,6 +7,8 @@ import java.util.HashMap;
 
 /**
  * This class provides testing for the calendar activity
+ *
+ * @author Sai Rasazna Ajerla
  */
 class CalendarUnitTest {
     /**

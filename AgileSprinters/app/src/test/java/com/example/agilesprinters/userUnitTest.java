@@ -5,7 +5,9 @@ import static org.junit.Assert.assertEquals;
 import org.junit.jupiter.api.Test;
 
 /**
- * This is a test class which tests the methods within the User object class
+ * This is a test class which tests the methods within the User object class.
+ *
+ * @author Hannah Desmarais
  */
 public class userUnitTest {
     private String UID = "TEST";

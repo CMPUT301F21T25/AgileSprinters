@@ -1,14 +1,18 @@
 package com.example.agilesprinters;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.Assert.assertTrue;
+
 import org.junit.jupiter.api.Test;
+
 import java.util.HashMap;
 
 /**
  * This class provides unit testing for a mock habit list. We tried to get this to work with the
  * database but could not figure out how
+ *
+ * @author Hannah Desmarais
  */
 public class homeUnitTest {
     /**

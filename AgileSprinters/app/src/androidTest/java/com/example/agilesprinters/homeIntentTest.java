@@ -4,7 +4,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
-import android.view.View;
 import android.widget.EditText;
 
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -14,14 +13,19 @@ import com.robotium.solo.Solo;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 /**
  * This class provides testing for the home activity. Please note that tests must be ran individually
  * and the cache must be cleared between each for them to work due to the app automatically going
  * to the home page after a single sign in on the device.
+ *
+ * @author Hannah Desmarais
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class homeIntentTest {
     private Solo solo;
 
@@ -55,7 +59,7 @@ public class homeIntentTest {
      * @throws Exception
      */
     @Test
-    public void start() throws Exception{
+    public void stage1_start() throws Exception{
         Activity activity = rule.getActivity();
     }
 
@@ -63,12 +67,12 @@ public class homeIntentTest {
      * This test will check to make sure that when a habit is added it shows up in the list
      */
     @Test
-    public void checkHabitList(){
+    public void stage2_checkHabitList(){
         //Login to test account
         solo.assertCurrentActivity("Wrong Activity", Login.class);
         solo.enterText((EditText) solo.getView(R.id.email), "test@email.com");
         solo.enterText((EditText) solo.getView(R.id.password), "testPassword");
-        solo.clickOnView(solo.getView(R.id.login));
+        solo.clickOnView(solo.getView(R.id.loginBtn));
 
         //checks to make sure the activity has switched to the Home activity
         solo.assertCurrentActivity("Wrong Activity", Home.class);
@@ -141,12 +145,12 @@ public class homeIntentTest {
      * This test will make sure that a habit can be edited and the edited version will show in the list
      */
     @Test
-    public void checkEditViewList(){
+    public void stage3_heckEditViewList(){
         //Login to test account
         solo.assertCurrentActivity("Wrong Activity", Login.class);
         solo.enterText((EditText) solo.getView(R.id.email), "test@email.com");
         solo.enterText((EditText) solo.getView(R.id.password), "testPassword");
-        solo.clickOnView(solo.getView(R.id.login));
+        solo.clickOnView(solo.getView(R.id.loginBtn));
 
         solo.assertCurrentActivity("Wrong Activity", Home.class);
         solo.clickOnView(solo.getView(R.id.add_habit_button));
@@ -216,12 +220,12 @@ public class homeIntentTest {
      * This test makes sure that a user can delete an item in the list.
      */
     @Test
-    public void deleteHabit(){
+    public void stage4_DdeleteHabit(){
         //Login to test account
         solo.assertCurrentActivity("Wrong Activity", Login.class);
         solo.enterText((EditText) solo.getView(R.id.email), "test@email.com");
         solo.enterText((EditText) solo.getView(R.id.password), "testPassword");
-        solo.clickOnView(solo.getView(R.id.login));
+        solo.clickOnView(solo.getView(R.id.loginBtn));
         solo.assertCurrentActivity("Wrong Activity", Home.class);
 
         solo.clickOnView(solo.getView(R.id.add_habit_button));

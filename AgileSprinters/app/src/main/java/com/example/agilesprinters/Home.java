@@ -1,10 +1,5 @@
 package com.example.agilesprinters;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,17 +7,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-//import com.google.firebase.database.DatabaseReference;
-//import com.google.firebase.database.FirebaseDatabase;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
@@ -32,7 +26,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -40,6 +33,8 @@ import java.util.HashMap;
  * may click the floating button to add a habit, tap on a habit to edit or view a habit, or long
  * click on a habit to delete it. There is a navigation bar on the bottom that the user may click
  * to go to either calendar, forum, or notifications.
+ *
+ * @author Hannah Desmarais, Hari Bheesetti, and Gurick Kooner
  */
 public class Home extends AppCompatActivity implements addHabitFragment.OnFragmentInteractionListener,
         viewEditHabitFragment.OnFragmentInteractionListener, BottomNavigationView.OnNavigationItemSelectedListener,
@@ -110,7 +105,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
         /**
          * This is an on item click listener which listens for when a user taps on an item in the
-         * habit list. nce clicked it will open the viewEditHabitFragment
+         * habit list. Once clicked it will open the viewEditHabitFragment
          */
         habitList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -274,7 +269,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         final CollectionReference collectionReference = db.collection("Habit");
         HashMap<String, Object> data = new HashMap<>();
 
-        data.put("UID", habit.getUID());
+        data.put("UID", UID);
         data.put("Title", habit.getTitle());
         data.put("Reason", habit.getReason());
         data.put("PrivacySetting", habit.getPrivacySetting());

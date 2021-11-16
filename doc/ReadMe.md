@@ -1,8 +1,7 @@
 ## Product Backlog
 The product backlog is linked to the repository and uses github project board. <br>
-To view click the projects tab at the top of the menu when viewing the organization CMPUT301F21T25 page. <br>
+To view click the projects tab at the top of the menu when viewing the organization CMPUT301F21T25/AgileSprinters page. <br>
 The backlog with in depth association of story points and risk level are show in the backlog document found in this directory. <br>
-The project board reflects these priotizations by placing high priority stories in the in progress column initally and the lower risk in todo coulmn.
 
 Note:
 In the to-do list, three-story duplicates were forgotten to be deleted
@@ -18,4 +17,4 @@ In the to-do list, three-story duplicates were forgotten to be deleted
 ![image](https://user-images.githubusercontent.com/65202488/137423055-b713aa3c-6395-4b7e-b08e-2c02accb1888.png)
 
 ## Storyboard Summary
-In the file "StorySummary.pdf" is a summary of our main frames from our story board (ui_mockup.png) that is made in Figma. To view, navigate to AgileSprinters/doc, where the file is.
+In the file "figma read me.pdf" is a summary of our main frames from our story board (ui_mockup.png) that is made in Figma. To view, navigate to AgileSprinters/projectpartwo, where the file is.

@@ -13,17 +13,25 @@
         android:largeHeap="true">
         <activity
             android:name=".Login"
-            android:exported="true" />
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".Register"
             android:exported="true" />
+
         <activity android:name=".Home"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.REGISTER" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".UserCalendar"
             android:exported="true">
             <intent-filter>
@@ -31,6 +39,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>
