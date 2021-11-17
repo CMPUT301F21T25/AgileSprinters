@@ -83,4 +83,8 @@
     <string name="REASON_STR">Reason</string>
     <string name="DELETE_HABIT_CONFIRM_STR">Would you like to delete this habit and all it\'s corresponding events?</string>
     <string name="RED_HEX_CODE">#ff0000</string>
+    <string name="HABIT_EVENT_COLLECTION_PATH">HabitEvents</string>
+    <string name="CONFIRM_PASSWORD">Confirm Password</string>
+    <string name="DATE_FORMAT_STR">dd/mm/yyyy</string>
+    <string name="DATE_PICKER_STR">DATE PICKER</string>
 </resources>

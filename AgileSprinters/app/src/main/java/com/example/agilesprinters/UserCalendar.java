@@ -66,6 +66,8 @@ public class UserCalendar extends AppCompatActivity
     private HabitInstance selectedHabitInstance;
     private String selectedHabitInstanceId;
     LocalDate currentDate = LocalDate.now();
+    private String collectionPath;
+    private Database database = new Database();
 
     /**
      * This function creates the UI on the screen and listens for user input
@@ -256,16 +258,12 @@ public class UserCalendar extends AppCompatActivity
         data.put("UID", instance.getUID());
         data.put("HID", instance.getHID());
         data.put("Date", instance.getDate());
-        data.put("Opt_comment", instance.getOpt_comment());
-        data.put("Duration", String.valueOf(instance.getDuration()));
+        data.put("Opt_comment",instance.getOpt_comment());
+        data.put("Duration",String.valueOf(instance.getDuration()));
 
-        db.collection("HabitEvents")
-                .document(selectedHabitInstanceId)
-                .set(data)
-                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
-                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
-
-        completedEventsScreenSetup();
+        // Makes a call to the database which handles it
+        collectionPath = getString(R.string.HABIT_EVENT_COLLECTION_PATH);
+        database.updateData(collectionPath, selectedHabitInstanceId, data, TAG);
     }
 
     /**
@@ -277,11 +275,9 @@ public class UserCalendar extends AppCompatActivity
     @Override
     public void onDeletePressed(HabitInstance instance) {
 
-        db.collection("HabitEvents")
-                .document(instance.getEID())
-                .delete()
-                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully deleted!"))
-                .addOnFailureListener(e -> Log.w(TAG, "Error deleting document", e));
+        collectionPath = getString(R.string.HABIT_EVENT_COLLECTION_PATH);
+        // Makes a call to the database which handles it
+        database.deleteData(collectionPath, instance.getEID(), TAG);
 
         completedEventsScreenSetup();
     }
@@ -292,29 +288,22 @@ public class UserCalendar extends AppCompatActivity
      * @param instance The habit instance that needs to be added to the database.
      */
     public void addHabitEventDatabase(HabitInstance instance) {
-        final CollectionReference collectionReference = db.collection("HabitEvents");
+        final CollectionReference collectionReference  =  db.collection("HabitEvents");
 
         String instanceId = instance.getEID();
         HashMap<String, Object> data = new HashMap<>();
 
-        if (instanceId != null) {
+        if (instanceId != null){
             data.put("EID", instance.getEID());
             data.put("UID", instance.getUID());
             data.put("HID", instance.getHID());
             data.put("Date", instance.getDate());
-            data.put("Opt_comment", instance.getOpt_comment());
-            data.put("Duration", instance.getDuration());
-            collectionReference
-                    .document(instanceId)
-                    .set(data)
-                    .addOnSuccessListener(aVoid -> {
-                        // These are a method which gets executed when the task is succeeded
-                        Log.d(TAG, "Data has been added successfully!");
-                    })
-                    .addOnFailureListener(e -> {
-                        // These are a method which gets executed if there’s any problem
-                        Log.d(TAG, "Data could not be added!" + e.toString());
-                    });
+            data.put("Opt_comment",instance.getOpt_comment());
+            data.put("Duration",instance.getDuration());
+
+            // Makes a call to the database which handles it
+            collectionPath = getString(R.string.HABIT_EVENT_COLLECTION_PATH);
+            database.addData(collectionPath, instanceId, data, TAG);
         }
     }
 

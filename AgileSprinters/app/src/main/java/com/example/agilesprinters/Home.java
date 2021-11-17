@@ -48,6 +48,8 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     private static final String TAG = "Habit";
     private String UID;
     private User user;
+    private Database database = new Database();
+    private String collectionPath;
 
     /**
      * This function creates the UI on the screen and listens for user input
@@ -230,6 +232,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         DocumentReference newHabitRef = db.collection("Habit").document();
         String HabitId = newHabitRef.getId();
         HashMap<String, Object> data = new HashMap<>();
+        collectionPath = "Habit";
 
         if (HabitId != null) {
             data.put("UID", UID);
@@ -239,25 +242,11 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             data.put("Data to Start", habit.getDateToStart());
             data.put("Weekdays", habit.getWeekdays());
 
-            collectionReference
-                    .document(HabitId)
-                    .set(data)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            // These are a method which gets executed when the task is succeeded
-                            Log.d(TAG, "Data has been added successfully!");
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            // These are a method which gets executed if there’s any problem
-                            Log.d(TAG, "Data could not be added!" + e.toString());
-                        }
-                    });
+            // Makes a call to the database which handles it.
+            database.addData(collectionPath, HabitId, data, TAG);
         }
     }
+
 
     /**
      * This is a method that updates a habit selected by the user in the database based with the
@@ -275,24 +264,9 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         data.put("PrivacySetting", habit.getPrivacySetting());
         data.put("Data to Start", habit.getDateToStart());
         data.put("Weekdays", habit.getWeekdays());
-
-        collectionReference
-                .document(habit.getHID())
-                .set(data)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        // These are a method which gets executed when the task is succeeded
-                        Log.d(TAG, "Data has been added successfully!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // These are a method which gets executed if there’s any problem
-                        Log.d(TAG, "Data could not be added!" + e.toString());
-                    }
-                });
+        collectionPath = "Habit";
+        // Makes a call to the database which handles it
+        database.updateData(collectionPath, habit.getHID(), data, TAG);
     }
 
     /**
@@ -300,22 +274,9 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
      * @param habit this is the habit object selected by the user to be deleted
      */
     public void deleteHabitDatabase(Habit habit) {
-        deleteHabitInstances(habit);
-        db.collection("Habit")
-                .document(habit.getHID())
-                .delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error deleting document", e);
-                    }
-                });
+        collectionPath = "Habit";
+        // Makes a call to the database which handles it
+        database.deleteData(collectionPath, habit.getHID(), TAG);
     }
 
     /**
@@ -327,6 +288,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     @Override
     public void onDeleteHabitYesPressed(int position) {
         Habit habit = habitAdapter.getItem(position);
+        deleteHabitInstances(habit);
         deleteHabitDatabase(habit);
         habitAdapter.notifyDataSetChanged();
     }
@@ -347,21 +309,8 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                         if(doc.getId() == null){
                             return;
                         } else {
-                            db.collection("HabitEvents")
-                                    .document(doc.getId())
-                                    .delete()
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            Log.d(TAG, "DocumentSnapshot successfully deleted!");
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.w(TAG, "Error deleting document", e);
-                                        }
-                                    });
+                            collectionPath = "HabitEvents";
+                            database.deleteData(collectionPath, doc.getId(), TAG);
                         }
                     }
                 }
