@@ -83,25 +83,25 @@ public class Register extends AppCompatActivity {
         String err;
 
         if (firstNameStr.isEmpty()) {
-            err = getString(R.string.first_name_err);
+            err = getString(R.string.FIRST_NAME_ERR);
             updateUI(null, err);
         } else if (lastNameStr.isEmpty()) {
-            err = getString(R.string.last_name_err);
+            err = getString(R.string.LAST_NAME_ERR);
             updateUI(null, err);
         } else if (emailStr.isEmpty()) {
-            err = getString(R.string.email_err);
+            err = getString(R.string.EMAIL_ERR);
             updateUI(null, err);
         } else if (passwordStr.isEmpty()) {
-            err = getString(R.string.password_err);
+            err = getString(R.string.PASSWORD_ERR);
             updateUI(null, err);
         } else if (passwordConfirmStr.isEmpty()) {
-            err = getString(R.string.confirm_password_err);
+            err = getString(R.string.CONFIRM_PASSWORD_ERR);
             updateUI(null, err);
         } else if (!passwordStr.equals(passwordConfirmStr)) {
-            err = getString(R.string.password_match_err);
+            err = getString(R.string.PASSWORD_MATCH_ERR);
             updateUI(null, err);
         } else {
-            Log.d(getString(R.string.successful_input_msg),
+            Log.d(getString(R.string.SUCCESSFUL_INPUT_MSG),
                     passwordConfirmStr + emailStr);
             CreateAccount(emailStr, passwordConfirmStr, firstNameStr, lastNameStr);
         }
@@ -121,14 +121,14 @@ public class Register extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         // Register success, update UI accordingly
-                        Log.d(TAG, getString(R.string.user_creation_failure_msg) );
+                        Log.d(TAG, getString(R.string.USER_CREATION_FAILURE_MSG) );
                         FirebaseUser user = auth.getCurrentUser();
                         System.out.println(user.getUid());
                         createUserDoc(user, firstName, lastName);
                         updateUI(user, null);
                     } else {
                         // If Register fails, display a message to the user.
-                        Log.w(TAG, getString(R.string.user_creation_failure_msg),
+                        Log.w(TAG, getString(R.string.USER_CREATION_FAILURE_MSG),
                                 task.getException());
                         String err = task.getException().getLocalizedMessage();
                         updateUI(null, err);
@@ -173,9 +173,9 @@ public class Register extends AppCompatActivity {
         String emailID = user.getEmail();
         HashMap<String, String> data = new HashMap<>();
 
-        data.put(getString(R.string.email_id_str), emailID);
-        data.put(getString(R.string.first_name_str), firstName);
-        data.put(getString(R.string.last_name_str), lastName);
+        data.put(getString(R.string.EMAIL_ID_STR), emailID);
+        data.put(getString(R.string.FIRST_NAME_STR), firstName);
+        data.put(getString(R.string.LAST_NAME_STR), lastName);
         collectionReference
                 .document(userId)
                 .set(data)

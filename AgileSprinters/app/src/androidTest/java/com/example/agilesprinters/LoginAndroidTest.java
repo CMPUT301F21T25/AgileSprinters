@@ -50,14 +50,14 @@ public class LoginAndroidTest {
     @Test
     public void checkEmptySignIn() {
         //Asserts that the current activity is the Login Activity. Otherwise, show "Wrong Activity"
-        solo.assertCurrentActivity(solo.getString(R.string.wrong_activity), Login.class);
+        solo.assertCurrentActivity(solo.getString(R.string.WRONG_ACTIVITY), Login.class);
 
         //click the login button when email and password fields are empty
-        trySignIn(R.id.email, "", solo.getString(R.string.empty_email));
+        trySignIn(R.id.email, "", solo.getString(R.string.EMPTY_EMAIL));
         //enter text into email then click the login button while the password field is empty
-        trySignIn(R.id.email, solo.getString(R.string.empty_string), solo.getString(R.string.empty_password));
+        trySignIn(R.id.email, solo.getString(R.string.EMPTY_STRING), solo.getString(R.string.EMPTY_PASSWORD));
         //enter text into password then click the login button while the info given does not match a user
-        trySignIn(R.id.password, solo.getString(R.string.empty_string), solo.getString(R.string.login_failed));
+        trySignIn(R.id.password, solo.getString(R.string.EMPTY_STRING), solo.getString(R.string.LOGIN_FAILED));
     }
 
     /**
@@ -89,12 +89,12 @@ public class LoginAndroidTest {
         String signInStr = solo.getString(R.string.action_sign_in);  //string of sign in button
 
         //enter the log in info of the test user
-        solo.enterText((EditText) solo.getView(R.id.email), solo.getString(R.string.email_test));
-        solo.enterText((EditText) solo.getView(R.id.password), solo.getString(R.string.password_test));
+        solo.enterText((EditText) solo.getView(R.id.email), solo.getString(R.string.EMAIL_TEST));
+        solo.enterText((EditText) solo.getView(R.id.password), solo.getString(R.string.PASSWORD_TEST));
         solo.clickOnButton(signInStr);  //click the login button
 
         //Asserts that the current activity is the Login Activity. Otherwise, show "Wrong Activity"
-        solo.assertCurrentActivity(solo.getString(R.string.wrong_activity), Home.class);
+        solo.assertCurrentActivity(solo.getString(R.string.WRONG_ACTIVITY), Home.class);
         assertTrue(solo.waitForLogMessage("signInWithEmail:success", 2000));
     }
 

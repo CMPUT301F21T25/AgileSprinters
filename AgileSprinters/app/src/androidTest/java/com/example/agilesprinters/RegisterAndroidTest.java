@@ -40,7 +40,7 @@ public class RegisterAndroidTest {
     @Test
     public void checkEmptySignIn() {
         //Asserts that the current activity is the Register Activity. Otherwise, show "Wrong Activity"
-        solo.assertCurrentActivity(solo.getString(R.string.wrong_activity), Register.class);
+        solo.assertCurrentActivity(solo.getString(R.string.WRONG_ACTIVITY), Register.class);
 
         //click the Register button when email and password fields are empty
         tryRegister(R.id.FirstName);
@@ -61,20 +61,20 @@ public class RegisterAndroidTest {
      */
 
     private void tryRegister(int id){
-        String registerStr = solo.getString(R.string.create_account);  //string of sign in button
+        String registerStr = solo.getString(R.string.CREATE_ACCOUNT);  //string of sign in button
 
-        solo.enterText((EditText) solo.getView(R.id.FirstName), solo.getString(R.string.empty_string));
-        solo.enterText((EditText) solo.getView(R.id.LastName), solo.getString(R.string.empty_string));
-        solo.enterText((EditText) solo.getView(R.id.EditTextEmail), solo.getString(R.string.empty_string));
-        solo.enterText((EditText) solo.getView(R.id.TextPassword), solo.getString(R.string.empty_string));
-        solo.enterText((EditText) solo.getView(R.id.TextConfirmPassword), solo.getString(R.string.empty_string));
+        solo.enterText((EditText) solo.getView(R.id.FirstName), solo.getString(R.string.EMPTY_STRING));
+        solo.enterText((EditText) solo.getView(R.id.LastName), solo.getString(R.string.EMPTY_STRING));
+        solo.enterText((EditText) solo.getView(R.id.EditTextEmail), solo.getString(R.string.EMPTY_STRING));
+        solo.enterText((EditText) solo.getView(R.id.TextPassword), solo.getString(R.string.EMPTY_STRING));
+        solo.enterText((EditText) solo.getView(R.id.TextConfirmPassword), solo.getString(R.string.EMPTY_STRING));
 
         solo.enterText((EditText) solo.getView(id), "");  //enter input into edit text
 
         solo.clickOnButton(registerStr);
         /* True if there is a text as given in input on the screen
         , wait at least 2 seconds and find one minimum match. */
-        solo.assertCurrentActivity(solo.getString(R.string.wrong_activity), Register.class);
+        solo.assertCurrentActivity(solo.getString(R.string.WRONG_ACTIVITY), Register.class);
     }
 
     /**
@@ -85,18 +85,18 @@ public class RegisterAndroidTest {
     @Test
     public void registerTestUser() {
         //Asserts that the current activity is the Register Activity. Otherwise, show "Wrong Activity"
-        solo.assertCurrentActivity(solo.getString(R.string.wrong_activity), Register.class);
+        solo.assertCurrentActivity(solo.getString(R.string.WRONG_ACTIVITY), Register.class);
 
         //register a test user
-        solo.enterText((EditText) solo.getView(R.id.LastName), solo.getString(R.string.last_test));
-        solo.enterText((EditText) solo.getView(R.id.FirstName), solo.getString(R.string.first_test));
-        solo.enterText((EditText) solo.getView(R.id.EditTextEmail), solo.getString(R.string.email_test));
-        solo.enterText((EditText) solo.getView(R.id.TextPassword), solo.getString(R.string.password_test));
-        solo.enterText((EditText) solo.getView(R.id.TextConfirmPassword), solo.getString(R.string.password_test));
+        solo.enterText((EditText) solo.getView(R.id.LastName), solo.getString(R.string.LAST_TEST));
+        solo.enterText((EditText) solo.getView(R.id.FirstName), solo.getString(R.string.FIRST_TEST));
+        solo.enterText((EditText) solo.getView(R.id.EditTextEmail), solo.getString(R.string.EMAIL_TEST));
+        solo.enterText((EditText) solo.getView(R.id.TextPassword), solo.getString(R.string.PASSWORD_TEST));
+        solo.enterText((EditText) solo.getView(R.id.TextConfirmPassword), solo.getString(R.string.PASSWORD_TEST));
 
-        solo.clickOnButton(solo.getString(R.string.create_account)); //Select register text
+        solo.clickOnButton(solo.getString(R.string.CREATE_ACCOUNT)); //Select register text
         //Asserts that the current activity is the Register Activity. Otherwise, show "Wrong Activity"
-        solo.assertCurrentActivity(solo.getString(R.string.wrong_activity), Register.class);
+        solo.assertCurrentActivity(solo.getString(R.string.WRONG_ACTIVITY), Register.class);
     }
 
 

@@ -11,7 +11,7 @@
         android:layout_width="113dp"
         android:layout_height="54dp"
         android:layout_marginTop="164dp"
-        android:text="@string/test"
+        android:text="@string/TEST"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

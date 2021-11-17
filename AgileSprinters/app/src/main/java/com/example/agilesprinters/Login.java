@@ -100,18 +100,18 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private void sendPassResetAlert() {
 
         AlertDialog.Builder resetDialog = new AlertDialog.Builder(Login.this);
-        resetDialog.setTitle(getString(R.string.password_reset_request));
+        resetDialog.setTitle(getString(R.string.PASSWORD_RESET));
 
         // Getting the email from the user to reset the password
         final EditText emailInput = new EditText(Login.this);
         resetDialog.setView(emailInput);
 
         // Calling the function to reset password here
-        resetDialog.setPositiveButton(getString(R.string.send_email), (dialog, which) -> {
+        resetDialog.setPositiveButton(getString(R.string.SEND_EMAIL), (dialog, which) -> {
             String resetEmail = emailInput.getText().toString();
             sendPasswordReset(resetEmail);
         });
-        resetDialog.setNegativeButton(R.string.cancel_str, (dialog, which) -> dialog.cancel());
+        resetDialog.setNegativeButton(R.string.CANCEL_STR, (dialog, which) -> dialog.cancel());
         resetDialog.show();
     }
 
@@ -127,8 +127,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         auth.sendPasswordResetEmail(emailAddress)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Log.d(TAG, getString(R.string.email_sent_msg));
-                        Toast.makeText(Login.this, getString(R.string.email_sent),
+                        Log.d(TAG, getString(R.string.EMAIL_SENT_MSG));
+                        Toast.makeText(Login.this, getString(R.string.EMAIL_SENT),
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -145,27 +145,27 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         //throw a message if the email is empty
         if (email.equals("")){
-            Toast.makeText(Login.this, getString(R.string.empty_email),
+            Toast.makeText(Login.this, getString(R.string.EMPTY_EMAIL),
                     Toast.LENGTH_SHORT).show();
         } //throw a message if the password is empty
         else if (password.equals("")){
-            Toast.makeText(Login.this, getString(R.string.empty_password),
+            Toast.makeText(Login.this, getString(R.string.EMPTY_PASSWORD),
                     Toast.LENGTH_SHORT).show();
         } else {
             auth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, task -> {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, getString(R.string.sign_in_success_msg));
+                            Log.d(TAG, getString(R.string.SIGN_IN_SUCCESS_MSG));
                             FirebaseUser user = auth.getCurrentUser();
                             if (user != null) {
                                 updateUI(user);
                             }
                         } else {
                             // If sign in fails due to a wrong password or email
-                            Log.w(TAG, getString(R.string.sign_in_failure_msg),
+                            Log.w(TAG, getString(R.string.SIGN_IN_FAILURE_MSG),
                                     task.getException());
-                            Toast.makeText(Login.this, getString(R.string.login_failed),
+                            Toast.makeText(Login.this, getString(R.string.LOGIN_FAILED),
                                     Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -183,7 +183,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         //pass in the unique user ID to home page
         String uniqueId = user.getUid();
         currentUser.setUser(uniqueId);
-        intent.putExtra(getString(R.string.user_str), currentUser);
+        intent.putExtra(getString(R.string.USER_STR), currentUser);
 
         //go to home page and finish the login activity
         startActivity(intent);

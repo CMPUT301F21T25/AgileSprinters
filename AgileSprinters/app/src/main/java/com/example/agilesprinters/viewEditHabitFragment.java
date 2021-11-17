@@ -146,15 +146,15 @@ public class viewEditHabitFragment extends DialogFragment {
         // Array with all the Edit buttons for weekdays
         Button[]  weekdayEditButtonArray = new Button[]{sunday, monday, tuesday, wednesday, thursday, friday, saturday};
         // Array with all the string values for weekdays
-        String[] weekdayStrArray = new String[]{ getString(R.string.mondayStr), getString(R.string.tuesdayStr),
-                getString(R.string.wednesdayStr), getString(R.string.thursdayStr), getString(R.string.fridayStr),
-                getString(R.string.saturdayStr), getString(R.string.sundayStr)};
+        String[] weekdayStrArray = new String[]{ getString(R.string.MONDAY_STR), getString(R.string.TUESDAY_STR),
+                getString(R.string.WEDNESDAY_STR), getString(R.string.THURSDAY_STR), getString(R.string.FRIDAY_STR),
+                getString(R.string.SATURDAY_STR), getString(R.string.SUNDAY_STR)};
 
         // Set weekday buttons to proper colors based on the habit object passed in
         // and initialize the trackers for buttons pressed
         for(int i = 0; i < weekdayStrArray.length; i++){
             if(weekdays.get(weekdayStrArray[i])) {
-                weekdayEditButtonArray[i].setBackgroundColor(Color.parseColor(getString(R.string.orangeHexCode)));
+                weekdayEditButtonArray[i].setBackgroundColor(Color.parseColor(getString(R.string.ORANGE_HEX_CODE)));
             }
         }
 
@@ -166,10 +166,10 @@ public class viewEditHabitFragment extends DialogFragment {
                 @Override
                 public void onClick(View view) {
                     if (weekdays.get(weekdayStrArray[finalI1]) == false) {
-                        weekdayEditButtonArray[finalI].setBackgroundColor(Color.parseColor(getString(R.string.orangeHexCode)));
+                        weekdayEditButtonArray[finalI].setBackgroundColor(Color.parseColor(getString(R.string.ORANGE_HEX_CODE)));
                         weekdays.replace(weekdayStrArray[finalI1], false, true);
                     } else {
-                        weekdayEditButtonArray[finalI].setBackgroundColor(Color.parseColor(getString(R.string.greyHexCode)));
+                        weekdayEditButtonArray[finalI].setBackgroundColor(Color.parseColor(getString(R.string.GREY_HEX_CODE)));
                         weekdays.replace(weekdayStrArray[finalI1], true, false);
                     }
                 }

@@ -133,9 +133,9 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
 
         UID = getArguments().getString("UID");
 
-        String[] weekdayStrArray = new String[]{ getString(R.string.mondayStr), getString(R.string.tuesdayStr),
-                getString(R.string.wednesdayStr), getString(R.string.thursdayStr), getString(R.string.fridayStr),
-                getString(R.string.saturdayStr), getString(R.string.sundayStr)};
+        String[] weekdayStrArray = new String[]{ getString(R.string.MONDAY_STR), getString(R.string.TUESDAY_STR),
+                getString(R.string.WEDNESDAY_STR), getString(R.string.THURSDAY_STR), getString(R.string.FRIDAY_STR),
+                getString(R.string.SATURDAY_STR), getString(R.string.SUNDAY_STR)};
 
         weekdays = new HashMap<String, Boolean>();
 
@@ -176,10 +176,10 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
                 @Override
                 public void onClick(View view) {
                     if (weekdays.get(weekdayStrArray[finalI1]) == false) {
-                        weekdayButtonArray[finalI].setBackgroundColor(Color.parseColor(getString(R.string.orangeHexCode)));
+                        weekdayButtonArray[finalI].setBackgroundColor(Color.parseColor(getString(R.string.ORANGE_HEX_CODE)));
                         weekdays.replace(weekdayStrArray[finalI1], false, true);
                     } else {
-                        weekdayButtonArray[finalI].setBackgroundColor(Color.parseColor(getString(R.string.greyHexCode)));
+                        weekdayButtonArray[finalI].setBackgroundColor(Color.parseColor(getString(R.string.GREY_HEX_CODE)));
                         weekdays.replace(weekdayStrArray[finalI1], true, false);
                     }
                 }
