@@ -30,6 +30,9 @@ public class completedEventsListAdapter extends ArrayAdapter<HabitInstance> {
      *
      * @param context  is the current screen
      * @param resource is the class path
+     * @param events are the list of completed events for the day
+     *
+     * @author Sai Rasazna Ajerla and Riyaben Patel
      * @param events   are the list of completed events for the day
      * @author Sai Rasazna Ajerla and Riyaben Patel
      */

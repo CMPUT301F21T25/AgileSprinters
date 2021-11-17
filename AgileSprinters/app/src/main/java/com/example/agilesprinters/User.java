@@ -6,11 +6,6 @@
  */
 package com.example.agilesprinters;
 
-import android.util.Log;
-
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
 import java.io.Serializable;
 
 /**

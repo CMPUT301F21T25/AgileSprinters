@@ -2,7 +2,6 @@ package com.example.agilesprinters;
 
 import static android.content.ContentValues.TAG;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,13 +11,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -77,11 +72,16 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         loginBtn = findViewById(R.id.loginBtn);
         loginBtn.setOnClickListener(this);
 
+        // if the reset password button is clicked
         resetPassword = findViewById(R.id.resetPassword);
         resetPassword.setOnClickListener(this);
 
     }
 
+    /**
+     * This function runs when the activity is becoming visible to the user and
+     * is usually called after onCreate method or onRestart method
+     */
     @Override
     public void onStart() {
         super.onStart();
@@ -102,22 +102,16 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         AlertDialog.Builder resetDialog = new AlertDialog.Builder(Login.this);
         resetDialog.setTitle(getString(R.string.password_reset_request));
 
+        // Getting the email from the user to reset the password
         final EditText emailInput = new EditText(Login.this);
         resetDialog.setView(emailInput);
 
-        resetDialog.setPositiveButton(getString(R.string.send_email), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String resetEmail = emailInput.getText().toString();
-                sendPasswordReset(resetEmail);
-            }
+        // Calling the function to reset password here
+        resetDialog.setPositiveButton(getString(R.string.send_email), (dialog, which) -> {
+            String resetEmail = emailInput.getText().toString();
+            sendPasswordReset(resetEmail);
         });
-        resetDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
+        resetDialog.setNegativeButton(R.string.cancel_str, (dialog, which) -> dialog.cancel());
         resetDialog.show();
     }
 
@@ -131,14 +125,11 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         FirebaseAuth auth = FirebaseAuth.getInstance();
 
         auth.sendPasswordResetEmail(emailAddress)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "Email sent.");
-                            Toast.makeText(Login.this, getString(R.string.email_sent),
-                                    Toast.LENGTH_SHORT).show();
-                        }
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, getString(R.string.email_sent_msg));
+                        Toast.makeText(Login.this, getString(R.string.email_sent),
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -162,22 +153,20 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                     Toast.LENGTH_SHORT).show();
         } else {
             auth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                // Sign in success, update UI with the signed-in user's information
-                                Log.d(TAG, "signInWithEmail:success");
-                                FirebaseUser user = auth.getCurrentUser();
-                                if (user != null) {
-                                    updateUI(user);
-                                }
-                            } else {
-                                // If sign in fails due to a wrong password or email
-                                Log.w(TAG, "signInWithEmail:failure", task.getException());
-                                Toast.makeText(Login.this, getString(R.string.login_failed),
-                                        Toast.LENGTH_SHORT).show();
+                    .addOnCompleteListener(this, task -> {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, getString(R.string.sign_in_success_msg));
+                            FirebaseUser user = auth.getCurrentUser();
+                            if (user != null) {
+                                updateUI(user);
                             }
+                        } else {
+                            // If sign in fails due to a wrong password or email
+                            Log.w(TAG, getString(R.string.sign_in_failure_msg),
+                                    task.getException());
+                            Toast.makeText(Login.this, getString(R.string.login_failed),
+                                    Toast.LENGTH_SHORT).show();
                         }
                     });
         }
@@ -192,9 +181,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         Intent intent = new Intent(Login.this, Home.class);
 
         //pass in the unique user ID to home page
-        String uId = user.getUid();
-        currentUser.setUser(uId);
-        intent.putExtra("user", currentUser);
+        String uniqueId = user.getUid();
+        currentUser.setUser(uniqueId);
+        intent.putExtra(getString(R.string.user_str), currentUser);
 
         //go to home page and finish the login activity
         startActivity(intent);
@@ -216,7 +205,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             case R.id.loginBtn:  //if the login button is clicked, attempt to sign in
                 signIn();
                 break;
-            case R.id.resetPassword:
+            case R.id.resetPassword: //if the reset password text is clicked, pop up alert
                 sendPassResetAlert();
                 break;
             default:

@@ -26,40 +26,26 @@ import org.junit.runners.MethodSorters;
  * @author Hannah Desmarais
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class homeIntentTest {
+public class HomeAndroidTest {
     private Solo solo;
 
     @Rule
     public ActivityTestRule<Login> rule =
             new ActivityTestRule<>(Login.class, true, true);
 
-    private void deleteAppData() {
-        try {
-            // clearing app data
-            String packageName = getApplicationContext().getPackageName();
-            Runtime runtime = Runtime.getRuntime();
-            runtime.exec("pm clear "+packageName);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      * Runs before all tests and creates solo instance.
-     * @throws Exception
      */
     @Before
-    public void setUp() throws Exception{
+    public void setUp() {
         solo = new Solo(InstrumentationRegistry.getInstrumentation(),rule.getActivity());
     }
 
     /**
      * Gets the Activity
-     * @throws Exception
      */
     @Test
-    public void stage1_start() throws Exception{
+    public void stage1_start() {
         Activity activity = rule.getActivity();
     }
 
@@ -277,10 +263,9 @@ public class homeIntentTest {
 
     /**
      * Closes the activity after each test
-     * @throws Exception
      */
     @After
-    public void tearDown() throws Exception{
+    public void tearDown() {
         solo.finishOpenedActivities();
     }
 }

@@ -17,14 +17,23 @@
     <string name="test">TEST</string>
     <string name="followers_text">Followers</string>
     <string name="following_text">Following</string>
-    <string name="firstNameErr">First name can not be empty</string>
-    <string name="lastNameErr">Last name can not be empty</string>
-    <string name="passwordErr">password can not be empty</string>
-    <string name="confirmPasswordErr">confirm password can not be empty</string>
-    <string name="emailErr" >email can not be empty</string>
-    <string name="passwordMatchErr" type="id">passwords do not match</string>
-    <string name="emptyString">dummy</string>
-    <string name="userExistsErr">The email address is already in use by another account</string>
+    <string name="first_name_err">First name can not be empty</string>
+    <string name="last_name_err">Last name can not be empty</string>
+    <string name="password_err">Password can not be empty</string>
+    <string name="confirm_password_err">Confirm password can not be empty</string>
+    <string name="email_err" >Email can not be empty</string>
+    <string name="password_match_err" type="id">passwords do not match</string>
+    <string name="cancel_str">Cancel</string>
+    <string name="user_str">user</string>
+    <string name="email_sent_msg">Email sent.</string>
+    <string name="first_name_str">First Name</string>
+    <string name="last_name_str">Last Name</string>
+    <string name="email_id_str">Email ID</string>
+    <string name="successful_input_msg">Successful user input</string>
+    <string name="user_creation_success_msg">createUserWithEmail:success</string>
+    <string name="user_creation_failure_msg">createUserWithEmail:failure</string>
+    <string name="sign_in_success_msg">signInWithEmail:success</string>
+    <string name="sign_in_failure_msg">signInWithEmail:failure</string>
     <string name="first_test">Test</string>
     <string name="last_test">User</string>
     <string name="email_test">test@email.com</string>
@@ -39,13 +48,13 @@
     <string name="uidKey">UID</string>
     <string name="hidKey">HID</string>
     <string name="eidKey">EID</string>
-    <string name="DATE_PICKER_STR">DATE PICKER</string>
+    <string name="datePickerTag">DATE PICKER</string>
     <string name="AddHabitInstanceFragmentTitle">Add Habit Event</string>
     <string name="cancelBtnStr">Cancel</string>
     <string name="saveBtnStr">Save</string>
     <string name="optCmtLenErr">This field cannot have more than 20 chars</string>
     <string name="fieldEmptyErr">This field cannot be empty</string>
-    <string name="DATE_FORMAT_STR">MM/dd/yyyy</string>
+    <string name="dateFormatStr">MM/dd/yyyy</string>
     <string name="currentDateErr">The date has to be today\'s date</string>
     <string name="MONDAY_STR">MONDAY</string>
     <string name="TUESDAY_STR">TUESDAY</string>

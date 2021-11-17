@@ -29,6 +29,8 @@ import java.util.HashMap;
 
 /**
  * This class is a dialog fragment that allows the user to add a new habit.
+ *
+ * @author Hannah Desmarais and Hari Bheesetti
  */
 public class addHabitFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
     private EditText habitTitle;

@@ -26,10 +26,9 @@ public class RegisterAndroidTest {
 
     /**
      * Runs before all tests and creates solo instance.
-     * @throws Exception
      */
     @Before
-    public void setUp() throws Exception{
+    public void setUp() {
         solo = new Solo(InstrumentationRegistry.getInstrumentation(),rule.getActivity());
     }
 
@@ -44,12 +43,12 @@ public class RegisterAndroidTest {
         solo.assertCurrentActivity(solo.getString(R.string.wrong_activity), Register.class);
 
         //click the Register button when email and password fields are empty
-        tryRegister(R.id.FirstName, "");
-        tryRegister(R.id.FirstName, "");
-        tryRegister(R.id.LastName, "");
-        tryRegister(R.id.EditTextEmail, "");
-        tryRegister(R.id.TextPassword, "");
-        tryRegister(R.id.TextConfirmPassword, "");
+        tryRegister(R.id.FirstName);
+        tryRegister(R.id.FirstName);
+        tryRegister(R.id.LastName);
+        tryRegister(R.id.EditTextEmail);
+        tryRegister(R.id.TextPassword);
+        tryRegister(R.id.TextConfirmPassword);
     }
 
     /**
@@ -58,20 +57,19 @@ public class RegisterAndroidTest {
      * test failed.
      * @param id
      *  Give the id of field that needs to be null
-     * @param input
-     *  Give the string to be entered into the specified editText {@See String}
+     *
      */
 
-    private void tryRegister(int id, String input){
+    private void tryRegister(int id){
         String registerStr = solo.getString(R.string.create_account);  //string of sign in button
 
-        solo.enterText((EditText) solo.getView(R.id.FirstName), solo.getString(R.string.emptyString));
-        solo.enterText((EditText) solo.getView(R.id.LastName), solo.getString(R.string.emptyString));
-        solo.enterText((EditText) solo.getView(R.id.EditTextEmail), solo.getString(R.string.emptyString));
-        solo.enterText((EditText) solo.getView(R.id.TextPassword), solo.getString(R.string.emptyString));
-        solo.enterText((EditText) solo.getView(R.id.TextConfirmPassword), solo.getString(R.string.emptyString));
+        solo.enterText((EditText) solo.getView(R.id.FirstName), solo.getString(R.string.empty_string));
+        solo.enterText((EditText) solo.getView(R.id.LastName), solo.getString(R.string.empty_string));
+        solo.enterText((EditText) solo.getView(R.id.EditTextEmail), solo.getString(R.string.empty_string));
+        solo.enterText((EditText) solo.getView(R.id.TextPassword), solo.getString(R.string.empty_string));
+        solo.enterText((EditText) solo.getView(R.id.TextConfirmPassword), solo.getString(R.string.empty_string));
 
-        solo.enterText((EditText) solo.getView(id), input);  //enter input into edit text
+        solo.enterText((EditText) solo.getView(id), "");  //enter input into edit text
 
         solo.clickOnButton(registerStr);
         /* True if there is a text as given in input on the screen
@@ -104,10 +102,9 @@ public class RegisterAndroidTest {
 
     /**
      * Close activity after each test
-     * @throws Exception
      */
     @After
-    public void tearDown() throws Exception{
+    public void tearDown() {
         solo.finishOpenedActivities();
     }
 
