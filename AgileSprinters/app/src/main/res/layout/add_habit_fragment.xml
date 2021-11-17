@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:custom="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:weightSum="100"
     android:layout_width="match_parent"
@@ -13,7 +12,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:maxLength="20"
-        android:hint="Title"
+        android:hint="@string/TITLE_STR"
         android:inputType="textPersonName"/>
 
     <EditText
@@ -21,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Reason"
+        android:hint="@string/REASON_STR"
         android:inputType="textPersonName"
         android:maxLength="30"
         android:minHeight="48dp" />
@@ -43,14 +42,14 @@
         android:cursorVisible="false"
         android:focusable="false"
         android:focusableInTouchMode="false"
-        android:hint="MM/DD/YYYY"
+        android:hint="@string/DATE_FORMAT_STR"
         android:minHeight="48dp" />
 
     <TextView
         android:id="@+id/add_habit_button_error"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="#ff0000"
+        android:textColor="@string/RED_HEX_CODE"
         android:textSize="10sp"/>
 
     <LinearLayout
