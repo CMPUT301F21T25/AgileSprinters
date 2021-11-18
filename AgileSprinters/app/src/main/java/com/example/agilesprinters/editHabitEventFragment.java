@@ -21,7 +21,7 @@ import androidx.fragment.app.DialogFragment;
  *
  * @author Sai Rasazna Ajerla and Riyaben Patel
  */
-public class editHabitEventFragment extends DialogFragment{
+public class editHabitEventFragment extends DialogFragment {
     private EditText optional_comment;
     private TextView input_date;
     private EditText input_duration;
@@ -33,8 +33,9 @@ public class editHabitEventFragment extends DialogFragment{
 
     /**
      * This function saves the values sent to the fragment for future manipulation
+     *
      * @param habitInstance is the item that was tapped within the list
-     * @param position is the position of the tapped item within the list
+     * @param position      is the position of the tapped item within the list
      * @return returns the fragment with the bundled parameters
      */
     public static editHabitEventFragment newInstance(int position, HabitInstance habitInstance) {
@@ -53,6 +54,7 @@ public class editHabitEventFragment extends DialogFragment{
      */
     public interface OnFragmentInteractionListener {
         void onEditSavePressed(HabitInstance instance);
+
         void onDeletePressed(HabitInstance instance);
     }
 
@@ -60,16 +62,16 @@ public class editHabitEventFragment extends DialogFragment{
      * This function attaches the fragment to the activity and keeps track of the context of the
      * fragment so the listener knows what to listen to. Ensures that the proper methods are
      * implemented by the Home class.
+     *
      * @param context context of the current fragment
      */
     @Override
-    public void onAttach(@NonNull Context context){
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
-        if (context instanceof addHabitEventFragment.OnFragmentInteractionListener){
+        if (context instanceof addHabitEventFragment.OnFragmentInteractionListener) {
             listener = (editHabitEventFragment.OnFragmentInteractionListener) context;
-        }
-        else{
+        } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
@@ -78,6 +80,7 @@ public class editHabitEventFragment extends DialogFragment{
     /**
      * This function creates the actual dialog on the screen and listens for user input, returning
      * the information through the listener based on which button is clicked.
+     *
      * @param savedInstanceState is the reference to the most recent object
      * @return the dialog of the fragment
      */
@@ -121,11 +124,11 @@ public class editHabitEventFragment extends DialogFragment{
      * when all requirements have been met.
      */
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
 
         final AlertDialog dialog = (AlertDialog) getDialog();
-        if(dialog != null){
+        if (dialog != null) {
             Button positive = dialog.getButton(Dialog.BUTTON_POSITIVE);
 
             positive.setOnClickListener(view -> {
@@ -154,8 +157,8 @@ public class editHabitEventFragment extends DialogFragment{
 
                 // If everything has been filled out, call the listener and send the edited
                 // habit back to the Home class and dismiss the dialog.
-                if(readyToClose){
-                    listener.onEditSavePressed(new HabitInstance(EID,UID,HID,comment, date, Integer.parseInt(duration)));
+                if (readyToClose) {
+                    listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date, Integer.parseInt(duration)));
                     dialog.dismiss();
                 }
             });
