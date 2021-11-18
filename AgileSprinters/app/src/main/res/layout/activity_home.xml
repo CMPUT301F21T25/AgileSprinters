@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".Home">
 
-g
+
     <TextView
         android:id="@+id/userId"
         android:layout_width="87dp"
