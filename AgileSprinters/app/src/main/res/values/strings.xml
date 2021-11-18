@@ -70,4 +70,22 @@
     <string name="EMAIL">Email</string>
     <string name="CONFIRM_PASSWORD">Confirm Password</string>
     <string name="EMPTY_STRING">dummy</string>
+    <string name="HABIT_TEXT">habit</string>
+    <string name="FRAG_ERROR_MSG">must implement OnFragmentInteractionListener</string>
+    <string name="POSITION_TEXT" >position</string>
+    <string name="PRIVATE_TEXT">private</string>
+    <string name="VIEW_EDIT_HABIT_FRAG_TITLE">View/Edit Habit</string>
+    <string name="EMPTY_FIELD_ERR_MSG">This field cannot be blank</string>
+    <string name="WEEKDAY_BTN_ERR_MSG">Please choose which days you would like this event to occur.</string>
+    <string name="NO_STR">No</string>
+    <string name="YES_STR">Yes</string>
+    <string name="ADD_HABIT_FRAG_TITLE">Add Habit</string>
+    <string name="ADD_BTN_STR">Add</string>
+    <string name="HABIT_COLLECTION_PATH">Habit</string>
+    <string name="TITLE_STR">Title</string>
+    <string name="REASON_STR">Reason</string>
+    <string name="DELETE_HABIT_CONFIRM_STR">Would you like to delete this habit and all it\'s corresponding events?</string>
+    <string name="RED_HEX_CODE">#ff0000</string>
+    <string name="DATE_PICKER_STR">DATE PICKER</string>
+    <string name="hidKey">HID</string>
 </resources>
