@@ -60,8 +60,8 @@ public class habitListAdapter extends ArrayAdapter<Habit> {
 
         //pass values to variables
         dateText.setText(mContext.getString(R.string.dateStarted) + habit.getDateToStart());
-        privacyText.setText(habit.getTitle());
-        titleText.setText(habit.getPrivacySetting());
+        privacyText.setText(habit.getPrivacySetting());
+        titleText.setText(habit.getTitle());
         reasonText.setText(habit.getReason());
 
         return view;
