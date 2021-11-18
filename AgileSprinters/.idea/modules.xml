@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/AgileSprinters.iml" filepath="$PROJECT_DIR$/.idea/AgileSprinters.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AgileSprinters.iml" filepath="$PROJECT_DIR$/.idea/modules/AgileSprinters.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/AgileSprinters.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/AgileSprinters.app.iml" />
     </modules>
   </component>
