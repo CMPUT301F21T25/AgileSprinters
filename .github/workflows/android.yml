@@ -22,7 +22,7 @@ jobs:
     - name: change dir
       run: cd AgileSprinters
     - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+      run: chmod +x AgileSprinters/gradlew
     - name: Build with Gradle
       run: ./AgileSprinters/gradlew build
     - name: Look for gradlew
