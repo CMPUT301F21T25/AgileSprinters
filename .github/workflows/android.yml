@@ -23,7 +23,8 @@ jobs:
       run: chmod +x AgileSprinters/gradlew
     - name: Build with Gradle
       run: ./AgileSprinters/gradlew build
-    - name: Look for gradlew
-      run: find / -type f -name "gradlew"
     - name: linuxConversion
       run: dos2unix ./AgileSprinters/gradlew
+    - name: Look for gradlew
+      run: find / -type f -name "gradlew"
+
