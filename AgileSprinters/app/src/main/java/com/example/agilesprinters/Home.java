@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -47,7 +48,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
     private static final String TAG = "Habit";
     private String UID;
-    private User currentUser;
+    private String firstName;
     private User user;
     private String collectionPath;
     private Database database = new Database();
@@ -70,20 +71,18 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         habitAdapter = new habitListAdapter(this, habitArrayList);
         habitList.setAdapter(habitAdapter);
         db = FirebaseFirestore.getInstance();
-        final CollectionReference collectionReference = db.collection("Habit");
+        CollectionReference habitCollectionReference = db.collection("Habit");
 
         if (user == null) {
             user = (User) getIntent().getSerializableExtra("user");
             UID = user.getUser();
         }
 
-        System.out.println("User" + UID);
-
         /**
          * This is a database listener. Each time the Home page is created, it will read the contents
          * of the database and put it in our listview.
          */
-        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        habitCollectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
                     FirebaseFirestoreException error) {
@@ -105,6 +104,8 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 // from the cloud
             }
         });
+
+
 
         /**
          * This is an on item click listener which listens for when a user taps on an item in the

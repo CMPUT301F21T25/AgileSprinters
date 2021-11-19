@@ -11,11 +11,26 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.HashMap;
 
 
 /**
@@ -40,7 +55,11 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     /**
      * this variable contains the current user
      */
-    private final User currentUser = new User();
+    private User currentUser = new User();
+
+    private FirebaseFirestore db;
+    private Database database = new Database();
+    private String firstName, lastName, emailId;
 
     /**
      * This function is called when the login activity starts
@@ -179,10 +198,20 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
      */
     private void updateUI(FirebaseUser user) {
         Intent intent = new Intent(Login.this, Home.class);
-
-        //pass in the unique user ID to home page
         String uniqueId = user.getUid();
+
+
+        db = FirebaseFirestore.getInstance();
+        DocumentReference docRef = db.collection("users").document(uniqueId);
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                currentUser.setEmailId((String) documentSnapshot.getData().get("Email ID"));
+            }
+        });
+        System.out.println(currentUser.getEmailId()+currentUser.getLastName()+"firstName");
         currentUser.setUser(uniqueId);
+
         intent.putExtra(getString(R.string.USER_STR), currentUser);
 
         //go to home page and finish the login activity
