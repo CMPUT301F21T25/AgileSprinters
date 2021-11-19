@@ -84,6 +84,7 @@ public class Database {
                 });
     }
 
+    /**
     public DocumentReference getData(String docId){
         db = FirebaseFirestore.getInstance();
         DocumentReference docRef = db.collection("users").document(docId);
@@ -104,5 +105,6 @@ public class Database {
         });
         return docRef;
     }
+     **/
 }
 

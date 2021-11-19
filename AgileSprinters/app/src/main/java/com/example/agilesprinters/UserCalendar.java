@@ -169,9 +169,9 @@ public class UserCalendar extends AppCompatActivity
      * Return a ArrayList of strings
      */
     public ArrayList<String> getHabitDays(Map<String, Object> weekdays) {
-        String[] days = new String[]{ getString(R.string.MONDAY_STR), getString(R.string.TUESDAY_STR),
+        String[] days = new String[]{ getString(R.string.SUNDAY_STR), getString(R.string.MONDAY_STR), getString(R.string.TUESDAY_STR),
                 getString(R.string.WEDNESDAY_STR), getString(R.string.THURSDAY_STR), getString(R.string.FRIDAY_STR),
-                getString(R.string.SATURDAY_STR), getString(R.string.SUNDAY_STR)};
+                getString(R.string.SATURDAY_STR) };
         ArrayList<String> habitDays = new ArrayList<>();
 
         for (String day : days) {
@@ -235,14 +235,15 @@ public class UserCalendar extends AppCompatActivity
                 completedEventIds.clear();
                 for(QueryDocumentSnapshot doc: value) {
                     Log.d(TAG, String.valueOf(doc.getData().get("Opt_comment")));
+                    if (doc.getString("UID").equals(UID) ){
+                        LocalDate eventDate = LocalDate.parse(doc.get("Date").toString(), formatter);
+                        if( (eventDate.isEqual(currentDate))){
+                            HabitInstance newInstance = new HabitInstance(doc.getString("EID"), doc.getString("UID"), doc.getString("HID"),
+                                    doc.getString("Opt_comment"), doc.getString("Date"), Integer.parseInt(doc.get("Duration").toString()));
+                            completedEventAdapter.add(newInstance);
+                            completedEventIds.add(doc.getId()); // Adding habit events from Firestore
+                        }
 
-                    LocalDate eventDate = LocalDate.parse(doc.get("Date").toString(), formatter);
-
-                    if (doc.getString("UID").equals(UID) && (eventDate.isEqual(currentDate)) ){
-                        HabitInstance newInstance = new HabitInstance(doc.getString("EID"), doc.getString("UID"), doc.getString("HID"),
-                                doc.getString("Opt_comment"), doc.getString("Date"), Integer.parseInt(doc.get("Duration").toString()));
-                        completedEventAdapter.add(newInstance);
-                        completedEventIds.add(doc.getId()); // Adding habit events from Firestore
                     }
                 }
 
