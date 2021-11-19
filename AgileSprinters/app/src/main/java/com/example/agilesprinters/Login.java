@@ -30,8 +30,10 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -56,7 +58,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     /**
      * this variable contains the current user
      */
-    private User currentUser = new User();
+    private User currentUser;
 
     private FirebaseFirestore db;
     private Database database = new Database();
@@ -204,22 +206,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         Intent intent = new Intent(Login.this, Home.class);
         String uniqueId = user.getUid();
 
-        currentUser.setUser(uniqueId);
-        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
-                    FirebaseFirestoreException error) {
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    Log.d(TAG, String.valueOf(doc.getData().get("UID")));
-                    if (uniqueId.matches((String) doc.getData().get("UID"))) {
-                        emailId = (String) doc.getData().get("Email ID");
-                        firstName = (String) doc.getData().get("First Name");
-                        lastName = (String) doc.getData().get("Last Name");
-                    }
-                }
-                User user1 = new User(uniqueId, firstName, lastName, emailId);
-                userArrayList.add(user1);
-            }
+        db.collection("users").addSnapshotListener((value, error) -> {
+            System.out.println("unique"+uniqueId);
         });
 
         intent.putExtra(getString(R.string.USER_STR), currentUser);
@@ -228,6 +216,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         startActivity(intent);
         finish();
     }
+
 
     public void setFields(User user, String emailId, String firstName, String lastName){
         user.setEmailId(emailId);
