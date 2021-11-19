@@ -24,7 +24,7 @@ jobs:
     - name: Build with Gradle
       run: ./AgileSprinters/gradlew build
     - name: linuxConversion
-      run: dos2unix ./AgileSprinters/gradlew
+      run: dos2unix AgileSprinters/gradlew
     - name: Look for gradlew
       run: find / -type f -name "gradlew"
 
