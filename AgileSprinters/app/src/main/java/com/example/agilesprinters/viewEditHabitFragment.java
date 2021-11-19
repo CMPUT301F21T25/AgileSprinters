@@ -44,8 +44,10 @@ public class viewEditHabitFragment extends DialogFragment {
     private Button friday;
     private Button saturday;
     private Spinner privacy;
-    private ArrayList<String> originalWeekdays;
+    private HashMap<String, Boolean> originalWeekdays;
     private HashMap<String, Boolean> weekdays;
+    private String[] weekdayStrArray;
+    private Button[]  weekdayEditButtonArray;
     private viewEditHabitFragment.OnFragmentInteractionListener listener;
     private String HID;
     private String UID;
@@ -135,6 +137,7 @@ public class viewEditHabitFragment extends DialogFragment {
         habitTitle.setText(habit.getTitle());
         habitReason.setText(habit.getReason());
         date_textView.setText("Date Started: " + habit.getDateToStart());
+        originalWeekdays = habit.getWeekdays();
         weekdays = habit.getWeekdays();
         date = habit.getDateToStart();
 
@@ -144,9 +147,9 @@ public class viewEditHabitFragment extends DialogFragment {
             privacy.setSelection(1);
         }
         // Array with all the Edit buttons for weekdays
-        Button[]  weekdayEditButtonArray = new Button[]{sunday, monday, tuesday, wednesday, thursday, friday, saturday};
+        weekdayEditButtonArray = new Button[]{sunday, monday, tuesday, wednesday, thursday, friday, saturday};
         // Array with all the string values for weekdays
-        String[] weekdayStrArray = new String[]{ getString(R.string.mondayStr), getString(R.string.tuesdayStr),
+        weekdayStrArray = new String[]{ getString(R.string.mondayStr), getString(R.string.tuesdayStr),
                 getString(R.string.wednesdayStr), getString(R.string.thursdayStr), getString(R.string.fridayStr),
                 getString(R.string.saturdayStr), getString(R.string.sundayStr)};
 
@@ -209,6 +212,26 @@ public class viewEditHabitFragment extends DialogFragment {
         final AlertDialog dialog = (AlertDialog) getDialog();
         if (dialog != null) {
             Button positive = (Button) dialog.getButton(Dialog.BUTTON_POSITIVE);
+            Button negative = (Button) dialog.getButton(Dialog.BUTTON_NEGATIVE);
+
+            negative.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int j = 0;
+                    for (String key : weekdays.keySet()){
+                        if (weekdays.get(key) == true && originalWeekdays.get(key) == false){
+                            System.out.println(weekdays);
+                            weekdayEditButtonArray[j].setBackgroundColor(Color.parseColor(getString(R.string.greyHexCode)));
+                        }
+                        else if(weekdays.get(key) == false && originalWeekdays.get(key) == true){
+                            weekdayEditButtonArray[j].setBackgroundColor(Color.parseColor(getString(R.string.orangeHexCode)));
+                        }
+                        j++;
+                    }
+
+                    dialog.dismiss();
+                }
+            });
 
             positive.setOnClickListener(new View.OnClickListener() {
                 @Override
