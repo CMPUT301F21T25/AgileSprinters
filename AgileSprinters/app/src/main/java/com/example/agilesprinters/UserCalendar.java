@@ -112,10 +112,12 @@ public class UserCalendar extends AppCompatActivity
 
                 DocumentReference newInstanceRef = db.collection("HabitEvents").document();
                 String instanceId = newInstanceRef.getId();
+                DocumentReference newImageRef = db.collection("EventImageCollection").document();
+                String IID = newImageRef.getId();
 
                 // get hid here
                 addHabitEventFragment values =
-                        new addHabitEventFragment().newInstance(i, UID, selectedHabitInstanceId, instanceId);
+                        new addHabitEventFragment().newInstance(i, UID, selectedHabitInstanceId, instanceId, IID);
                 values.show(getSupportFragmentManager(), "ADD");
 
             }
@@ -239,7 +241,7 @@ public class UserCalendar extends AppCompatActivity
                         LocalDate eventDate = LocalDate.parse(doc.get("Date").toString(), formatter);
                         if( (eventDate.isEqual(currentDate))){
                             HabitInstance newInstance = new HabitInstance(doc.getString("EID"), doc.getString("UID"), doc.getString("HID"),
-                                    doc.getString("Opt_comment"), doc.getString("Date"), Integer.parseInt(doc.get("Duration").toString()));
+                                    doc.getString("Opt_comment"), doc.getString("Date"), Integer.parseInt(doc.get("Duration").toString()), doc.getString("IID"));
                             completedEventAdapter.add(newInstance);
                             completedEventIds.add(doc.getId()); // Adding habit events from Firestore
                         }
@@ -318,6 +320,7 @@ public class UserCalendar extends AppCompatActivity
                 data.put("EID", instance.getEID());
                 data.put("UID", instance.getUID());
                 data.put("HID", instance.getHID());
+                data.put("IID", instance.getIID());
                 data.put("Date", instance.getDate());
                 data.put("Opt_comment",instance.getOpt_comment());
                 data.put("Duration",instance.getDuration());

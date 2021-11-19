@@ -30,6 +30,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -59,7 +60,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
     private FirebaseFirestore db;
     private Database database = new Database();
-    private String firstName, lastName, emailId;
+    private String  firstName, lastName, emailId;
+    private final ArrayList<User> userArrayList = new ArrayList<>();
 
     /**
      * This function is called when the login activity starts
@@ -197,26 +199,40 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
      * Give the firebase user that is logged in, if null is passed {@link FirebaseUser}
      */
     private void updateUI(FirebaseUser user) {
+        db = FirebaseFirestore.getInstance();
+        CollectionReference collectionReference = db.collection("users");
         Intent intent = new Intent(Login.this, Home.class);
         String uniqueId = user.getUid();
 
-
-        db = FirebaseFirestore.getInstance();
-        DocumentReference docRef = db.collection("users").document(uniqueId);
-        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        currentUser.setUser(uniqueId);
+        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                currentUser.setEmailId((String) documentSnapshot.getData().get("Email ID"));
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
+                    FirebaseFirestoreException error) {
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    Log.d(TAG, String.valueOf(doc.getData().get("UID")));
+                    if (uniqueId.matches((String) doc.getData().get("UID"))) {
+                        emailId = (String) doc.getData().get("Email ID");
+                        firstName = (String) doc.getData().get("First Name");
+                        lastName = (String) doc.getData().get("Last Name");
+                    }
+                }
+                User user1 = new User(uniqueId, firstName, lastName, emailId);
+                userArrayList.add(user1);
             }
         });
-        System.out.println(currentUser.getEmailId()+currentUser.getLastName()+"firstName");
-        currentUser.setUser(uniqueId);
 
         intent.putExtra(getString(R.string.USER_STR), currentUser);
 
         //go to home page and finish the login activity
         startActivity(intent);
         finish();
+    }
+
+    public void setFields(User user, String emailId, String firstName, String lastName){
+        user.setEmailId(emailId);
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
     }
 
     /**

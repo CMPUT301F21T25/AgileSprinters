@@ -48,8 +48,8 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
     private static final String TAG = "Habit";
     private String UID;
-    private String firstName;
     private User user;
+    private String firstName;
     private String collectionPath;
     private Database database = new Database();
 
@@ -76,8 +76,12 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         if (user == null) {
             user = (User) getIntent().getSerializableExtra("user");
             UID = user.getUser();
+            firstName = user.getFirstName();
+
         }
 
+        TextView firstName = findViewById(R.id.userIdTextView);
+        //firstName.setText(firstName);
         /**
          * This is a database listener. Each time the Home page is created, it will read the contents
          * of the database and put it in our listview.

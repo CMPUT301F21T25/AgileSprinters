@@ -153,4 +153,5 @@
     <string name="RED_HEX_CODE">#ff0000</string>
     <string name="DATE_PICKER_STR">DATE PICKER</string>
     <string name="hidKey">HID</string>
+    <string name="IID">IID</string>
 </resources>
