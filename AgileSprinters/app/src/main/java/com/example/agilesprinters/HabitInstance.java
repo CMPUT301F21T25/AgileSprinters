@@ -14,6 +14,7 @@ public class HabitInstance implements Serializable {
     private String opt_comment;
     private String date;
     private int duration;
+    private String IID;
 
     /**
      * This is a constructor that takes the eventID, habitID, userID,
@@ -33,13 +34,21 @@ public class HabitInstance implements Serializable {
      *  duration of the event given as an int
      */
     public HabitInstance(String EID, String UID, String HID,
-                         String opt_comment, String date, int duration) {
+                         String opt_comment, String date, int duration, String IID) {
         this.EID = EID;
         this.UID = UID;
         this.HID = HID;
         this.opt_comment = opt_comment;
         this.date = date;
         this.duration = duration;
+    }
+
+    public String getIID() {
+        return IID;
+    }
+
+    public void setIID(String IID) {
+        this.IID = IID;
     }
 
     /**

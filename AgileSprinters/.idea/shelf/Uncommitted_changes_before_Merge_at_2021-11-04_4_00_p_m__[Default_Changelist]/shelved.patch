@@ -1,0 +1,1804 @@
+Index: app/src/main/res/values/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><resources>\r\n    <string name=\"app_name\">AgileSprinters</string>\r\n    <string name=\"title_activity_login\">LoginActivity</string>\r\n    <string name=\"prompt_email\">Email</string>\r\n    <string name=\"prompt_password\">Password</string>\r\n    <string name=\"action_sign_in\">Sign in</string>\r\n    <string name=\"action_register\"><u>Click to register</u></string>\r\n\r\n    <string name=\"welcome\">\"Welcome !\"</string>\r\n    <string name=\"invalid_username\">Not a valid username</string>\r\n    <string name=\"invalid_password\">Password must be >5 characters</string>\r\n    <string name=\"login_failed\">\"Login failed\"</string>\r\n    <string name=\"userId_text\">User Id</string>\r\n    <string name=\"test\">TEST</string>\r\n    <string name=\"followers_text\">Followers</string>\r\n    <string name=\"following_text\">Following</string>\r\n</resources>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/values/strings.xml b/app/src/main/res/values/strings.xml
+--- a/app/src/main/res/values/strings.xml	
++++ b/app/src/main/res/values/strings.xml	
+@@ -8,10 +8,12 @@
+ 
+     <string name="welcome">"Welcome !"</string>
+     <string name="invalid_username">Not a valid username</string>
+-    <string name="invalid_password">Password must be >5 characters</string>
++    <string name="invalid_password">Password must be atleast 6 characters</string>
+     <string name="login_failed">"Login failed"</string>
+     <string name="userId_text">User Id</string>
+     <string name="test">TEST</string>
+     <string name="followers_text">Followers</string>
+     <string name="following_text">Following</string>
++    <string name="wrongActivityMsg">This is not the right activity</string>
++    <string name="wrong_activity">Wrong activity</string>
+ </resources>
+\ No newline at end of file
+Index: app/src/main/java/com/example/agilesprinters/addHabitFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.agilesprinters;\r\n\r\nimport android.app.AlertDialog;\r\nimport android.app.DatePickerDialog;\r\nimport android.app.Dialog;\r\nimport android.content.Context;\r\nimport android.content.DialogInterface;\r\nimport android.graphics.Color;\r\nimport android.os.Bundle;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.DatePicker;\r\nimport android.widget.EditText;\r\nimport android.widget.Spinner;\r\nimport android.widget.TextView;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.fragment.app.DialogFragment;\r\n\r\nimport com.google.firebase.firestore.CollectionReference;\r\nimport com.google.firebase.firestore.DocumentReference;\r\nimport com.google.firebase.firestore.FirebaseFirestore;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.Calendar;\r\nimport java.util.HashMap;\r\n\r\n/**\r\n * This class is a dialog fragment that allows the user to add a new habit.\r\n */\r\npublic class addHabitFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener{\r\n    private EditText habitTitle;\r\n    private EditText habitReason;\r\n    private EditText date_editText;\r\n    private TextView buttonError;\r\n    private Button sunday;\r\n    private Button monday;\r\n    private Button tuesday;\r\n    private Button wednesday;\r\n    private Button thursday;\r\n    private Button friday;\r\n    private Button saturday;\r\n    private String date = \"\";\r\n    private HashMap <String,Boolean> weekdays;\r\n    private Spinner privacy;\r\n    private addHabitFragment.OnFragmentInteractionListener listener;\r\n    FirebaseFirestore db;\r\n\r\n\r\n    /**\r\n     * This function captures the date chosen by the user once they press ok on the datePicker\r\n     * fragment.\r\n     * @param view the datePicker dialog view\r\n     * @param year year of the date chosen by the user\r\n     * @param month month of the date chosen by the user\r\n     * @param dayOfMonth day of the month of the date chosen by the user\r\n     */\r\n    @Override\r\n    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {\r\n        Calendar c = Calendar.getInstance();\r\n        c.set(Calendar.YEAR, year);\r\n        c.set(Calendar.MONTH, month);\r\n        c.set(Calendar.DAY_OF_MONTH, dayOfMonth);\r\n\r\n        //make sure date is empty before setting it to the date picked\r\n        date = \"\";\r\n        if(month+1 < 10) date+= \"0\";\r\n        date += String.valueOf(month + 1) + \"/\";\r\n        if (dayOfMonth < 10 ) date += \"0\";\r\n        date += String.valueOf(dayOfMonth + \"/\");\r\n        date += String.valueOf(year);\r\n        date_editText.setText(date);\r\n    }\r\n\r\n    /**\r\n     * This interface listens for when dialog is ended and sends the information and the function\r\n     * to the Home class for it to implement.\r\n     */\r\n    public interface OnFragmentInteractionListener {\r\n        void onAddPressed(Habit habit);\r\n    }\r\n\r\n    /**\r\n     * This function attaches the fragment to the activity and keeps track of the context of the\r\n     * fragment so the listener knows what to listen to. Ensures that the proper methods are\r\n     * implemented by the Home class.\r\n     * @param context\r\n     */\r\n    @Override\r\n    public void onAttach(Context context){\r\n        super.onAttach(context);\r\n\r\n        if (context instanceof OnFragmentInteractionListener){\r\n            listener = (OnFragmentInteractionListener) context;\r\n        }\r\n        else{\r\n            throw new RuntimeException(context.toString()\r\n                    + \" must implement OnFragmentInteractionListener\");\r\n        }\r\n    }\r\n\r\n\r\n    /**\r\n     * This function creates the actual dialog on the screen and listens for user input, returning\r\n     * the information through the listener based on which button is clicked.\r\n     * @param savedInstanceState\r\n     * @return\r\n     */\r\n    @NonNull\r\n    @Override\r\n    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {\r\n        //inflate the layout for this fragment\r\n        View view = LayoutInflater.from(getActivity()).inflate(R.layout.add_habit_fragment, null);\r\n\r\n        weekdays = new HashMap<String, Boolean>();\r\n        weekdays.put(\"MONDAY\", false);\r\n        weekdays.put(\"TUESDAY\", false);\r\n        weekdays.put(\"WEDNESDAY\", false);\r\n        weekdays.put(\"THURSDAY\", false);\r\n        weekdays.put(\"FRIDAY\", false);\r\n        weekdays.put(\"SATURDAY\", false);\r\n        weekdays.put(\"SUNDAY\", false);\r\n\r\n        habitTitle = view.findViewById(R.id.habit_title_editText);\r\n        habitReason = view.findViewById(R.id.habit_reason_editText);\r\n        date_editText = view.findViewById(R.id.Date);\r\n        privacy = view.findViewById(R.id.privacy_spinner);\r\n        buttonError = view.findViewById(R.id.add_habit_button_error);\r\n\r\n        //set weekday buttons\r\n        sunday = view.findViewById(R.id.button_sunday);\r\n        monday = view.findViewById(R.id.button_monday);\r\n        tuesday = view.findViewById(R.id.button_Tuesday);\r\n        wednesday = view.findViewById(R.id.button_wednesday);\r\n        thursday = view.findViewById(R.id.button_thursday);\r\n        friday = view.findViewById(R.id.button_friday);\r\n        saturday = view.findViewById(R.id.button_saturday);\r\n\r\n        //set on click listeners for all weekday buttons and the editText for the date started\r\n        date_editText.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                DialogFragment datePicker = new datePickerFragment();\r\n                datePicker.show(getChildFragmentManager(), \"DATE PICKER\");\r\n            }\r\n        });\r\n\r\n        sunday.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                if(weekdays.get(\"SUNDAY\") == false){\r\n                    sunday.setBackgroundColor(Color.parseColor(\"#e27c65\"));\r\n                    weekdays.replace(\"SUNDAY\", false, true);\r\n                }\r\n                else{\r\n                    sunday.setBackgroundColor(Color.parseColor(\"#808080\"));\r\n                    weekdays.replace(\"SUNDAY\", true, false);\r\n                }\r\n            }\r\n        });\r\n\r\n        monday.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                if (weekdays.get(\"MONDAY\") == false){\r\n                    monday.setBackgroundColor(Color.parseColor(\"#e27c65\"));\r\n                    weekdays.replace(\"MONDAY\", false, true);\r\n                } else {\r\n                    monday.setBackgroundColor(Color.parseColor(\"#808080\"));\r\n                    weekdays.replace(\"MONDAY\", true, false);\r\n                }\r\n            }\r\n        });\r\n\r\n        tuesday.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                if (weekdays.get(\"TUESDAY\") == false){\r\n                    tuesday.setBackgroundColor(Color.parseColor(\"#e27c65\"));\r\n                    weekdays.replace(\"TUESDAY\", false, true);\r\n                } else {\r\n                    tuesday.setBackgroundColor(Color.parseColor(\"#808080\"));\r\n                    weekdays.replace(\"TUESDAY\", true, false);\r\n                }\r\n            }\r\n        });\r\n\r\n        wednesday.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                if (weekdays.get(\"WEDNESDAY\") == false){\r\n                    wednesday.setBackgroundColor(Color.parseColor(\"#e27c65\"));\r\n                    weekdays.replace(\"WEDNESDAY\", false, true);\r\n                } else {\r\n                    wednesday.setBackgroundColor(Color.parseColor(\"#808080\"));\r\n                    weekdays.replace(\"WEDNESDAY\", true, false);\r\n                }\r\n            }\r\n        });\r\n\r\n        thursday.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                if (weekdays.get(\"THURSDAY\") == false){\r\n                    thursday.setBackgroundColor(Color.parseColor(\"#e27c65\"));\r\n                    weekdays.replace(\"THURSDAY\", false, true);\r\n                } else {\r\n                    thursday.setBackgroundColor(Color.parseColor(\"#808080\"));\r\n                    weekdays.replace(\"THURSDAY\", true, false);\r\n                }\r\n            }\r\n        });\r\n\r\n        friday.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                if (weekdays.get(\"FRIDAY\") == false){\r\n                    friday.setBackgroundColor(Color.parseColor(\"#e27c65\"));\r\n                    weekdays.replace(\"FRIDAY\", false, true);\r\n                } else {\r\n                    friday.setBackgroundColor(Color.parseColor(\"#808080\"));\r\n                    weekdays.replace(\"FRIDAY\", true, false);\r\n                }\r\n            }\r\n        });\r\n\r\n        saturday.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                if (weekdays.get(\"SATURDAY\") == false){\r\n                    saturday.setBackgroundColor(Color.parseColor(\"#e27c65\"));\r\n                    weekdays.replace(\"SATURDAY\", false, true);\r\n                } else {\r\n                    saturday.setBackgroundColor(Color.parseColor(\"#808080\"));\r\n                    weekdays.replace(\"SATURDAY\", true, false);\r\n                }\r\n            }\r\n        });\r\n\r\n        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());\r\n         return builder\r\n                .setView(view)\r\n                .setTitle(\"Add Habit\")\r\n                .setNegativeButton(\"Cancel\", null)\r\n                .setPositiveButton(\"Add\", new DialogInterface.OnClickListener() {\r\n                    @Override\r\n                    public void onClick(DialogInterface dialog, int which) {\r\n                        /* Do not implement anything here in order to override the button\r\n                         * to only call the listener once all the information required has been\r\n                         * filled out and display error messages if they have been left blank.\r\n                         */\r\n                    }\r\n                }).create();\r\n\r\n    }\r\n\r\n    /**\r\n     * This function overrides the buttons clicked in order to only allow the dialog to be dismissed\r\n     * when all requirements have been met.\r\n     */\r\n    @Override\r\n    public void onResume(){\r\n        super.onResume();\r\n\r\n        final AlertDialog dialog = (AlertDialog) getDialog();\r\n        if(dialog != null){\r\n            Button positive = (Button) dialog.getButton(Dialog.BUTTON_POSITIVE);\r\n\r\n            positive.setOnClickListener(new View.OnClickListener() {\r\n                @Override\r\n                public void onClick(View view) {\r\n                    // Boolean tracks when the all the fields have been filled out. Will turn to false\r\n                    // if anything has been left blank.\r\n                    Boolean readyToClose = true;\r\n\r\n                    String habit_title = habitTitle.getText().toString();\r\n                    String habit_reason = habitReason.getText().toString();\r\n                    String privacySetting = privacy.getSelectedItem().toString();\r\n\r\n                    if (habit_title.matches(\"\")) {\r\n                        readyToClose = false;\r\n                        habitTitle.setError(\"This field cannot be blank\");\r\n                    }\r\n                    if (habit_reason.matches(\"\")) {\r\n                        readyToClose = false;\r\n                        habitReason.setError(\"This field cannot be blank\");\r\n                    }\r\n                    if (privacySetting.matches(\"\")) {\r\n                        readyToClose = false;\r\n                    }\r\n                    if (date.matches(\"\")) {\r\n                        readyToClose = false;\r\n                        date_editText.setError(\"This field cannot be blank\");\r\n                    }\r\n\r\n                    Boolean weekdayCheck = false;\r\n                    for(String i : weekdays.keySet()){\r\n                        if (weekdays.get(i)){\r\n                            weekdayCheck = true;\r\n                            break;\r\n                        }\r\n                    }\r\n                    if (!weekdayCheck) {\r\n                        readyToClose = false;\r\n                        buttonError.setText(\"Please choose which days you would like this event to occur.\");\r\n                    }\r\n\r\n                    // If everything has been filled out, call the listener and send the edited\r\n                    // habit back to the Home class and dismiss the dialog.\r\n                    if(readyToClose){\r\n                        User user = new User();\r\n                        db  =  FirebaseFirestore.getInstance();\r\n                        DocumentReference newHabitRef = db.collection(\"Habit\").document();\r\n                        listener.onAddPressed(new Habit(newHabitRef.getId(),user.getUser(),habit_title,habit_reason,date, weekdays, privacySetting));\r\n                        dialog.dismiss();\r\n                    }\r\n                }\r\n            });\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/agilesprinters/addHabitFragment.java b/app/src/main/java/com/example/agilesprinters/addHabitFragment.java
+--- a/app/src/main/java/com/example/agilesprinters/addHabitFragment.java	
++++ b/app/src/main/java/com/example/agilesprinters/addHabitFragment.java	
+@@ -30,7 +30,7 @@
+ /**
+  * This class is a dialog fragment that allows the user to add a new habit.
+  */
+-public class addHabitFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener{
++public class addHabitFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+     private EditText habitTitle;
+     private EditText habitReason;
+     private EditText date_editText;
+@@ -43,7 +43,7 @@
+     private Button friday;
+     private Button saturday;
+     private String date = "";
+-    private HashMap <String,Boolean> weekdays;
++    private HashMap<String, Boolean> weekdays;
+     private Spinner privacy;
+     private addHabitFragment.OnFragmentInteractionListener listener;
+     FirebaseFirestore db;
+@@ -52,9 +52,10 @@
+     /**
+      * This function captures the date chosen by the user once they press ok on the datePicker
+      * fragment.
+-     * @param view the datePicker dialog view
+-     * @param year year of the date chosen by the user
+-     * @param month month of the date chosen by the user
++     *
++     * @param view       the datePicker dialog view
++     * @param year       year of the date chosen by the user
++     * @param month      month of the date chosen by the user
+      * @param dayOfMonth day of the month of the date chosen by the user
+      */
+     @Override
+@@ -66,9 +67,9 @@
+ 
+         //make sure date is empty before setting it to the date picked
+         date = "";
+-        if(month+1 < 10) date+= "0";
++        if (month + 1 < 10) date += "0";
+         date += String.valueOf(month + 1) + "/";
+-        if (dayOfMonth < 10 ) date += "0";
++        if (dayOfMonth < 10) date += "0";
+         date += String.valueOf(dayOfMonth + "/");
+         date += String.valueOf(year);
+         date_editText.setText(date);
+@@ -86,16 +87,16 @@
+      * This function attaches the fragment to the activity and keeps track of the context of the
+      * fragment so the listener knows what to listen to. Ensures that the proper methods are
+      * implemented by the Home class.
++     *
+      * @param context
+      */
+     @Override
+-    public void onAttach(Context context){
++    public void onAttach(Context context) {
+         super.onAttach(context);
+ 
+-        if (context instanceof OnFragmentInteractionListener){
++        if (context instanceof OnFragmentInteractionListener) {
+             listener = (OnFragmentInteractionListener) context;
+-        }
+-        else{
++        } else {
+             throw new RuntimeException(context.toString()
+                     + " must implement OnFragmentInteractionListener");
+         }
+@@ -105,6 +106,7 @@
+     /**
+      * This function creates the actual dialog on the screen and listens for user input, returning
+      * the information through the listener based on which button is clicked.
++     *
+      * @param savedInstanceState
+      * @return
+      */
+@@ -150,11 +152,10 @@
+         sunday.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+-                if(weekdays.get("SUNDAY") == false){
++                if (weekdays.get("SUNDAY") == false) {
+                     sunday.setBackgroundColor(Color.parseColor("#e27c65"));
+                     weekdays.replace("SUNDAY", false, true);
+-                }
+-                else{
++                } else {
+                     sunday.setBackgroundColor(Color.parseColor("#808080"));
+                     weekdays.replace("SUNDAY", true, false);
+                 }
+@@ -164,7 +165,7 @@
+         monday.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+-                if (weekdays.get("MONDAY") == false){
++                if (weekdays.get("MONDAY") == false) {
+                     monday.setBackgroundColor(Color.parseColor("#e27c65"));
+                     weekdays.replace("MONDAY", false, true);
+                 } else {
+@@ -177,7 +178,7 @@
+         tuesday.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+-                if (weekdays.get("TUESDAY") == false){
++                if (weekdays.get("TUESDAY") == false) {
+                     tuesday.setBackgroundColor(Color.parseColor("#e27c65"));
+                     weekdays.replace("TUESDAY", false, true);
+                 } else {
+@@ -190,7 +191,7 @@
+         wednesday.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+-                if (weekdays.get("WEDNESDAY") == false){
++                if (weekdays.get("WEDNESDAY") == false) {
+                     wednesday.setBackgroundColor(Color.parseColor("#e27c65"));
+                     weekdays.replace("WEDNESDAY", false, true);
+                 } else {
+@@ -203,7 +204,7 @@
+         thursday.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+-                if (weekdays.get("THURSDAY") == false){
++                if (weekdays.get("THURSDAY") == false) {
+                     thursday.setBackgroundColor(Color.parseColor("#e27c65"));
+                     weekdays.replace("THURSDAY", false, true);
+                 } else {
+@@ -216,7 +217,7 @@
+         friday.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+-                if (weekdays.get("FRIDAY") == false){
++                if (weekdays.get("FRIDAY") == false) {
+                     friday.setBackgroundColor(Color.parseColor("#e27c65"));
+                     weekdays.replace("FRIDAY", false, true);
+                 } else {
+@@ -229,7 +230,7 @@
+         saturday.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+-                if (weekdays.get("SATURDAY") == false){
++                if (weekdays.get("SATURDAY") == false) {
+                     saturday.setBackgroundColor(Color.parseColor("#e27c65"));
+                     weekdays.replace("SATURDAY", false, true);
+                 } else {
+@@ -240,7 +241,7 @@
+         });
+ 
+         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+-         return builder
++        return builder
+                 .setView(view)
+                 .setTitle("Add Habit")
+                 .setNegativeButton("Cancel", null)
+@@ -261,11 +262,11 @@
+      * when all requirements have been met.
+      */
+     @Override
+-    public void onResume(){
++    public void onResume() {
+         super.onResume();
+ 
+         final AlertDialog dialog = (AlertDialog) getDialog();
+-        if(dialog != null){
++        if (dialog != null) {
+             Button positive = (Button) dialog.getButton(Dialog.BUTTON_POSITIVE);
+ 
+             positive.setOnClickListener(new View.OnClickListener() {
+@@ -296,8 +297,8 @@
+                     }
+ 
+                     Boolean weekdayCheck = false;
+-                    for(String i : weekdays.keySet()){
+-                        if (weekdays.get(i)){
++                    for (String i : weekdays.keySet()) {
++                        if (weekdays.get(i)) {
+                             weekdayCheck = true;
+                             break;
+                         }
+@@ -309,11 +310,11 @@
+ 
+                     // If everything has been filled out, call the listener and send the edited
+                     // habit back to the Home class and dismiss the dialog.
+-                    if(readyToClose){
++                    if (readyToClose) {
+                         User user = new User();
+-                        db  =  FirebaseFirestore.getInstance();
++                        db = FirebaseFirestore.getInstance();
+                         DocumentReference newHabitRef = db.collection("Habit").document();
+-                        listener.onAddPressed(new Habit(newHabitRef.getId(),user.getUser(),habit_title,habit_reason,date, weekdays, privacySetting));
++                        listener.onAddPressed(new Habit(newHabitRef.getId(), user.getUser(), habit_title, habit_reason, date, weekdays, privacySetting));
+                         dialog.dismiss();
+                     }
+                 }
+Index: app/src/main/java/com/example/agilesprinters/datePickerFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.agilesprinters;\r\n\r\nimport android.app.AlertDialog;\r\nimport android.app.DatePickerDialog;\r\nimport android.app.Dialog;\r\nimport android.content.Context;\r\nimport android.content.DialogInterface;\r\nimport android.os.Bundle;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.widget.DatePicker;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.fragment.app.DialogFragment;\r\n\r\nimport java.util.Calendar;\r\n\r\n/**\r\n * This class is a dialog fragment that allows a user to choose a date to begin a habit\r\n */\r\npublic class datePickerFragment extends DialogFragment {\r\n\r\n    /**\r\n     * This function creates the dialog screen and listens for the date the user chooses\r\n     * @param savedInstanceState\r\n     * @return\r\n     */\r\n    @NonNull\r\n    @Override\r\n    public Dialog onCreateDialog(Bundle savedInstanceState) {\r\n        Calendar c = Calendar.getInstance();\r\n        int year = c.get(Calendar.YEAR);\r\n        int month = c.get(Calendar.MONTH);\r\n        int day = c.get(Calendar.DAY_OF_MONTH);\r\n        return new DatePickerDialog(getActivity(), (DatePickerDialog.OnDateSetListener) getParentFragment(), year, month, day);\r\n    }\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/agilesprinters/datePickerFragment.java b/app/src/main/java/com/example/agilesprinters/datePickerFragment.java
+--- a/app/src/main/java/com/example/agilesprinters/datePickerFragment.java	
++++ b/app/src/main/java/com/example/agilesprinters/datePickerFragment.java	
+@@ -23,6 +23,7 @@
+ 
+     /**
+      * This function creates the dialog screen and listens for the date the user chooses
++     *
+      * @param savedInstanceState
+      * @return
+      */
+Index: app/src/main/java/com/example/agilesprinters/Habit.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.agilesprinters;\r\n\r\nimport java.io.Serializable;\r\nimport java.util.ArrayList;\r\nimport java.util.Date;\r\nimport java.util.HashMap;\r\nimport java.util.List;\r\n\r\npublic class Habit implements Serializable {\r\n    private String UID;\r\n    private String HID;\r\n    private String title;\r\n    private String reason;\r\n    private String dateToStart;\r\n    private HashMap<String, Boolean> weekdays;\r\n    private String privacySetting;\r\n\r\n    public String getUID() {\r\n        return UID;\r\n    }\r\n\r\n    public void setUID(String UID) {\r\n        this.UID = UID;\r\n    }\r\n\r\n    public String getHID() {\r\n        return HID;\r\n    }\r\n\r\n    public void setHID(String HID) {\r\n        this.HID = HID;\r\n    }\r\n\r\n    public Habit(String HID,String UID, String title, String reason, String dateToStart, HashMap<String,Boolean> weekdays, String privacySetting) {\r\n        this.UID = UID;\r\n        this.HID = HID;\r\n        this.title = title;\r\n        this.reason = reason;\r\n        this.dateToStart = dateToStart;\r\n        this.weekdays = weekdays;\r\n        this.privacySetting = privacySetting;\r\n\r\n    }\r\n\r\n    public String getPrivacySetting() {\r\n        return privacySetting;\r\n    }\r\n\r\n    public void setPrivacySetting(String privacySetting) {\r\n        this.privacySetting = privacySetting;\r\n    }\r\n\r\n    public HashMap<String, Boolean> getWeekdays() {\r\n        return weekdays;\r\n    }\r\n\r\n    public void setWeekdays(HashMap<String,Boolean> weekdays) {\r\n        this.weekdays = weekdays;\r\n    }\r\n\r\n    public String getTitle() {\r\n        return title;\r\n    }\r\n\r\n    public void setTitle(String title) {\r\n        this.title = title;\r\n    }\r\n\r\n    public String getReason() {\r\n        return reason;\r\n    }\r\n\r\n    public void setReason(String reason) {\r\n        this.reason = reason;\r\n    }\r\n\r\n    public String getDateToStart() {\r\n        return dateToStart;\r\n    }\r\n\r\n    public void setDateToStart(String dateToStart) {\r\n        this.dateToStart = dateToStart;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/agilesprinters/Habit.java b/app/src/main/java/com/example/agilesprinters/Habit.java
+--- a/app/src/main/java/com/example/agilesprinters/Habit.java	
++++ b/app/src/main/java/com/example/agilesprinters/Habit.java	
+@@ -31,7 +31,7 @@
+         this.HID = HID;
+     }
+ 
+-    public Habit(String HID,String UID, String title, String reason, String dateToStart, HashMap<String,Boolean> weekdays, String privacySetting) {
++    public Habit(String HID, String UID, String title, String reason, String dateToStart, HashMap<String, Boolean> weekdays, String privacySetting) {
+         this.UID = UID;
+         this.HID = HID;
+         this.title = title;
+@@ -54,7 +54,7 @@
+         return weekdays;
+     }
+ 
+-    public void setWeekdays(HashMap<String,Boolean> weekdays) {
++    public void setWeekdays(HashMap<String, Boolean> weekdays) {
+         this.weekdays = weekdays;
+     }
+ 
+Index: app/src/main/java/com/example/agilesprinters/datePickerCalendar.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.agilesprinters;\r\n\r\nimport android.app.AlertDialog;\r\nimport android.app.DatePickerDialog;\r\nimport android.app.Dialog;\r\nimport android.content.Context;\r\nimport android.content.DialogInterface;\r\nimport android.os.Bundle;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.widget.DatePicker;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.fragment.app.DialogFragment;\r\n\r\nimport java.util.Calendar;\r\n\r\n/**\r\n * This class is a dialog fragment that allows a user to choose a date to begin a habit\r\n */\r\npublic class datePickerCalendar extends DialogFragment {\r\n\r\n    /**\r\n     * This function creates the dialog screen and listens for the date the user chooses\r\n     * @param savedInstanceState\r\n     * @return\r\n     */\r\n    @NonNull\r\n    @Override\r\n    public Dialog onCreateDialog(Bundle savedInstanceState) {\r\n        Calendar c = Calendar.getInstance();\r\n        int year = c.get(Calendar.YEAR);\r\n        int month = c.get(Calendar.MONTH);\r\n        int day = c.get(Calendar.DAY_OF_MONTH);\r\n        return new DatePickerDialog(getActivity(), (DatePickerDialog.OnDateSetListener) getActivity(), year, month, day);\r\n    }\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/agilesprinters/datePickerCalendar.java b/app/src/main/java/com/example/agilesprinters/datePickerCalendar.java
+--- a/app/src/main/java/com/example/agilesprinters/datePickerCalendar.java	
++++ b/app/src/main/java/com/example/agilesprinters/datePickerCalendar.java	
+@@ -23,6 +23,7 @@
+ 
+     /**
+      * This function creates the dialog screen and listens for the date the user chooses
++     *
+      * @param savedInstanceState
+      * @return
+      */
+Index: app/src/main/java/com/example/agilesprinters/habitListAdapter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.agilesprinters;\r\n\r\nimport android.content.Context;\r\nimport android.graphics.Color;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.ArrayAdapter;\r\nimport android.widget.TextView;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.HashMap;\r\nimport java.util.List;\r\n\r\n/**\r\n * This class provides a custom layout for items in the habit list on the home page.\r\n */\r\npublic class habitListAdapter extends ArrayAdapter<Habit> {\r\n    private Context mContext;\r\n    private ArrayList<Habit> habits;\r\n\r\n    public habitListAdapter(Context context,  ArrayList<Habit> objects) {\r\n        super(context,0, objects);\r\n        this.habits = objects;\r\n        this.mContext = context;\r\n    }\r\n\r\n    @NonNull\r\n    @Override\r\n    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {\r\n        View view = convertView;\r\n\r\n        if(view == null){\r\n            view = LayoutInflater.from(mContext).inflate(R.layout.home_list_content, parent, false);\r\n        }\r\n\r\n        Habit habit = habits.get(position);\r\n\r\n        //attach variables to the textViews in the list\r\n        TextView tvDate = view.findViewById(R.id.habit_date_textView);\r\n        TextView tvPrivacy = view.findViewById(R.id.privacy_setting_list);\r\n        TextView tvTitle = view.findViewById(R.id.habit_list_title_textView);\r\n        TextView tvReason = view.findViewById(R.id.habit_list_reason_textView);\r\n\r\n        //pass values to variables\r\n        tvDate.setText(\"  Date Started: \" + habit.getDateToStart());\r\n        tvTitle.setText(habit.getTitle());\r\n        tvPrivacy.setText(habit.getPrivacySetting());\r\n        tvReason.setText(habit.getReason());\r\n\r\n        return view;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/agilesprinters/habitListAdapter.java b/app/src/main/java/com/example/agilesprinters/habitListAdapter.java
+--- a/app/src/main/java/com/example/agilesprinters/habitListAdapter.java	
++++ b/app/src/main/java/com/example/agilesprinters/habitListAdapter.java	
+@@ -22,8 +22,8 @@
+     private Context mContext;
+     private ArrayList<Habit> habits;
+ 
+-    public habitListAdapter(Context context,  ArrayList<Habit> objects) {
+-        super(context,0, objects);
++    public habitListAdapter(Context context, ArrayList<Habit> objects) {
++        super(context, 0, objects);
+         this.habits = objects;
+         this.mContext = context;
+     }
+@@ -33,7 +33,7 @@
+     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+         View view = convertView;
+ 
+-        if(view == null){
++        if (view == null) {
+             view = LayoutInflater.from(mContext).inflate(R.layout.home_list_content, parent, false);
+         }
+ 
+Index: app/src/main/res/layout/activity_login.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:id=\"@+id/container\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:paddingLeft=\"@dimen/activity_horizontal_margin\"\r\n    android:paddingTop=\"@dimen/activity_vertical_margin\"\r\n    android:paddingRight=\"@dimen/activity_horizontal_margin\"\r\n    android:paddingBottom=\"@dimen/activity_vertical_margin\"\r\n    tools:context=\".Login\">\r\n\r\n    <EditText\r\n        android:id=\"@+id/email\"\r\n        android:layout_width=\"0dp\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginTop=\"96dp\"\r\n        android:autofillHints=\"@string/prompt_email\"\r\n        android:hint=\"@string/prompt_email\"\r\n        android:inputType=\"textEmailAddress\"\r\n        android:selectAllOnFocus=\"true\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\" />\r\n\r\n    <EditText\r\n        android:id=\"@+id/password\"\r\n        android:layout_width=\"0dp\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginTop=\"8dp\"\r\n        android:autofillHints=\"@string/prompt_password\"\r\n        android:hint=\"@string/prompt_password\"\r\n        android:imeActionLabel=\"@string/prompt_password\"\r\n        android:imeOptions=\"actionDone\"\r\n        android:inputType=\"textPassword\"\r\n        android:selectAllOnFocus=\"true\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/email\" />\r\n\r\n    <Button\r\n        android:id=\"@+id/login\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_gravity=\"start\"\r\n        android:layout_marginTop=\"16dp\"\r\n        android:layout_marginBottom=\"64dp\"\r\n        android:text=\"@string/action_sign_in\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/password\"\r\n        app:layout_constraintVertical_bias=\"0.2\" />\r\n\r\n    <ProgressBar\r\n        android:id=\"@+id/loading\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_gravity=\"center\"\r\n        android:layout_marginTop=\"64dp\"\r\n        android:layout_marginBottom=\"64dp\"\r\n        android:visibility=\"gone\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"@+id/password\"\r\n        app:layout_constraintStart_toStartOf=\"@+id/password\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        app:layout_constraintVertical_bias=\"0.3\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/register\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginTop=\"15dp\"\r\n        android:text=\"@string/action_register\"\r\n        android:textColor=\"#03A9F4\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0\"\r\n        app:layout_constraintRight_toLeftOf=\"@+id/password\"\r\n        app:layout_constraintStart_toStartOf=\"@id/password\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/password\"/>\r\n\r\n\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_login.xml b/app/src/main/res/layout/activity_login.xml
+--- a/app/src/main/res/layout/activity_login.xml	
++++ b/app/src/main/res/layout/activity_login.xml	
+@@ -78,7 +78,7 @@
+         app:layout_constraintHorizontal_bias="0"
+         app:layout_constraintRight_toLeftOf="@+id/password"
+         app:layout_constraintStart_toStartOf="@id/password"
+-        app:layout_constraintTop_toBottomOf="@+id/password"/>
++        app:layout_constraintTop_toBottomOf="@+id/password" />
+ 
+ 
+ </androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: app/src/main/res/layout/activity_register.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout\r\n    xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".Register\">\r\n\r\n\r\n    <EditText\r\n        android:id=\"@+id/LastName\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"45dp\"\r\n        android:layout_marginBottom=\"12dp\"\r\n        android:ems=\"10\"\r\n        android:hint=\"Last Name\"\r\n        android:inputType=\"textPersonName\"\r\n        app:layout_constraintBottom_toTopOf=\"@+id/EditTextEmail\"\r\n        tools:layout_editor_absoluteX=\"0dp\" />\r\n\r\n    <EditText\r\n        android:id=\"@+id/FirstName\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"45dp\"\r\n        android:layout_marginBottom=\"12dp\"\r\n        android:ems=\"10\"\r\n        android:hint=\"First Name\"\r\n        android:inputType=\"textPersonName\"\r\n        app:layout_constraintBottom_toTopOf=\"@+id/LastName\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        app:layout_constraintVertical_bias=\"1.0\"\r\n        tools:layout_editor_absoluteX=\"0dp\" />\r\n\r\n    <EditText\r\n        android:id=\"@+id/TextPassword\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"45dp\"\r\n        android:layout_marginTop=\"12dp\"\r\n        android:ems=\"10\"\r\n        android:hint=\"Password\"\r\n        android:inputType=\"textPassword\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.0\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/EditTextEmail\" />\r\n\r\n    <EditText\r\n        android:id=\"@+id/EditTextEmail\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"46dp\"\r\n        android:layout_marginTop=\"236dp\"\r\n        android:ems=\"10\"\r\n        android:hint=\"Email\"\r\n        android:inputType=\"textEmailAddress\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\" />\r\n\r\n    <EditText\r\n        android:id=\"@+id/TextConfirmPassword\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"45dp\"\r\n        android:layout_marginTop=\"12dp\"\r\n        android:ems=\"10\"\r\n        android:hint=\"Confirm Password\"\r\n        android:inputType=\"textPassword\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"1.0\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/TextPassword\"\r\n        app:layout_constraintVertical_bias=\"0.0\" />\r\n\r\n    <Button\r\n        android:id=\"@+id/createAccBtn\"\r\n        android:layout_width=\"239dp\"\r\n        android:layout_height=\"46dp\"\r\n        android:layout_marginTop=\"20dp\"\r\n        android:text=\"Create Account\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/TextConfirmPassword\" />\r\n\r\n\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_register.xml b/app/src/main/res/layout/activity_register.xml
+--- a/app/src/main/res/layout/activity_register.xml	
++++ b/app/src/main/res/layout/activity_register.xml	
+@@ -1,6 +1,5 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<androidx.constraintlayout.widget.ConstraintLayout
+-    xmlns:android="http://schemas.android.com/apk/res/android"
++<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:app="http://schemas.android.com/apk/res-auto"
+     xmlns:tools="http://schemas.android.com/tools"
+     android:layout_width="match_parent"
+Index: app/src/main/res/layout/activity_home.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout\r\n    xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".Home\">\r\n\r\n\r\n    <TextView\r\n        android:id=\"@+id/userId\"\r\n        android:layout_width=\"87dp\"\r\n        android:layout_height=\"28dp\"\r\n        android:text=\"@string/userId_text\"\r\n        app:layout_constraintEnd_toStartOf=\"@+id/followers\"\r\n        app:layout_constraintHorizontal_bias=\"0.5\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/followers\"\r\n        android:layout_width=\"145dp\"\r\n        android:layout_height=\"96dp\"\r\n        android:onClick=\"follow\"\r\n        android:text=\"@string/followers_text\"\r\n        app:layout_constraintBaseline_toBaselineOf=\"@+id/userId\"\r\n        app:layout_constraintEnd_toStartOf=\"@id/following\"\r\n        app:layout_constraintHorizontal_bias=\"0.5\"\r\n        app:layout_constraintStart_toEndOf=\"@+id/userId\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/following\"\r\n        android:layout_width=\"145dp\"\r\n        android:layout_height=\"93dp\"\r\n        android:text=\"Following\"\r\n        app:layout_constraintBaseline_toBaselineOf=\"@+id/followers\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.5\"\r\n        app:layout_constraintStart_toEndOf=\"@+id/followers\" />\r\n\r\n\r\n    <ListView\r\n        android:id=\"@+id/habit_list\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"457dp\"\r\n        android:layout_marginTop=\"8dp\"\r\n        app:layout_constraintBottom_toTopOf=\"@+id/bottomNavigationView\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@id/followers\">\r\n\r\n    </ListView>\r\n\r\n    <com.google.android.material.floatingactionbutton.FloatingActionButton\r\n        android:id=\"@+id/add_habit_button\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_gravity=\"end|bottom\"\r\n        android:layout_margin=\"16dp\"\r\n        android:clickable=\"true\"\r\n        android:focusable=\"true\"\r\n        app:layout_constraintBottom_toTopOf=\"@+id/bottomNavigationView\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@id/habit_list\"\r\n        app:srcCompat=\"@android:drawable/ic_input_add\"\r\n        tools:ignore=\"SpeakableTextPresentCheck\" />\r\n\r\n    <com.google.android.material.bottomnavigation.BottomNavigationView\r\n        android:id=\"@+id/bottomNavigationView\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"75dp\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@id/add_habit_button\"\r\n        app:menu=\"@menu/bottom_nav_menu\" />\r\n\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_home.xml b/app/src/main/res/layout/activity_home.xml
+--- a/app/src/main/res/layout/activity_home.xml	
++++ b/app/src/main/res/layout/activity_home.xml	
+@@ -1,8 +1,7 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<androidx.constraintlayout.widget.ConstraintLayout
+-    xmlns:android="http://schemas.android.com/apk/res/android"
+-    xmlns:tools="http://schemas.android.com/tools"
++<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:app="http://schemas.android.com/apk/res-auto"
++    xmlns:tools="http://schemas.android.com/tools"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+     tools:context=".Home">
+Index: app/src/main/res/layout/home_list_content.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:orientation=\"horizontal\"\r\n    android:weightSum=\"100\">\r\n\r\n    <LinearLayout\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_weight=\"50\"\r\n        android:orientation=\"vertical\">\r\n\r\n        <LinearLayout\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_weight=\"50\"\r\n            android:orientation=\"horizontal\">\r\n\r\n            <TextView\r\n                android:id=\"@+id/habit_date_textView\"\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"20dp\"\r\n                android:layout_weight=\"50\"\r\n                android:gravity=\"left\"\r\n                android:text=\"Date\"\r\n                />\r\n\r\n            <TextView\r\n                android:id=\"@+id/habit_tag_textView\"\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"20dp\"\r\n                android:layout_weight=\"50\"\r\n                android:gravity=\"left\"\r\n                android:text=\"Tags to be added later\"\r\n                />\r\n        </LinearLayout>\r\n\r\n        <TextView\r\n            android:id=\"@+id/habit_list_title_textView\"\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"30dp\"\r\n            android:layout_marginLeft=\"6dp\"\r\n            android:text=\"Habit Title\"\r\n            android:textSize=\"20sp\"/>\r\n\r\n\r\n        <TextView\r\n            android:id=\"@+id/habit_list_reason_textView\"\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"40dp\"\r\n            android:layout_marginLeft=\"6dp\"\r\n            android:text=\"Habit Reason\"\r\n            android:textSize=\"18sp\"\r\n            />\r\n\r\n        <LinearLayout\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_weight=\"50\"\r\n            android:orientation=\"horizontal\">\r\n\r\n            <TextView\r\n                android:id=\"@+id/privacy_setting_list\"\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"20dp\"\r\n                android:layout_weight=\"50\"\r\n                android:layout_marginLeft=\"6dp\"\r\n                android:layout_gravity=\"left\"\r\n                android:text = \"Privacy Setting\"\r\n                />\r\n\r\n            <TextView\r\n                android:id=\"@+id/buttons_textView\"\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"20dp\"\r\n                android:text=\"Buttons to be added later\"\r\n                android:layout_weight=\"50\"\r\n                android:gravity=\"left\"\r\n                />\r\n        </LinearLayout>\r\n\r\n    </LinearLayout>\r\n\r\n\r\n</LinearLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/home_list_content.xml b/app/src/main/res/layout/home_list_content.xml
+--- a/app/src/main/res/layout/home_list_content.xml	
++++ b/app/src/main/res/layout/home_list_content.xml	
+@@ -23,8 +23,7 @@
+                 android:layout_height="20dp"
+                 android:layout_weight="50"
+                 android:gravity="left"
+-                android:text="Date"
+-                />
++                android:text="Date" />
+ 
+             <TextView
+                 android:id="@+id/habit_tag_textView"
+@@ -32,8 +31,7 @@
+                 android:layout_height="20dp"
+                 android:layout_weight="50"
+                 android:gravity="left"
+-                android:text="Tags to be added later"
+-                />
++                android:text="Tags to be added later" />
+         </LinearLayout>
+ 
+         <TextView
+@@ -42,7 +40,7 @@
+             android:layout_height="30dp"
+             android:layout_marginLeft="6dp"
+             android:text="Habit Title"
+-            android:textSize="20sp"/>
++            android:textSize="20sp" />
+ 
+ 
+         <TextView
+@@ -51,8 +49,7 @@
+             android:layout_height="40dp"
+             android:layout_marginLeft="6dp"
+             android:text="Habit Reason"
+-            android:textSize="18sp"
+-            />
++            android:textSize="18sp" />
+ 
+         <LinearLayout
+             android:layout_width="match_parent"
+@@ -64,20 +61,18 @@
+                 android:id="@+id/privacy_setting_list"
+                 android:layout_width="match_parent"
+                 android:layout_height="20dp"
+-                android:layout_weight="50"
+-                android:layout_marginLeft="6dp"
+                 android:layout_gravity="left"
+-                android:text = "Privacy Setting"
+-                />
++                android:layout_marginLeft="6dp"
++                android:layout_weight="50"
++                android:text="Privacy Setting" />
+ 
+             <TextView
+                 android:id="@+id/buttons_textView"
+                 android:layout_width="match_parent"
+                 android:layout_height="20dp"
+-                android:text="Buttons to be added later"
+                 android:layout_weight="50"
+                 android:gravity="left"
+-                />
++                android:text="Buttons to be added later" />
+         </LinearLayout>
+ 
+     </LinearLayout>
+Index: app/src/main/java/com/example/agilesprinters/addHabitEventFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.agilesprinters;\r\n\r\nimport android.app.AlertDialog;\r\nimport android.app.DatePickerDialog;\r\nimport android.app.Dialog;\r\nimport android.content.Context;\r\nimport android.content.DialogInterface;\r\nimport android.os.Bundle;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.CheckBox;\r\nimport android.widget.DatePicker;\r\nimport android.widget.EditText;\r\nimport android.widget.TextView;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.fragment.app.DialogFragment;\r\n\r\nimport java.time.LocalDate;\r\nimport java.time.format.DateTimeFormatter;\r\nimport java.util.Calendar;\r\n\r\npublic class addHabitEventFragment extends DialogFragment\r\n        implements DatePickerDialog.OnDateSetListener{\r\n    private int position;\r\n    private String EID;\r\n    private String UID;\r\n    private String HID;\r\n    private String date = \"\";\r\n\r\n    private EditText optional_comment;\r\n    private TextView input_date;\r\n    private EditText input_duration;\r\n\r\n    private addHabitEventFragment.OnFragmentInteractionListener listener;\r\n\r\n    public static addHabitEventFragment newInstance(int position, String UID, String HID, String EID) {\r\n        addHabitEventFragment fragment = new addHabitEventFragment();\r\n        Bundle args = new Bundle();\r\n        args.putInt(\"position\", position);\r\n        args.putString(\"UID\", UID);\r\n        args.putString(\"HID\", HID);\r\n        args.putString(\"EID\", EID);\r\n        fragment.setArguments(args);\r\n\r\n        return fragment;\r\n    }\r\n\r\n    @Override\r\n    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {\r\n        Calendar c = Calendar.getInstance();\r\n        c.set(Calendar.YEAR, year);\r\n        c.set(Calendar.MONTH, month);\r\n        c.set(Calendar.DAY_OF_MONTH, dayOfMonth);\r\n\r\n        //make sure date is empty before setting it to the date picked\r\n        date = \"\";\r\n        if(month+1 < 10) date+= \"0\";\r\n        date += String.valueOf(month + 1) + \"/\";\r\n        if (dayOfMonth < 10 ) date += \"0\";\r\n        date += String.valueOf(dayOfMonth + \"/\");\r\n        date += String.valueOf(year);\r\n        input_date.setText(date);\r\n    }\r\n\r\n    public interface OnFragmentInteractionListener {\r\n        void onSavePressed(HabitInstance habitInstance);\r\n    }\r\n\r\n    @Override\r\n    public void onAttach(@NonNull Context context) {\r\n        super.onAttach(context);\r\n\r\n        if (context instanceof OnFragmentInteractionListener) {\r\n            listener = (OnFragmentInteractionListener) context;\r\n        } else {\r\n            throw new RuntimeException(context.toString()\r\n                    + \" must implement OnFragmentInteractionListener\");\r\n        }\r\n    }\r\n\r\n    @NonNull\r\n    @Override\r\n    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {\r\n        //inflate the layout for this fragment\r\n        View view = LayoutInflater.from(getActivity()).inflate(R.layout.edit_habit_event_fragment, null);\r\n\r\n        // Display the calendar\r\n        optional_comment = view.findViewById(R.id.editText_comment);\r\n        input_date = view.findViewById(R.id.editText_date);\r\n        input_duration = view.findViewById(R.id.editText_duration);\r\n\r\n        position = getArguments().getInt(\"position\");\r\n        UID = getArguments().getString(\"UID\");\r\n        HID = getArguments().getString(\"HID\");\r\n        EID = getArguments().getString(\"EID\");\r\n\r\n        input_date.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                DialogFragment datePicker = new datePickerFragment();\r\n                datePicker.show(getChildFragmentManager(), \"DATE PICKER\");\r\n            }\r\n        });\r\n\r\n        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());\r\n        return builder\r\n                .setView(view)\r\n                .setTitle(\"Add Habit Event\")\r\n                .setNegativeButton(\"Cancel\", null)\r\n                .setPositiveButton(\"Save\", new DialogInterface.OnClickListener() {\r\n                    @Override\r\n                    public void onClick(DialogInterface dialogInterface, int i) {\r\n\r\n                    }\r\n                }).create();\r\n\r\n    }\r\n\r\n    @Override\r\n    public void onResume(){\r\n        super.onResume();\r\n\r\n        final AlertDialog dialog = (AlertDialog) getDialog();\r\n        if(dialog != null){\r\n            Button positive = (Button) dialog.getButton(Dialog.BUTTON_POSITIVE);\r\n\r\n            positive.setOnClickListener(new View.OnClickListener() {\r\n                @Override\r\n                public void onClick(View view) {\r\n                    // Boolean tracks when the all the fields have been filled out. Will turn to false\r\n                    // if anything has been left blank.\r\n                    Boolean readyToClose = true;\r\n\r\n                    String comment = optional_comment.getText().toString();\r\n                    //String date_entry = input_date.getText().toString();\r\n                    String duration = input_duration.getText().toString();\r\n\r\n                    if (comment.length() > 20) {\r\n                        readyToClose = false;\r\n                        optional_comment.setError(\"This field cannot have more than 20 chars\");\r\n                    }\r\n\r\n                    if (comment.matches(\"\")) {\r\n                        readyToClose = false;\r\n                        optional_comment.setError(\"This field cannot be empty\");\r\n                    }\r\n\r\n                    if (date.matches(\"\")) {\r\n                        readyToClose = false;\r\n                        input_date.setError(\"This field cannot be blank\");\r\n                    }\r\n\r\n                    LocalDate currentDate = LocalDate.now();\r\n                    LocalDate eventDate = LocalDate.parse(date, DateTimeFormatter.ofPattern(\"MM/dd/yyyy\"));\r\n\r\n                    if (!eventDate.isEqual(currentDate)) {\r\n                        readyToClose = false;\r\n                        input_date.setError(\"The date has to be today's date\");\r\n                    }\r\n\r\n                    if (duration.matches(\"\")) {\r\n                        readyToClose = false;\r\n                        input_duration.setError(\"This field cannot be blank\");\r\n                    }\r\n\r\n                    // If everything has been filled out, call the listener and send the edited\r\n                    // habit back to the Home class and dismiss the dialog.\r\n                    if(readyToClose){\r\n                        listener.onSavePressed(new HabitInstance(EID, UID, HID, comment, date, Integer.parseInt(duration)));\r\n                        dialog.dismiss();\r\n                    }\r\n                }\r\n            });\r\n        }\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/agilesprinters/addHabitEventFragment.java b/app/src/main/java/com/example/agilesprinters/addHabitEventFragment.java
+--- a/app/src/main/java/com/example/agilesprinters/addHabitEventFragment.java	
++++ b/app/src/main/java/com/example/agilesprinters/addHabitEventFragment.java	
+@@ -23,7 +23,7 @@
+ import java.util.Calendar;
+ 
+ public class addHabitEventFragment extends DialogFragment
+-        implements DatePickerDialog.OnDateSetListener{
++        implements DatePickerDialog.OnDateSetListener {
+     private int position;
+     private String EID;
+     private String UID;
+@@ -57,9 +57,9 @@
+ 
+         //make sure date is empty before setting it to the date picked
+         date = "";
+-        if(month+1 < 10) date+= "0";
++        if (month + 1 < 10) date += "0";
+         date += String.valueOf(month + 1) + "/";
+-        if (dayOfMonth < 10 ) date += "0";
++        if (dayOfMonth < 10) date += "0";
+         date += String.valueOf(dayOfMonth + "/");
+         date += String.valueOf(year);
+         input_date.setText(date);
+@@ -120,11 +120,11 @@
+     }
+ 
+     @Override
+-    public void onResume(){
++    public void onResume() {
+         super.onResume();
+ 
+         final AlertDialog dialog = (AlertDialog) getDialog();
+-        if(dialog != null){
++        if (dialog != null) {
+             Button positive = (Button) dialog.getButton(Dialog.BUTTON_POSITIVE);
+ 
+             positive.setOnClickListener(new View.OnClickListener() {
+@@ -168,7 +168,7 @@
+ 
+                     // If everything has been filled out, call the listener and send the edited
+                     // habit back to the Home class and dismiss the dialog.
+-                    if(readyToClose){
++                    if (readyToClose) {
+                         listener.onSavePressed(new HabitInstance(EID, UID, HID, comment, date, Integer.parseInt(duration)));
+                         dialog.dismiss();
+                     }
+Index: app/src/main/res/layout/view_edit_habit_fragment.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:custom=\"http://schemas.android.com/tools\"\r\n    android:orientation=\"vertical\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\">\r\n\r\n    <EditText\r\n        android:id=\"@+id/view_edit_habit_title_editText\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:ems=\"10\"\r\n        android:maxLength=\"20\"\r\n        android:hint=\"Title\"\r\n        android:inputType=\"textPersonName\"/>\r\n\r\n    <EditText\r\n        android:id=\"@+id/view_edit_habit_reason_editText\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:ems=\"10\"\r\n        android:hint=\"Reason\"\r\n        android:inputType=\"textPersonName\"\r\n        android:maxLength=\"30\"\r\n        android:minHeight=\"48dp\" />\r\n\r\n    <Spinner\r\n        android:id=\"@+id/view_edit_privacy_spinner\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:background=\"@android:drawable/btn_dropdown\"\r\n        android:spinnerMode=\"dropdown\"\r\n        android:entries=\"@array/privacy_options\"/>\r\n\r\n\r\n    <TextView\r\n        android:id=\"@+id/view_edit_habit_date\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginLeft=\"3dp\"\r\n        android:textSize=\"16sp\"\r\n        />\r\n\r\n    <TextView\r\n        android:id=\"@+id/view_edit_habit_button_error\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:textColor=\"#ff0000\"\r\n        android:textSize=\"10sp\"/>\r\n\r\n    <LinearLayout\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:orientation=\"horizontal\"\r\n        android:layout_weight=\"100\">\r\n\r\n        <Button\r\n            android:id=\"@+id/view_edit_button_sunday\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_weight=\"14\"\r\n            android:backgroundTint=\"#808080\"\r\n            android:gravity=\"center\"\r\n            android:text=\"Su\"\r\n            android:textSize=\"11sp\"\r\n            android:layout_marginLeft=\"3dp\"\r\n            android:layout_marginRight=\"3dp\"\r\n            app:cornerRadius=\"40sp\" />\r\n\r\n        <Button\r\n            android:id=\"@+id/view_edit_button_monday\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_weight=\"14\"\r\n            android:backgroundTint=\"#808080\"\r\n            android:gravity=\"center\"\r\n            android:text=\"Mo\"\r\n            android:textSize=\"11sp\"\r\n            android:layout_marginLeft=\"3dp\"\r\n            android:layout_marginRight=\"3dp\"\r\n            app:cornerRadius=\"40sp\"\r\n            />\r\n\r\n        <Button\r\n            android:id=\"@+id/view_edit_button_Tuesday\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_weight=\"14\"\r\n            android:backgroundTint=\"#808080\"\r\n            android:gravity=\"center\"\r\n            android:text=\"Tu\"\r\n            android:textSize=\"11sp\"\r\n            android:layout_marginLeft=\"3dp\"\r\n            android:layout_marginRight=\"3dp\"\r\n            app:cornerRadius=\"40sp\"\r\n            />\r\n\r\n        <Button\r\n            android:id=\"@+id/view_edit_button_wednesday\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_weight=\"14\"\r\n            android:backgroundTint=\"#808080\"\r\n            android:gravity=\"center\"\r\n            android:text=\"We\"\r\n            android:textSize=\"11sp\"\r\n            android:layout_marginLeft=\"3dp\"\r\n            android:layout_marginRight=\"3dp\"\r\n            app:cornerRadius=\"40sp\"\r\n            />\r\n\r\n        <Button\r\n            android:id=\"@+id/view_edit_button_thursday\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_weight=\"14\"\r\n            android:backgroundTint=\"#808080\"\r\n            android:gravity=\"center\"\r\n            android:text=\"Th\"\r\n            android:textSize=\"11sp\"\r\n            android:layout_marginLeft=\"3dp\"\r\n            android:layout_marginRight=\"3dp\"\r\n            app:cornerRadius=\"40sp\"\r\n            />\r\n\r\n        <Button\r\n            android:id=\"@+id/view_edit_button_friday\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_weight=\"14\"\r\n            android:backgroundTint=\"#808080\"\r\n            android:gravity=\"center\"\r\n            android:text=\"Fr\"\r\n            android:textSize=\"11sp\"\r\n            android:layout_marginLeft=\"3dp\"\r\n            android:layout_marginRight=\"3dp\"\r\n            app:cornerRadius=\"40sp\"\r\n            />\r\n\r\n        <Button\r\n            android:id=\"@+id/view_edit_button_saturday\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_weight=\"14\"\r\n            android:backgroundTint=\"#808080\"\r\n            android:gravity=\"center\"\r\n            android:text=\"Sa\"\r\n            android:textSize=\"11sp\"\r\n            android:layout_marginLeft=\"3dp\"\r\n            android:layout_marginRight=\"3dp\"\r\n            app:cornerRadius=\"40sp\"\r\n            />\r\n\r\n    </LinearLayout>\r\n</LinearLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/view_edit_habit_fragment.xml b/app/src/main/res/layout/view_edit_habit_fragment.xml
+--- a/app/src/main/res/layout/view_edit_habit_fragment.xml	
++++ b/app/src/main/res/layout/view_edit_habit_fragment.xml	
+@@ -2,18 +2,18 @@
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:app="http://schemas.android.com/apk/res-auto"
+     xmlns:custom="http://schemas.android.com/tools"
+-    android:orientation="vertical"
+     android:layout_width="match_parent"
+-    android:layout_height="match_parent">
++    android:layout_height="match_parent"
++    android:orientation="vertical">
+ 
+     <EditText
+         android:id="@+id/view_edit_habit_title_editText"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:ems="10"
+-        android:maxLength="20"
+         android:hint="Title"
+-        android:inputType="textPersonName"/>
++        android:inputType="textPersonName"
++        android:maxLength="20" />
+ 
+     <EditText
+         android:id="@+id/view_edit_habit_reason_editText"
+@@ -30,8 +30,8 @@
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:background="@android:drawable/btn_dropdown"
+-        android:spinnerMode="dropdown"
+-        android:entries="@array/privacy_options"/>
++        android:entries="@array/privacy_options"
++        android:spinnerMode="dropdown" />
+ 
+ 
+     <TextView
+@@ -39,118 +39,111 @@
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_marginLeft="3dp"
+-        android:textSize="16sp"
+-        />
++        android:textSize="16sp" />
+ 
+     <TextView
+         android:id="@+id/view_edit_habit_button_error"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:textColor="#ff0000"
+-        android:textSize="10sp"/>
++        android:textSize="10sp" />
+ 
+     <LinearLayout
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+-        android:orientation="horizontal"
+-        android:layout_weight="100">
++        android:layout_weight="100"
++        android:orientation="horizontal">
+ 
+         <Button
+             android:id="@+id/view_edit_button_sunday"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
++            android:layout_marginLeft="3dp"
++            android:layout_marginRight="3dp"
+             android:layout_weight="14"
+             android:backgroundTint="#808080"
+             android:gravity="center"
+             android:text="Su"
+             android:textSize="11sp"
+-            android:layout_marginLeft="3dp"
+-            android:layout_marginRight="3dp"
+             app:cornerRadius="40sp" />
+ 
+         <Button
+             android:id="@+id/view_edit_button_monday"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
++            android:layout_marginLeft="3dp"
++            android:layout_marginRight="3dp"
+             android:layout_weight="14"
+             android:backgroundTint="#808080"
+             android:gravity="center"
+             android:text="Mo"
+             android:textSize="11sp"
+-            android:layout_marginLeft="3dp"
+-            android:layout_marginRight="3dp"
+-            app:cornerRadius="40sp"
+-            />
++            app:cornerRadius="40sp" />
+ 
+         <Button
+             android:id="@+id/view_edit_button_Tuesday"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
++            android:layout_marginLeft="3dp"
++            android:layout_marginRight="3dp"
+             android:layout_weight="14"
+             android:backgroundTint="#808080"
+             android:gravity="center"
+             android:text="Tu"
+             android:textSize="11sp"
+-            android:layout_marginLeft="3dp"
+-            android:layout_marginRight="3dp"
+-            app:cornerRadius="40sp"
+-            />
++            app:cornerRadius="40sp" />
+ 
+         <Button
+             android:id="@+id/view_edit_button_wednesday"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
++            android:layout_marginLeft="3dp"
++            android:layout_marginRight="3dp"
+             android:layout_weight="14"
+             android:backgroundTint="#808080"
+             android:gravity="center"
+             android:text="We"
+             android:textSize="11sp"
+-            android:layout_marginLeft="3dp"
+-            android:layout_marginRight="3dp"
+-            app:cornerRadius="40sp"
+-            />
++            app:cornerRadius="40sp" />
+ 
+         <Button
+             android:id="@+id/view_edit_button_thursday"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
++            android:layout_marginLeft="3dp"
++            android:layout_marginRight="3dp"
+             android:layout_weight="14"
+             android:backgroundTint="#808080"
+             android:gravity="center"
+             android:text="Th"
+             android:textSize="11sp"
+-            android:layout_marginLeft="3dp"
+-            android:layout_marginRight="3dp"
+-            app:cornerRadius="40sp"
+-            />
++            app:cornerRadius="40sp" />
+ 
+         <Button
+             android:id="@+id/view_edit_button_friday"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
++            android:layout_marginLeft="3dp"
++            android:layout_marginRight="3dp"
+             android:layout_weight="14"
+             android:backgroundTint="#808080"
+             android:gravity="center"
+             android:text="Fr"
+             android:textSize="11sp"
+-            android:layout_marginLeft="3dp"
+-            android:layout_marginRight="3dp"
+-            app:cornerRadius="40sp"
+-            />
++            app:cornerRadius="40sp" />
+ 
+         <Button
+             android:id="@+id/view_edit_button_saturday"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
++            android:layout_marginLeft="3dp"
++            android:layout_marginRight="3dp"
+             android:layout_weight="14"
+             android:backgroundTint="#808080"
+             android:gravity="center"
+             android:text="Sa"
+             android:textSize="11sp"
+-            android:layout_marginLeft="3dp"
+-            android:layout_marginRight="3dp"
+-            app:cornerRadius="40sp"
+-            />
++            app:cornerRadius="40sp" />
+ 
+     </LinearLayout>
+ </LinearLayout>
+\ No newline at end of file
+Index: app/src/main/res/layout/add_habit_fragment.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:custom=\"http://schemas.android.com/tools\"\r\n    android:orientation=\"vertical\"\r\n    android:weightSum=\"100\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\">\r\n\r\n    <EditText\r\n        android:id=\"@+id/habit_title_editText\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:ems=\"10\"\r\n        android:maxLength=\"20\"\r\n        android:hint=\"Title\"\r\n        android:inputType=\"textPersonName\"/>\r\n\r\n    <EditText\r\n        android:id=\"@+id/habit_reason_editText\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:ems=\"10\"\r\n        android:hint=\"Reason\"\r\n        android:inputType=\"textPersonName\"\r\n        android:maxLength=\"30\"\r\n        android:minHeight=\"48dp\" />\r\n\r\n    <Spinner\r\n        android:id=\"@+id/privacy_spinner\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:background=\"@android:drawable/btn_dropdown\"\r\n        android:spinnerMode=\"dropdown\"\r\n        android:entries=\"@array/privacy_options\"/>\r\n\r\n\r\n    <EditText\r\n        android:id=\"@+id/Date\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:clickable=\"false\"\r\n        android:cursorVisible=\"false\"\r\n        android:focusable=\"false\"\r\n        android:focusableInTouchMode=\"false\"\r\n        android:hint=\"MM/DD/YYYY\"\r\n        android:minHeight=\"48dp\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/add_habit_button_error\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:textColor=\"#ff0000\"\r\n        android:textSize=\"10sp\"/>\r\n\r\n    <LinearLayout\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:orientation=\"horizontal\"\r\n        android:layout_weight=\"100\">\r\n\r\n        <Button\r\n            android:id=\"@+id/button_sunday\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_weight=\"14\"\r\n            android:backgroundTint=\"#808080\"\r\n            android:gravity=\"center\"\r\n            android:text=\"Su\"\r\n            android:textSize=\"11sp\"\r\n            android:layout_marginLeft=\"3dp\"\r\n            android:layout_marginRight=\"3dp\"\r\n            app:cornerRadius=\"40sp\" />\r\n\r\n        <Button\r\n            android:id=\"@+id/button_monday\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_weight=\"14\"\r\n            android:backgroundTint=\"#808080\"\r\n            android:gravity=\"center\"\r\n            android:text=\"Mo\"\r\n            android:textSize=\"11sp\"\r\n            android:layout_marginLeft=\"3dp\"\r\n            android:layout_marginRight=\"3dp\"\r\n            app:cornerRadius=\"40sp\"\r\n            />\r\n\r\n        <Button\r\n            android:id=\"@+id/button_Tuesday\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_weight=\"14\"\r\n            android:backgroundTint=\"#808080\"\r\n            android:gravity=\"center\"\r\n            android:text=\"Tu\"\r\n            android:textSize=\"11sp\"\r\n            android:layout_marginLeft=\"3dp\"\r\n            android:layout_marginRight=\"3dp\"\r\n            app:cornerRadius=\"40sp\"\r\n            />\r\n\r\n        <Button\r\n            android:id=\"@+id/button_wednesday\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_weight=\"14\"\r\n            android:backgroundTint=\"#808080\"\r\n            android:gravity=\"center\"\r\n            android:text=\"We\"\r\n            android:textSize=\"11sp\"\r\n            android:layout_marginLeft=\"3dp\"\r\n            android:layout_marginRight=\"3dp\"\r\n            app:cornerRadius=\"40sp\"\r\n            />\r\n\r\n        <Button\r\n            android:id=\"@+id/button_thursday\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_weight=\"14\"\r\n            android:backgroundTint=\"#808080\"\r\n            android:gravity=\"center\"\r\n            android:text=\"Th\"\r\n            android:textSize=\"11sp\"\r\n            android:layout_marginLeft=\"3dp\"\r\n            android:layout_marginRight=\"3dp\"\r\n            app:cornerRadius=\"40sp\"\r\n            />\r\n\r\n        <Button\r\n            android:id=\"@+id/button_friday\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_weight=\"14\"\r\n            android:backgroundTint=\"#808080\"\r\n            android:gravity=\"center\"\r\n            android:text=\"Fr\"\r\n            android:textSize=\"11sp\"\r\n            android:layout_marginLeft=\"3dp\"\r\n            android:layout_marginRight=\"3dp\"\r\n            app:cornerRadius=\"40sp\"\r\n            />\r\n\r\n        <Button\r\n            android:id=\"@+id/button_saturday\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_weight=\"14\"\r\n            android:backgroundTint=\"#808080\"\r\n            android:gravity=\"center\"\r\n            android:text=\"Sa\"\r\n            android:textSize=\"11sp\"\r\n            android:layout_marginLeft=\"3dp\"\r\n            android:layout_marginRight=\"3dp\"\r\n            app:cornerRadius=\"40sp\"\r\n            />\r\n\r\n    </LinearLayout>\r\n\r\n</LinearLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/add_habit_fragment.xml b/app/src/main/res/layout/add_habit_fragment.xml
+--- a/app/src/main/res/layout/add_habit_fragment.xml	
++++ b/app/src/main/res/layout/add_habit_fragment.xml	
+@@ -2,19 +2,19 @@
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:app="http://schemas.android.com/apk/res-auto"
+     xmlns:custom="http://schemas.android.com/tools"
+-    android:orientation="vertical"
+-    android:weightSum="100"
+     android:layout_width="match_parent"
+-    android:layout_height="match_parent">
++    android:layout_height="match_parent"
++    android:orientation="vertical"
++    android:weightSum="100">
+ 
+     <EditText
+         android:id="@+id/habit_title_editText"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:ems="10"
+-        android:maxLength="20"
+         android:hint="Title"
+-        android:inputType="textPersonName"/>
++        android:inputType="textPersonName"
++        android:maxLength="20" />
+ 
+     <EditText
+         android:id="@+id/habit_reason_editText"
+@@ -31,8 +31,8 @@
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:background="@android:drawable/btn_dropdown"
+-        android:spinnerMode="dropdown"
+-        android:entries="@array/privacy_options"/>
++        android:entries="@array/privacy_options"
++        android:spinnerMode="dropdown" />
+ 
+ 
+     <EditText
+@@ -51,110 +51,104 @@
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:textColor="#ff0000"
+-        android:textSize="10sp"/>
++        android:textSize="10sp" />
+ 
+     <LinearLayout
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+-        android:orientation="horizontal"
+-        android:layout_weight="100">
++        android:layout_weight="100"
++        android:orientation="horizontal">
+ 
+         <Button
+             android:id="@+id/button_sunday"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
++            android:layout_marginLeft="3dp"
++            android:layout_marginRight="3dp"
+             android:layout_weight="14"
+             android:backgroundTint="#808080"
+             android:gravity="center"
+             android:text="Su"
+             android:textSize="11sp"
+-            android:layout_marginLeft="3dp"
+-            android:layout_marginRight="3dp"
+             app:cornerRadius="40sp" />
+ 
+         <Button
+             android:id="@+id/button_monday"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
++            android:layout_marginLeft="3dp"
++            android:layout_marginRight="3dp"
+             android:layout_weight="14"
+             android:backgroundTint="#808080"
+             android:gravity="center"
+             android:text="Mo"
+             android:textSize="11sp"
+-            android:layout_marginLeft="3dp"
+-            android:layout_marginRight="3dp"
+-            app:cornerRadius="40sp"
+-            />
++            app:cornerRadius="40sp" />
+ 
+         <Button
+             android:id="@+id/button_Tuesday"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
++            android:layout_marginLeft="3dp"
++            android:layout_marginRight="3dp"
+             android:layout_weight="14"
+             android:backgroundTint="#808080"
+             android:gravity="center"
+             android:text="Tu"
+             android:textSize="11sp"
+-            android:layout_marginLeft="3dp"
+-            android:layout_marginRight="3dp"
+-            app:cornerRadius="40sp"
+-            />
++            app:cornerRadius="40sp" />
+ 
+         <Button
+             android:id="@+id/button_wednesday"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
++            android:layout_marginLeft="3dp"
++            android:layout_marginRight="3dp"
+             android:layout_weight="14"
+             android:backgroundTint="#808080"
+             android:gravity="center"
+             android:text="We"
+             android:textSize="11sp"
+-            android:layout_marginLeft="3dp"
+-            android:layout_marginRight="3dp"
+-            app:cornerRadius="40sp"
+-            />
++            app:cornerRadius="40sp" />
+ 
+         <Button
+             android:id="@+id/button_thursday"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
++            android:layout_marginLeft="3dp"
++            android:layout_marginRight="3dp"
+             android:layout_weight="14"
+             android:backgroundTint="#808080"
+             android:gravity="center"
+             android:text="Th"
+             android:textSize="11sp"
+-            android:layout_marginLeft="3dp"
+-            android:layout_marginRight="3dp"
+-            app:cornerRadius="40sp"
+-            />
++            app:cornerRadius="40sp" />
+ 
+         <Button
+             android:id="@+id/button_friday"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
++            android:layout_marginLeft="3dp"
++            android:layout_marginRight="3dp"
+             android:layout_weight="14"
+             android:backgroundTint="#808080"
+             android:gravity="center"
+             android:text="Fr"
+             android:textSize="11sp"
+-            android:layout_marginLeft="3dp"
+-            android:layout_marginRight="3dp"
+-            app:cornerRadius="40sp"
+-            />
++            app:cornerRadius="40sp" />
+ 
+         <Button
+             android:id="@+id/button_saturday"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
++            android:layout_marginLeft="3dp"
++            android:layout_marginRight="3dp"
+             android:layout_weight="14"
+             android:backgroundTint="#808080"
+             android:gravity="center"
+             android:text="Sa"
+             android:textSize="11sp"
+-            android:layout_marginLeft="3dp"
+-            android:layout_marginRight="3dp"
+-            app:cornerRadius="40sp"
+-            />
++            app:cornerRadius="40sp" />
+ 
+     </LinearLayout>
+ 
+Index: app/src/main/java/com/example/agilesprinters/editHabitEventFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.agilesprinters;\r\n\r\nimport android.app.AlertDialog;\r\nimport android.app.DatePickerDialog;\r\nimport android.app.Dialog;\r\nimport android.content.Context;\r\nimport android.content.DialogInterface;\r\nimport android.os.Bundle;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.CheckBox;\r\nimport android.widget.DatePicker;\r\nimport android.widget.EditText;\r\nimport android.widget.TextView;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.fragment.app.DialogFragment;\r\n\r\nimport java.util.Calendar;\r\n\r\npublic class editHabitEventFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener{\r\n    private int position;\r\n    private EditText optional_comment;\r\n    private TextView input_date;\r\n    private EditText input_duration;\r\n    private String EID;\r\n    private String UID;\r\n    private String HID;\r\n\r\n    private String date = \"\";\r\n\r\n    private editHabitEventFragment.OnFragmentInteractionListener listener;\r\n\r\n    public static editHabitEventFragment newInstance(int position, HabitInstance habitInstance) {\r\n        editHabitEventFragment fragment = new editHabitEventFragment();\r\n        Bundle args = new Bundle();\r\n        args.putInt(\"position\", position);\r\n        args.putSerializable(\"Habit instance\", habitInstance);\r\n        fragment.setArguments(args);\r\n\r\n        return fragment;\r\n    }\r\n\r\n    @Override\r\n    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {\r\n        Calendar c = Calendar.getInstance();\r\n        c.set(Calendar.YEAR, year);\r\n        c.set(Calendar.MONTH, month);\r\n        c.set(Calendar.DAY_OF_MONTH, dayOfMonth);\r\n\r\n        //make sure date is empty before setting it to the date picked\r\n        date = \"\";\r\n        if(month+1 < 10) date+= \"0\";\r\n        date += String.valueOf(month + 1) + \"/\";\r\n        if (dayOfMonth < 10 ) date += \"0\";\r\n        date += String.valueOf(dayOfMonth + \"/\");\r\n        date += String.valueOf(year);\r\n        input_date.setText(date);\r\n    }\r\n\r\n    public interface OnFragmentInteractionListener {\r\n        void onEditSavePressed(HabitInstance instance);\r\n        void onDeletePressed(HabitInstance instance);\r\n    }\r\n\r\n\r\n    @Override\r\n    public void onAttach(Context context){\r\n        super.onAttach(context);\r\n\r\n        if (context instanceof addHabitEventFragment.OnFragmentInteractionListener){\r\n            listener = (editHabitEventFragment.OnFragmentInteractionListener) context;\r\n        }\r\n        else{\r\n            throw new RuntimeException(context.toString()\r\n                    + \" must implement OnFragmentInteractionListener\");\r\n        }\r\n    }\r\n\r\n    @NonNull\r\n    @Override\r\n    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {\r\n        //inflate the layout for this fragment\r\n        View view = LayoutInflater.from(getActivity()).inflate(R.layout.edit_habit_event_fragment, null);\r\n\r\n        // Display the calendar\r\n        optional_comment = view.findViewById(R.id.editText_comment);\r\n        input_date = view.findViewById(R.id.editText_date);\r\n        input_duration = view.findViewById(R.id.editText_duration);\r\n\r\n        HabitInstance habitInstance = (HabitInstance) getArguments().getSerializable(\"Habit instance\");\r\n\r\n        optional_comment.setText(habitInstance.getOpt_comment());\r\n        input_date.setText(habitInstance.getDate());\r\n        input_duration.setText(String.valueOf(habitInstance.getDuration()));\r\n        date = habitInstance.getDate();\r\n\r\n        input_date.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                DialogFragment datePicker = new datePickerFragment();\r\n                datePicker.show(getChildFragmentManager(), \"DATE PICKER\");\r\n            }\r\n        });\r\n\r\n        EID = habitInstance.getEID();\r\n        UID = habitInstance.getUID();\r\n        HID = habitInstance.getHID();\r\n\r\n        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());\r\n        return builder\r\n                .setView(view)\r\n                .setTitle(\"View/Edit Habit Event\")\r\n                .setNegativeButton(\"Delete\", new DialogInterface.OnClickListener() {\r\n                    public void onClick(DialogInterface dialog, int id) {\r\n                        listener.onDeletePressed(habitInstance);\r\n                    }\r\n                })\r\n                .setPositiveButton(\"Save\", new DialogInterface.OnClickListener() {\r\n                    @Override\r\n                    public void onClick(DialogInterface dialogInterface, int i) {\r\n\r\n                    }\r\n                }).create();\r\n\r\n    }\r\n\r\n    @Override\r\n    public void onResume(){\r\n        super.onResume();\r\n\r\n        final AlertDialog dialog = (AlertDialog) getDialog();\r\n        if(dialog != null){\r\n            Button positive = (Button) dialog.getButton(Dialog.BUTTON_POSITIVE);\r\n\r\n            positive.setOnClickListener(new View.OnClickListener() {\r\n                @Override\r\n                public void onClick(View view) {\r\n                    // Boolean tracks when the all the fields have been filled out. Will turn to false\r\n                    // if anything has been left blank.\r\n                    Boolean readyToClose = true;\r\n\r\n                    String comment = optional_comment.getText().toString();\r\n                    //String date = input_date.getText().toString();\r\n                    String duration = input_duration.getText().toString();\r\n\r\n                    if (optional_comment.length() > 20) {\r\n                        readyToClose = false;\r\n                        optional_comment.setError(\"This field cannot have more than 20 chars\");\r\n                    }\r\n\r\n                    if (date.matches(\"\")) {\r\n                        readyToClose = false;\r\n                        input_date.setError(\"This field cannot be blank\");\r\n                    }\r\n                    if (duration.matches(\"\")) {\r\n                        readyToClose = false;\r\n                        input_duration.setError(\"This field cannot be blank\");\r\n                    }\r\n\r\n                    // If everything has been filled out, call the listener and send the edited\r\n                    // habit back to the Home class and dismiss the dialog.\r\n                    if(readyToClose){\r\n                        listener.onEditSavePressed(new HabitInstance(EID,UID,HID,comment, date, Integer.parseInt(duration)));\r\n                        dialog.dismiss();\r\n                    }\r\n                }\r\n            });\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/agilesprinters/editHabitEventFragment.java b/app/src/main/java/com/example/agilesprinters/editHabitEventFragment.java
+--- a/app/src/main/java/com/example/agilesprinters/editHabitEventFragment.java	
++++ b/app/src/main/java/com/example/agilesprinters/editHabitEventFragment.java	
+@@ -20,7 +20,7 @@
+ 
+ import java.util.Calendar;
+ 
+-public class editHabitEventFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener{
++public class editHabitEventFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+     private int position;
+     private EditText optional_comment;
+     private TextView input_date;
+@@ -52,9 +52,9 @@
+ 
+         //make sure date is empty before setting it to the date picked
+         date = "";
+-        if(month+1 < 10) date+= "0";
++        if (month + 1 < 10) date += "0";
+         date += String.valueOf(month + 1) + "/";
+-        if (dayOfMonth < 10 ) date += "0";
++        if (dayOfMonth < 10) date += "0";
+         date += String.valueOf(dayOfMonth + "/");
+         date += String.valueOf(year);
+         input_date.setText(date);
+@@ -62,18 +62,18 @@
+ 
+     public interface OnFragmentInteractionListener {
+         void onEditSavePressed(HabitInstance instance);
++
+         void onDeletePressed(HabitInstance instance);
+     }
+ 
+ 
+     @Override
+-    public void onAttach(Context context){
++    public void onAttach(Context context) {
+         super.onAttach(context);
+ 
+-        if (context instanceof addHabitEventFragment.OnFragmentInteractionListener){
++        if (context instanceof addHabitEventFragment.OnFragmentInteractionListener) {
+             listener = (editHabitEventFragment.OnFragmentInteractionListener) context;
+-        }
+-        else{
++        } else {
+             throw new RuntimeException(context.toString()
+                     + " must implement OnFragmentInteractionListener");
+         }
+@@ -128,11 +128,11 @@
+     }
+ 
+     @Override
+-    public void onResume(){
++    public void onResume() {
+         super.onResume();
+ 
+         final AlertDialog dialog = (AlertDialog) getDialog();
+-        if(dialog != null){
++        if (dialog != null) {
+             Button positive = (Button) dialog.getButton(Dialog.BUTTON_POSITIVE);
+ 
+             positive.setOnClickListener(new View.OnClickListener() {
+@@ -162,8 +162,8 @@
+ 
+                     // If everything has been filled out, call the listener and send the edited
+                     // habit back to the Home class and dismiss the dialog.
+-                    if(readyToClose){
+-                        listener.onEditSavePressed(new HabitInstance(EID,UID,HID,comment, date, Integer.parseInt(duration)));
++                    if (readyToClose) {
++                        listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date, Integer.parseInt(duration)));
+                         dialog.dismiss();
+                     }
+                 }
+Index: app/src/main/res/layout/date_picker_fragment.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    android:orientation=\"vertical\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\">\r\n\r\n    <DatePicker\r\n        android:id=\"@+id/date_started_DatePicker\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"/>\r\n\r\n</LinearLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/date_picker_fragment.xml b/app/src/main/res/layout/date_picker_fragment.xml
+--- a/app/src/main/res/layout/date_picker_fragment.xml	
++++ b/app/src/main/res/layout/date_picker_fragment.xml	
+@@ -1,12 +1,12 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+-    android:orientation="vertical"
+     android:layout_width="match_parent"
+-    android:layout_height="match_parent">
++    android:layout_height="match_parent"
++    android:orientation="vertical">
+ 
+     <DatePicker
+         android:id="@+id/date_started_DatePicker"
+         android:layout_width="match_parent"
+-        android:layout_height="wrap_content"/>
++        android:layout_height="wrap_content" />
+ 
+ </LinearLayout>
+\ No newline at end of file
+Index: app/src/main/java/com/example/agilesprinters/toDoEventsListAdapter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.agilesprinters;\r\n\r\nimport android.content.Context;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.ArrayAdapter;\r\nimport android.widget.CheckBox;\r\nimport android.widget.EditText;\r\nimport android.widget.TextView;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\n\r\nimport java.util.ArrayList;\r\n\r\npublic class toDoEventsListAdapter extends ArrayAdapter<Habit> {\r\n\r\n    private Context mContext;\r\n    private ArrayList<Habit> habits;\r\n\r\n    public toDoEventsListAdapter(Context context, ArrayList<Habit> habits) {\r\n        super(context, 0, habits);\r\n        this.mContext = context;\r\n        this.habits = habits;\r\n    }\r\n\r\n    @NonNull\r\n    @Override\r\n    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {\r\n\r\n        if(convertView == null){\r\n            convertView = LayoutInflater.from(mContext).inflate(R.layout.todo_habits_content, parent,false);\r\n        }\r\n\r\n        Habit habit = habits.get(position);\r\n\r\n        TextView habitTitle = convertView.findViewById(R.id.habit_text);\r\n\r\n        habitTitle.setText(habit.getTitle().toString());\r\n\r\n        return convertView;\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/agilesprinters/toDoEventsListAdapter.java b/app/src/main/java/com/example/agilesprinters/toDoEventsListAdapter.java
+--- a/app/src/main/java/com/example/agilesprinters/toDoEventsListAdapter.java	
++++ b/app/src/main/java/com/example/agilesprinters/toDoEventsListAdapter.java	
+@@ -29,8 +29,8 @@
+     @Override
+     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+ 
+-        if(convertView == null){
+-            convertView = LayoutInflater.from(mContext).inflate(R.layout.todo_habits_content, parent,false);
++        if (convertView == null) {
++            convertView = LayoutInflater.from(mContext).inflate(R.layout.todo_habits_content, parent, false);
+         }
+ 
+         Habit habit = habits.get(position);
+Index: app/src/test/java/com/example/agilesprinters/RegisterUnitTest.java
+===================================================================
+diff --git a/app/src/test/java/com/example/agilesprinters/RegisterUnitTest.java b/app/src/test/java/com/example/agilesprinters/RegisterUnitTest.java
+new file mode 100644
+--- /dev/null	
++++ b/app/src/test/java/com/example/agilesprinters/RegisterUnitTest.java	
+@@ -0,0 +1,11 @@
++package com.example.agilesprinters;
++
++import org.junit.Test;
++
++public class RegisterUnitTest {
++
++    @Test
++    void newUser(){
++        
++    }
++}
+Index: app/src/androidTest/java/com/example/agilesprinters/RegisterAndroidTest.java
+===================================================================
+diff --git a/app/src/androidTest/java/com/example/agilesprinters/RegisterAndroidTest.java b/app/src/androidTest/java/com/example/agilesprinters/RegisterAndroidTest.java
+new file mode 100644
+--- /dev/null	
++++ b/app/src/androidTest/java/com/example/agilesprinters/RegisterAndroidTest.java	
+@@ -0,0 +1,136 @@
++package com.example.agilesprinters;
++
++import static org.junit.Assert.assertTrue;
++
++import android.widget.EditText;
++
++import androidx.test.platform.app.InstrumentationRegistry;
++import androidx.test.rule.ActivityTestRule;
++
++import com.robotium.solo.Solo;
++
++import org.junit.After;
++import org.junit.Before;
++import org.junit.Rule;
++import org.junit.Test;
++
++/**
++ * Test class for Login Activity. All the UI tests are written here. Robotium test framework is
++ used.
++ @author Leen Alzebdeh
++ The tests being run are:
++ 1. checkEmptySignIn: Tests that the activity correctly handles empty email/ password fields (throws a message) <br>
++ then checks handling of information that does not match any user.
++ 2. correctInfoTest: enters the information of a user that exists and ensures the activity signs the user in correctly. <br>
++ Note: There is no dedicated unit test class for the login activity as the Android test class is sufficient for <br>
++ what needs to be checked.
++ */
++public class LoginAndroidTest {
++    private Solo solo;
++
++    @Rule
++    public ActivityTestRule<Login> rule =
++            new ActivityTestRule<>(Login.class, true, true);
++
++    /**
++     * Runs before all tests and creates solo instance.
++     * @throws Exception
++     */
++    @Before
++    public void setUp() throws Exception{
++        solo = new Solo(InstrumentationRegistry.getInstrumentation(),rule.getActivity());
++    }
++
++    /**
++     * Click sign in button when email field is empty and check for error message
++     * then do the same for when password field is empty
++     * then have both email and password be incorrect and check for error message
++     */
++    @Test
++    public void checkEmptySignIn() {
++        //Asserts that the current activity is the Register Activity. Otherwise, show “Wrong Activity”
++        solo.assertCurrentActivity(solo.getString(R.string.wrong_activity), Register.class);
++
++        //click the Register button when email and password fields are empty
++        trySignIn(-1, "", solo.getString(R.string.empty_email));
++        //enter text into email then click the Register button while the password field is empty
++        trySignIn(R.id.email, "null", solo.getString(R.string.empty_password));
++        //enter text into password then click the Register button while the info given does not match a user
++        trySignIn(R.id.password, "null", solo.getString(R.string.login_failed));
++    }
++
++    /**
++     * This function enters given text into an editText if desired,
++     * then sign in is pressed and a message is checked for on screen
++     * @param id
++     *  Give the edittext field to have text entered into,
++     * if -1 then no field will be updated {@see int}
++     * @param input
++     *  Give the string to be entered into the specified editText {@See String}
++     * @param resultText
++     *  Give the expected text that is expected to appear on screen after sign in is clicked
++     */
++    private void trySignIn(int id, String input, String resultText){
++        String signInStr = solo.getString(R.string.action_sign_in);  //string of sign in button
++
++        if (id!=-1) {
++            solo.enterText((EditText) solo.getView(id), input);  //enter input into edit text
++        }
++        solo.clickOnButton(signInStr);
++        /* True if there is a text as given in input on the screen
++        , wait at least 2 seconds and find one minimum match. */
++        assertTrue(solo.waitForText(resultText, 1, 2000));
++    }
++
++    /**
++     * Function registers a test user then tests if they can be logged in successfully
++     */
++    @Test
++    public void correctInfoTest(){
++        String signInStr = solo.getString(R.string.action_sign_in);  //string of sign in button
++
++        registerTestUser();  //register a test user
++
++        //enter the log in info of the test user
++        solo.enterText((EditText) solo.getView(R.id.email), solo.getString(R.string.email_test));
++        solo.enterText((EditText) solo.getView(R.id.password), solo.getString(R.string.password_test));
++        solo.clickOnButton(signInStr);  //click the Register button
++
++        //Asserts that the current activity is the Home Activity. Otherwise, show “Wrong Activity”
++        solo.assertCurrentActivity(solo.getString(R.string.wrong_activity), Home.class);
++    }
++
++    //will move or import from register
++    private void registerTestUser() {
++        //Asserts that the current activity is the Register Activity. Otherwise, show “Wrong Activity”
++        solo.assertCurrentActivity(solo.getString(R.string.wrong_activity), Register.class);
++
++        //click register button
++        solo.clickOnText(solo.getString(R.string.action_register));
++        //Asserts that the current activity is the Register Activity. Otherwise, show “Wrong Activity”
++        solo.assertCurrentActivity(solo.getString(R.string.wrong_activity), Register.class);
++
++        //register a test user
++        solo.enterText((EditText) solo.getView(R.id.LastName), solo.getString(R.string.last_test));
++        solo.enterText((EditText) solo.getView(R.id.FirstName), solo.getString(R.string.first_test));
++        solo.enterText((EditText) solo.getView(R.id.EditTextEmail), solo.getString(R.string.email_test));
++        solo.enterText((EditText) solo.getView(R.id.TextPassword), solo.getString(R.string.password_test));
++        solo.enterText((EditText) solo.getView(R.id.TextConfirmPassword), solo.getString(R.string.password_test));
++
++        solo.clickOnButton(solo.getString(R.string.create_account)); //Select register text
++        //Asserts that the current activity is the Register Activity. Otherwise, show “Wrong Activity”
++        solo.assertCurrentActivity(solo.getString(R.string.wrong_activity), Register.class);
++    }
++
++
++    /**
++     * Close activity after each test
++     * @throws Exception
++     */
++    @After
++    public void tearDown() throws Exception{
++        solo.finishOpenedActivities();
++    }
++
++
++}
+Index: app/src/main/res/layout/completed_habits_content.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"wrap_content\"\r\n    android:layout_height=\"wrap_content\"\r\n    android:orientation=\"horizontal\">\r\n\r\n    <TextView\r\n        android:id=\"@+id/EventContent\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_margin=\"8dp\"\r\n        android:paddingTop=\"10dp\"\r\n        android:text=\"Event title\"\r\n        android:textSize=\"22sp\"/>\r\n\r\n    <TextView\r\n        android:id=\"@+id/duration_content\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_margin=\"8dp\"\r\n        android:paddingTop=\"10dp\"\r\n        android:text=\"Event Duration\"\r\n        android:textSize=\"22sp\"/>\r\n\r\n\r\n</LinearLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/completed_habits_content.xml b/app/src/main/res/layout/completed_habits_content.xml
+--- a/app/src/main/res/layout/completed_habits_content.xml	
++++ b/app/src/main/res/layout/completed_habits_content.xml	
+@@ -13,7 +13,7 @@
+         android:layout_margin="8dp"
+         android:paddingTop="10dp"
+         android:text="Event title"
+-        android:textSize="22sp"/>
++        android:textSize="22sp" />
+ 
+     <TextView
+         android:id="@+id/duration_content"
+@@ -22,7 +22,7 @@
+         android:layout_margin="8dp"
+         android:paddingTop="10dp"
+         android:text="Event Duration"
+-        android:textSize="22sp"/>
++        android:textSize="22sp" />
+ 
+ 
+ </LinearLayout>
+\ No newline at end of file
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"DesignSurface\">\r\n    <option name=\"filePathToZoomLevelMap\">\r\n      <map>\r\n        <entry key=\"..\\:/Users/haric_ff7o5th/GitRepo/Project/AgileSprinters/AgileSprinters/app/src/main/res/layout/activity_home.xml\" value=\"0.20516304347826086\" />\r\n        <entry key=\"..\\:/Users/haric_ff7o5th/GitRepo/Project/AgileSprinters/AgileSprinters/app/src/main/res/layout/add_habit_fragment.xml\" value=\"0.2234375\" />\r\n        <entry key=\"..\\:/Users/haric_ff7o5th/GitRepo/Project/AgileSprinters/AgileSprinters/app/src/main/res/layout/edit_habit_event_fragment.xml\" value=\"0.2234375\" />\r\n        <entry key=\"..\\:/Users/haric_ff7o5th/GitRepo/Project/AgileSprinters/AgileSprinters/app/src/main/res/layout/user_calendar.xml\" value=\"0.2234375\" />\r\n        <entry key=\"..\\:/Users/haric_ff7o5th/GitRepo/Project/AgileSprinters/AgileSprinters/app/src/main/res/menu/bottom_nav_menu.xml\" value=\"0.23489583333333333\" />\r\n        <entry key=\"app/src/main/res/drawable/ic_calendar_foreground.xml\" value=\"0.13333333333333333\" />\r\n        <entry key=\"app/src/main/res/drawable/ic_forumn_foreground.xml\" value=\"0.13333333333333333\" />\r\n        <entry key=\"app/src/main/res/drawable/ic_home_foreground.xml\" value=\"0.13333333333333333\" />\r\n        <entry key=\"app/src/main/res/drawable/ic_notification_foreground.xml\" value=\"0.13333333333333333\" />\r\n        <entry key=\"app/src/main/res/layout/activity_home.xml\" value=\"0.335\" />\r\n        <entry key=\"app/src/main/res/layout/activity_test.xml\" value=\"0.335\" />\r\n        <entry key=\"app/src/main/res/layout/add_habit_fragment.xml\" value=\"0.14990942028985507\" />\r\n        <entry key=\"app/src/main/res/menu/bottom_nav_menu.xml\" value=\"0.28229166666666666\" />\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_11\" default=\"true\" project-jdk-name=\"Android Studio default JDK\" project-jdk-type=\"JavaSDK\">\r\n    <output url=\"file://$PROJECT_DIR$/build/classes\" />\r\n  </component>\r\n  <component name=\"ProjectType\">\r\n    <option name=\"id\" value=\"Android\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	
++++ b/.idea/misc.xml	
+@@ -4,9 +4,17 @@
+     <option name="filePathToZoomLevelMap">
+       <map>
+         <entry key="..\:/Users/haric_ff7o5th/GitRepo/Project/AgileSprinters/AgileSprinters/app/src/main/res/layout/activity_home.xml" value="0.20516304347826086" />
++        <entry key="..\:/Users/haric_ff7o5th/GitRepo/Project/AgileSprinters/AgileSprinters/app/src/main/res/layout/activity_test.xml" value="0.27239583333333334" />
+         <entry key="..\:/Users/haric_ff7o5th/GitRepo/Project/AgileSprinters/AgileSprinters/app/src/main/res/layout/add_habit_fragment.xml" value="0.2234375" />
++        <entry key="..\:/Users/haric_ff7o5th/GitRepo/Project/AgileSprinters/AgileSprinters/app/src/main/res/layout/calendar.xml" value="0.27239583333333334" />
++        <entry key="..\:/Users/haric_ff7o5th/GitRepo/Project/AgileSprinters/AgileSprinters/app/src/main/res/layout/calendar_content.xml" value="0.27239583333333334" />
++        <entry key="..\:/Users/haric_ff7o5th/GitRepo/Project/AgileSprinters/AgileSprinters/app/src/main/res/layout/completed_habits_content.xml" value="0.27239583333333334" />
++        <entry key="..\:/Users/haric_ff7o5th/GitRepo/Project/AgileSprinters/AgileSprinters/app/src/main/res/layout/date_picker_fragment.xml" value="0.27239583333333334" />
++        <entry key="..\:/Users/haric_ff7o5th/GitRepo/Project/AgileSprinters/AgileSprinters/app/src/main/res/layout/delete_habit_fragment.xml" value="0.27239583333333334" />
+         <entry key="..\:/Users/haric_ff7o5th/GitRepo/Project/AgileSprinters/AgileSprinters/app/src/main/res/layout/edit_habit_event_fragment.xml" value="0.2234375" />
++        <entry key="..\:/Users/haric_ff7o5th/GitRepo/Project/AgileSprinters/AgileSprinters/app/src/main/res/layout/todo_habits_content.xml" value="0.27239583333333334" />
+         <entry key="..\:/Users/haric_ff7o5th/GitRepo/Project/AgileSprinters/AgileSprinters/app/src/main/res/layout/user_calendar.xml" value="0.2234375" />
++        <entry key="..\:/Users/haric_ff7o5th/GitRepo/Project/AgileSprinters/AgileSprinters/app/src/main/res/layout/view_edit_habit_fragment.xml" value="0.27239583333333334" />
+         <entry key="..\:/Users/haric_ff7o5th/GitRepo/Project/AgileSprinters/AgileSprinters/app/src/main/res/menu/bottom_nav_menu.xml" value="0.23489583333333333" />
+         <entry key="app/src/main/res/drawable/ic_calendar_foreground.xml" value="0.13333333333333333" />
+         <entry key="app/src/main/res/drawable/ic_forumn_foreground.xml" value="0.13333333333333333" />
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>apply plugin: 'com.android.application'\r\napply plugin: 'com.google.gms.google-services'\r\n\r\nandroid {\r\n    compileSdk 31\r\n\r\n    defaultConfig {\r\n        applicationId \"com.CMPUT301F21T25.HabitTracker\"\r\n        minSdk 26\r\n        targetSdk 31\r\n        versionCode 1\r\n        versionName \"1.0\"\r\n\r\n        testInstrumentationRunner \"androidx.test.runner.AndroidJUnitRunner\"\r\n    }\r\n\r\n    buildTypes {\r\n        release {\r\n            minifyEnabled false\r\n            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\r\n        }\r\n    }\r\n    compileOptions {\r\n        sourceCompatibility JavaVersion.VERSION_1_8\r\n        targetCompatibility JavaVersion.VERSION_1_8\r\n    }\r\n    buildFeatures {\r\n        viewBinding true\r\n    }\r\n}\r\n\r\ndependencies {\r\n    implementation 'androidx.appcompat:appcompat:1.3.1'\r\n    implementation 'com.google.android.material:material:1.4.0'\r\n    implementation 'androidx.constraintlayout:constraintlayout:2.1.1'\r\n    implementation 'androidx.annotation:annotation:1.2.0'\r\n    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'\r\n    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'\r\n    implementation 'com.google.android.material:material:1.2.0'\r\n    implementation 'com.google.firebase:firebase-firestore:24.0.0'\r\n    implementation 'com.google.android.material:material:1.2.0'\r\n    implementation 'com.google.firebase:firebase-firestore:23.0.4'\r\n    implementation 'com.google.firebase:firebase-database:20.0.2'\r\n    testImplementation 'junit:junit:4.+'\r\n    androidTestImplementation 'androidx.test.ext:junit:1.1.3'\r\n    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'\r\n    implementation platform('com.google.firebase:firebase-bom:29.0.0')\r\n    implementation 'com.google.firebase:firebase-auth'\r\n    implementation 'com.google.firebase:firebase-analytics'\r\n    implementation 'com.google.firebase:firebase-analytics'\r\n    implementation 'com.google.android.gms:play-services-location:18.0.0'\r\n    implementation platform('com.google.firebase:firebase-bom:28.4.2')\r\n    androidTestImplementation 'com.android.support.test:runner:1.0.1'\r\n    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/build.gradle b/app/build.gradle
+--- a/app/build.gradle	
++++ b/app/build.gradle	
+@@ -52,5 +52,10 @@
+     implementation platform('com.google.firebase:firebase-bom:28.4.2')
+     androidTestImplementation 'com.android.support.test:runner:1.0.1'
+     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
++    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.0.1'
++    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.0.1'
++    androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.3.1'
++    androidTestImplementation 'com.android.support.test:rules:1.0.2'
++    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+ 
+ }
+\ No newline at end of file
+Index: app/src/main/res/layout/calendar_content.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<TextView xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    android:id=\"@+id/content_view\"\r\n    android:layout_width=\"wrap_content\"\r\n    android:layout_height=\"match_parent\"\r\n    android:textSize=\"20sp\"\r\n    android:padding=\"20dp\">\r\n\r\n</TextView>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/calendar_content.xml b/app/src/main/res/layout/calendar_content.xml
+--- a/app/src/main/res/layout/calendar_content.xml	
++++ b/app/src/main/res/layout/calendar_content.xml	
+@@ -3,7 +3,7 @@
+     android:id="@+id/content_view"
+     android:layout_width="wrap_content"
+     android:layout_height="match_parent"
+-    android:textSize="20sp"
+-    android:padding="20dp">
++    android:padding="20dp"
++    android:textSize="20sp">
+ 
+ </TextView>
+\ No newline at end of file
+Index: app/src/main/res/layout/delete_habit_fragment.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    android:orientation=\"vertical\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\">\r\n\r\n    <TextView\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:id=\"@+id/delete_habit_textView\"\r\n        android:layout_margin=\"16dp\"\r\n        android:textSize=\"20sp\"\r\n        android:ems=\"10\"\r\n        android:text=\"Would you like to delete this habit and all it's corresponding events?\"/>\r\n\r\n</LinearLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/delete_habit_fragment.xml b/app/src/main/res/layout/delete_habit_fragment.xml
+--- a/app/src/main/res/layout/delete_habit_fragment.xml	
++++ b/app/src/main/res/layout/delete_habit_fragment.xml	
+@@ -1,16 +1,16 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+-    android:orientation="vertical"
+     android:layout_width="match_parent"
+-    android:layout_height="match_parent">
++    android:layout_height="match_parent"
++    android:orientation="vertical">
+ 
+     <TextView
++        android:id="@+id/delete_habit_textView"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+-        android:id="@+id/delete_habit_textView"
+         android:layout_margin="16dp"
+-        android:textSize="20sp"
+         android:ems="10"
+-        android:text="Would you like to delete this habit and all it's corresponding events?"/>
++        android:text="Would you like to delete this habit and all it's corresponding events?"
++        android:textSize="20sp" />
+ 
+ </LinearLayout>
+\ No newline at end of file
+Index: app/src/main/res/layout/user_calendar.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<LinearLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:orientation=\"vertical\">\r\n\r\n\r\n    <TextView\r\n        android:id=\"@+id/title1\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:textStyle=\"bold\"\r\n        android:textSize=\"25sp\"\r\n        android:layout_marginLeft=\"10dp\"\r\n        android:layout_marginTop=\"5dp\"\r\n        android:textColor=\"#a4c639\"/>\r\n\r\n    <LinearLayout\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:orientation=\"horizontal\">\r\n\r\n        <TextView\r\n            android:id=\"@+id/title3\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:textStyle=\"bold|italic\"\r\n            android:textSize=\"22sp\"\r\n            android:layout_marginLeft=\"10dp\"\r\n            android:layout_marginTop=\"5dp\"\r\n            android:text=\"To do\"/>\r\n\r\n        <Space\r\n            android:layout_width=\"0dp\"\r\n            android:layout_weight=\"1\"\r\n            android:layout_height=\"match_parent\" />\r\n\r\n        <TextView\r\n            android:id=\"@+id/title4\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:textSize=\"15sp\"\r\n            android:layout_marginTop=\"5dp\"\r\n            android:layout_marginEnd=\"10dp\"\r\n            android:text=\"Tap to add habit event\" />\r\n\r\n    </LinearLayout>\r\n\r\n    <ListView\r\n        android:id=\"@+id/toDoEventsList\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"0dp\"\r\n        android:layout_marginLeft=\"10dp\"\r\n        android:layout_weight=\"1\"\r\n        android:divider=\"@null\"\r\n        />\r\n\r\n    <LinearLayout\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:orientation=\"horizontal\">\r\n\r\n        <TextView\r\n            android:id=\"@+id/title2\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:textStyle=\"bold|italic\"\r\n            android:textSize=\"22sp\"\r\n            android:layout_marginLeft=\"10dp\"\r\n            android:layout_marginTop=\"5dp\"\r\n            android:text=\"Tasks completed today\" />\r\n\r\n        <Space\r\n            android:layout_width=\"0dp\"\r\n            android:layout_weight=\"1\"\r\n            android:layout_height=\"match_parent\" />\r\n\r\n        <TextView\r\n            android:id=\"@+id/title5\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:textSize=\"15sp\"\r\n            android:layout_marginTop=\"5dp\"\r\n            android:layout_marginEnd=\"10dp\"\r\n            android:text=\"Tap event to edit/delete\"/>\r\n\r\n    </LinearLayout>\r\n\r\n    <ListView\r\n        android:id=\"@+id/completedEventsList\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"0dp\"\r\n        android:layout_marginLeft=\"10dp\"\r\n        android:layout_weight=\"1\"\r\n        android:divider=\"@null\"\r\n        />\r\n\r\n    <Button\r\n        android:id=\"@+id/calendar_button\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_gravity=\"end\"\r\n        android:layout_margin=\"5dp\"\r\n        android:text=\"View habit events\"\r\n        />\r\n\r\n    <com.google.android.material.bottomnavigation.BottomNavigationView\r\n        android:id=\"@+id/bottomNavigationView2\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"75dp\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:menu=\"@menu/bottom_nav_menu\"/>\r\n\r\n</LinearLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/user_calendar.xml b/app/src/main/res/layout/user_calendar.xml
+--- a/app/src/main/res/layout/user_calendar.xml	
++++ b/app/src/main/res/layout/user_calendar.xml	
+@@ -11,11 +11,11 @@
+         android:id="@+id/title1"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+-        android:textStyle="bold"
+-        android:textSize="25sp"
+         android:layout_marginLeft="10dp"
+         android:layout_marginTop="5dp"
+-        android:textColor="#a4c639"/>
++        android:textColor="#a4c639"
++        android:textSize="25sp"
++        android:textStyle="bold" />
+ 
+     <LinearLayout
+         android:layout_width="match_parent"
+@@ -26,25 +26,25 @@
+             android:id="@+id/title3"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+-            android:textStyle="bold|italic"
+-            android:textSize="22sp"
+             android:layout_marginLeft="10dp"
+             android:layout_marginTop="5dp"
+-            android:text="To do"/>
++            android:text="To do"
++            android:textSize="22sp"
++            android:textStyle="bold|italic" />
+ 
+         <Space
+             android:layout_width="0dp"
+-            android:layout_weight="1"
+-            android:layout_height="match_parent" />
++            android:layout_height="match_parent"
++            android:layout_weight="1" />
+ 
+         <TextView
+             android:id="@+id/title4"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+-            android:textSize="15sp"
+             android:layout_marginTop="5dp"
+             android:layout_marginEnd="10dp"
+-            android:text="Tap to add habit event" />
++            android:text="Tap to add habit event"
++            android:textSize="15sp" />
+ 
+     </LinearLayout>
+ 
+@@ -54,8 +54,7 @@
+         android:layout_height="0dp"
+         android:layout_marginLeft="10dp"
+         android:layout_weight="1"
+-        android:divider="@null"
+-        />
++        android:divider="@null" />
+ 
+     <LinearLayout
+         android:layout_width="match_parent"
+@@ -66,25 +65,25 @@
+             android:id="@+id/title2"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+-            android:textStyle="bold|italic"
+-            android:textSize="22sp"
+             android:layout_marginLeft="10dp"
+             android:layout_marginTop="5dp"
+-            android:text="Tasks completed today" />
++            android:text="Tasks completed today"
++            android:textSize="22sp"
++            android:textStyle="bold|italic" />
+ 
+         <Space
+             android:layout_width="0dp"
+-            android:layout_weight="1"
+-            android:layout_height="match_parent" />
++            android:layout_height="match_parent"
++            android:layout_weight="1" />
+ 
+         <TextView
+             android:id="@+id/title5"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+-            android:textSize="15sp"
+             android:layout_marginTop="5dp"
+             android:layout_marginEnd="10dp"
+-            android:text="Tap event to edit/delete"/>
++            android:text="Tap event to edit/delete"
++            android:textSize="15sp" />
+ 
+     </LinearLayout>
+ 
+@@ -94,8 +93,7 @@
+         android:layout_height="0dp"
+         android:layout_marginLeft="10dp"
+         android:layout_weight="1"
+-        android:divider="@null"
+-        />
++        android:divider="@null" />
+ 
+     <Button
+         android:id="@+id/calendar_button"
+@@ -103,8 +101,7 @@
+         android:layout_height="wrap_content"
+         android:layout_gravity="end"
+         android:layout_margin="5dp"
+-        android:text="View habit events"
+-        />
++        android:text="View habit events" />
+ 
+     <com.google.android.material.bottomnavigation.BottomNavigationView
+         android:id="@+id/bottomNavigationView2"
+@@ -113,6 +110,6 @@
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent"
+-        app:menu="@menu/bottom_nav_menu"/>
++        app:menu="@menu/bottom_nav_menu" />
+ 
+ </LinearLayout>
+\ No newline at end of file
+Index: app/src/main/java/com/example/agilesprinters/viewEditHabitFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.agilesprinters;\r\n\r\nimport android.app.AlertDialog;\r\nimport android.app.Dialog;\r\nimport android.content.Context;\r\nimport android.content.DialogInterface;\r\nimport android.graphics.Color;\r\nimport android.os.Bundle;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.Spinner;\r\nimport android.widget.TextView;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.fragment.app.DialogFragment;\r\n\r\nimport com.google.firebase.firestore.DocumentReference;\r\nimport com.google.firebase.firestore.FirebaseFirestore;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.HashMap;\r\n\r\n/**\r\n * This class is a fragment allows a user to view all the details of a habit and edit any details\r\n * they wish to change.\r\n */\r\npublic class viewEditHabitFragment extends DialogFragment{\r\n    private int position;\r\n    private String date;\r\n    private EditText habitTitle;\r\n    private EditText habitReason;\r\n    private TextView date_textView;\r\n    private TextView buttonError;\r\n    private Button sunday;\r\n    private Button monday;\r\n    private Button tuesday;\r\n    private Button wednesday;\r\n    private Button thursday;\r\n    private Button friday;\r\n    private Button saturday;\r\n    private Spinner privacy;\r\n    private ArrayList<String> originalWeekdays;\r\n    private HashMap<String,Boolean> weekdays;\r\n    private viewEditHabitFragment.OnFragmentInteractionListener listener;\r\n    private String HID;\r\n    private String UID;\r\n\r\n\r\n    /**\r\n     * This function saves the values sent to the fragment for future manipulation\r\n\r\n     * @param habit is the item that was tapped within the list\r\n     * @return returns the fragment with the bundled parameters\r\n     */\r\n    public static viewEditHabitFragment newInstance(Habit habit) {\r\n        viewEditHabitFragment frag = new viewEditHabitFragment();\r\n        Bundle args = new Bundle();\r\n        args.putSerializable(\"habit\", habit);\r\n        frag.setArguments(args);\r\n\r\n        return frag;\r\n    }\r\n\r\n    /**\r\n     * This interface listens for when dialog is ended and sends the information and the function\r\n     * to the Home class for it to implement.\r\n     */\r\n    public interface OnFragmentInteractionListener {\r\n        void onEditViewSaveChangesPressed(Habit habit);\r\n        void onEditViewCancelPressed(Habit habit);\r\n    }\r\n\r\n    /**\r\n     * This function attaches the fragment to the activity and keeps track of the context of the\r\n     * fragment so the listener knows what to listen to. Ensures that the proper methods are\r\n     * implemented by the Home class.\r\n     * @param context context of the current fragment\r\n     */\r\n    @Override\r\n    public void onAttach(Context context){\r\n        super.onAttach(context);\r\n\r\n        if (context instanceof addHabitFragment.OnFragmentInteractionListener){\r\n            listener = (viewEditHabitFragment.OnFragmentInteractionListener) context;\r\n        }\r\n        else{\r\n            throw new RuntimeException(context.toString()\r\n                    + \" must implement OnFragmentInteractionListener\");\r\n        }\r\n    }\r\n\r\n    /**\r\n     * This function creates the actual dialog on the screen and listens for user input, returning\r\n     * the information through the listener based on which button is clicked.\r\n     * @param savedInstanceState\r\n     * @return\r\n     */\r\n    @NonNull\r\n    @Override\r\n    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {\r\n        // Inflate the layout for this fragment\r\n        View view = LayoutInflater.from(getActivity()).inflate(R.layout.view_edit_habit_fragment, null);\r\n\r\n        // Connect all the elements of the screen to their appropriate counterparts\r\n        habitTitle = view.findViewById(R.id.view_edit_habit_title_editText);\r\n        habitReason = view.findViewById(R.id.view_edit_habit_reason_editText);\r\n        date_textView = view.findViewById(R.id.view_edit_habit_date);\r\n        privacy = view.findViewById(R.id.view_edit_privacy_spinner);\r\n        buttonError = view.findViewById(R.id.view_edit_habit_button_error);\r\n\r\n        // Get weekday buttons and make sure they are set to blank\r\n        sunday = view.findViewById(R.id.view_edit_button_sunday);\r\n        monday = view.findViewById(R.id.view_edit_button_monday);\r\n        tuesday = view.findViewById(R.id.view_edit_button_Tuesday);\r\n        wednesday = view.findViewById(R.id.view_edit_button_wednesday);\r\n        thursday = view.findViewById(R.id.view_edit_button_thursday);\r\n        friday = view.findViewById(R.id.view_edit_button_friday);\r\n        saturday = view.findViewById(R.id.view_edit_button_saturday);\r\n\r\n        // Get the arguments that were stored in the bundle\r\n        Habit habit = (Habit) getArguments().getSerializable(\"habit\");\r\n        position = getArguments().getInt(\"position\");\r\n\r\n        HID = habit.getHID();\r\n        UID = habit.getUID();\r\n\r\n\r\n        // Set all of the screen elements to their original habit values for viewing\r\n        habitTitle.setText(habit.getTitle());\r\n        habitReason.setText(habit.getReason());\r\n        date_textView.setText(\"Date Started: \" + habit.getDateToStart());\r\n        weekdays = habit.getWeekdays();\r\n        date = habit.getDateToStart();\r\n\r\n\r\n        // Make sure spinner for privacy settings is set to the correct option\r\n        if(habit.getPrivacySetting().equals(\"Private\")){\r\n            privacy.setSelection(1);\r\n        }\r\n\r\n        // Set weekday buttons to proper colors based on the habit object passed in\r\n        // and initialize the trackers for buttons pressed\r\n        if(weekdays.get(\"SUNDAY\")) {\r\n            sunday.setBackgroundColor(Color.parseColor(\"#e27c65\"));\r\n        }\r\n        if(weekdays.get(\"MONDAY\")) {\r\n            monday.setBackgroundColor(Color.parseColor(\"#e27c65\"));\r\n        }\r\n        if(weekdays.get(\"TUESDAY\")) {\r\n            tuesday.setBackgroundColor(Color.parseColor(\"#e27c65\"));\r\n        }\r\n        if(weekdays.get(\"WEDNESDAY\")) {\r\n            wednesday.setBackgroundColor(Color.parseColor(\"#e27c65\"));\r\n        }\r\n        if(weekdays.get(\"THURSDAY\")) {\r\n            thursday.setBackgroundColor(Color.parseColor(\"#e27c65\"));\r\n        }\r\n        if(weekdays.get(\"FRIDAY\")) {\r\n            friday.setBackgroundColor(Color.parseColor(\"#e27c65\"));\r\n        }\r\n        if(weekdays.get(\"SATURDAY\")) {\r\n            saturday.setBackgroundColor(Color.parseColor(\"#e27c65\"));\r\n        }\r\n\r\n        //Set on click listeners for all weekday buttons\r\n        sunday.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                if(weekdays.get(\"SUNDAY\") == false){\r\n                    sunday.setBackgroundColor(Color.parseColor(\"#e27c65\"));\r\n                    weekdays.replace(\"SUNDAY\", false, true);\r\n                }\r\n                else{\r\n                    sunday.setBackgroundColor(Color.parseColor(\"#808080\"));\r\n                    weekdays.replace(\"SUNDAY\", true, false);\r\n                }\r\n            }\r\n        });\r\n\r\n        monday.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                if (weekdays.get(\"MONDAY\") == false){\r\n                    monday.setBackgroundColor(Color.parseColor(\"#e27c65\"));\r\n                    weekdays.replace(\"MONDAY\", false, true);\r\n                } else {\r\n                    monday.setBackgroundColor(Color.parseColor(\"#808080\"));\r\n                    weekdays.replace(\"MONDAY\", true, false);\r\n                }\r\n            }\r\n        });\r\n\r\n        tuesday.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                if (weekdays.get(\"TUESDAY\") == false){\r\n                    tuesday.setBackgroundColor(Color.parseColor(\"#e27c65\"));\r\n                    weekdays.replace(\"TUESDAY\", false, true);\r\n                } else {\r\n                    tuesday.setBackgroundColor(Color.parseColor(\"#808080\"));\r\n                    weekdays.replace(\"TUESDAY\", true, false);\r\n                }\r\n            }\r\n        });\r\n\r\n        wednesday.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                if (weekdays.get(\"WEDNESDAY\") == false){\r\n                    wednesday.setBackgroundColor(Color.parseColor(\"#e27c65\"));\r\n                    weekdays.replace(\"WEDNESDAY\", false, true);\r\n                } else {\r\n                    wednesday.setBackgroundColor(Color.parseColor(\"#808080\"));\r\n                    weekdays.replace(\"WEDNESDAY\", true, false);\r\n                }\r\n            }\r\n        });\r\n\r\n        thursday.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                if (weekdays.get(\"THURSDAY\") == false){\r\n                    thursday.setBackgroundColor(Color.parseColor(\"#e27c65\"));\r\n                    weekdays.replace(\"THURSDAY\", false, true);\r\n                } else {\r\n                    thursday.setBackgroundColor(Color.parseColor(\"#808080\"));\r\n                    weekdays.replace(\"THURSDAY\", true, false);\r\n                }\r\n            }\r\n        });\r\n\r\n        friday.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                if (weekdays.get(\"FRIDAY\") == false){\r\n                    friday.setBackgroundColor(Color.parseColor(\"#e27c65\"));\r\n                    weekdays.replace(\"FRIDAY\", false, true);\r\n                } else {\r\n                    friday.setBackgroundColor(Color.parseColor(\"#808080\"));\r\n                    weekdays.replace(\"FRIDAY\", true, false);\r\n                }\r\n            }\r\n        });\r\n\r\n        saturday.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                if (weekdays.get(\"SATURDAY\") == false){\r\n                    saturday.setBackgroundColor(Color.parseColor(\"#e27c65\"));\r\n                    weekdays.replace(\"SATURDAY\", false, true);\r\n                } else {\r\n                    saturday.setBackgroundColor(Color.parseColor(\"#808080\"));\r\n                    weekdays.replace(\"SATURDAY\", true, false);\r\n                }\r\n            }\r\n        });\r\n\r\n        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());\r\n        return builder\r\n                .setView(view)\r\n                .setTitle(\"View/Edit Habit\")\r\n                .setNegativeButton(\"Cancel\", new DialogInterface.OnClickListener() {\r\n                    @Override\r\n                    public void onClick(DialogInterface dialogInterface, int i) {\r\n\r\n                    }\r\n                })\r\n                .setPositiveButton(\"Save Changes\", new DialogInterface.OnClickListener() {\r\n                    @Override\r\n                    public void onClick(DialogInterface dialog, int which) {\r\n                        /* Do not implement anything here in order to override the button\r\n                         * to only call the listener once all the information required has been\r\n                         * filled out and display error messages if they have been left blank.\r\n                        */\r\n                    }\r\n                }).create();\r\n\r\n    }\r\n\r\n    /**\r\n     * This function overrides the buttons clicked in order to only allow the dialog to be dismissed\r\n     * when all requirements have been met.\r\n     */\r\n    @Override\r\n    public void onResume(){\r\n        super.onResume();\r\n\r\n        final AlertDialog dialog = (AlertDialog) getDialog();\r\n        if(dialog != null){\r\n            Button positive = (Button) dialog.getButton(Dialog.BUTTON_POSITIVE);\r\n\r\n            positive.setOnClickListener(new View.OnClickListener() {\r\n                @Override\r\n                public void onClick(View view) {\r\n                    // Boolean tracks when the all the fields have been filled out. Will turn to false\r\n                    // if anything has been left blank.\r\n                    Boolean readyToClose = true;\r\n\r\n                    String habit_title = habitTitle.getText().toString();\r\n                    String habit_reason = habitReason.getText().toString();\r\n                    String privacySetting = privacy.getSelectedItem().toString();\r\n\r\n                    if (habit_title.matches(\"\")) {\r\n                        readyToClose = false;\r\n                        habitTitle.setError(\"This field cannot be blank\");\r\n                    }\r\n                    if (habit_reason.matches(\"\")) {\r\n                        readyToClose = false;\r\n                        habitReason.setError(\"This field cannot be blank\");\r\n                    }\r\n                    if (privacySetting.matches(\"\")) {\r\n                        readyToClose = false;\r\n                    }\r\n\r\n                    Boolean weekdayCheck = false;\r\n                    for(String i : weekdays.keySet()){\r\n                        if (weekdays.get(i)){\r\n                            weekdayCheck = true;\r\n                            break;\r\n                        }\r\n                    }\r\n                    if (!weekdayCheck) {\r\n                        readyToClose = false;\r\n                        buttonError.setText(\"Please choose which days you would like this event to occur.\");\r\n                    }\r\n\r\n                    // If everything has been filled out, call the listener and send the edited\r\n                    // habit back to the Home class and dismiss the dialog.\r\n                    if(readyToClose){\r\n                        listener.onEditViewSaveChangesPressed(new Habit(HID,UID,habit_title,habit_reason,date, weekdays, privacySetting));\r\n                        dialog.dismiss();\r\n                    }\r\n                }\r\n            });\r\n        }\r\n    }\r\n}\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/agilesprinters/viewEditHabitFragment.java b/app/src/main/java/com/example/agilesprinters/viewEditHabitFragment.java
+--- a/app/src/main/java/com/example/agilesprinters/viewEditHabitFragment.java	
++++ b/app/src/main/java/com/example/agilesprinters/viewEditHabitFragment.java	
+@@ -27,7 +27,7 @@
+  * This class is a fragment allows a user to view all the details of a habit and edit any details
+  * they wish to change.
+  */
+-public class viewEditHabitFragment extends DialogFragment{
++public class viewEditHabitFragment extends DialogFragment {
+     private int position;
+     private String date;
+     private EditText habitTitle;
+@@ -43,7 +43,7 @@
+     private Button saturday;
+     private Spinner privacy;
+     private ArrayList<String> originalWeekdays;
+-    private HashMap<String,Boolean> weekdays;
++    private HashMap<String, Boolean> weekdays;
+     private viewEditHabitFragment.OnFragmentInteractionListener listener;
+     private String HID;
+     private String UID;
+@@ -51,7 +51,7 @@
+ 
+     /**
+      * This function saves the values sent to the fragment for future manipulation
+-
++     *
+      * @param habit is the item that was tapped within the list
+      * @return returns the fragment with the bundled parameters
+      */
+@@ -70,6 +70,7 @@
+      */
+     public interface OnFragmentInteractionListener {
+         void onEditViewSaveChangesPressed(Habit habit);
++
+         void onEditViewCancelPressed(Habit habit);
+     }
+ 
+@@ -77,16 +78,16 @@
+      * This function attaches the fragment to the activity and keeps track of the context of the
+      * fragment so the listener knows what to listen to. Ensures that the proper methods are
+      * implemented by the Home class.
++     *
+      * @param context context of the current fragment
+      */
+     @Override
+-    public void onAttach(Context context){
++    public void onAttach(Context context) {
+         super.onAttach(context);
+ 
+-        if (context instanceof addHabitFragment.OnFragmentInteractionListener){
++        if (context instanceof addHabitFragment.OnFragmentInteractionListener) {
+             listener = (viewEditHabitFragment.OnFragmentInteractionListener) context;
+-        }
+-        else{
++        } else {
+             throw new RuntimeException(context.toString()
+                     + " must implement OnFragmentInteractionListener");
+         }
+@@ -95,6 +96,7 @@
+     /**
+      * This function creates the actual dialog on the screen and listens for user input, returning
+      * the information through the listener based on which button is clicked.
++     *
+      * @param savedInstanceState
+      * @return
+      */
+@@ -137,31 +139,31 @@
+ 
+ 
+         // Make sure spinner for privacy settings is set to the correct option
+-        if(habit.getPrivacySetting().equals("Private")){
++        if (habit.getPrivacySetting().equals("Private")) {
+             privacy.setSelection(1);
+         }
+ 
+         // Set weekday buttons to proper colors based on the habit object passed in
+         // and initialize the trackers for buttons pressed
+-        if(weekdays.get("SUNDAY")) {
++        if (weekdays.get("SUNDAY")) {
+             sunday.setBackgroundColor(Color.parseColor("#e27c65"));
+         }
+-        if(weekdays.get("MONDAY")) {
++        if (weekdays.get("MONDAY")) {
+             monday.setBackgroundColor(Color.parseColor("#e27c65"));
+         }
+-        if(weekdays.get("TUESDAY")) {
++        if (weekdays.get("TUESDAY")) {
+             tuesday.setBackgroundColor(Color.parseColor("#e27c65"));
+         }
+-        if(weekdays.get("WEDNESDAY")) {
++        if (weekdays.get("WEDNESDAY")) {
+             wednesday.setBackgroundColor(Color.parseColor("#e27c65"));
+         }
+-        if(weekdays.get("THURSDAY")) {
++        if (weekdays.get("THURSDAY")) {
+             thursday.setBackgroundColor(Color.parseColor("#e27c65"));
+         }
+-        if(weekdays.get("FRIDAY")) {
++        if (weekdays.get("FRIDAY")) {
+             friday.setBackgroundColor(Color.parseColor("#e27c65"));
+         }
+-        if(weekdays.get("SATURDAY")) {
++        if (weekdays.get("SATURDAY")) {
+             saturday.setBackgroundColor(Color.parseColor("#e27c65"));
+         }
+ 
+@@ -169,11 +171,10 @@
+         sunday.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+-                if(weekdays.get("SUNDAY") == false){
++                if (weekdays.get("SUNDAY") == false) {
+                     sunday.setBackgroundColor(Color.parseColor("#e27c65"));
+                     weekdays.replace("SUNDAY", false, true);
+-                }
+-                else{
++                } else {
+                     sunday.setBackgroundColor(Color.parseColor("#808080"));
+                     weekdays.replace("SUNDAY", true, false);
+                 }
+@@ -183,7 +184,7 @@
+         monday.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+-                if (weekdays.get("MONDAY") == false){
++                if (weekdays.get("MONDAY") == false) {
+                     monday.setBackgroundColor(Color.parseColor("#e27c65"));
+                     weekdays.replace("MONDAY", false, true);
+                 } else {
+@@ -196,7 +197,7 @@
+         tuesday.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+-                if (weekdays.get("TUESDAY") == false){
++                if (weekdays.get("TUESDAY") == false) {
+                     tuesday.setBackgroundColor(Color.parseColor("#e27c65"));
+                     weekdays.replace("TUESDAY", false, true);
+                 } else {
+@@ -209,7 +210,7 @@
+         wednesday.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+-                if (weekdays.get("WEDNESDAY") == false){
++                if (weekdays.get("WEDNESDAY") == false) {
+                     wednesday.setBackgroundColor(Color.parseColor("#e27c65"));
+                     weekdays.replace("WEDNESDAY", false, true);
+                 } else {
+@@ -222,7 +223,7 @@
+         thursday.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+-                if (weekdays.get("THURSDAY") == false){
++                if (weekdays.get("THURSDAY") == false) {
+                     thursday.setBackgroundColor(Color.parseColor("#e27c65"));
+                     weekdays.replace("THURSDAY", false, true);
+                 } else {
+@@ -235,7 +236,7 @@
+         friday.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+-                if (weekdays.get("FRIDAY") == false){
++                if (weekdays.get("FRIDAY") == false) {
+                     friday.setBackgroundColor(Color.parseColor("#e27c65"));
+                     weekdays.replace("FRIDAY", false, true);
+                 } else {
+@@ -248,7 +249,7 @@
+         saturday.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+-                if (weekdays.get("SATURDAY") == false){
++                if (weekdays.get("SATURDAY") == false) {
+                     saturday.setBackgroundColor(Color.parseColor("#e27c65"));
+                     weekdays.replace("SATURDAY", false, true);
+                 } else {
+@@ -274,7 +275,7 @@
+                         /* Do not implement anything here in order to override the button
+                          * to only call the listener once all the information required has been
+                          * filled out and display error messages if they have been left blank.
+-                        */
++                         */
+                     }
+                 }).create();
+ 
+@@ -285,11 +286,11 @@
+      * when all requirements have been met.
+      */
+     @Override
+-    public void onResume(){
++    public void onResume() {
+         super.onResume();
+ 
+         final AlertDialog dialog = (AlertDialog) getDialog();
+-        if(dialog != null){
++        if (dialog != null) {
+             Button positive = (Button) dialog.getButton(Dialog.BUTTON_POSITIVE);
+ 
+             positive.setOnClickListener(new View.OnClickListener() {
+@@ -316,8 +317,8 @@
+                     }
+ 
+                     Boolean weekdayCheck = false;
+-                    for(String i : weekdays.keySet()){
+-                        if (weekdays.get(i)){
++                    for (String i : weekdays.keySet()) {
++                        if (weekdays.get(i)) {
+                             weekdayCheck = true;
+                             break;
+                         }
+@@ -329,8 +330,8 @@
+ 
+                     // If everything has been filled out, call the listener and send the edited
+                     // habit back to the Home class and dismiss the dialog.
+-                    if(readyToClose){
+-                        listener.onEditViewSaveChangesPressed(new Habit(HID,UID,habit_title,habit_reason,date, weekdays, privacySetting));
++                    if (readyToClose) {
++                        listener.onEditViewSaveChangesPressed(new Habit(HID, UID, habit_title, habit_reason, date, weekdays, privacySetting));
+                         dialog.dismiss();
+                     }
+                 }
+Index: app/src/main/res/layout/edit_habit_event_fragment.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:custom=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:orientation=\"vertical\"\r\n    android:weightSum=\"100\">\r\n\r\n\r\n    <EditText\r\n        android:id=\"@+id/editText_duration\"\r\n        android:layout_width=\"0dp\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginStart=\"8dp\"\r\n        android:layout_marginEnd=\"8dp\"\r\n        android:ems=\"10\"\r\n        android:hint=\"** min\"\r\n        android:inputType=\"textPersonName\"\r\n        android:minHeight=\"48dp\"\r\n        app:layout_constraintBaseline_toBaselineOf=\"@+id/editText_date\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.5\"\r\n        app:layout_constraintStart_toEndOf=\"@+id/editText_date\" />\r\n\r\n    <EditText\r\n        android:id=\"@+id/editText_comment\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginStart=\"8dp\"\r\n        android:layout_marginTop=\"8dp\"\r\n        android:ems=\"10\"\r\n        android:hint=\"Comment\"\r\n        android:inputType=\"textPersonName\"\r\n        android:minHeight=\"48dp\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.0\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/editText_date\"\r\n        android:layout_width=\"0dp\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginStart=\"12dp\"\r\n        android:layout_marginTop=\"4dp\"\r\n        android:layout_marginEnd=\"8dp\"\r\n        android:ems=\"10\"\r\n        android:clickable=\"true\"\r\n        android:cursorVisible=\"false\"\r\n        android:focusable=\"true\"\r\n        android:textSize=\"15dp\"\r\n        android:focusableInTouchMode=\"true\"\r\n        android:hint=\"MM/DD/YYYY\"\r\n        android:minHeight=\"48dp\"\r\n        app:layout_constraintEnd_toStartOf=\"@+id/editText_duration\"\r\n        app:layout_constraintHorizontal_bias=\"0.5\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/editText_comment\" />\r\n\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/edit_habit_event_fragment.xml b/app/src/main/res/layout/edit_habit_event_fragment.xml
+--- a/app/src/main/res/layout/edit_habit_event_fragment.xml	
++++ b/app/src/main/res/layout/edit_habit_event_fragment.xml	
+@@ -45,14 +45,14 @@
+         android:layout_marginStart="12dp"
+         android:layout_marginTop="4dp"
+         android:layout_marginEnd="8dp"
+-        android:ems="10"
+         android:clickable="true"
+         android:cursorVisible="false"
++        android:ems="10"
+         android:focusable="true"
+-        android:textSize="15dp"
+         android:focusableInTouchMode="true"
+         android:hint="MM/DD/YYYY"
+         android:minHeight="48dp"
++        android:textSize="15dp"
+         app:layout_constraintEnd_toStartOf="@+id/editText_duration"
+         app:layout_constraintHorizontal_bias="0.5"
+         app:layout_constraintStart_toStartOf="parent"
+Index: app/src/main/res/layout/todo_habits_content.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n\r\n<LinearLayout\r\n    xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    android:layout_height=\"wrap_content\"\r\n    android:layout_width=\"match_parent\"\r\n    android:orientation=\"horizontal\">\r\n\r\n    <TextView\r\n        android:id=\"@+id/habit_text\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_margin=\"10dp\"\r\n        android:text=\"Habit\"\r\n        android:padding=\"10dp\"\r\n        android:textSize=\"22sp\">\r\n\r\n    </TextView>\r\n\r\n\r\n</LinearLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/todo_habits_content.xml b/app/src/main/res/layout/todo_habits_content.xml
+--- a/app/src/main/res/layout/todo_habits_content.xml	
++++ b/app/src/main/res/layout/todo_habits_content.xml	
+@@ -1,9 +1,8 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ 
+-<LinearLayout
+-    xmlns:android="http://schemas.android.com/apk/res/android"
+-    android:layout_height="wrap_content"
++<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     android:layout_width="match_parent"
++    android:layout_height="wrap_content"
+     android:orientation="horizontal">
+ 
+     <TextView
+@@ -11,8 +10,8 @@
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_margin="10dp"
+-        android:text="Habit"
+         android:padding="10dp"
++        android:text="Habit"
+         android:textSize="22sp">
+ 
+     </TextView>
+Index: app/src/main/res/menu/bottom_nav_menu.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<menu xmlns:android=\"http://schemas.android.com/apk/res/android\">\r\n\r\n    <item\r\n        android:id=\"@+id/home\"\r\n        android:title=\"Home\"\r\n        android:enabled=\"true\"\r\n        android:icon=\"@drawable/ic_home\"/>\r\n\r\n    <item\r\n        android:id=\"@+id/calendar\"\r\n        android:title=\"Calendar\"\r\n        android:enabled=\"true\"\r\n        android:icon=\"@drawable/ic_calendar\"/>\r\n\r\n    <item\r\n        android:id=\"@+id/forumn\"\r\n        android:title=\"Forumn\"\r\n        android:enabled=\"true\"\r\n        android:icon=\"@drawable/ic_language\"/>\r\n\r\n    <item\r\n        android:id=\"@+id/notification\"\r\n        android:title=\"Notification\"\r\n        android:enabled=\"true\"\r\n        android:icon=\"@drawable/ic_notifications\"/>\r\n\r\n</menu>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/menu/bottom_nav_menu.xml b/app/src/main/res/menu/bottom_nav_menu.xml
+--- a/app/src/main/res/menu/bottom_nav_menu.xml	
++++ b/app/src/main/res/menu/bottom_nav_menu.xml	
+@@ -3,26 +3,26 @@
+ 
+     <item
+         android:id="@+id/home"
+-        android:title="Home"
+         android:enabled="true"
+-        android:icon="@drawable/ic_home"/>
++        android:icon="@drawable/ic_home"
++        android:title="Home" />
+ 
+     <item
+         android:id="@+id/calendar"
+-        android:title="Calendar"
+         android:enabled="true"
+-        android:icon="@drawable/ic_calendar"/>
++        android:icon="@drawable/ic_calendar"
++        android:title="Calendar" />
+ 
+     <item
+         android:id="@+id/forumn"
+-        android:title="Forumn"
+         android:enabled="true"
+-        android:icon="@drawable/ic_language"/>
++        android:icon="@drawable/ic_language"
++        android:title="Forumn" />
+ 
+     <item
+         android:id="@+id/notification"
+-        android:title="Notification"
+         android:enabled="true"
+-        android:icon="@drawable/ic_notifications"/>
++        android:icon="@drawable/ic_notifications"
++        android:title="Notification" />
+ 
+ </menu>
+\ No newline at end of file
+Index: app/src/main/java/com/example/agilesprinters/deleteHabitFragment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.agilesprinters;\r\n\r\nimport android.app.AlertDialog;\r\nimport android.app.Dialog;\r\nimport android.content.Context;\r\nimport android.content.DialogInterface;\r\nimport android.os.Bundle;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.fragment.app.DialogFragment;\r\n\r\n/**\r\n * This class is a fragment that asks the user if they wish to delete a habit and all of its events.\r\n */\r\npublic class deleteHabitFragment extends DialogFragment {\r\n    private deleteHabitFragment.OnFragmentInteractionListener listener;\r\n\r\n    /**\r\n     * This function saves the position sent to the fragment for future manipulation\r\n     * @param position is the item position that was tapped within the list\r\n     * @return returns the fragment with the bundled parameters\r\n     */\r\n    public static deleteHabitFragment newInstance(int position) {\r\n        //Keep track of item the user wishes to delete.\r\n        deleteHabitFragment frag = new deleteHabitFragment();\r\n        Bundle args = new Bundle();\r\n        args.putInt(\"position\", position);\r\n        frag.setArguments(args);\r\n\r\n        return frag;\r\n    }\r\n\r\n    /**\r\n     * This interface listens for when dialog is ended and sends the information and the function\r\n     * to the Home class for it to implement.\r\n     */\r\n    public interface OnFragmentInteractionListener {\r\n        void onDeleteHabitYesPressed(int position);\r\n    }\r\n\r\n    /**\r\n     * This function attaches the fragment to the activity and keeps track of the context of the\r\n     * fragment so the listener knows what to listen to. Ensures that the proper methods are\r\n     * implemented by the Home class.\r\n     * @param context context of the current fragment\r\n     */\r\n    @Override\r\n    public void onAttach(Context context){\r\n        super.onAttach(context);\r\n\r\n        if (context instanceof deleteHabitFragment.OnFragmentInteractionListener){\r\n            listener = (deleteHabitFragment.OnFragmentInteractionListener) context;\r\n        }\r\n        else{\r\n            throw new RuntimeException(context.toString()\r\n                    + \" must implement OnFragmentInteractionListener\");\r\n        }\r\n    }\r\n\r\n    /**\r\n     * This function creates the actual dialog on the screen and listens for user input, returning\r\n     * the information through the listener based on which button is clicked.\r\n     * @param savedInstanceState\r\n     * @return\r\n     */\r\n    @NonNull\r\n    @Override\r\n    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {\r\n        // Inflate the layout for this fragment\r\n        View view = LayoutInflater.from(getActivity()).inflate(R.layout.delete_habit_fragment, null);\r\n\r\n        // Get arguments from the bundle\r\n        int position = getArguments().getInt(\"position\");\r\n\r\n        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());\r\n        return builder\r\n                .setView(view)\r\n                .setNegativeButton(\"No\", null)\r\n                .setPositiveButton(\"Yes\", new DialogInterface.OnClickListener() {\r\n                    @Override\r\n                    public void onClick(DialogInterface dialog, int which) {\r\n                        listener.onDeleteHabitYesPressed(position);\r\n                    }\r\n                }).create();\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/agilesprinters/deleteHabitFragment.java b/app/src/main/java/com/example/agilesprinters/deleteHabitFragment.java
+--- a/app/src/main/java/com/example/agilesprinters/deleteHabitFragment.java	
++++ b/app/src/main/java/com/example/agilesprinters/deleteHabitFragment.java	
+@@ -20,6 +20,7 @@
+ 
+     /**
+      * This function saves the position sent to the fragment for future manipulation
++     *
+      * @param position is the item position that was tapped within the list
+      * @return returns the fragment with the bundled parameters
+      */
+@@ -45,16 +46,16 @@
+      * This function attaches the fragment to the activity and keeps track of the context of the
+      * fragment so the listener knows what to listen to. Ensures that the proper methods are
+      * implemented by the Home class.
++     *
+      * @param context context of the current fragment
+      */
+     @Override
+-    public void onAttach(Context context){
++    public void onAttach(Context context) {
+         super.onAttach(context);
+ 
+-        if (context instanceof deleteHabitFragment.OnFragmentInteractionListener){
++        if (context instanceof deleteHabitFragment.OnFragmentInteractionListener) {
+             listener = (deleteHabitFragment.OnFragmentInteractionListener) context;
+-        }
+-        else{
++        } else {
+             throw new RuntimeException(context.toString()
+                     + " must implement OnFragmentInteractionListener");
+         }
+@@ -63,6 +64,7 @@
+     /**
+      * This function creates the actual dialog on the screen and listens for user input, returning
+      * the information through the listener based on which button is clicked.
++     *
+      * @param savedInstanceState
+      * @return
+      */

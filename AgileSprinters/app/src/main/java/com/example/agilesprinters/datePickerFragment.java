@@ -12,8 +12,6 @@ import java.util.Calendar;
 /**
  * This class is a dialog fragment that allows a user to choose a date to go back and check past
  * habit events
- *
- * @author Hannah Desmarais
  */
 public class datePickerFragment extends DialogFragment {
 

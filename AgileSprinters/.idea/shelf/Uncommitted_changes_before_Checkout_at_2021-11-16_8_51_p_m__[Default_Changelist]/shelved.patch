@@ -1,0 +1,359 @@
+Index: app/src/main/java/com/example/agilesprinters/Home.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.agilesprinters;\r\n\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.util.Log;\r\nimport android.view.MenuItem;\r\nimport android.view.View;\r\nimport android.widget.AdapterView;\r\nimport android.widget.ArrayAdapter;\r\nimport android.widget.ListView;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport com.google.android.gms.tasks.OnFailureListener;\r\nimport com.google.android.gms.tasks.OnSuccessListener;\r\nimport com.google.android.material.bottomnavigation.BottomNavigationView;\r\nimport com.google.android.material.floatingactionbutton.FloatingActionButton;\r\nimport com.google.firebase.firestore.CollectionReference;\r\nimport com.google.firebase.firestore.DocumentReference;\r\nimport com.google.firebase.firestore.EventListener;\r\nimport com.google.firebase.firestore.FirebaseFirestore;\r\nimport com.google.firebase.firestore.FirebaseFirestoreException;\r\nimport com.google.firebase.firestore.QueryDocumentSnapshot;\r\nimport com.google.firebase.firestore.QuerySnapshot;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.HashMap;\r\n\r\n/**\r\n * The home class is an activity which displays the habits of a user upon login. From here a user\r\n * may click the floating button to add a habit, tap on a habit to edit or view a habit, or long\r\n * click on a habit to delete it. There is a navigation bar on the bottom that the user may click\r\n * to go to either calendar, forum, or notifications.\r\n *\r\n * @author Hannah Desmarais, Hari Bheesetti, and Gurick Kooner\r\n */\r\npublic class Home extends AppCompatActivity implements addHabitFragment.OnFragmentInteractionListener,\r\n        viewEditHabitFragment.OnFragmentInteractionListener, BottomNavigationView.OnNavigationItemSelectedListener,\r\n        deleteHabitFragment.OnFragmentInteractionListener {\r\n    private ArrayList<Habit> habitArrayList;\r\n    private ListView habitList;\r\n    private ArrayAdapter<Habit> habitAdapter;\r\n    BottomNavigationView bottomNavigationView;\r\n    FirebaseFirestore db;\r\n\r\n    private static final String TAG = \"Habit\";\r\n    private String UID;\r\n    private User user;\r\n\r\n    /**\r\n     * This function creates the UI on the screen and listens for user input\r\n     * @param savedInstanceState the instance state\r\n     */\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_home);\r\n\r\n        bottomNavigationView = findViewById(R.id.bottomNavigationView);\r\n        bottomNavigationView.setOnNavigationItemSelectedListener(this);\r\n        bottomNavigationView.setSelectedItemId(R.id.home);\r\n\r\n        habitList = findViewById(R.id.habit_list);\r\n        habitArrayList = new ArrayList<>();\r\n        habitAdapter = new habitListAdapter(this, habitArrayList);\r\n        habitList.setAdapter(habitAdapter);\r\n        db = FirebaseFirestore.getInstance();\r\n        final CollectionReference collectionReference = db.collection(\"Habit\");\r\n\r\n        if (user == null) {\r\n            user = (User) getIntent().getSerializableExtra(\"user\");\r\n            UID = user.getUser();\r\n        }\r\n\r\n        System.out.println(\"User\" + UID);\r\n\r\n        /**\r\n         * This is a database listener. Each time the Home page is created, it will read the contents\r\n         * of the database and put it in our listview.\r\n         */\r\n        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {\r\n            @Override\r\n            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable\r\n                    FirebaseFirestoreException error) {\r\n                // Clear the old list\r\n                habitArrayList.clear();\r\n                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {\r\n                    Log.d(TAG, String.valueOf(doc.getData().get(\"UID\")));\r\n                    if (UID.matches((String) doc.getData().get(\"UID\"))) {\r\n                        String title = (String) doc.getData().get(\"Title\");\r\n                        String reason = (String) doc.getData().get(\"Reason\");\r\n                        String dateToStart = (String) doc.getData().get(\"Data to Start\");\r\n                        HashMap<String, Boolean> weekdays = (HashMap<String, Boolean>) doc.getData().get(\"Weekdays\");\r\n                        String privacySetting = (String) doc.getData().get(\"PrivacySetting\");\r\n\r\n                        habitArrayList.add(new Habit(doc.getId(), UID, title, reason, dateToStart, weekdays, privacySetting));\r\n                    }\r\n                }\r\n                habitAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched\r\n                // from the cloud\r\n            }\r\n        });\r\n\r\n        /**\r\n         * This is an on item click listener which listens for when a user taps on an item in the\r\n         * habit list. Once clicked it will open the viewEditHabitFragment\r\n         */\r\n        habitList.setOnItemClickListener(new AdapterView.OnItemClickListener() {\r\n            @Override\r\n            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {\r\n                Habit habit = (Habit) adapterView.getItemAtPosition(i);\r\n                viewEditHabitFragment values = new viewEditHabitFragment().newInstance(habit);\r\n                values.show(getSupportFragmentManager(), \"VIEW/EDIT\");\r\n            }\r\n        });\r\n\r\n        /**\r\n         * This is a floating action button which listens for when a user taps it. If tapped it will\r\n         * begin the addHabitFragment.\r\n         */\r\n        final FloatingActionButton addButton = findViewById(R.id.add_habit_button);\r\n        addButton.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                addHabitFragment values = new addHabitFragment().newInstance(UID);\r\n                values.show(getSupportFragmentManager(), \"ADD\");\r\n                System.out.println(getIntent());\r\n            }\r\n        });\r\n\r\n        /**\r\n         * This is a long item click listener which overrides the regular item click listener.\r\n         * When an item is long clicked, it will begin the deleteHabitFragment\r\n         */\r\n        habitList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {\r\n            @Override\r\n            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {\r\n                deleteHabitFragment delete = new deleteHabitFragment().newInstance(i);\r\n                delete.show(getSupportFragmentManager(), \"DELETE\");\r\n\r\n                // return true so that it overrides a regular item click and the view/edit fragment does not pop up\r\n                return true;\r\n            }\r\n        });\r\n\r\n    }\r\n\r\n\r\n    /**\r\n     * This function passes a habit to be added to the list once the user clicks add on the\r\n     * addHabitFragment dialog fragment\r\n     *\r\n     * @param habit The habit object created by the addHabitFragment\r\n     */\r\n    @Override\r\n    public void onAddPressed(Habit habit) {\r\n        addHabitDatabase(habit);\r\n        habitAdapter.notifyDataSetChanged();\r\n    }\r\n\r\n    /**\r\n     * This function passes a habit to be updated once a user clicks Save Changes in the\r\n     * viewEditHabitFragment dialog fragment.\r\n     * @param habit The habit object changed in the viewEditHabitFragment\r\n     */\r\n    @Override\r\n    public void onEditViewSaveChangesPressed(Habit habit) {\r\n        updateHabitDatabase(habit);\r\n    }\r\n\r\n    /**\r\n     * This method is called when the user presses cancel on the editViewCancel fragment. Will not\r\n     * change the habit.\r\n     */\r\n    @Override\r\n    public void onEditViewCancelPressed() {\r\n    }\r\n\r\n\r\n    //onclick for follow and followers. Not to be implemented until after the halfway checkpoint\r\n    public void follow(View view) {\r\n    }\r\n\r\n    /**\r\n     * This method contains the logic for switching screens by selecting an item from the navigation\r\n     * bar.\r\n     * @param item This is the item selected by the user\r\n     * @return\r\n     * Returns a boolean based on which activity the user is currently in and which item was\r\n     * clicked.\r\n     */\r\n    @Override\r\n    public boolean onNavigationItemSelected(@NonNull MenuItem item) {\r\n        //Context context = getApplicationContext();\r\n        switch (item.getItemId()) {\r\n            case R.id.home:\r\n                if (this instanceof Home) {\r\n                    return true;\r\n                } else {\r\n                    Intent intent = new Intent(this, Home.class);\r\n                    //add bundle to send data if need\r\n                    startActivity(intent);\r\n                }\r\n                break;\r\n\r\n            case R.id.calendar:\r\n                Intent intent = new Intent(this, UserCalendar.class);\r\n                intent.putExtra(\"user\", user);\r\n                //add bundle to send data if need\r\n                startActivity(intent);\r\n                break;\r\n\r\n            case R.id.forumn:\r\n                break;\r\n\r\n        }\r\n        return false;\r\n    }\r\n\r\n    /**\r\n     * This function adds a habit to the database.\r\n     * @param habit The habit that needs to be added to the database.\r\n     */\r\n    public void addHabitDatabase(Habit habit) {\r\n        db = FirebaseFirestore.getInstance();\r\n        final CollectionReference collectionReference = db.collection(\"Habit\");\r\n        // Creating a unique Id for the Habit that is being added\r\n        DocumentReference newHabitRef = db.collection(\"Habit\").document();\r\n        String HabitId = newHabitRef.getId();\r\n        HashMap<String, Object> data = new HashMap<>();\r\n\r\n        if (HabitId != null) {\r\n            data.put(\"UID\", UID);\r\n            data.put(\"Title\", habit.getTitle());\r\n            data.put(\"Reason\", habit.getReason());\r\n            data.put(\"PrivacySetting\", habit.getPrivacySetting());\r\n            data.put(\"Data to Start\", habit.getDateToStart());\r\n            data.put(\"Weekdays\", habit.getWeekdays());\r\n\r\n            collectionReference\r\n                    .document(HabitId)\r\n                    .set(data)\r\n                    .addOnSuccessListener(new OnSuccessListener<Void>() {\r\n                        @Override\r\n                        public void onSuccess(Void aVoid) {\r\n                            // These are a method which gets executed when the task is succeeded\r\n                            Log.d(TAG, \"Data has been added successfully!\");\r\n                        }\r\n                    })\r\n                    .addOnFailureListener(new OnFailureListener() {\r\n                        @Override\r\n                        public void onFailure(@NonNull Exception e) {\r\n                            // These are a method which gets executed if there’s any problem\r\n                            Log.d(TAG, \"Data could not be added!\" + e.toString());\r\n                        }\r\n                    });\r\n        }\r\n    }\r\n\r\n    /**\r\n     * This is a method that updates a habit selected by the user in the database based with the\r\n     * fields entered in the viewEditHabitFragment\r\n     * @param habit\r\n     */\r\n    public void updateHabitDatabase(Habit habit) {\r\n        db = FirebaseFirestore.getInstance();\r\n        final CollectionReference collectionReference = db.collection(\"Habit\");\r\n        HashMap<String, Object> data = new HashMap<>();\r\n\r\n        data.put(\"UID\", UID);\r\n        data.put(\"Title\", habit.getTitle());\r\n        data.put(\"Reason\", habit.getReason());\r\n        data.put(\"PrivacySetting\", habit.getPrivacySetting());\r\n        data.put(\"Data to Start\", habit.getDateToStart());\r\n        data.put(\"Weekdays\", habit.getWeekdays());\r\n\r\n        collectionReference\r\n                .document(habit.getHID())\r\n                .set(data)\r\n                .addOnSuccessListener(new OnSuccessListener<Void>() {\r\n                    @Override\r\n                    public void onSuccess(Void aVoid) {\r\n                        // These are a method which gets executed when the task is succeeded\r\n                        Log.d(TAG, \"Data has been added successfully!\");\r\n                    }\r\n                })\r\n                .addOnFailureListener(new OnFailureListener() {\r\n                    @Override\r\n                    public void onFailure(@NonNull Exception e) {\r\n                        // These are a method which gets executed if there’s any problem\r\n                        Log.d(TAG, \"Data could not be added!\" + e.toString());\r\n                    }\r\n                });\r\n    }\r\n\r\n    /**\r\n     * This method deletes a habit selected by the user from the database\r\n     * @param habit this is the habit object selected by the user to be deleted\r\n     */\r\n    public void deleteHabitDatabase(Habit habit) {\r\n        deleteHabitInstances(habit);\r\n        db.collection(\"Habit\")\r\n                .document(habit.getHID())\r\n                .delete()\r\n                .addOnSuccessListener(new OnSuccessListener<Void>() {\r\n                    @Override\r\n                    public void onSuccess(Void aVoid) {\r\n                        Log.d(TAG, \"DocumentSnapshot successfully deleted!\");\r\n                    }\r\n                })\r\n                .addOnFailureListener(new OnFailureListener() {\r\n                    @Override\r\n                    public void onFailure(@NonNull Exception e) {\r\n                        Log.w(TAG, \"Error deleting document\", e);\r\n                    }\r\n                });\r\n    }\r\n\r\n    /**\r\n     * This function deletes the habit selected by the user in the list after a user clicks \"Yes\"\r\n     * in the deleteHabitFragment dialog fragment.\r\n     *\r\n     * @param position The position of the object clicked in the list.\r\n     */\r\n    @Override\r\n    public void onDeleteHabitYesPressed(int position) {\r\n        Habit habit = habitAdapter.getItem(position);\r\n        deleteHabitDatabase(habit);\r\n        habitAdapter.notifyDataSetChanged();\r\n    }\r\n\r\n    /**\r\n     * This method deletes habit events from the database based on the habit object passed to it.\r\n     * @param habit this is the habit object the user wishes to be deleted\r\n     */\r\n    public void deleteHabitInstances(Habit habit) {\r\n        CollectionReference collectionReference = db.collection(\"HabitEvents\");\r\n        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {\r\n            @Override\r\n            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable\r\n                    FirebaseFirestoreException error) {\r\n                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {\r\n                    Log.d(TAG, String.valueOf(doc.getData().get(\"UID\")));\r\n                    if (habit.getHID().matches((String) doc.getData().get(\"HID\"))) {\r\n                        if(doc.getId() == null){\r\n                            return;\r\n                        } else {\r\n                            db.collection(\"HabitEvents\")\r\n                                    .document(doc.getId())\r\n                                    .delete()\r\n                                    .addOnSuccessListener(new OnSuccessListener<Void>() {\r\n                                        @Override\r\n                                        public void onSuccess(Void aVoid) {\r\n                                            Log.d(TAG, \"DocumentSnapshot successfully deleted!\");\r\n                                        }\r\n                                    })\r\n                                    .addOnFailureListener(new OnFailureListener() {\r\n                                        @Override\r\n                                        public void onFailure(@NonNull Exception e) {\r\n                                            Log.w(TAG, \"Error deleting document\", e);\r\n                                        }\r\n                                    });\r\n                        }\r\n                    }\r\n                }\r\n                habitAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched\r\n                // from the cloud\r\n            }\r\n        });\r\n        return;\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/agilesprinters/Home.java b/app/src/main/java/com/example/agilesprinters/Home.java
+--- a/app/src/main/java/com/example/agilesprinters/Home.java	(revision 23f833ad53873cb0feff28092ba5841d678d4087)
++++ b/app/src/main/java/com/example/agilesprinters/Home.java	(date 1636851294644)
+@@ -33,8 +33,6 @@
+  * may click the floating button to add a habit, tap on a habit to edit or view a habit, or long
+  * click on a habit to delete it. There is a navigation bar on the bottom that the user may click
+  * to go to either calendar, forum, or notifications.
+- *
+- * @author Hannah Desmarais, Hari Bheesetti, and Gurick Kooner
+  */
+ public class Home extends AppCompatActivity implements addHabitFragment.OnFragmentInteractionListener,
+         viewEditHabitFragment.OnFragmentInteractionListener, BottomNavigationView.OnNavigationItemSelectedListener,
+@@ -46,8 +44,10 @@
+     FirebaseFirestore db;
+ 
+     private static final String TAG = "Habit";
++    private String collectionPath;
+     private String UID;
+     private User user;
++    private Database database = new Database();
+ 
+     /**
+      * This function creates the UI on the screen and listens for user input
+@@ -74,8 +74,6 @@
+             UID = user.getUser();
+         }
+ 
+-        System.out.println("User" + UID);
+-
+         /**
+          * This is a database listener. Each time the Home page is created, it will read the contents
+          * of the database and put it in our listview.
+@@ -105,7 +103,7 @@
+ 
+         /**
+          * This is an on item click listener which listens for when a user taps on an item in the
+-         * habit list. Once clicked it will open the viewEditHabitFragment
++         * habit list. nce clicked it will open the viewEditHabitFragment
+          */
+         habitList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+             @Override
+@@ -224,12 +222,11 @@
+      * @param habit The habit that needs to be added to the database.
+      */
+     public void addHabitDatabase(Habit habit) {
+-        db = FirebaseFirestore.getInstance();
+-        final CollectionReference collectionReference = db.collection("Habit");
+         // Creating a unique Id for the Habit that is being added
+         DocumentReference newHabitRef = db.collection("Habit").document();
+         String HabitId = newHabitRef.getId();
+         HashMap<String, Object> data = new HashMap<>();
++        collectionPath = "Habit";
+ 
+         if (HabitId != null) {
+             data.put("UID", UID);
+@@ -239,23 +236,8 @@
+             data.put("Data to Start", habit.getDateToStart());
+             data.put("Weekdays", habit.getWeekdays());
+ 
+-            collectionReference
+-                    .document(HabitId)
+-                    .set(data)
+-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+-                        @Override
+-                        public void onSuccess(Void aVoid) {
+-                            // These are a method which gets executed when the task is succeeded
+-                            Log.d(TAG, "Data has been added successfully!");
+-                        }
+-                    })
+-                    .addOnFailureListener(new OnFailureListener() {
+-                        @Override
+-                        public void onFailure(@NonNull Exception e) {
+-                            // These are a method which gets executed if there’s any problem
+-                            Log.d(TAG, "Data could not be added!" + e.toString());
+-                        }
+-                    });
++            // Makes a call to the database which handles it.
++            database.addData(collectionPath, HabitId, data, TAG);
+         }
+     }
+ 
+@@ -275,24 +257,9 @@
+         data.put("PrivacySetting", habit.getPrivacySetting());
+         data.put("Data to Start", habit.getDateToStart());
+         data.put("Weekdays", habit.getWeekdays());
+-
+-        collectionReference
+-                .document(habit.getHID())
+-                .set(data)
+-                .addOnSuccessListener(new OnSuccessListener<Void>() {
+-                    @Override
+-                    public void onSuccess(Void aVoid) {
+-                        // These are a method which gets executed when the task is succeeded
+-                        Log.d(TAG, "Data has been added successfully!");
+-                    }
+-                })
+-                .addOnFailureListener(new OnFailureListener() {
+-                    @Override
+-                    public void onFailure(@NonNull Exception e) {
+-                        // These are a method which gets executed if there’s any problem
+-                        Log.d(TAG, "Data could not be added!" + e.toString());
+-                    }
+-                });
++        collectionPath = "Habit";
++        // Makes a call to the database which handles it
++        database.updateData(collectionPath, habit.getHID(), data, TAG);
+     }
+ 
+     /**
+@@ -300,22 +267,9 @@
+      * @param habit this is the habit object selected by the user to be deleted
+      */
+     public void deleteHabitDatabase(Habit habit) {
+-        deleteHabitInstances(habit);
+-        db.collection("Habit")
+-                .document(habit.getHID())
+-                .delete()
+-                .addOnSuccessListener(new OnSuccessListener<Void>() {
+-                    @Override
+-                    public void onSuccess(Void aVoid) {
+-                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
+-                    }
+-                })
+-                .addOnFailureListener(new OnFailureListener() {
+-                    @Override
+-                    public void onFailure(@NonNull Exception e) {
+-                        Log.w(TAG, "Error deleting document", e);
+-                    }
+-                });
++        collectionPath = "Habit";
++        // Makes a call to the database which handles it
++        database.deleteData(collectionPath, habit.getHID(), TAG);
+     }
+ 
+     /**
+@@ -327,6 +281,7 @@
+     @Override
+     public void onDeleteHabitYesPressed(int position) {
+         Habit habit = habitAdapter.getItem(position);
++        deleteHabitInstances(habit);
+         deleteHabitDatabase(habit);
+         habitAdapter.notifyDataSetChanged();
+     }
+@@ -347,21 +302,8 @@
+                         if(doc.getId() == null){
+                             return;
+                         } else {
+-                            db.collection("HabitEvents")
+-                                    .document(doc.getId())
+-                                    .delete()
+-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+-                                        @Override
+-                                        public void onSuccess(Void aVoid) {
+-                                            Log.d(TAG, "DocumentSnapshot successfully deleted!");
+-                                        }
+-                                    })
+-                                    .addOnFailureListener(new OnFailureListener() {
+-                                        @Override
+-                                        public void onFailure(@NonNull Exception e) {
+-                                            Log.w(TAG, "Error deleting document", e);
+-                                        }
+-                                    });
++                            collectionPath = "HabitEvents";
++                            database.deleteData(collectionPath, doc.getId(), TAG);
+                         }
+                     }
+                 }
+Index: .gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>*.iml\r\n.gradle\r\n/local.properties\r\n/.idea/caches\r\n/.idea/libraries\r\n/.idea/modules.xml\r\n/.idea/workspace.xml\r\n/.idea/navEditor.xml\r\n/.idea/assetWizardSettings.xml\r\n.DS_Store\r\n/build\r\n/captures\r\n.externalNativeBuild\r\n.cxx\r\nlocal.properties\r\n/.idea\r\n../.idea\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.gitignore b/.gitignore
+--- a/.gitignore	(revision 23f833ad53873cb0feff28092ba5841d678d4087)
++++ b/.gitignore	(date 1636858625905)
+@@ -1,5 +1,4 @@
+ *.iml
+-.gradle
+ /local.properties
+ /.idea/caches
+ /.idea/libraries
+Index: app/src/main/java/com/example/agilesprinters/Database.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/agilesprinters/Database.java b/app/src/main/java/com/example/agilesprinters/Database.java
+new file mode 100644
+--- /dev/null	(date 1636850233655)
++++ b/app/src/main/java/com/example/agilesprinters/Database.java	(date 1636850233655)
+@@ -0,0 +1,81 @@
++package com.example.agilesprinters;
++
++import android.util.Log;
++
++import androidx.annotation.NonNull;
++
++import com.google.android.gms.tasks.OnFailureListener;
++import com.google.android.gms.tasks.OnSuccessListener;
++import com.google.firebase.firestore.CollectionReference;
++import com.google.firebase.firestore.FirebaseFirestore;
++
++import java.util.HashMap;
++
++public class Database {
++    FirebaseFirestore db;
++
++    public void addData(String collectionPath, String objectId, HashMap data, String TAG){
++        db = FirebaseFirestore.getInstance();
++        final CollectionReference collectionReference = db.collection(collectionPath);
++        collectionReference
++                .document(objectId)
++                .set(data)
++                .addOnSuccessListener(new OnSuccessListener<Void>() {
++                    @Override
++                    public void onSuccess(Void aVoid) {
++                        // These are a method which gets executed when the task is succeeded
++                        Log.d(TAG, "Data has been added successfully!");
++                    }
++                })
++                .addOnFailureListener(new OnFailureListener() {
++                    @Override
++                    public void onFailure(@NonNull Exception e) {
++                        // These are a method which gets executed if there’s any problem
++                        Log.d(TAG, "Data could not be added!" + e.toString());
++                    }
++                });
++    }
++
++    public void updateData(String collectionPath, String objectId, HashMap data, String TAG){
++        db = FirebaseFirestore.getInstance();
++        final CollectionReference collectionReference = db.collection(collectionPath);
++
++        collectionReference
++                .document(objectId)
++                .set(data)
++                .addOnSuccessListener(new OnSuccessListener<Void>() {
++                    @Override
++                    public void onSuccess(Void aVoid) {
++                        // These are a method which gets executed when the task is succeeded
++                        Log.d(TAG, "Data has been updated successfully!");
++                    }
++                })
++                .addOnFailureListener(new OnFailureListener() {
++                    @Override
++                    public void onFailure(@NonNull Exception e) {
++                        // These are a method which gets executed if there’s any problem
++                        Log.d(TAG, "Data could not be updated!" + e.toString());
++                    }
++                });
++    }
++
++    public void deleteData(String collectionPath, String objectId, String TAG){
++        db = FirebaseFirestore.getInstance();
++        db.collection(collectionPath)
++                .document(objectId)
++                .delete()
++                .addOnSuccessListener(new OnSuccessListener<Void>() {
++                    @Override
++                    public void onSuccess(Void aVoid) {
++                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
++                    }
++                })
++                .addOnFailureListener(new OnFailureListener() {
++                    @Override
++                    public void onFailure(@NonNull Exception e) {
++                        Log.w(TAG, "Error deleting document", e);
++                    }
++                });
++    }
++}
++
+Index: app/src/main/java/com/example/agilesprinters/UserCalendar.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.agilesprinters;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.fragment.app.DialogFragment;\r\n\r\nimport android.app.DatePickerDialog;\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.util.Log;\r\nimport android.view.MenuItem;\r\nimport android.view.View;\r\nimport android.widget.AdapterView;\r\nimport android.widget.ArrayAdapter;\r\nimport android.widget.Button;\r\nimport android.widget.DatePicker;\r\nimport android.widget.ListView;\r\nimport android.widget.TextView;\r\n\r\nimport com.google.android.material.bottomnavigation.BottomNavigationView;\r\nimport com.google.firebase.firestore.CollectionReference;\r\nimport com.google.firebase.firestore.DocumentReference;\r\nimport com.google.firebase.firestore.EventListener;\r\nimport com.google.firebase.firestore.FirebaseFirestore;\r\nimport com.google.firebase.firestore.FirebaseFirestoreException;\r\nimport com.google.firebase.firestore.QueryDocumentSnapshot;\r\nimport com.google.firebase.firestore.QuerySnapshot;\r\n\r\nimport java.time.LocalDate;\r\nimport java.time.format.DateTimeFormatter;\r\nimport java.time.format.FormatStyle;\r\nimport java.util.ArrayList;\r\nimport java.util.Calendar;\r\nimport java.util.HashMap;\r\nimport java.util.Map;\r\n\r\n/**\r\n * The user calendar class is an activity which displays the habits planned by the user for that day.\r\n * From here a user may click on the habit to add a completed habit event, tap on the event to edit,\r\n * view or delete it. There is also a 'past view events' button, through which the user can see\r\n * what habits were actually planned for a specific day in the past and what events were completed\r\n * regarding that. There is a navigation bar on the bottom that the user may click\r\n * to go to either home, forum, or notifications.\r\n *\r\n * @author Sai Rasazna Ajerla and Riyaben Patel\r\n */\r\npublic class UserCalendar extends AppCompatActivity\r\n        implements addHabitEventFragment.OnFragmentInteractionListener,\r\n        editHabitEventFragment.OnFragmentInteractionListener,\r\n        DatePickerDialog.OnDateSetListener, BottomNavigationView.OnNavigationItemSelectedListener{\r\n\r\n    private static final String TAG = \"Instance\";\r\n\r\n    private ArrayAdapter<Habit> toDoEventAdapter;\r\n    private final ArrayList<Habit> toDoEvents = new ArrayList<>();\r\n\r\n    private ArrayAdapter<HabitInstance> completedEventAdapter;\r\n    private final ArrayList<HabitInstance> completedEvents = new ArrayList<>();\r\n    private final ArrayList<String> completedEventIds = new ArrayList<>();\r\n    private final ArrayList<String> toDoEventIds = new ArrayList<>();\r\n    BottomNavigationView bottomNavigationView;\r\n    private TextView title1;\r\n    FirebaseFirestore db;\r\n    private String UID;\r\n    private User user;\r\n\r\n    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(\"MM/dd/yyyy\");\r\n\r\n    private HabitInstance selectedHabitInstance;\r\n    private String selectedHabitInstanceId;\r\n    LocalDate currentDate = LocalDate.now();\r\n\r\n    /**\r\n     * This function creates the UI on the screen and listens for user input\r\n     * @param savedInstanceState the instance state\r\n     */\r\n    @Override\r\n    protected void onCreate(@Nullable Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.user_calendar);\r\n\r\n\r\n        if (UID == null){\r\n            user = (User) getIntent().getSerializableExtra(\"user\");\r\n            UID = user.getUser();\r\n        }\r\n\r\n        bottomNavigationView = findViewById(R.id.bottomNavigationView2);\r\n        bottomNavigationView.setOnNavigationItemSelectedListener(this);\r\n\r\n        ListView toDoEventsList = findViewById(R.id.toDoEventsList);\r\n        ListView completedEventsList = findViewById(R.id.completedEventsList);\r\n\r\n        title1 = findViewById(R.id.title1);\r\n        Button calendar_button = findViewById(R.id.calendar_button);\r\n\r\n        db = FirebaseFirestore.getInstance();\r\n\r\n        screenSetup();\r\n        completedEventsScreenSetup();\r\n\r\n        // When a item in the to do events is clicked, input is taken,\r\n        // a habit event object is created and added to the database\r\n        toDoEventsList.setOnItemClickListener((adapterView, view, i, l) -> {\r\n\r\n            if (currentDate.isEqual(LocalDate.now())) {\r\n                selectedHabitInstanceId = toDoEventIds.get(i);\r\n\r\n                DocumentReference newInstanceRef = db.collection(\"HabitEvents\").document();\r\n                String instanceId = newInstanceRef.getId();\r\n\r\n                // get hid here\r\n                addHabitEventFragment values =\r\n                        new addHabitEventFragment().newInstance(i, UID, selectedHabitInstanceId, instanceId);\r\n                values.show(getSupportFragmentManager(), \"ADD\");\r\n\r\n            }\r\n        });\r\n\r\n        // When a item in the completed events is clicked updated input is taken,\r\n        // or an event object is deleted\r\n        completedEventsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {\r\n            @Override\r\n            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {\r\n                selectedHabitInstance = completedEvents.get(i);\r\n                selectedHabitInstanceId = completedEventIds.get(i);\r\n\r\n                editHabitEventFragment values =\r\n                        new editHabitEventFragment().newInstance(i, selectedHabitInstance);\r\n                values.show(getSupportFragmentManager(), \"VIEW/EDIT\");\r\n            }\r\n        });\r\n\r\n        // When the past events button is clicked, it asks for a date input and shows\r\n        // habits planned for that day and events actually completed\r\n        calendar_button.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                DialogFragment datePicker = new datePickerCalendar();\r\n                datePicker.show(getSupportFragmentManager(), \"date picker\");\r\n            }\r\n        });\r\n\r\n        toDoEventAdapter = new toDoEventsListAdapter(this, toDoEvents);\r\n        completedEventAdapter = new completedEventsListAdapter(this, R.layout.completed_habits_content, completedEvents);\r\n\r\n        toDoEventsList.setAdapter(toDoEventAdapter);\r\n        completedEventsList.setAdapter(completedEventAdapter);\r\n    }\r\n\r\n    /**\r\n     * This function sets the date on the UI according to the date selected by the user\r\n     */\r\n    public void setDate() {\r\n        String formattedDate = currentDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG));\r\n        title1.setText(\"Tasks for \" + formattedDate + \")\");\r\n    }\r\n\r\n    /**\r\n     * This function checks which day of the week is true\r\n     * to see the habit days planned by the user\r\n     * @param weekdays\r\n     * This is a candidate map to check for the positive days\r\n     * @return\r\n     * Return a ArrayList of strings\r\n     */\r\n    public ArrayList<String> getHabitDays(Map<String, Object> weekdays) {\r\n        String[] days = new String[]{ getString(R.string.mondayStr), getString(R.string.tuesdayStr),\r\n                getString(R.string.wednesdayStr), getString(R.string.thursdayStr), getString(R.string.fridayStr),\r\n                getString(R.string.saturdayStr), getString(R.string.sundayStr)};\r\n        ArrayList<String> habitDays = new ArrayList<>();\r\n\r\n        for (String day : days) {\r\n            if (weekdays.get(day).equals(true)) {\r\n                habitDays.add(day);\r\n                System.out.println(\"The habits are \" + day);\r\n            }\r\n        }\r\n\r\n        return habitDays;\r\n    }\r\n\r\n    /**\r\n     * This function sets the to-do tasks part of the screen on the UI\r\n     * according to the habits retrieved from the database\r\n     */\r\n    public void screenSetup() {\r\n        setDate();\r\n\r\n        // Gives the day of the week\r\n        String todayDay = currentDate.getDayOfWeek().toString();\r\n\r\n        // Display the habits which are scheduled for the current day (checking date and day)\r\n        db.collection(\"Habit\").addSnapshotListener((value, error) -> {\r\n            toDoEvents.clear();\r\n            toDoEventIds.clear();\r\n            for(QueryDocumentSnapshot doc: value) {\r\n                Log.d(TAG, \"Habits to do today \" + String.valueOf(doc.getData().get(\"Title\")));\r\n\r\n                // Gives the start date\r\n                LocalDate startDate = LocalDate.parse(doc.getString(\"Data to Start\"), formatter);\r\n                Map<String, Object> weekdays = (Map<String, Object>) doc.getData().get(\"Weekdays\");\r\n                HashMap<String,Boolean> weekdays2 = (HashMap<String, Boolean>) doc.getData().get(\"Weekdays\");\r\n                ArrayList<String> habitDays = getHabitDays(weekdays);\r\n\r\n                if (doc.getString(\"UID\").equals(UID)\r\n                        && (startDate.isBefore(currentDate) || startDate.isEqual(currentDate))\r\n                        && (habitDays.contains(todayDay))){\r\n                    Habit newHabit = new Habit(doc.getId(),doc.getString(\"UID\"),doc.getString(\"Title\"), doc.getString(\"Reason\"),\r\n                            doc.getString(\"Data to Start\"), weekdays2, doc.getString(\"PrivacySetting\"));\r\n                    toDoEvents.add(newHabit); // Adding habits from Firestore\r\n                    toDoEventIds.add(doc.getId());\r\n                }\r\n            }\r\n\r\n            toDoEventAdapter.notifyDataSetChanged();\r\n        });\r\n        \r\n    }\r\n\r\n    /**\r\n     * This function sets the completed tasks part of the screen on the UI\r\n     * according to the habit events retrieved from the database\r\n     */\r\n    public void completedEventsScreenSetup() {\r\n        // Get a list of habit events of the user logged in on the current day\r\n        db.collection(\"HabitEvents\").addSnapshotListener(new EventListener<QuerySnapshot>() {\r\n            @Override\r\n            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {\r\n                completedEvents.clear();\r\n                completedEventIds.clear();\r\n                for(QueryDocumentSnapshot doc: value) {\r\n                    Log.d(TAG, String.valueOf(doc.getData().get(\"Opt_comment\")));\r\n\r\n                    LocalDate eventDate = LocalDate.parse(doc.get(\"Date\").toString(), formatter);\r\n\r\n                    if (doc.getString(\"UID\").equals(UID) && (eventDate.isEqual(currentDate)) ){\r\n                        HabitInstance newInstance = new HabitInstance(doc.getString(\"EID\"), doc.getString(\"UID\"), doc.getString(\"HID\"),\r\n                                doc.getString(\"Opt_comment\"), doc.getString(\"Date\"), Integer.parseInt(doc.get(\"Duration\").toString()));\r\n                        completedEventAdapter.add(newInstance);\r\n                        completedEventIds.add(doc.getId()); // Adding habit events from Firestore\r\n                    }\r\n                }\r\n\r\n                completedEventAdapter.notifyDataSetChanged();\r\n            }\r\n        });\r\n    }\r\n\r\n    /**\r\n     * This function passes a habit instance to be added to the database once\r\n     * the user clicks save on the addHabitEventFragment dialog fragment\r\n     *\r\n     * @param habitInstance The instance object created by the addHabitEventFragment\r\n     */\r\n    @Override\r\n    public void onSavePressed(HabitInstance habitInstance) {\r\n\r\n        addHabitEventDatabase(habitInstance);\r\n\r\n        completedEventsScreenSetup();\r\n\r\n    }\r\n\r\n    /**\r\n     * This function passes a habit instance to be updated once a user clicks\r\n     * Save in the editHabitEventFragment dialog fragment.\r\n     * @param instance The habit instance object changed in the editHabitEventFragment\r\n     */\r\n    @Override\r\n    public void onEditSavePressed(HabitInstance instance) {\r\n        HashMap<String, String> data = new HashMap<>();\r\n        data.put(\"EID\", instance.getEID());\r\n        data.put(\"UID\", instance.getUID());\r\n        data.put(\"HID\", instance.getHID());\r\n        data.put(\"Date\", instance.getDate());\r\n        data.put(\"Opt_comment\",instance.getOpt_comment());\r\n        data.put(\"Duration\",String.valueOf(instance.getDuration()));\r\n\r\n        db.collection(\"HabitEvents\")\r\n                .document(selectedHabitInstanceId)\r\n                .set(data)\r\n                .addOnSuccessListener(aVoid -> Log.d(TAG, \"DocumentSnapshot successfully updated!\"))\r\n                .addOnFailureListener(e -> Log.w(TAG, \"Error updating document\", e));\r\n\r\n        completedEventsScreenSetup();\r\n    }\r\n\r\n    /**\r\n     * This function deletes a habit instance object from the database once a user clicks\r\n     * Delete in the editHabitEventFragment dialog fragment.\r\n     * @param instance The habit instance object deleted in the editHabitEventFragment\r\n     */\r\n    @Override\r\n    public void onDeletePressed(HabitInstance instance) {\r\n\r\n        db.collection(\"HabitEvents\")\r\n                .document(instance.getEID())\r\n                .delete()\r\n                .addOnSuccessListener(aVoid -> Log.d(TAG, \"DocumentSnapshot successfully deleted!\"))\r\n                .addOnFailureListener(e -> Log.w(TAG, \"Error deleting document\", e));\r\n\r\n        completedEventsScreenSetup();\r\n    }\r\n\r\n    /**\r\n     * This function adds a habit event/instance object to the database.\r\n     * @param instance The habit instance that needs to be added to the database.\r\n     */\r\n    public void addHabitEventDatabase(HabitInstance instance){\r\n        final CollectionReference collectionReference  =  db.collection(\"HabitEvents\");\r\n\r\n        String instanceId = instance.getEID();\r\n        HashMap<String, Object> data = new HashMap<>();\r\n\r\n        if (instanceId != null){\r\n            data.put(\"EID\", instance.getEID());\r\n            data.put(\"UID\", instance.getUID());\r\n            data.put(\"HID\", instance.getHID());\r\n            data.put(\"Date\", instance.getDate());\r\n            data.put(\"Opt_comment\",instance.getOpt_comment());\r\n            data.put(\"Duration\",instance.getDuration());\r\n            collectionReference\r\n                    .document(instanceId)\r\n                    .set(data)\r\n                    .addOnSuccessListener(aVoid -> {\r\n                        // These are a method which gets executed when the task is succeeded\r\n                        Log. d (TAG, \"Data has been added successfully!\");\r\n                    })\r\n                    .addOnFailureListener(e -> {\r\n                        // These are a method which gets executed if there’s any problem\r\n                        Log. d (TAG, \"Data could not be added!\" + e.toString());\r\n                    });\r\n        }\r\n    }\r\n\r\n    /**\r\n     * This function captures the date chosen by the user once they press ok on the datePicker\r\n     * fragment.\r\n     * @param datePicker the datePicker dialog view\r\n     * @param year year of the date chosen by the user\r\n     * @param month month of the date chosen by the user\r\n     * @param day day of the month of the date chosen by the user\r\n     */\r\n    @Override\r\n    public void onDateSet(DatePicker datePicker, int year, int month, int day) {\r\n        Calendar c = Calendar.getInstance();\r\n        c.set(Calendar.YEAR, year);\r\n        c.set(Calendar.MONTH, month);\r\n        c.set(Calendar.DAY_OF_MONTH, day);\r\n\r\n        //make sure date is empty before setting it to the date picked\r\n        String date = \"\";\r\n\r\n        if(month+1 < 10) date+= \"0\";\r\n        date += (month + 1) + \"/\";\r\n\r\n        if (day < 10 ) date += \"0\";\r\n        date += day + \"/\";\r\n\r\n        date += String.valueOf(year);\r\n\r\n        currentDate = LocalDate.parse(date, formatter);\r\n        setDate();\r\n        screenSetup();\r\n        completedEventsScreenSetup();\r\n    }\r\n\r\n    /**\r\n     * This method contains the logic for switching screens by selecting an item from the navigation\r\n     * bar.\r\n     * @param item This is the item selected by the user\r\n     * @return\r\n     * Returns a boolean based on which activity the user is currently in and which item was\r\n     * clicked.\r\n     */\r\n    @Override\r\n    public boolean onNavigationItemSelected(@NonNull MenuItem item) {\r\n        switch (item.getItemId()) {\r\n            case R.id.home:\r\n                Intent intent = new Intent(this, Home.class);\r\n                intent.putExtra(\"user\", user);\r\n                //add bundle to send data if need\r\n                startActivity(intent);\r\n                break;\r\n\r\n            case R.id.calendar:\r\n                if(this instanceof UserCalendar){\r\n                    return true;\r\n                } else {\r\n                    Intent intent2 = new Intent(this, UserCalendar.class);\r\n                    //add bundle to send data if need\r\n                    startActivity(intent2);\r\n                    break;\r\n                }\r\n\r\n            case R.id.forumn:\r\n                break;\r\n\r\n        }\r\n        return false;\r\n    }\r\n\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/agilesprinters/UserCalendar.java b/app/src/main/java/com/example/agilesprinters/UserCalendar.java
+--- a/app/src/main/java/com/example/agilesprinters/UserCalendar.java	(revision 23f833ad53873cb0feff28092ba5841d678d4087)
++++ b/app/src/main/java/com/example/agilesprinters/UserCalendar.java	(date 1636850993175)
+@@ -64,12 +64,14 @@
+     FirebaseFirestore db;
+     private String UID;
+     private User user;
++    private Database database = new Database();
+ 
+     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+ 
+     private HabitInstance selectedHabitInstance;
+     private String selectedHabitInstanceId;
+     LocalDate currentDate = LocalDate.now();
++    private String collectionPath;
+ 
+     /**
+      * This function creates the UI on the screen and listens for user input
+@@ -278,11 +280,9 @@
+         data.put("Opt_comment",instance.getOpt_comment());
+         data.put("Duration",String.valueOf(instance.getDuration()));
+ 
+-        db.collection("HabitEvents")
+-                .document(selectedHabitInstanceId)
+-                .set(data)
+-                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+-                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
++        // Makes a call to the database which handles it
++        collectionPath = "HabitEvents";
++        database.updateData(collectionPath, selectedHabitInstanceId, data, TAG);
+ 
+         completedEventsScreenSetup();
+     }
+@@ -294,12 +294,9 @@
+      */
+     @Override
+     public void onDeletePressed(HabitInstance instance) {
+-
+-        db.collection("HabitEvents")
+-                .document(instance.getEID())
+-                .delete()
+-                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully deleted!"))
+-                .addOnFailureListener(e -> Log.w(TAG, "Error deleting document", e));
++        collectionPath = "HabitEvents";
++        // Makes a call to the database which handles it
++        database.deleteData(collectionPath, instance.getEID(), TAG);
+ 
+         completedEventsScreenSetup();
+     }
+@@ -321,17 +318,10 @@
+             data.put("Date", instance.getDate());
+             data.put("Opt_comment",instance.getOpt_comment());
+             data.put("Duration",instance.getDuration());
+-            collectionReference
+-                    .document(instanceId)
+-                    .set(data)
+-                    .addOnSuccessListener(aVoid -> {
+-                        // These are a method which gets executed when the task is succeeded
+-                        Log. d (TAG, "Data has been added successfully!");
+-                    })
+-                    .addOnFailureListener(e -> {
+-                        // These are a method which gets executed if there’s any problem
+-                        Log. d (TAG, "Data could not be added!" + e.toString());
+-                    });
++
++            // Makes a call to the database which handles it
++            collectionPath = "HabitEvents";
++            database.addData(collectionPath, instanceId, data, TAG);
+         }
+     }
+ 
