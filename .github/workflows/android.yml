@@ -19,8 +19,6 @@ jobs:
         java-version: '11'
         distribution: 'adopt'
         cache: gradle
-    - name: change dir
-      run: cd AgileSprinters
     - name: Grant execute permission for gradlew
       run: chmod +x AgileSprinters/gradlew
     - name: Build with Gradle
