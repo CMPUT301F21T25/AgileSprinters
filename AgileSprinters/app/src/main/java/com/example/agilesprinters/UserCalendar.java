@@ -199,7 +199,7 @@ public class UserCalendar extends AppCompatActivity
                 Log.d(TAG, "Habits to do today " + String.valueOf(doc.getData().get("Title")));
 
                 // Gives the start date
-                LocalDate startDate = LocalDate.parse(doc.getString("Data to Start"), formatter);
+                LocalDate startDate = LocalDate.parse(doc.getString("Date to Start"), formatter);
                 Map<String, Object> weekdays = (Map<String, Object>) doc.getData().get("Weekdays");
                 HashMap<String,Boolean> weekdays2 = (HashMap<String, Boolean>) doc.getData().get("Weekdays");
                 ArrayList<String> habitDays = getHabitDays(weekdays);
@@ -208,7 +208,7 @@ public class UserCalendar extends AppCompatActivity
                         && (startDate.isBefore(currentDate) || startDate.isEqual(currentDate))
                         && (habitDays.contains(todayDay))){
                     Habit newHabit = new Habit(doc.getId(),doc.getString("UID"),doc.getString("Title"), doc.getString("Reason"),
-                            doc.getString("Data to Start"), weekdays2, doc.getString("PrivacySetting"));
+                            doc.getString("Date to Start"), weekdays2, doc.getString("PrivacySetting"));
                     toDoEvents.add(newHabit); // Adding habits from Firestore
                     toDoEventIds.add(doc.getId());
                 }
