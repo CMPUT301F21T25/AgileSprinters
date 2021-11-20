@@ -30,8 +30,10 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -57,7 +59,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     /**
      * this variable contains the current user
      */
-    private User currentUser = new User();
+    private User currentUser;
 
     private FirebaseFirestore db;
     private Database database = new Database();
@@ -205,6 +207,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         String uniqueId = user.getUid();
 
+<<<<<<< HEAD
         currentUser.setUser(uniqueId);
         collectionReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
@@ -222,6 +225,10 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                     }
                 }
             }
+=======
+        db.collection("users").addSnapshotListener((value, error) -> {
+            System.out.println("unique"+uniqueId);
+>>>>>>> 70fa03b481ff284c0aae6c084a4522fca395a1b8
         });
     }
 
@@ -231,6 +238,11 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         Intent intent = new Intent(Login.this, Home.class);
 
+<<<<<<< HEAD
+=======
+
+    public void setFields(User user, String emailId, String firstName, String lastName){
+>>>>>>> 70fa03b481ff284c0aae6c084a4522fca395a1b8
         user.setEmailId(emailId);
         user.setFirstName(firstName);
         user.setLastName(lastName);
