@@ -112,7 +112,7 @@
     <string name="delFrag">DELETE</string>
     <string name="addFrag">ADD</string>
     <string name="viewEditFrag">VIEW/EDIT</string>
-    <string name="dateStarted">\"  Date Started: \"</string>
+    <string name="DATE_STARTED">Date Started:"</string>
     <string name="addhabitBtn">addHabitBtn</string>
     <string name="CANCEL_BTN_STR">Cancel</string>
     <string name="SAVE_BTN_STR">Save</string>
@@ -154,4 +154,5 @@
     <string name="DATE_PICKER_STR">DATE PICKER</string>
     <string name="hidKey">HID</string>
     <string name="IID">IID</string>
+    <string name="PROGRESS_STR">Progress so far</string>
 </resources>

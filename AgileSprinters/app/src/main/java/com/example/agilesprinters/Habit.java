@@ -1,7 +1,9 @@
 package com.example.agilesprinters;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * This is an object class called Habit. It is responsible for creating habits and storing their information
@@ -14,6 +16,7 @@ public class Habit implements Serializable {
     private String dateToStart;
     private HashMap<String, Boolean> weekdays;
     private String privacySetting;
+    private HashMap<String, Integer> overallProgress;
 
     /**
      * This will return the value of the user ID, UID.
@@ -63,7 +66,8 @@ public class Habit implements Serializable {
      *                       boolean values.
      * @param privacySetting The privacy setting of the habit given as a string.
      */
-    public Habit(String HID, String UID, String title, String reason, String dateToStart, HashMap<String, Boolean> weekdays, String privacySetting) {
+    public Habit(String HID, String UID, String title, String reason, String dateToStart,
+                 HashMap<String, Boolean> weekdays, String privacySetting, HashMap<String,Integer> overallProgress) {
         this.UID = UID;
         this.HID = HID;
         this.title = title;
@@ -71,7 +75,7 @@ public class Habit implements Serializable {
         this.dateToStart = dateToStart;
         this.weekdays = weekdays;
         this.privacySetting = privacySetting;
-
+        this.overallProgress = overallProgress;
     }
 
     /**
@@ -165,5 +169,13 @@ public class Habit implements Serializable {
      */
     public void setDateToStart(String dateToStart) {
         this.dateToStart = dateToStart;
+    }
+
+    public HashMap<String,Integer> getOverallProgress() {
+        return overallProgress;
+    }
+
+    public void setOverallProgress(HashMap<String,Integer> overallProgress) {
+        this.overallProgress = overallProgress;
     }
 }

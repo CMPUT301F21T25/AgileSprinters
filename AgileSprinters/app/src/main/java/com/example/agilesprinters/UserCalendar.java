@@ -33,6 +33,7 @@ import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -213,7 +214,7 @@ public class UserCalendar extends AppCompatActivity
                         && (startDate.isBefore(currentDate) || startDate.isEqual(currentDate))
                         && (habitDays.contains(todayDay))){
                     Habit newHabit = new Habit(doc.getId(),doc.getString("UID"),doc.getString("Title"), doc.getString("Reason"),
-                            doc.getString("Date to Start"), weekdays2, doc.getString("PrivacySetting"));
+                            doc.getString("Date to Start"), weekdays2, doc.getString("PrivacySetting"), (HashMap<String,Integer>) doc.getData().get("Progress"));
                     toDoEvents.add(newHabit); // Adding habits from Firestore
                     toDoEventIds.add(doc.getId());
                 }
@@ -328,9 +329,36 @@ public class UserCalendar extends AppCompatActivity
                 // Makes a call to the database which handles it
                 collectionPath = "HabitEvents";
                 database.addData(collectionPath, instanceId, data, TAG);
+
+                db.collection("Habit")
+                        .document(instance.getHID())
+                        .update("Progress", getNewProgress(instance));
+            }
+
+        }
+
+    private HashMap<String,Integer> getNewProgress(HabitInstance instance) {
+        int completedEventsNum = 0;
+        int totalEventsNum = 0;
+
+        HashMap<String,Integer> updatedProgress = new HashMap<String, Integer>();
+        for (HabitInstance ins : completedEvents) {
+            if (ins.getHID().equals(instance.getHID())) {
+                completedEventsNum++;
             }
         }
 
+        for (Habit habit : toDoEvents) {
+            if (habit.getHID().equals(instance.getHID())) {
+                totalEventsNum =  habit.getOverallProgress().get("Total");
+            }
+        }
+
+        updatedProgress.put("Completed", completedEventsNum);
+        updatedProgress.put("put", totalEventsNum);
+
+        return updatedProgress;
+    }
 
     /**
      * This function captures the date chosen by the user once they press ok on the datePicker

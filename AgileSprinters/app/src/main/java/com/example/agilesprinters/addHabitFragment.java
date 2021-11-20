@@ -22,8 +22,10 @@ import androidx.fragment.app.DialogFragment;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * This class is a dialog fragment that allows the user to add a new habit.
@@ -42,6 +44,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
     private Button saturdayBtn;
     private String date = "";
     private HashMap<String, Boolean> weekdaysHashMap;
+    private HashMap<String,Integer> progressSoFar;
     private Spinner privacySpinner;
     private String UID;
     private addHabitFragment.OnFragmentInteractionListener fragmentListener;
@@ -181,6 +184,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
             });
         }
 
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         return builder
                 .setView(view)
@@ -249,6 +253,17 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
                         buttonError.setText(getString(R.string.WEEKDAY_BTN_ERR_MSG));
                     }
 
+                    // Adding for progress
+                    progressSoFar = new HashMap<String, Integer>();
+                    int totalDays = 0;
+                    for (Boolean value : weekdaysHashMap.values()) {
+                        if (value) {
+                            totalDays = totalDays + 1;
+                        }
+                    }
+                    progressSoFar.put("Completed", 0);
+                    progressSoFar.put("Total",totalDays*12);
+
                     // If everything has been filled out, call the listener and send the edited
                     // habit back to the Home class and dismiss the dialog.
                     if (readyToClose) {
@@ -256,7 +271,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
                         db = FirebaseFirestore.getInstance();
                         DocumentReference newHabitRef = db.collection(getString(R.string.HABIT_COLLECTION_PATH)).document();
                         fragmentListener.onAddPressed(new Habit(newHabitRef.getId(),user.getUser(),habit_title
-                                ,habit_reason,date, weekdaysHashMap, privacySetting));
+                                ,habit_reason,date, weekdaysHashMap, privacySetting, progressSoFar));
                         dialog.dismiss();
                     }
                 }

@@ -286,7 +286,7 @@ public class addHabitEventFragment extends DialogFragment{
                 if(readyToClose){
                     
                     listener.onSavePressed(new HabitInstance(EID, UID, HID, comment, date_entry,
-                            Integer.parseInt(duration), IID), );
+                            Integer.parseInt(duration), IID));
                     dialog.dismiss();
                 }
             });

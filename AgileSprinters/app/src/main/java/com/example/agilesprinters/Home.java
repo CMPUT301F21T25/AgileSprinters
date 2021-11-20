@@ -28,6 +28,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * The home class is an activity which displays the habits of a user upon login. From here a user
@@ -100,8 +101,9 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                         String dateToStart = (String) doc.getData().get("Date to Start");
                         HashMap<String, Boolean> weekdays = (HashMap<String, Boolean>) doc.getData().get("Weekdays");
                         String privacySetting = (String) doc.getData().get("PrivacySetting");
+                        HashMap<String,Integer> progress = (HashMap<String,Integer>) doc.getData().get("Progress");
 
-                        habitArrayList.add(new Habit(doc.getId(), UID, title, reason, dateToStart, weekdays, privacySetting));
+                        habitArrayList.add(new Habit(doc.getId(), UID, title, reason, dateToStart, weekdays, privacySetting, progress));
                     }
                 }
                 habitAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
@@ -245,6 +247,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             data.put("PrivacySetting", habit.getPrivacySetting());
             data.put("Date to Start", habit.getDateToStart());
             data.put("Weekdays", habit.getWeekdays());
+            data.put("Progress", habit.getOverallProgress());
 
             // Makes a call to the database which handles it.
             database.addData(collectionPath, HabitId, data, TAG);
@@ -267,6 +270,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         data.put("PrivacySetting", habit.getPrivacySetting());
         data.put("Date to Start", habit.getDateToStart());
         data.put("Weekdays", habit.getWeekdays());
+        data.put("Progress", habit.getOverallProgress());
         collectionPath = "Habit";
         // Makes a call to the database which handles it
         database.updateData(collectionPath, habit.getHID(), data, TAG);
