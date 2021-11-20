@@ -236,14 +236,15 @@ public class UserCalendar extends AppCompatActivity
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 completedEvents.clear();
                 completedEventIds.clear();
-                for(QueryDocumentSnapshot doc: value) {
+                for (QueryDocumentSnapshot doc : value) {
                     Log.d(TAG, String.valueOf(doc.getData().get("Opt_comment")));
-                    if (doc.getString("UID").equals(UID) ){
+                    if (doc.getString("UID").equals(UID)) {
                         LocalDate eventDate = LocalDate.parse(doc.get("Date").toString(), formatter);
-                        if( (eventDate.isEqual(currentDate))){
+                        if ((eventDate.isEqual(currentDate))) {
                             HabitInstance newInstance = new HabitInstance(doc.getString("EID"), doc.getString("UID"), doc.getString("HID"),
                                     doc.getString("Opt_comment"), doc.getString("Date"), Integer.parseInt(doc.get("Duration").toString()), doc.getString("IID"));
-                            completedEventAdapter.add(newInstance);
+
+                            completedEvents.add(newInstance);
                             completedEventIds.add(doc.getId()); // Adding habit events from Firestore
                         }
 
@@ -268,6 +269,8 @@ public class UserCalendar extends AppCompatActivity
 
         completedEventsScreenSetup();
 
+        updateProgressInDatabase(habitInstance);
+
     }
 
     /**
@@ -277,20 +280,20 @@ public class UserCalendar extends AppCompatActivity
      */
     @Override
     public void onEditSavePressed(HabitInstance instance) {
-            HashMap<String, String> data = new HashMap<>();
-            data.put("EID", instance.getEID());
-            data.put("UID", instance.getUID());
-            data.put("HID", instance.getHID());
-            data.put("Date", instance.getDate());
-            data.put("Opt_comment",instance.getOpt_comment());
-            data.put("Duration",String.valueOf(instance.getDuration()));
+        HashMap<String, String> data = new HashMap<>();
+        data.put("EID", instance.getEID());
+        data.put("UID", instance.getUID());
+        data.put("HID", instance.getHID());
+        data.put("Date", instance.getDate());
+        data.put("Opt_comment", instance.getOpt_comment());
+        data.put("Duration", String.valueOf(instance.getDuration()));
 
-            // Makes a call to the database which handles it
-            collectionPath = "HabitEvents";
-            database.updateData(collectionPath, selectedHabitInstanceId, data, TAG);
+        // Makes a call to the database which handles it
+        collectionPath = "HabitEvents";
+        database.updateData(collectionPath, selectedHabitInstanceId, data, TAG);
 
-            completedEventsScreenSetup();
-        }
+        completedEventsScreenSetup();
+    }
 
 
     /**
@@ -300,48 +303,44 @@ public class UserCalendar extends AppCompatActivity
      */
     @Override
     public void onDeletePressed(HabitInstance instance) {
-            collectionPath = "HabitEvents";
-            // Makes a call to the database which handles it
-            database.deleteData(collectionPath, instance.getEID(), TAG);
+        collectionPath = "HabitEvents";
+        // Makes a call to the database which handles it
+        database.deleteData(collectionPath, instance.getEID(), TAG);
 
-            completedEventsScreenSetup();
-        }
+        completedEventsScreenSetup();
+    }
 
     /**
      * This function adds a habit event/instance object to the database.
      * @param instance The habit instance that needs to be added to the database.
      */
-    public void addHabitEventDatabase(HabitInstance instance){
-            final CollectionReference collectionReference  =  db.collection("HabitEvents");
+    public void addHabitEventDatabase(HabitInstance instance) {
+        final CollectionReference collectionReference = db.collection("HabitEvents");
 
-            String instanceId = instance.getEID();
-            HashMap<String, Object> data = new HashMap<>();
+        String instanceId = instance.getEID();
+        HashMap<String, Object> data = new HashMap<>();
 
-            if (instanceId != null){
-                data.put("EID", instance.getEID());
-                data.put("UID", instance.getUID());
-                data.put("HID", instance.getHID());
-                data.put("IID", instance.getIID());
-                data.put("Date", instance.getDate());
-                data.put("Opt_comment",instance.getOpt_comment());
-                data.put("Duration",instance.getDuration());
+        if (instanceId != null) {
+            data.put("EID", instance.getEID());
+            data.put("UID", instance.getUID());
+            data.put("HID", instance.getHID());
+            data.put("IID", instance.getIID());
+            data.put("Date", instance.getDate());
+            data.put("Opt_comment", instance.getOpt_comment());
+            data.put("Duration", instance.getDuration());
 
-                // Makes a call to the database which handles it
-                collectionPath = "HabitEvents";
-                database.addData(collectionPath, instanceId, data, TAG);
-
-                db.collection("Habit")
-                        .document(instance.getHID())
-                        .update("Progress", getNewProgress(instance));
-            }
-
+            // Makes a call to the database which handles it
+            collectionPath = "HabitEvents";
+            database.addData(collectionPath, instanceId, data, TAG);
         }
+    }
 
     private HashMap<String,Integer> getNewProgress(HabitInstance instance) {
-        int completedEventsNum = 0;
+        int completedEventsNum = 1;
         int totalEventsNum = 0;
 
         HashMap<String,Integer> updatedProgress = new HashMap<String, Integer>();
+        System.out.println("Completed events"+completedEvents);
         for (HabitInstance ins : completedEvents) {
             if (ins.getHID().equals(instance.getHID())) {
                 completedEventsNum++;
@@ -350,14 +349,26 @@ public class UserCalendar extends AppCompatActivity
 
         for (Habit habit : toDoEvents) {
             if (habit.getHID().equals(instance.getHID())) {
-                totalEventsNum =  habit.getOverallProgress().get("Total");
+                int totalDays = 0;
+                for (Boolean value : habit.getWeekdays().values()) {
+                    if (value) {
+                        totalDays = totalDays + 1;
+                    }
+                }
+                totalEventsNum = totalDays * 12;
             }
         }
 
         updatedProgress.put("Completed", completedEventsNum);
-        updatedProgress.put("put", totalEventsNum);
+        updatedProgress.put("Total", totalEventsNum);
 
         return updatedProgress;
+    }
+
+    public void updateProgressInDatabase(HabitInstance instance){
+        db.collection("Habit")
+                .document(instance.getHID())
+                .update("Progress", getNewProgress(instance));
     }
 
     /**

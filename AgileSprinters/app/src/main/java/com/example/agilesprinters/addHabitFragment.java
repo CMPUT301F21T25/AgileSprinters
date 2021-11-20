@@ -263,6 +263,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
                     }
                     progressSoFar.put("Completed", 0);
                     progressSoFar.put("Total",totalDays*12);
+                    System.out.println("Progress so far"+progressSoFar);
 
                     // If everything has been filled out, call the listener and send the edited
                     // habit back to the Home class and dismiss the dialog.
