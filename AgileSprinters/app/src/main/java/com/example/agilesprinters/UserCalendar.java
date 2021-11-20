@@ -112,10 +112,12 @@ public class UserCalendar extends AppCompatActivity
 
                 DocumentReference newInstanceRef = db.collection("HabitEvents").document();
                 String instanceId = newInstanceRef.getId();
+                DocumentReference newImageRef = db.collection("EventImageCollection").document();
+                String IID = newImageRef.getId();
 
                 // get hid here
                 addHabitEventFragment values =
-                        new addHabitEventFragment().newInstance(i, UID, selectedHabitInstanceId, instanceId);
+                        new addHabitEventFragment().newInstance(i, UID, selectedHabitInstanceId, instanceId, IID);
                 values.show(getSupportFragmentManager(), "ADD");
 
             }
@@ -169,9 +171,9 @@ public class UserCalendar extends AppCompatActivity
      * Return a ArrayList of strings
      */
     public ArrayList<String> getHabitDays(Map<String, Object> weekdays) {
-        String[] days = new String[]{ getString(R.string.MONDAY_STR), getString(R.string.TUESDAY_STR),
+        String[] days = new String[]{ getString(R.string.SUNDAY_STR), getString(R.string.MONDAY_STR), getString(R.string.TUESDAY_STR),
                 getString(R.string.WEDNESDAY_STR), getString(R.string.THURSDAY_STR), getString(R.string.FRIDAY_STR),
-                getString(R.string.SATURDAY_STR), getString(R.string.SUNDAY_STR)};
+                getString(R.string.SATURDAY_STR) };
         ArrayList<String> habitDays = new ArrayList<>();
 
         for (String day : days) {
@@ -235,14 +237,15 @@ public class UserCalendar extends AppCompatActivity
                 completedEventIds.clear();
                 for(QueryDocumentSnapshot doc: value) {
                     Log.d(TAG, String.valueOf(doc.getData().get("Opt_comment")));
+                    if (doc.getString("UID").equals(UID) ){
+                        LocalDate eventDate = LocalDate.parse(doc.get("Date").toString(), formatter);
+                        if( (eventDate.isEqual(currentDate))){
+                            HabitInstance newInstance = new HabitInstance(doc.getString("EID"), doc.getString("UID"), doc.getString("HID"),
+                                    doc.getString("Opt_comment"), doc.getString("Date"), Integer.parseInt(doc.get("Duration").toString()), doc.getString("IID"));
+                            completedEventAdapter.add(newInstance);
+                            completedEventIds.add(doc.getId()); // Adding habit events from Firestore
+                        }
 
-                    LocalDate eventDate = LocalDate.parse(doc.get("Date").toString(), formatter);
-
-                    if (doc.getString("UID").equals(UID) && (eventDate.isEqual(currentDate)) ){
-                        HabitInstance newInstance = new HabitInstance(doc.getString("EID"), doc.getString("UID"), doc.getString("HID"),
-                                doc.getString("Opt_comment"), doc.getString("Date"), Integer.parseInt(doc.get("Duration").toString()));
-                        completedEventAdapter.add(newInstance);
-                        completedEventIds.add(doc.getId()); // Adding habit events from Firestore
                     }
                 }
 
@@ -317,6 +320,7 @@ public class UserCalendar extends AppCompatActivity
                 data.put("EID", instance.getEID());
                 data.put("UID", instance.getUID());
                 data.put("HID", instance.getHID());
+                data.put("IID", instance.getIID());
                 data.put("Date", instance.getDate());
                 data.put("Opt_comment",instance.getOpt_comment());
                 data.put("Duration",instance.getDuration());

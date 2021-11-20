@@ -14,7 +14,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * This class is used when a user is signing up for the app. It takes the user details and
@@ -171,11 +173,19 @@ public class Register extends AppCompatActivity {
 
         String userId = user.getUid();
         String emailID = user.getEmail();
-        HashMap<String, String> data = new HashMap<>();
+        HashMap<String, Object> data = new HashMap<>();
+        ArrayList<String> followers = new ArrayList<>();
+        ArrayList<String> following = new ArrayList<>();
+        ArrayList<String> followRequestList = new ArrayList<>();
 
+        data.put("UID", userId);
         data.put(getString(R.string.EMAIL_ID_STR), emailID);
         data.put(getString(R.string.FIRST_NAME_STR), firstName);
         data.put(getString(R.string.LAST_NAME_STR), lastName);
+        data.put("followers", followers);
+        data.put("following", following);
+        data.put("follow request list", followRequestList);
+
         collectionReference
                 .document(userId)
                 .set(data)

@@ -40,7 +40,7 @@ public class addHabitEventFragment extends DialogFragment{
     private String EID;
     private String UID;
     private String HID;
-
+    private String IID;
     private EditText optional_comment;
     private TextView input_date;
     private EditText input_duration;
@@ -60,13 +60,14 @@ public class addHabitEventFragment extends DialogFragment{
      * @param position is the selected item position
      * @return returns the fragment with the bundled parameters
      */
-    public static addHabitEventFragment newInstance(int position, String UID, String HID, String EID) {
+    public static addHabitEventFragment newInstance(int position, String UID, String HID, String EID, String IID) {
         addHabitEventFragment fragment = new addHabitEventFragment();
         Bundle args = new Bundle();
         args.putInt("position", position);
         args.putString("UID", UID);
         args.putString("HID", HID);
         args.putString("EID", EID);
+        args.putString("IID", IID);
         fragment.setArguments(args);
 
         return fragment;
@@ -139,6 +140,7 @@ public class addHabitEventFragment extends DialogFragment{
         UID = getArguments().getString(getString(R.string.UID));
         HID = getArguments().getString(getString(R.string.HID));
         EID = getArguments().getString(getString(R.string.EID));
+        IID = getArguments().getString(getString(R.string.IID));
 
         LocalDate currentDate = LocalDate.now();
         input_date.setText(currentDate.format(formatter));
@@ -207,7 +209,7 @@ public class addHabitEventFragment extends DialogFragment{
         }
     }
 
-    /***
+    /**
     public boolean runtimePermissionForCamera(){
         //only have to check runtime permission if android version is greater than 23
         //if less than 23 then auto permission using manifest file
@@ -221,7 +223,7 @@ public class addHabitEventFragment extends DialogFragment{
         }
         return true;
     }
-     **/
+
 
     //return result from requestPermission (line 132)
     @Override
@@ -237,6 +239,8 @@ public class addHabitEventFragment extends DialogFragment{
         }
 
     }
+
+    **/
 
 
     /**
@@ -280,8 +284,9 @@ public class addHabitEventFragment extends DialogFragment{
                 // If everything has been filled out, call the listener and send the edited
                 // habit back to the Home class and dismiss the dialog.
                 if(readyToClose){
+                    
                     listener.onSavePressed(new HabitInstance(EID, UID, HID, comment, date_entry,
-                            Integer.parseInt(duration)));
+                            Integer.parseInt(duration), IID));
                     dialog.dismiss();
                 }
             });

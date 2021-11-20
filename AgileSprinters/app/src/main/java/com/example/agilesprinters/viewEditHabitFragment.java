@@ -140,9 +140,9 @@ public class viewEditHabitFragment extends DialogFragment {
         // Array with all the Edit buttons for weekdays
         Button[] weekdayEditButtonArray = new Button[]{sundayButton, mondayButton, tuesdayButton, wednesdayButton, thursdayButton, fridayButton, saturdayButton};
         // Array with all the string values for weekdays
-        String[] weekdayStrArray = new String[]{getString(R.string.MONDAY_STR), getString(R.string.TUESDAY_STR),
+        String[] weekdayStrArray = new String[]{getString(R.string.SUNDAY_STR), getString(R.string.MONDAY_STR), getString(R.string.TUESDAY_STR),
                 getString(R.string.WEDNESDAY_STR), getString(R.string.THURSDAY_STR), getString(R.string.FRIDAY_STR),
-                getString(R.string.SATURDAY_STR), getString(R.string.SUNDAY_STR)};
+                getString(R.string.SATURDAY_STR) };
 
         // Set weekday buttons to proper colors based on the habit object passed in
         // and initialize the trackers for buttons pressed

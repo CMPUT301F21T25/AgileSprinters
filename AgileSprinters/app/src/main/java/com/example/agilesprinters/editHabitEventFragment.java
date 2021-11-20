@@ -28,6 +28,7 @@ public class editHabitEventFragment extends DialogFragment {
     private String EID;
     private String UID;
     private String HID;
+    private String IID;
 
     private editHabitEventFragment.OnFragmentInteractionListener listener;
 
@@ -104,6 +105,7 @@ public class editHabitEventFragment extends DialogFragment {
         EID = habitInstance.getEID();
         UID = habitInstance.getUID();
         HID = habitInstance.getHID();
+        IID = habitInstance.getIID();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         return builder
@@ -158,7 +160,7 @@ public class editHabitEventFragment extends DialogFragment {
                 // If everything has been filled out, call the listener and send the edited
                 // habit back to the Home class and dismiss the dialog.
                 if (readyToClose) {
-                    listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date, Integer.parseInt(duration)));
+                    listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date, Integer.parseInt(duration), IID));
                     dialog.dismiss();
                 }
             });
