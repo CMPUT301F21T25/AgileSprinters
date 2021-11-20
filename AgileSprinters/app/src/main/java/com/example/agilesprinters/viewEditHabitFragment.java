@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -38,7 +39,9 @@ public class viewEditHabitFragment extends DialogFragment {
     private Button fridayButton;
     private Button saturdayButton;
     private Spinner privacySpinner;
+    private Button[] weekdayEditButtonArray;
     private HashMap<String, Boolean> weekdaysHashMap;
+    private HashMap<String, Boolean> originalWeekdaysHashMap;
     private viewEditHabitFragment.OnFragmentInteractionListener editFragmentListener;
     private String HID;
     private String UID;
@@ -129,7 +132,10 @@ public class viewEditHabitFragment extends DialogFragment {
         currentHabitTitle.setText(habit.getTitle());
         currentHabitReason.setText(habit.getReason());
         currentDateTextView.setText("Date Started: " + habit.getDateToStart());
-        weekdaysHashMap = habit.getWeekdays();
+        originalWeekdaysHashMap = new HashMap<>();
+        originalWeekdaysHashMap.putAll(habit.getWeekdays());
+        weekdaysHashMap = new HashMap<>();
+        weekdaysHashMap.putAll(habit.getWeekdays());
         currentDate = habit.getDateToStart();
 
 
@@ -138,7 +144,7 @@ public class viewEditHabitFragment extends DialogFragment {
             privacySpinner.setSelection(1);
         }
         // Array with all the Edit buttons for weekdays
-        Button[] weekdayEditButtonArray = new Button[]{sundayButton, mondayButton, tuesdayButton, wednesdayButton, thursdayButton, fridayButton, saturdayButton};
+        weekdayEditButtonArray = new Button[]{sundayButton, mondayButton, tuesdayButton, wednesdayButton, thursdayButton, fridayButton, saturdayButton};
         // Array with all the string values for weekdays
         String[] weekdayStrArray = new String[]{getString(R.string.SUNDAY_STR), getString(R.string.MONDAY_STR), getString(R.string.TUESDAY_STR),
                 getString(R.string.WEDNESDAY_STR), getString(R.string.THURSDAY_STR), getString(R.string.FRIDAY_STR),
@@ -203,6 +209,25 @@ public class viewEditHabitFragment extends DialogFragment {
         final AlertDialog dialog = (AlertDialog) getDialog();
         if (dialog != null) {
             Button positive = (Button) dialog.getButton(Dialog.BUTTON_POSITIVE);
+            Button negative = (Button) dialog.getButton(Dialog.BUTTON_NEGATIVE);
+
+            negative.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int j = 0;
+                    for (String key : weekdaysHashMap.keySet()){
+                        if (weekdaysHashMap.get(key) == true && originalWeekdaysHashMap.get(key) == false){
+                            weekdayEditButtonArray[j].setBackgroundColor(Color.parseColor(getString(R.string.greyHexCode)));
+                        }
+                        else if(weekdaysHashMap.get(key) == false && originalWeekdaysHashMap.get(key) == true){
+                            weekdayEditButtonArray[j].setBackgroundColor(Color.parseColor(getString(R.string.orangeHexCode)));
+                        }
+                        j++;
+                    }
+
+                    dialog.dismiss();
+                }
+            });
 
             positive.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -91,6 +91,7 @@ public class UserCalendar extends AppCompatActivity
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView2);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
+        bottomNavigationView.setSelectedItemId(R.id.calendar);
 
         ListView toDoEventsList = findViewById(R.id.toDoEventsList);
         ListView completedEventsList = findViewById(R.id.completedEventsList);
@@ -391,6 +392,13 @@ public class UserCalendar extends AppCompatActivity
                     startActivity(intent2);
                     break;
                 }
+
+            case R.id.notification:
+                Intent intentNotification = new Intent(this, Notifications.class);
+                intentNotification.putExtra("user", user);
+                //add bundle to send data if need
+                startActivity(intentNotification);
+                break;
 
             case R.id.forumn:
                 break;
