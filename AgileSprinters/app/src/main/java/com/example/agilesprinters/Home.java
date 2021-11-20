@@ -76,7 +76,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             UID = currentUser.getUser();
         }
 
-        /*
+        /**
           This is a database listener. Each time the Home page is created, it will read the contents
           of the database and put it in our listview.
          */
