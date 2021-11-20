@@ -72,6 +72,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         habitList = findViewById(R.id.habit_list);
         followingTextView = findViewById(R.id.following);
         followersTextView = findViewById(R.id.followers);
+
         habitArrayList = new ArrayList<>();
         habitAdapter = new habitListAdapter(this, habitArrayList);
         habitList.setAdapter(habitAdapter);
