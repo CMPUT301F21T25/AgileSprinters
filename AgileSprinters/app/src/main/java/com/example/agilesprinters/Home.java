@@ -77,7 +77,6 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             user = (User) getIntent().getSerializableExtra("user");
             UID = user.getUser();
             firstName = user.getFirstName();
-
         }
 
         TextView firstName = findViewById(R.id.userIdTextView);
@@ -218,6 +217,13 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 intent.putExtra("user", user);
                 //add bundle to send data if need
                 startActivity(intent);
+                break;
+
+            case R.id.notification:
+                Intent intentNotification = new Intent(this, Notifications.class);
+                intentNotification.putExtra("user", user);
+                //add bundle to send data if need
+                startActivity(intentNotification);
                 break;
 
             case R.id.forumn:
