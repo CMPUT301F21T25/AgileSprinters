@@ -9,10 +9,9 @@
 
 
     <TextView
-        android:id="@+id/userId"
+        android:id="@+id/userIdTextView"
         android:layout_width="87dp"
         android:layout_height="28dp"
-        android:text="@string/userId_text"
         android:gravity="center"
         android:textStyle="bold"
         android:textSize="18sp"
@@ -30,10 +29,10 @@
         android:gravity="center"
         android:textStyle="bold"
         android:textSize="18sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/userId"
+        app:layout_constraintBaseline_toBaselineOf="@+id/userIdTextView"
         app:layout_constraintEnd_toStartOf="@id/following"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/userId" />
+        app:layout_constraintStart_toEndOf="@+id/userIdTextView" />
 
     <TextView
         android:id="@+id/following"

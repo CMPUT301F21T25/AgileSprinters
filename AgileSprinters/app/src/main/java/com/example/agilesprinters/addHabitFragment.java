@@ -19,36 +19,32 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
 /**
  * This class is a dialog fragment that allows the user to add a new habit.
- *
- * @author Hannah Desmarais and Hari Bheesetti
  */
 public class addHabitFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
     private EditText habitTitle;
     private EditText habitReason;
-    private EditText date_editText;
+    private EditText dateEditText;
     private TextView buttonError;
-    private Button sunday;
-    private Button monday;
-    private Button tuesday;
-    private Button wednesday;
-    private Button thursday;
-    private Button friday;
-    private Button saturday;
+    private Button sundayBtn;
+    private Button mondayBtn;
+    private Button tuesdayBtn;
+    private Button wednesdayBtn;
+    private Button thursdayBtn;
+    private Button fridayBtn;
+    private Button saturdayBtn;
     private String date = "";
-    private HashMap<String, Boolean> weekdays;
-    private Spinner privacy;
+    private HashMap<String, Boolean> weekdaysHashMap;
+    private Spinner privacySpinner;
     private String UID;
-    private addHabitFragment.OnFragmentInteractionListener listener;
+    private addHabitFragment.OnFragmentInteractionListener fragmentListener;
     FirebaseFirestore db;
 
     /**
@@ -59,7 +55,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
     public static addHabitFragment newInstance(String UID) {
         addHabitFragment frag = new addHabitFragment();
         Bundle args = new Bundle();
-        args.putString("UID", UID);
+        args.putString(String.valueOf(R.string.hidKey), UID);
         frag.setArguments(args);
 
         return frag;
@@ -87,7 +83,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
         if (dayOfMonth < 10 ) date += "0";
         date += String.valueOf(dayOfMonth + "/");
         date += String.valueOf(year);
-        date_editText.setText(date);
+        dateEditText.setText(date);
     }
 
     /**
@@ -109,7 +105,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
         super.onAttach(context);
 
         if (context instanceof OnFragmentInteractionListener){
-            listener = (OnFragmentInteractionListener) context;
+            fragmentListener = (OnFragmentInteractionListener) context;
         }
         else{
             throw new RuntimeException(context.toString()
@@ -131,43 +127,43 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
         //inflate the layout for this fragment
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.add_habit_fragment, null);
 
-        UID = getArguments().getString("UID");
+        UID = getArguments().getString(getString(R.string.hidKey));
 
-        String[] weekdayStrArray = new String[]{ getString(R.string.mondayStr), getString(R.string.tuesdayStr),
-                getString(R.string.wednesdayStr), getString(R.string.thursdayStr), getString(R.string.fridayStr),
-                getString(R.string.saturdayStr), getString(R.string.sundayStr)};
+        String[] weekdayStrArray = new String[]{ getString(R.string.MONDAY_STR), getString(R.string.TUESDAY_STR),
+                getString(R.string.WEDNESDAY_STR), getString(R.string.THURSDAY_STR), getString(R.string.FRIDAY_STR),
+                getString(R.string.SATURDAY_STR), getString(R.string.SUNDAY_STR)};
 
-        weekdays = new HashMap<String, Boolean>();
+        weekdaysHashMap = new HashMap<String, Boolean>();
 
         for(int i = 0; i < weekdayStrArray.length; i++){
-            weekdays.put(weekdayStrArray[i], false);
+            weekdaysHashMap.put(weekdayStrArray[i], false);
         }
 
         habitTitle = view.findViewById(R.id.habit_title_editText);
         habitReason = view.findViewById(R.id.habit_reason_editText);
-        date_editText = view.findViewById(R.id.Date);
-        privacy = view.findViewById(R.id.privacy_spinner);
+        dateEditText = view.findViewById(R.id.Date);
+        privacySpinner = view.findViewById(R.id.privacy_spinner);
         buttonError = view.findViewById(R.id.add_habit_button_error);
 
         //set weekday buttons
-        sunday = view.findViewById(R.id.button_sunday);
-        monday = view.findViewById(R.id.button_monday);
-        tuesday = view.findViewById(R.id.button_Tuesday);
-        wednesday = view.findViewById(R.id.button_wednesday);
-        thursday = view.findViewById(R.id.button_thursday);
-        friday = view.findViewById(R.id.button_friday);
-        saturday = view.findViewById(R.id.button_saturday);
+        sundayBtn = view.findViewById(R.id.button_sunday);
+        mondayBtn = view.findViewById(R.id.button_monday);
+        tuesdayBtn = view.findViewById(R.id.button_Tuesday);
+        wednesdayBtn = view.findViewById(R.id.button_wednesday);
+        thursdayBtn = view.findViewById(R.id.button_thursday);
+        fridayBtn = view.findViewById(R.id.button_friday);
+        saturdayBtn = view.findViewById(R.id.button_saturday);
 
         //set on click listeners for all weekday buttons and the editText for the date started
-        date_editText.setOnClickListener(new View.OnClickListener() {
+        dateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 DialogFragment datePicker = new datePickerFragment();
-                datePicker.show(getChildFragmentManager(), "DATE PICKER");
+                datePicker.show(getChildFragmentManager(), getString(R.string.DATE_PICKER_STR));
             }
         });
 
-        Button[]  weekdayButtonArray = new Button[]{sunday, monday, tuesday, wednesday, thursday, friday, saturday};
+        Button[]  weekdayButtonArray = new Button[]{sundayBtn, mondayBtn, tuesdayBtn, wednesdayBtn, thursdayBtn, fridayBtn, saturdayBtn};
 
         for( int i = 0; i < weekdayButtonArray.length; i++){
             int finalI = i;
@@ -175,12 +171,12 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
             weekdayButtonArray[i].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (weekdays.get(weekdayStrArray[finalI1]) == false) {
-                        weekdayButtonArray[finalI].setBackgroundColor(Color.parseColor(getString(R.string.orangeHexCode)));
-                        weekdays.replace(weekdayStrArray[finalI1], false, true);
+                    if (weekdaysHashMap.get(weekdayStrArray[finalI1]) == false) {
+                        weekdayButtonArray[finalI].setBackgroundColor(Color.parseColor(getString(R.string.ORANGE_HEX_CODE)));
+                        weekdaysHashMap.replace(weekdayStrArray[finalI1], false, true);
                     } else {
-                        weekdayButtonArray[finalI].setBackgroundColor(Color.parseColor(getString(R.string.greyHexCode)));
-                        weekdays.replace(weekdayStrArray[finalI1], true, false);
+                        weekdayButtonArray[finalI].setBackgroundColor(Color.parseColor(getString(R.string.GREY_HEX_CODE)));
+                        weekdaysHashMap.replace(weekdayStrArray[finalI1], true, false);
                     }
                 }
             });
@@ -189,9 +185,9 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         return builder
                 .setView(view)
-                .setTitle("Add Habit")
-                .setNegativeButton("Cancel", null)
-                .setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                .setTitle(getString(R.string.ADD_HABIT_FRAG_TITLE))
+                .setNegativeButton(getString(R.string.CANCEL_BTN_STR), null)
+                .setPositiveButton(getString(R.string.ADD_BTN_STR), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         /* Do not implement anything here in order to override the button
@@ -224,34 +220,34 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
 
                     String habit_title = habitTitle.getText().toString();
                     String habit_reason = habitReason.getText().toString();
-                    String privacySetting = privacy.getSelectedItem().toString();
+                    String privacySetting = privacySpinner.getSelectedItem().toString();
 
                     if (habit_title.matches("")) {
                         readyToClose = false;
-                        habitTitle.setError("This field cannot be blank");
+                        habitTitle.setError(getString(R.string.EMPTY_FIELD_ERR_MSG));
                     }
                     if (habit_reason.matches("")) {
                         readyToClose = false;
-                        habitReason.setError("This field cannot be blank");
+                        habitReason.setError(getString(R.string.EMPTY_FIELD_ERR_MSG));
                     }
                     if (privacySetting.matches("")) {
                         readyToClose = false;
                     }
                     if (date.matches("")) {
                         readyToClose = false;
-                        date_editText.setError("This field cannot be blank");
+                        dateEditText.setError(getString(R.string.EMPTY_FIELD_ERR_MSG));
                     }
 
                     Boolean weekdayCheck = false;
-                    for (String i : weekdays.keySet()) {
-                        if (weekdays.get(i)) {
+                    for (String i : weekdaysHashMap.keySet()) {
+                        if (weekdaysHashMap.get(i)) {
                             weekdayCheck = true;
                             break;
                         }
                     }
                     if (!weekdayCheck) {
                         readyToClose = false;
-                        buttonError.setText("Please choose which days you would like this event to occur.");
+                        buttonError.setText(getString(R.string.WEEKDAY_BTN_ERR_MSG));
                     }
 
                     // If everything has been filled out, call the listener and send the edited
@@ -259,9 +255,9 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
                     if (readyToClose) {
                         User user = new User();
                         db = FirebaseFirestore.getInstance();
-                        DocumentReference newHabitRef = db.collection("Habit").document();
-                        listener.onAddPressed(new Habit(newHabitRef.getId(),user.getUser(),habit_title
-                                ,habit_reason,date, weekdays, privacySetting));
+                        DocumentReference newHabitRef = db.collection(getString(R.string.HABIT_COLLECTION_PATH)).document();
+                        fragmentListener.onAddPressed(new Habit(newHabitRef.getId(),user.getUser(),habit_title
+                                ,habit_reason,date, weekdaysHashMap, privacySetting));
                         dialog.dismiss();
                     }
                 }

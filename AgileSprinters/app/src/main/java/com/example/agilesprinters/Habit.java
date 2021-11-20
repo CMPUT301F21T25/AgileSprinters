@@ -1,16 +1,10 @@
 package com.example.agilesprinters;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 /**
- * This is an object class called Habit. It is responsible for creating habits and storing a habit's
- * information
- *
- * @author Hannah Desmarais and Hari Bheesetti
+ * This is an object class called Habit. It is responsible for creating habits and storing their information
  */
 public class Habit implements Serializable {
     private String UID;

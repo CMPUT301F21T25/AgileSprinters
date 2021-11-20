@@ -64,6 +64,9 @@ public class UserCalendar extends AppCompatActivity
     FirebaseFirestore db;
     private String UID;
     private User user;
+    private String collectionPath;
+    private Database database = new Database();
+
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
@@ -166,9 +169,9 @@ public class UserCalendar extends AppCompatActivity
      * Return a ArrayList of strings
      */
     public ArrayList<String> getHabitDays(Map<String, Object> weekdays) {
-        String[] days = new String[]{ getString(R.string.mondayStr), getString(R.string.tuesdayStr),
-                getString(R.string.wednesdayStr), getString(R.string.thursdayStr), getString(R.string.fridayStr),
-                getString(R.string.saturdayStr), getString(R.string.sundayStr)};
+        String[] days = new String[]{ getString(R.string.MONDAY_STR), getString(R.string.TUESDAY_STR),
+                getString(R.string.WEDNESDAY_STR), getString(R.string.THURSDAY_STR), getString(R.string.FRIDAY_STR),
+                getString(R.string.SATURDAY_STR), getString(R.string.SUNDAY_STR)};
         ArrayList<String> habitDays = new ArrayList<>();
 
         for (String day : days) {
@@ -197,9 +200,9 @@ public class UserCalendar extends AppCompatActivity
             toDoEventIds.clear();
             for(QueryDocumentSnapshot doc: value) {
                 Log.d(TAG, "Habits to do today " + String.valueOf(doc.getData().get("Title")));
-
+                System.out.println(doc.getString("Date to Start"));
                 // Gives the start date
-                LocalDate startDate = LocalDate.parse(doc.getString("Data to Start"), formatter);
+                LocalDate startDate = LocalDate.parse(doc.getString("Date to Start"), formatter);
                 Map<String, Object> weekdays = (Map<String, Object>) doc.getData().get("Weekdays");
                 HashMap<String,Boolean> weekdays2 = (HashMap<String, Boolean>) doc.getData().get("Weekdays");
                 ArrayList<String> habitDays = getHabitDays(weekdays);
@@ -208,7 +211,7 @@ public class UserCalendar extends AppCompatActivity
                         && (startDate.isBefore(currentDate) || startDate.isEqual(currentDate))
                         && (habitDays.contains(todayDay))){
                     Habit newHabit = new Habit(doc.getId(),doc.getString("UID"),doc.getString("Title"), doc.getString("Reason"),
-                            doc.getString("Data to Start"), weekdays2, doc.getString("PrivacySetting"));
+                            doc.getString("Date to Start"), weekdays2, doc.getString("PrivacySetting"));
                     toDoEvents.add(newHabit); // Adding habits from Firestore
                     toDoEventIds.add(doc.getId());
                 }
@@ -270,22 +273,21 @@ public class UserCalendar extends AppCompatActivity
      */
     @Override
     public void onEditSavePressed(HabitInstance instance) {
-        HashMap<String, String> data = new HashMap<>();
-        data.put("EID", instance.getEID());
-        data.put("UID", instance.getUID());
-        data.put("HID", instance.getHID());
-        data.put("Date", instance.getDate());
-        data.put("Opt_comment",instance.getOpt_comment());
-        data.put("Duration",String.valueOf(instance.getDuration()));
+            HashMap<String, String> data = new HashMap<>();
+            data.put("EID", instance.getEID());
+            data.put("UID", instance.getUID());
+            data.put("HID", instance.getHID());
+            data.put("Date", instance.getDate());
+            data.put("Opt_comment",instance.getOpt_comment());
+            data.put("Duration",String.valueOf(instance.getDuration()));
 
-        db.collection("HabitEvents")
-                .document(selectedHabitInstanceId)
-                .set(data)
-                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
-                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
+            // Makes a call to the database which handles it
+            collectionPath = "HabitEvents";
+            database.updateData(collectionPath, selectedHabitInstanceId, data, TAG);
 
-        completedEventsScreenSetup();
-    }
+            completedEventsScreenSetup();
+        }
+
 
     /**
      * This function deletes a habit instance object from the database once a user clicks
@@ -294,46 +296,37 @@ public class UserCalendar extends AppCompatActivity
      */
     @Override
     public void onDeletePressed(HabitInstance instance) {
+            collectionPath = "HabitEvents";
+            // Makes a call to the database which handles it
+            database.deleteData(collectionPath, instance.getEID(), TAG);
 
-        db.collection("HabitEvents")
-                .document(instance.getEID())
-                .delete()
-                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully deleted!"))
-                .addOnFailureListener(e -> Log.w(TAG, "Error deleting document", e));
-
-        completedEventsScreenSetup();
-    }
+            completedEventsScreenSetup();
+        }
 
     /**
      * This function adds a habit event/instance object to the database.
      * @param instance The habit instance that needs to be added to the database.
      */
     public void addHabitEventDatabase(HabitInstance instance){
-        final CollectionReference collectionReference  =  db.collection("HabitEvents");
+            final CollectionReference collectionReference  =  db.collection("HabitEvents");
 
-        String instanceId = instance.getEID();
-        HashMap<String, Object> data = new HashMap<>();
+            String instanceId = instance.getEID();
+            HashMap<String, Object> data = new HashMap<>();
 
-        if (instanceId != null){
-            data.put("EID", instance.getEID());
-            data.put("UID", instance.getUID());
-            data.put("HID", instance.getHID());
-            data.put("Date", instance.getDate());
-            data.put("Opt_comment",instance.getOpt_comment());
-            data.put("Duration",instance.getDuration());
-            collectionReference
-                    .document(instanceId)
-                    .set(data)
-                    .addOnSuccessListener(aVoid -> {
-                        // These are a method which gets executed when the task is succeeded
-                        Log. d (TAG, "Data has been added successfully!");
-                    })
-                    .addOnFailureListener(e -> {
-                        // These are a method which gets executed if there’s any problem
-                        Log. d (TAG, "Data could not be added!" + e.toString());
-                    });
+            if (instanceId != null){
+                data.put("EID", instance.getEID());
+                data.put("UID", instance.getUID());
+                data.put("HID", instance.getHID());
+                data.put("Date", instance.getDate());
+                data.put("Opt_comment",instance.getOpt_comment());
+                data.put("Duration",instance.getDuration());
+
+                // Makes a call to the database which handles it
+                collectionPath = "HabitEvents";
+                database.addData(collectionPath, instanceId, data, TAG);
+            }
         }
-    }
+
 
     /**
      * This function captures the date chosen by the user once they press ok on the datePicker

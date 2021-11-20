@@ -17,43 +17,36 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
  * This class is a fragment allows a user to view all the details of a habit and edit any details
- * they wish to change.There is a bug in the viewEditHabitFragment. If a user presses buttons for
- * the days of the week and then presses cancel, the changes do not get made to the habit or the
- * database but if the same object is the list is pressed again, the buttons are still colored with
- * the buttons pressed before hitting cancel. This will be fixed by the final checkpoint.
- *
- * @author Hannah Desmarais and Hari Bheesetti
+ * they wish to change.
  */
 public class viewEditHabitFragment extends DialogFragment {
     private int position;
-    private String date;
-    private EditText habitTitle;
-    private EditText habitReason;
-    private TextView date_textView;
+    private String currentDate;
+    private EditText currentHabitTitle;
+    private EditText currentHabitReason;
+    private TextView currentDateTextView;
     private TextView buttonError;
-    private Button sunday;
-    private Button monday;
-    private Button tuesday;
-    private Button wednesday;
-    private Button thursday;
-    private Button friday;
-    private Button saturday;
-    private Spinner privacy;
-    private ArrayList<String> originalWeekdays;
-    private HashMap<String, Boolean> weekdays;
-    private viewEditHabitFragment.OnFragmentInteractionListener listener;
+    private Button sundayButton;
+    private Button mondayButton;
+    private Button tuesdayButton;
+    private Button wednesdayButton;
+    private Button thursdayButton;
+    private Button fridayButton;
+    private Button saturdayButton;
+    private Spinner privacySpinner;
+    private HashMap<String, Boolean> weekdaysHashMap;
+    private viewEditHabitFragment.OnFragmentInteractionListener editFragmentListener;
     private String HID;
     private String UID;
 
 
     /**
      * This function saves the values sent to the fragment for future manipulation
-
+     *
      * @param habit is the item that was tapped within the list
      * @return returns the fragment with the bundled parameters
      */
@@ -72,6 +65,7 @@ public class viewEditHabitFragment extends DialogFragment {
      */
     public interface OnFragmentInteractionListener {
         void onEditViewSaveChangesPressed(Habit habit);
+
         void onEditViewCancelPressed();
     }
 
@@ -87,10 +81,10 @@ public class viewEditHabitFragment extends DialogFragment {
         super.onAttach(context);
 
         if (context instanceof addHabitFragment.OnFragmentInteractionListener) {
-            listener = (viewEditHabitFragment.OnFragmentInteractionListener) context;
+            editFragmentListener = (viewEditHabitFragment.OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + getString(R.string.FRAG_ERROR_MSG));
         }
     }
 
@@ -108,69 +102,69 @@ public class viewEditHabitFragment extends DialogFragment {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.view_edit_habit_fragment, null);
 
         // Connect all the elements of the screen to their appropriate counterparts
-        habitTitle = view.findViewById(R.id.view_edit_habit_title_editText);
-        habitReason = view.findViewById(R.id.view_edit_habit_reason_editText);
-        date_textView = view.findViewById(R.id.view_edit_habit_date);
-        privacy = view.findViewById(R.id.view_edit_privacy_spinner);
+        currentHabitTitle = view.findViewById(R.id.view_edit_habit_title_editText);
+        currentHabitReason = view.findViewById(R.id.view_edit_habit_reason_editText);
+        currentDateTextView = view.findViewById(R.id.view_edit_habit_date);
+        privacySpinner = view.findViewById(R.id.view_edit_privacy_spinner);
         buttonError = view.findViewById(R.id.view_edit_habit_button_error);
 
         // Get weekday buttons and make sure they are set to blank
-        sunday = view.findViewById(R.id.view_edit_button_sunday);
-        monday = view.findViewById(R.id.view_edit_button_monday);
-        tuesday = view.findViewById(R.id.view_edit_button_Tuesday);
-        wednesday = view.findViewById(R.id.view_edit_button_wednesday);
-        thursday = view.findViewById(R.id.view_edit_button_thursday);
-        friday = view.findViewById(R.id.view_edit_button_friday);
-        saturday = view.findViewById(R.id.view_edit_button_saturday);
+        sundayButton = view.findViewById(R.id.view_edit_button_sunday);
+        mondayButton = view.findViewById(R.id.view_edit_button_monday);
+        tuesdayButton = view.findViewById(R.id.view_edit_button_Tuesday);
+        wednesdayButton = view.findViewById(R.id.view_edit_button_wednesday);
+        thursdayButton = view.findViewById(R.id.view_edit_button_thursday);
+        fridayButton = view.findViewById(R.id.view_edit_button_friday);
+        saturdayButton = view.findViewById(R.id.view_edit_button_saturday);
 
         // Get the arguments that were stored in the bundle
-        Habit habit = (Habit) getArguments().getSerializable("habit");
-        position = getArguments().getInt("position");
+        Habit habit = (Habit) getArguments().getSerializable(getString(R.string.HABIT_TEXT));
+        position = getArguments().getInt(getString(R.string.POSITION_TEXT));
 
         HID = habit.getHID();
         UID = habit.getUID();
 
 
         // Set all of the screen elements to their original habit values for viewing
-        habitTitle.setText(habit.getTitle());
-        habitReason.setText(habit.getReason());
-        date_textView.setText("Date Started: " + habit.getDateToStart());
-        weekdays = habit.getWeekdays();
-        date = habit.getDateToStart();
+        currentHabitTitle.setText(habit.getTitle());
+        currentHabitReason.setText(habit.getReason());
+        currentDateTextView.setText("Date Started: " + habit.getDateToStart());
+        weekdaysHashMap = habit.getWeekdays();
+        currentDate = habit.getDateToStart();
 
 
         // Make sure spinner for privacy settings is set to the correct option
-        if (habit.getPrivacySetting().equals("Private")) {
-            privacy.setSelection(1);
+        if (habit.getPrivacySetting().equals(getString(R.string.PRIVATE_TEXT))) {
+            privacySpinner.setSelection(1);
         }
         // Array with all the Edit buttons for weekdays
-        Button[]  weekdayEditButtonArray = new Button[]{sunday, monday, tuesday, wednesday, thursday, friday, saturday};
+        Button[] weekdayEditButtonArray = new Button[]{sundayButton, mondayButton, tuesdayButton, wednesdayButton, thursdayButton, fridayButton, saturdayButton};
         // Array with all the string values for weekdays
-        String[] weekdayStrArray = new String[]{ getString(R.string.mondayStr), getString(R.string.tuesdayStr),
-                getString(R.string.wednesdayStr), getString(R.string.thursdayStr), getString(R.string.fridayStr),
-                getString(R.string.saturdayStr), getString(R.string.sundayStr)};
+        String[] weekdayStrArray = new String[]{getString(R.string.MONDAY_STR), getString(R.string.TUESDAY_STR),
+                getString(R.string.WEDNESDAY_STR), getString(R.string.THURSDAY_STR), getString(R.string.FRIDAY_STR),
+                getString(R.string.SATURDAY_STR), getString(R.string.SUNDAY_STR)};
 
         // Set weekday buttons to proper colors based on the habit object passed in
         // and initialize the trackers for buttons pressed
-        for(int i = 0; i < weekdayStrArray.length; i++){
-            if(weekdays.get(weekdayStrArray[i])) {
-                weekdayEditButtonArray[i].setBackgroundColor(Color.parseColor(getString(R.string.orangeHexCode)));
+        for (int i = 0; i < weekdayStrArray.length; i++) {
+            if (weekdaysHashMap.get(weekdayStrArray[i])) {
+                weekdayEditButtonArray[i].setBackgroundColor(Color.parseColor(getString(R.string.ORANGE_HEX_CODE)));
             }
         }
 
         //Set on click listeners for all weekday buttons
-        for( int i = 0; i < weekdayEditButtonArray.length; i++){
+        for (int i = 0; i < weekdayEditButtonArray.length; i++) {
             int finalI = i;
             int finalI1 = i;
             weekdayEditButtonArray[i].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (weekdays.get(weekdayStrArray[finalI1]) == false) {
-                        weekdayEditButtonArray[finalI].setBackgroundColor(Color.parseColor(getString(R.string.orangeHexCode)));
-                        weekdays.replace(weekdayStrArray[finalI1], false, true);
+                    if (weekdaysHashMap.get(weekdayStrArray[finalI1]) == false) {
+                        weekdayEditButtonArray[finalI].setBackgroundColor(Color.parseColor(getString(R.string.ORANGE_HEX_CODE)));
+                        weekdaysHashMap.replace(weekdayStrArray[finalI1], false, true);
                     } else {
-                        weekdayEditButtonArray[finalI].setBackgroundColor(Color.parseColor(getString(R.string.greyHexCode)));
-                        weekdays.replace(weekdayStrArray[finalI1], true, false);
+                        weekdayEditButtonArray[finalI].setBackgroundColor(Color.parseColor(getString(R.string.GREY_HEX_CODE)));
+                        weekdaysHashMap.replace(weekdayStrArray[finalI1], true, false);
                     }
                 }
             });
@@ -179,14 +173,14 @@ public class viewEditHabitFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         return builder
                 .setView(view)
-                .setTitle("View/Edit Habit")
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setTitle(getString(R.string.VIEW_EDIT_HABIT_FRAG_TITLE))
+                .setNegativeButton(getString(R.string.CANCEL_BTN_STR), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
                     }
                 })
-                .setPositiveButton("Save Changes", new DialogInterface.OnClickListener() {
+                .setPositiveButton(getString(R.string.SAVE_BTN_STR), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         /* Do not implement anything here in order to override the button
@@ -217,38 +211,38 @@ public class viewEditHabitFragment extends DialogFragment {
                     // if anything has been left blank.
                     Boolean readyToClose = true;
 
-                    String habit_title = habitTitle.getText().toString();
-                    String habit_reason = habitReason.getText().toString();
-                    String privacySetting = privacy.getSelectedItem().toString();
+                    String newHabitTitle = currentHabitTitle.getText().toString();
+                    String newHabitReason = currentHabitReason.getText().toString();
+                    String newPrivacySetting = privacySpinner.getSelectedItem().toString();
 
-                    if (habit_title.matches("")) {
+                    if (newHabitTitle.matches("")) {
                         readyToClose = false;
-                        habitTitle.setError("This field cannot be blank");
+                        currentHabitTitle.setError(getString(R.string.EMPTY_FIELD_ERR_MSG));
                     }
-                    if (habit_reason.matches("")) {
+                    if (newHabitReason.matches("")) {
                         readyToClose = false;
-                        habitReason.setError("This field cannot be blank");
+                        currentHabitReason.setError(getString(R.string.EMPTY_FIELD_ERR_MSG));
                     }
-                    if (privacySetting.matches("")) {
+                    if (newPrivacySetting.matches("")) {
                         readyToClose = false;
                     }
 
                     Boolean weekdayCheck = false;
-                    for (String i : weekdays.keySet()) {
-                        if (weekdays.get(i)) {
+                    for (String i : weekdaysHashMap.keySet()) {
+                        if (weekdaysHashMap.get(i)) {
                             weekdayCheck = true;
                             break;
                         }
                     }
                     if (!weekdayCheck) {
                         readyToClose = false;
-                        buttonError.setText("Please choose which days you would like this event to occur.");
+                        buttonError.setText(getString(R.string.WEEKDAY_BTN_ERR_MSG));
                     }
 
                     // If everything has been filled out, call the listener and send the edited
                     // habit back to the Home class and dismiss the dialog.
                     if (readyToClose) {
-                        listener.onEditViewSaveChangesPressed(new Habit(HID, UID, habit_title, habit_reason, date, weekdays, privacySetting));
+                        editFragmentListener.onEditViewSaveChangesPressed(new Habit(HID, UID, newHabitTitle, newHabitReason, currentDate, weekdaysHashMap, newPrivacySetting));
                         dialog.dismiss();
                     }
                 }
@@ -256,4 +250,3 @@ public class viewEditHabitFragment extends DialogFragment {
         }
     }
 }
-
