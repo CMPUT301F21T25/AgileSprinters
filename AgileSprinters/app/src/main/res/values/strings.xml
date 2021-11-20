@@ -20,7 +20,7 @@
     <string name="lastNameErr">Last name can not be empty</string>
     <string name="passwordErr">password can not be empty</string>
     <string name="confirmPasswordErr">confirm password can not be empty</string>
-    <string name="emailErr" >email can not be empty</string>
+    <string name="emailErr">email can not be empty</string>
     <string name="passwordMatchErr" type="id">passwords do not match</string>
     <string name="emptyString">dummy</string>
     <string name="userExistsErr">The email address is already in use by another account</string>
@@ -50,7 +50,7 @@
     <string name="LAST_NAME_ERR">Last name can not be empty</string>
     <string name="PASSWORD_ERR">Password can not be empty</string>
     <string name="CONFIRM_PASSWORD_ERR">Confirm password can not be empty</string>
-    <string name="EMAIL_ERR" >Email can not be empty</string>
+    <string name="EMAIL_ERR">Email can not be empty</string>
     <string name="PASSWORD_MATCH_ERR" type="id">passwords do not match</string>
     <string name="CANCEL_STR">Cancel</string>
     <string name="USER_STR">user</string>
@@ -137,7 +137,7 @@
     <string name="EMPTY_STRING">dummy</string>
     <string name="HABIT_TEXT">habit</string>
     <string name="FRAG_ERROR_MSG">must implement OnFragmentInteractionListener</string>
-    <string name="POSITION_TEXT" >position</string>
+    <string name="POSITION_TEXT">position</string>
     <string name="PRIVATE_TEXT">private</string>
     <string name="VIEW_EDIT_HABIT_FRAG_TITLE">View/Edit Habit</string>
     <string name="EMPTY_FIELD_ERR_MSG">This field cannot be blank</string>

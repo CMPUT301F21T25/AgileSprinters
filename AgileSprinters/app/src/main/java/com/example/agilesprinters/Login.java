@@ -45,6 +45,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
      * This variable contains an instance of FirebaseAuth
      */
     private FirebaseAuth auth;
+
     /**
      * this variable contains the edit text of the email field
      */
@@ -61,8 +62,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private FirebaseFirestore db;
     private Database database = new Database();
     private String  firstName, lastName, emailId;
-    private final ArrayList<User> userArrayList = new ArrayList<>();
-
+    private ArrayList<String> followersList = new ArrayList<>();
+    private ArrayList<String> followingList = new ArrayList<>();
+    private ArrayList<String> followRequestList = new ArrayList<>();
     /**
      * This function is called when the login activity starts
      * @param savedInstanceState
@@ -110,7 +112,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         FirebaseUser currentUser = auth.getCurrentUser();
         if ( currentUser != null){
             //Do anything here which needs to be done after user is set is complete
-            updateUI(currentUser);
+            getUser(currentUser);
         }
     }
 
@@ -159,7 +161,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
      * email and password fields must be non-empty
      */
     private void signIn() {
-
         // get the email and password from respective fields
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
@@ -180,7 +181,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                             Log.d(TAG, getString(R.string.SIGN_IN_SUCCESS_MSG));
                             FirebaseUser user = auth.getCurrentUser();
                             if (user != null) {
-                                updateUI(user);
+                                getUser(user);
                             }
                         } else {
                             // If sign in fails due to a wrong password or email
@@ -198,41 +199,49 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
      * @param user
      * Give the firebase user that is logged in, if null is passed {@link FirebaseUser}
      */
-    private void updateUI(FirebaseUser user) {
+    private void getUser(FirebaseUser user) {
         db = FirebaseFirestore.getInstance();
         CollectionReference collectionReference = db.collection("users");
-        Intent intent = new Intent(Login.this, Home.class);
+
         String uniqueId = user.getUid();
 
         currentUser.setUser(uniqueId);
-        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        collectionReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
-                    FirebaseFirestoreException error) {
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     Log.d(TAG, String.valueOf(doc.getData().get("UID")));
                     if (uniqueId.matches((String) doc.getData().get("UID"))) {
                         emailId = (String) doc.getData().get("Email ID");
                         firstName = (String) doc.getData().get("First Name");
                         lastName = (String) doc.getData().get("Last Name");
+                        followersList = (ArrayList<String>) doc.getData().get("followers");
+                        followingList = (ArrayList<String>) doc.getData().get("following");
+                        followRequestList = (ArrayList<String>) doc.getData().get("follow request list");
+                        updateUi(currentUser, emailId, firstName, lastName, followersList, followingList, followRequestList);
                     }
                 }
-                User user1 = new User(uniqueId, firstName, lastName, emailId);
-                userArrayList.add(user1);
             }
         });
+    }
 
+    public void updateUi(User user, String emailId, String firstName, String lastName,
+                         ArrayList<String> followersList, ArrayList<String> followingList,
+                         ArrayList<String> followRequestList){
+
+        Intent intent = new Intent(Login.this, Home.class);
+
+        user.setEmailId(emailId);
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setFollowersList(followersList);
+        user.setFollowingList(followingList);
+        user.setFollowRequestList(followRequestList);
         intent.putExtra(getString(R.string.USER_STR), currentUser);
 
         //go to home page and finish the login activity
         startActivity(intent);
         finish();
-    }
-
-    public void setFields(User user, String emailId, String firstName, String lastName){
-        user.setEmailId(emailId);
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
     }
 
     /**

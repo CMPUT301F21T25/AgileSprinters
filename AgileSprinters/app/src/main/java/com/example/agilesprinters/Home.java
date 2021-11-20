@@ -45,13 +45,16 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     private ArrayAdapter<Habit> habitAdapter;
     BottomNavigationView bottomNavigationView;
     FirebaseFirestore db;
+    private TextView followingTextView;
+    private TextView followersTextView;
 
     private static final String TAG = "Habit";
     private String UID;
     private User user;
-    private String firstName;
+    private String firstNameStr;
     private String collectionPath;
     private Database database = new Database();
+
 
     /**
      * This function creates the UI on the screen and listens for user input
@@ -67,6 +70,8 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         bottomNavigationView.setSelectedItemId(R.id.home);
 
         habitList = findViewById(R.id.habit_list);
+        followingTextView = findViewById(R.id.following);
+        followersTextView = findViewById(R.id.followers);
         habitArrayList = new ArrayList<>();
         habitAdapter = new habitListAdapter(this, habitArrayList);
         habitList.setAdapter(habitAdapter);
@@ -76,12 +81,12 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         if (user == null) {
             user = (User) getIntent().getSerializableExtra("user");
             UID = user.getUser();
-            firstName = user.getFirstName();
+            firstNameStr = (String) user.getFirstName();
 
         }
 
         TextView firstName = findViewById(R.id.userIdTextView);
-        //firstName.setText(firstName);
+        firstName.setText(firstNameStr);
         /**
          * This is a database listener. Each time the Home page is created, it will read the contents
          * of the database and put it in our listview.
@@ -124,6 +129,8 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             }
         });
 
+
+
         /**
          * This is a floating action button which listens for when a user taps it. If tapped it will
          * begin the addHabitFragment.
@@ -137,6 +144,30 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 System.out.println(getIntent());
             }
         });
+
+        followingTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Home.this, FollowerFollowing.class);
+                intent.putExtra("Title", "Following");
+                intent.putExtra(getString(R.string.USER_STR), user);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        followersTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Home.this, FollowerFollowing.class);
+                intent.putExtra("Title", "Followers");
+                intent.putExtra(getString(R.string.USER_STR), user);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+
 
         /**
          * This is a long item click listener which overrides the regular item click listener.
