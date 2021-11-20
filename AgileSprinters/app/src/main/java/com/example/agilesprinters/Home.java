@@ -3,6 +3,8 @@ package com.example.agilesprinters;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -18,6 +20,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
@@ -318,5 +321,40 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             }
         });
         return;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.home_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.signOutItem:
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(this, Login.class);
+                startActivity(intent);
+                return true;
+            case R.id.deleteItem:
+//                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                /**.delete()
+                 .addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                Log.d(TAG, "User account deleted.");
+                Intent intent = new Intent(Home.this, Login.class);
+                startActivity(intent);
+                }
+                }
+                });**/
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
     }
 }
