@@ -3,20 +3,27 @@ package com.example.agilesprinters;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
@@ -80,30 +87,26 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
           This is a database listener. Each time the Home page is created, it will read the contents
           of the database and put it in our listview.
          */
-        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
-                    FirebaseFirestoreException error) {
-                // Clear the old list
-                habitArrayList.clear();
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    Log.d(TAG, String.valueOf(doc.getData().get(getString(R.string.UID))));
-                    if (UID.matches((String) doc.getData().get(getString(R.string.UID)))) {
+        collectionReference.addSnapshotListener((queryDocumentSnapshots, error) -> {
+            // Clear the old list
+            habitArrayList.clear();
+            for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                Log.d(TAG, String.valueOf(doc.getData().get(getString(R.string.UID))));
+                if (UID.matches((String) doc.getData().get(getString(R.string.UID)))) {
 
-                        //get the information of each habit to be displayed
-                        String habitTitle = (String) doc.getData().get(getString(R.string.habitTitle));
-                        String habitReason = (String) doc.getData().get(getString(R.string.habitReason));
-                        String habitStartDate = (String) doc.getData().get(getString(R.string.habitStartDate));
-                        HashMap<String, Boolean> habitWeekdays = (HashMap<String, Boolean>) doc.getData().get(getString(R.string.habitWeekdays));
-                        String habitPrivacySetting = (String) doc.getData().get(getString(R.string.habitPrivacySetting));
+                    //get the information of each habit to be displayed
+                    String habitTitle = (String) doc.getData().get(getString(R.string.habitTitle));
+                    String habitReason = (String) doc.getData().get(getString(R.string.habitReason));
+                    String habitStartDate = (String) doc.getData().get(getString(R.string.habitStartDate));
+                    HashMap<String, Boolean> habitWeekdays = (HashMap<String, Boolean>) doc.getData().get(getString(R.string.habitWeekdays));
+                    String habitPrivacySetting = (String) doc.getData().get(getString(R.string.habitPrivacySetting));
 
-                        //add habit's info to be displayed
-                        habitArrayList.add(new Habit(doc.getId(), UID, habitTitle, habitReason, habitStartDate, habitWeekdays, habitPrivacySetting));
-                    }
+                    //add habit's info to be displayed
+                    habitArrayList.add(new Habit(doc.getId(), UID, habitTitle, habitReason, habitStartDate, habitWeekdays, habitPrivacySetting));
                 }
-                habitAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
-                // from the cloud
             }
+            habitAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
+            // from the cloud
         });
 
         /**
@@ -124,28 +127,22 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
          begin the addHabitFragment.
          */
         final FloatingActionButton addButton = findViewById(R.id.add_habit_button);
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addHabitFragment values = new addHabitFragment().newInstance(UID);
-                values.show(getSupportFragmentManager(), getString(R.string.addFrag));
-                System.out.println(getIntent());
-            }
+        addButton.setOnClickListener(view -> {
+            addHabitFragment values = new addHabitFragment().newInstance(UID);
+            values.show(getSupportFragmentManager(), getString(R.string.addFrag));
+            System.out.println(getIntent());
         });
 
         /**
          This is a long item click listener which overrides the regular item click listener.
          When an item is long clicked, it will begin the deleteHabitFragment
          */
-        habitList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                deleteHabitFragment deleteFrag = new deleteHabitFragment().newInstance(i);
-                deleteFrag.show(getSupportFragmentManager(), getString(R.string.delFrag));
+        habitList.setOnItemLongClickListener((adapterView, view, i, l) -> {
+            deleteHabitFragment deleteFrag = new deleteHabitFragment().newInstance(i);
+            deleteFrag.show(getSupportFragmentManager(), getString(R.string.delFrag));
 
-                // return true so that it overrides a regular item click and the view/edit fragment does not pop up
-                return true;
-            }
+            // return true so that it overrides a regular item click and the view/edit fragment does not pop up
+            return true;
         });
 
     }
@@ -239,19 +236,13 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             collectionReference
                     .document(HabitId)
                     .set(data)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            // These are a method which gets executed when the task is succeeded
-                            Log.d(TAG, getString(R.string.dataAddSuccess));
-                        }
+                    .addOnSuccessListener(aVoid -> {
+                        // These are a method which gets executed when the task is succeeded
+                        Log.d(TAG, getString(R.string.dataAddSuccess));
                     })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            // These are a method which gets executed if there’s any problem
-                            Log.d(TAG, getString(R.string.dataAddErr) + e.toString());
-                        }
+                    .addOnFailureListener(e -> {
+                        // These are a method which gets executed if there’s any problem
+                        Log.d(TAG, getString(R.string.dataAddErr) + e.toString());
                     });
         }
     }
@@ -270,19 +261,13 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         collectionReference
                 .document(habit.getHID())
                 .set(data)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        // These are a method which gets executed when the task is succeeded
-                        Log.d(TAG, getString(R.string.dataAddSuccess));
-                    }
+                .addOnSuccessListener(aVoid -> {
+                    // These are a method which gets executed when the task is succeeded
+                    Log.d(TAG, getString(R.string.dataAddSuccess));
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // These are a method which gets executed if there’s any problem
-                        Log.d(TAG, getString(R.string.dataAddErr) + e.toString());
-                    }
+                .addOnFailureListener(e -> {
+                    // These are a method which gets executed if there’s any problem
+                    Log.d(TAG, getString(R.string.dataAddErr) + e.toString());
                 });
     }
 
@@ -314,18 +299,8 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         db.collection(getString(R.string.habit))
                 .document(habit.getHID())
                 .delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, getString(R.string.delDocSuccess));
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, getString(R.string.delDocErr), e);
-                    }
-                });
+                .addOnSuccessListener(aVoid -> Log.d(TAG, getString(R.string.delDocSuccess)))
+                .addOnFailureListener(e -> Log.w(TAG, getString(R.string.delDocErr), e));
     }
 
     /**
@@ -348,37 +323,59 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
      */
     public void deleteHabitInstances(Habit habit) {
         CollectionReference collectionReference = db.collection(getString(R.string.HabitEvents));
-        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
-                    FirebaseFirestoreException error) {
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    Log.d(TAG, String.valueOf(doc.getData().get(getString(R.string.UID))));
-                    if (habit.getHID().matches((String) doc.getData().get(getString(R.string.HID)))) {
-                        if (doc.getId() == null) {
-                            return;
-                        } else {
-                            db.collection(getString(R.string.HabitEvents))
-                                    .document(doc.getId())
-                                    .delete()
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            Log.d(TAG, getString(R.string.delDocSuccess));
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.w(TAG, getString(R.string.delDocErr), e);
-                                        }
-                                    });
-                        }
+        collectionReference.addSnapshotListener((queryDocumentSnapshots, error) -> {
+            for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                Log.d(TAG, String.valueOf(doc.getData().get(getString(R.string.UID))));
+                if (habit.getHID().matches((String) doc.getData().get(getString(R.string.HID)))) {
+                    if (doc.getId() == null) {
+                        return;
+                    } else {
+                        db.collection(getString(R.string.HabitEvents))
+                                .document(doc.getId())
+                                .delete()
+                                .addOnSuccessListener(aVoid -> Log.d(TAG, getString(R.string.delDocSuccess)))
+                                .addOnFailureListener(e -> Log.w(TAG, getString(R.string.delDocErr), e));
                     }
                 }
-                habitAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
-                // from the cloud
             }
+            habitAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
+            // from the cloud
         });
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.home_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.signOutItem:
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(this, Login.class);
+                startActivity(intent);
+                return true;
+            case R.id.deleteItem:
+//                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                        /**.delete()
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Log.d(TAG, "User account deleted.");
+                                    Intent intent = new Intent(Home.this, Login.class);
+                                    startActivity(intent);
+                                }
+                            }
+                        });**/
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+    }
+
 }

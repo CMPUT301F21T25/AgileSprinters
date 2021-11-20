@@ -72,4 +72,6 @@
     <string name="viewEditFrag">VIEW/EDIT</string>
     <string name="dateStarted"> Date Started: </string>
     <string name="addhabitBtn">addHabitBtn</string>
+    <string name="SIGN_OUT">Sign out</string>
+    <string name="DEL_ACCOUNT">Delete account</string>
 </resources>
