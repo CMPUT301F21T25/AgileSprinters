@@ -3,19 +3,29 @@ package com.example.agilesprinters;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
@@ -26,6 +36,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * The home class is an activity which displays the habits of a user upon login. From here a user
@@ -317,12 +328,22 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
     /**
      * This method deletes a habit selected by the user from the database
-     * @param habit this is the habit object selected by the user to be deleted
+     * @param  HID is the habit object's ID selected by the user to be deleted
      */
-    public void deleteHabitDatabase(Habit habit) {
+    public void deleteHabitDb(String HID) {
         collectionPath = "Habit";
         // Makes a call to the database which handles it
-        database.deleteData(collectionPath, habit.getHID(), TAG);
+        database.deleteData(collectionPath, HID, TAG);
+    }
+
+    /**
+     * This method deletes a habit selected by the user from the database
+     * @param  EID is the habit event object's ID selected by the user to be deleted
+     */
+    public void deleteHabitEventsDb(String EID) {
+        collectionPath = "HabitEvents";
+        // Makes a call to the database which handles it
+        database.deleteData(collectionPath, EID, TAG);
     }
 
     /**
@@ -334,16 +355,16 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     @Override
     public void onDeleteHabitYesPressed(int position) {
         Habit habit = habitAdapter.getItem(position);
-        deleteHabitInstances(habit);
-        deleteHabitDatabase(habit);
+        deleteHabitInstances(habit.getHID());
+        deleteHabitDb(habit.getHID());
         habitAdapter.notifyDataSetChanged();
     }
 
     /**
      * This method deletes habit events from the database based on the habit object passed to it.
-     * @param habit this is the habit object the user wishes to be deleted
+     * @param HID this is the habit object the user wishes to be deleted
      */
-    public void deleteHabitInstances(Habit habit) {
+    public void deleteHabitInstances(String HID) {
         CollectionReference collectionReference = db.collection("HabitEvents");
         collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -351,12 +372,11 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                     FirebaseFirestoreException error) {
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     Log.d(TAG, String.valueOf(doc.getData().get("UID")));
-                    if (habit.getHID().matches((String) doc.getData().get("HID"))) {
+                    if (HID.matches((String) doc.getData().get("HID"))) {
                         if(doc.getId() == null){
                             return;
                         } else {
-                            collectionPath = "HabitEvents";
-                            database.deleteData(collectionPath, doc.getId(), TAG);
+                            deleteHabitEventsDb(doc.getId());
                         }
                     }
                 }
@@ -366,4 +386,147 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         });
         return;
     }
+
+    /**
+     * This method deletes all of the user's habit and associated events when the user is deleted.
+     */
+    private void deleteUserHabits() {
+        CollectionReference collectionReference = db.collection(getString(R.string.HABIT));
+        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
+                    FirebaseFirestoreException error) {
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    Log.d(TAG, String.valueOf(doc.getData().get(getString(R.string.UID))));
+                    if (UID.matches((String) doc.getData().get(getString(R.string.UID)))) {
+                        if (doc.getId() == null) {
+                            return;
+                        } else {
+                            collectionPath = "Habit";
+                            deleteHabitInstances((String) doc.getId());
+                            database.deleteData(collectionPath, doc.getId(), TAG);
+                        }
+                    }
+                }
+            }
+        });
+        return;
+    }
+
+
+    /**
+     * This method is for the creation of the options menu
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.home_menu, menu);
+        return true;
+    }
+
+    /**
+     * This method lets a user sign out or delete their account on a menu.
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.signOutItem:
+                confirmMenuSelection(item.getItemId(), getString(R.string.SIGN_OUT));
+                return true;
+            case R.id.deleteItem:
+                confirmMenuSelection(item.getItemId(), getString(R.string.DEL_USER));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+    }
+
+    /**
+     * This function handles sign in/ authentication when the user clicks the sign in button,
+     * email and password fields must be non-empty
+     */
+    private void confirmMenuSelection(int itemId, String titleStr) {
+
+        AlertDialog.Builder confirmDialog = new AlertDialog.Builder(Home.this);
+        confirmDialog.setTitle(titleStr);
+        confirmDialog.setMessage(getString(R.string.SURE_STR)+titleStr.toLowerCase()+"?");
+
+        // Calling the function to reset password here
+        confirmDialog.setPositiveButton(R.string.CONFIRM_STR, (dialog, which) -> {
+            select(itemId);
+        });
+        confirmDialog.setNegativeButton(R.string.CANCEL_STR, (dialog, which) -> dialog.cancel());
+        confirmDialog.show();
+    }
+
+    private boolean select(int itemId){
+        Intent intent = null;
+        switch (itemId) {
+            case R.id.signOutItem:
+                FirebaseAuth.getInstance().signOut();
+                intent = new Intent(this, Login.class);
+                user = null;
+                startActivity(intent);
+                finish();
+                return true;
+            case R.id.deleteItem:
+                deleteUser();
+                user = null;
+                FirebaseAuth.getInstance().signOut();
+                intent = new Intent(Home.this, Login.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            default:
+                return true;
+        }
+    }
+    /**
+     * This method deletes a user from the database and all its associated data and habits and events.
+     */
+    private void deleteUser() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        user.delete()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, getString(R.string.USER_DEL_LOG));
+                            deleteUserHabits();
+                            deleteUserData();
+                        }
+                        else {
+                            Log.d(TAG, getString(R.string.USER_NOT_DEL_LOG));
+                        }
+                    }
+                });
+    }
+
+    /**
+     * This method deletes all data (email, password etc) associated with a user.
+     */
+    private void deleteUserData(){
+        CollectionReference collectionReference = db.collection("users");
+        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
+                    FirebaseFirestoreException error) {
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    Log.d(TAG, String.valueOf(doc.getData().get(getString(R.string.UID))));
+                    if (UID.matches((String) doc.getData().get(getString(R.string.UID)))) {
+                        if(doc.getId() == null){
+                            return;
+                        } else {
+                            collectionPath = getString(R.string.USERS);
+                            database.deleteData(collectionPath, doc.getId(), TAG);
+                        }
+                    }
+                }
+                // from the cloud
+            }
+        });
+    }
+
 }

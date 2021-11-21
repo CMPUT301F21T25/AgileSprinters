@@ -58,7 +58,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
     public static addHabitFragment newInstance(String UID) {
         addHabitFragment frag = new addHabitFragment();
         Bundle args = new Bundle();
-        args.putString(String.valueOf(R.string.hidKey), UID);
+        args.putString(String.valueOf(R.string.HID), UID);
         frag.setArguments(args);
 
         return frag;
@@ -130,7 +130,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
         //inflate the layout for this fragment
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.add_habit_fragment, null);
 
-        UID = getArguments().getString(getString(R.string.hidKey));
+        UID = getArguments().getString(getString(R.string.HID));
 
         String[] weekdayStrArray = new String[]{getString(R.string.SUNDAY_STR), getString(R.string.MONDAY_STR), getString(R.string.TUESDAY_STR),
                 getString(R.string.WEDNESDAY_STR), getString(R.string.THURSDAY_STR), getString(R.string.FRIDAY_STR),

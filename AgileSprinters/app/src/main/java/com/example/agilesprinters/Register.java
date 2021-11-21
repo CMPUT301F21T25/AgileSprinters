@@ -123,7 +123,7 @@ public class Register extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         // Register success, update UI accordingly
-                        Log.d(TAG, getString(R.string.USER_CREATION_FAILURE_MSG) );
+                        Log.d(TAG, getString(R.string.USER_CREATION_SUCCESS_MSG) );
                         FirebaseUser user = auth.getCurrentUser();
                         System.out.println(user.getUid());
                         createUserDoc(user, firstName, lastName);
@@ -154,6 +154,7 @@ public class Register extends AppCompatActivity {
             auth.signOut();
             Intent intent = new Intent(Register.this, Login.class);
             startActivity(intent);
+            finish();
         }
     }
 
