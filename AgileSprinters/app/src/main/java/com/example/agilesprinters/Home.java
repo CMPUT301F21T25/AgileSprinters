@@ -314,12 +314,22 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
     /**
      * This method deletes a habit selected by the user from the database
-     * @param habit this is the habit object selected by the user to be deleted
+     * @param  HID is the habit object's ID selected by the user to be deleted
      */
-    public void deleteHabitDatabase(Habit habit) {
+    public void deleteHabitDb(String HID) {
         collectionPath = "Habit";
         // Makes a call to the database which handles it
-        database.deleteData(collectionPath, habit.getHID(), TAG);
+        database.deleteData(collectionPath, HID, TAG);
+    }
+
+    /**
+     * This method deletes a habit selected by the user from the database
+     * @param  EID is the habit event object's ID selected by the user to be deleted
+     */
+    public void deleteHabitEventsDb(String EID) {
+        collectionPath = "HabitEvents";
+        // Makes a call to the database which handles it
+        database.deleteData(collectionPath, EID, TAG);
     }
 
     /**
@@ -332,7 +342,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     public void onDeleteHabitYesPressed(int position) {
         Habit habit = habitAdapter.getItem(position);
         deleteHabitInstances(habit.getHID());
-        deleteHabitDatabase(habit);
+        deleteHabitDb(habit.getHID());
         habitAdapter.notifyDataSetChanged();
     }
 
@@ -348,15 +358,11 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                     FirebaseFirestoreException error) {
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     Log.d(TAG, String.valueOf(doc.getData().get("UID")));
-                    if (HID == null) {
-                        return;
-                    }
                     if (HID.matches((String) doc.getData().get("HID"))) {
                         if(doc.getId() == null){
                             return;
                         } else {
-                            collectionPath = "HabitEvents";
-                            database.deleteData(collectionPath, doc.getId(), TAG);
+                            deleteHabitEventsDb(doc.getId());
                         }
                     }
                 }
@@ -366,6 +372,33 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         });
         return;
     }
+
+    /**
+     * This method deletes all of the user's habit and associated events when the user is deleted.
+     */
+    private void deleteUserHabits() {
+        CollectionReference collectionReference = db.collection(getString(R.string.HABIT));
+        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
+                    FirebaseFirestoreException error) {
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    Log.d(TAG, String.valueOf(doc.getData().get(getString(R.string.UID))));
+                    if (UID.matches((String) doc.getData().get(getString(R.string.UID)))) {
+                        if (doc.getId() == null) {
+                            return;
+                        } else {
+                            collectionPath = "Habit";
+                            deleteHabitInstances((String) doc.getId());
+                            database.deleteData(collectionPath, doc.getId(), TAG);
+                        }
+                    }
+                }
+            }
+        });
+        return;
+    }
+
 
     /**
      * This method is for the creation of the options menu
@@ -480,33 +513,6 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 // from the cloud
             }
         });
-    }
-
-    /**
-     * This method deletes all of the user's habit and associated events when the user is deleted.
-     */
-    private void deleteUserHabits() {
-        CollectionReference collectionReference = db.collection(getString(R.string.HABIT));
-        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
-                    FirebaseFirestoreException error) {
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    Log.d(TAG, String.valueOf(doc.getData().get(getString(R.string.UID))));
-                    if (UID.matches((String) doc.getData().get(getString(R.string.UID)))) {
-                        if(doc.getId() == null){
-                            return;
-                        } else {
-                            collectionPath = getString(R.string.HABIT);
-                            System.out.println(getString(R.string.HID_IS)+(String) doc.getData().get(getString(R.string.HID)));
-                            deleteHabitInstances((String) doc.getData().get(getString(R.string.HID)));
-                            database.deleteData(collectionPath, doc.getId(), TAG);
-                        }
-                    }
-                }
-            }
-        });
-        return;
     }
 
 }
