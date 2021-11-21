@@ -112,7 +112,7 @@
     <string name="delFrag">DELETE</string>
     <string name="addFrag">ADD</string>
     <string name="viewEditFrag">VIEW/EDIT</string>
-    <string name="dateStarted">\"  Date Started: \"</string>
+    <string name="dateStarted">\ Date Started: </string>
     <string name="addhabitBtn">addHabitBtn</string>
     <string name="CANCEL_BTN_STR">Cancel</string>
     <string name="SAVE_BTN_STR">Save</string>
@@ -155,29 +155,5 @@
     <string name="hidKey">HID</string>
     <string name="SIGN_OUT">Sign out</string>
     <string name="DEL_ACCOUNT">Delete account</string>
-    <string name="CREATE_ACCOUNT">Create Account</string>
-    <string name="SEND_EMAIL">Send</string>
-    <string name="CANCEL_STR">Cancel</string>
-    <string name="EMAIL_SENT">Email Sent</string>
-    <string name="EMAIL_SENT_MSG">Email sent.</string>
-    <string name="EMPTY_EMAIL"><u>Email is required</u></string>
-    <string name="LOGIN_FAILED">Email or password entered is incorrect</string>
-    <string name="FIRST_NAME_ERR">First name can not be empty</string>
-    <string name="LAST_NAME_ERR">Last name can not be empty</string>
-    <string name="EMAIL_ERR">Email can not be empty</string>
-    <string name="PASSWORD_ERR">Password can not be empty</string>
-    <string name="CONFIRM_PASSWORD_ERR">Confirm password can not be empty</string>
-    <string name="PASSWORD_MATCH_ERR" type="id">passwords do not match</string>
-    <string name="SUCCESSFUL_INPUT_MSG">Successful user input</string>
-    <string name="USER_CREATION_SUCCESS_MSG">createUserWithEmail:success</string>
-    <string name="USER_CREATION_FAILURE_MSG">createUserWithEmail:failure</string>
-    <string name="FIRST_NAME_STR">First Name</string>
-    <string name="LAST_NAME_STR">Last Name</string>
-    <string name="EMAIL_ID_STR">Email ID</string>
-    <string name="SIGN_IN_SUCCESS_MSG">signInWithEmail:success</string>
-    <string name="SIGN_IN_FAILURE_MSG">signInWithEmail:failure</string>
-    <string name="EMPTY_PASSWORD"><u>Password is required</u></string>
-    <string name="USER_STR">user</string>
-    <string name="PASSWORD_RESET">Reset Password</string>
     <string name="IID">IID</string>
 </resources>

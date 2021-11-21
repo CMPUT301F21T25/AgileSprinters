@@ -154,6 +154,7 @@ public class Register extends AppCompatActivity {
             auth.signOut();
             Intent intent = new Intent(Register.this, Login.class);
             startActivity(intent);
+            finish();
         }
     }
 

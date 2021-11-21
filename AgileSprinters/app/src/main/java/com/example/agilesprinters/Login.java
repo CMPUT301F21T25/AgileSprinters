@@ -255,6 +255,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         switch(v.getId()){
             case R.id.register:  //if the register text is clicked, direct to the register page
                 intent = new Intent(Login.this, Register.class);
+                finish();
                 break;
             case R.id.loginBtn:  //if the login button is clicked, attempt to sign in
                 signIn();

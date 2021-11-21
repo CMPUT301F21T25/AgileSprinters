@@ -16,11 +16,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
@@ -326,16 +329,16 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     @Override
     public void onDeleteHabitYesPressed(int position) {
         Habit habit = habitAdapter.getItem(position);
-        deleteHabitInstances(habit);
+        deleteHabitInstances(habit.getHID());
         deleteHabitDatabase(habit);
         habitAdapter.notifyDataSetChanged();
     }
 
     /**
      * This method deletes habit events from the database based on the habit object passed to it.
-     * @param habit this is the habit object the user wishes to be deleted
+     * @param HID this is the habit object the user wishes to be deleted
      */
-    public void deleteHabitInstances(Habit habit) {
+    public void deleteHabitInstances(String HID) {
         CollectionReference collectionReference = db.collection("HabitEvents");
         collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -343,7 +346,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                     FirebaseFirestoreException error) {
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     Log.d(TAG, String.valueOf(doc.getData().get("UID")));
-                    if (habit.getHID().matches((String) doc.getData().get("HID"))) {
+                    if (HID.matches((String) doc.getData().get("HID"))) {
                         if(doc.getId() == null){
                             return;
                         } else {
@@ -368,29 +371,89 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent = null;
         switch (item.getItemId()) {
             case R.id.signOutItem:
                 FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(this, Login.class);
+                intent = new Intent(this, Login.class);
+                user = null;
                 startActivity(intent);
+                finish();
                 return true;
             case R.id.deleteItem:
-//                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                /**.delete()
-                 .addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                Log.d(TAG, "User account deleted.");
-                Intent intent = new Intent(Home.this, Login.class);
+                deleteUser();
+                user = null;
+                intent = new Intent(this, Login.class);
                 startActivity(intent);
-                }
-                }
-                });**/
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
 
     }
+
+    private void deleteUser(){
+        deleteUserHabits();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        user.delete()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "User account deleted.");
+                        }
+                    }
+                });
+        CollectionReference collectionReference = db.collection("users");
+        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
+                    FirebaseFirestoreException error) {
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    Log.d(TAG, String.valueOf(doc.getData().get("UID")));
+                    if (UID.matches((String) doc.getData().get("UID"))) {
+                        if(doc.getId() == null){
+                            return;
+                        } else {
+                            collectionPath = "users";
+                            database.deleteData(collectionPath, doc.getId(), TAG);
+                        }
+                    }
+                }
+                // from the cloud
+            }
+        });
+        user = null;
+        return;
+    }
+
+    /**
+     * This method deletes all of the user's habit and associated events when the user is deleted.
+     */
+    private void deleteUserHabits() {
+        CollectionReference collectionReference = db.collection("Habit");
+        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
+                    FirebaseFirestoreException error) {
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    Log.d(TAG, String.valueOf(doc.getData().get("UID")));
+                    if (UID.matches((String) doc.getData().get("UID"))) {
+                        if(doc.getId() == null){
+                            return;
+                        } else {
+                            collectionPath = "Habit";
+                            deleteHabitInstances((String) doc.getData().get("HID"));
+                            database.deleteData(collectionPath, doc.getId(), TAG);
+                        }
+                    }
+                }
+                habitAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
+                // from the cloud
+            }
+        });
+        return;
+    }
+
 }
