@@ -81,8 +81,8 @@ public class habitListAdapter extends ArrayAdapter<Habit> {
             }
         }
 
-        double totalDays = Math.ceil( (-1 * period.getDays()) / 7);
-        int k = (habit.getOverallProgress() / (int)(numDaysForHabit * totalDays)) * 100;
+        //double totalDays = Math.ceil( (-1 * period.getDays()) / 7);
+        //int k = (habit.getOverallProgress() / (int)(numDaysForHabit * totalDays)) * 100;
 
         /**System.out.println("period " + period);
         System.out.println("Total days " + totalDays);
@@ -93,7 +93,7 @@ public class habitListAdapter extends ArrayAdapter<Habit> {
         privacyText.setText(habit.getPrivacySetting());
         titleText.setText(habit.getTitle());
         reasonText.setText(habit.getReason());
-        progressSoFar.setProgress((habit.getOverallProgress() / (int)(numDaysForHabit * totalDays)) * 100);
+        progressSoFar.setProgress(100);
 
         return view;
     }

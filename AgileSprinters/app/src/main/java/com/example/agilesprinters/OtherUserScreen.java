@@ -61,8 +61,10 @@ public class OtherUserScreen extends AppCompatActivity {
                     String dateToStart = (String) doc.getData().get("Date to Start");
                     HashMap<String, Boolean> weekdays = (HashMap<String, Boolean>) doc.getData().get("Weekdays");
                     String privacySetting = (String) doc.getData().get("PrivacySetting");
+                    int progress = Integer.parseInt(doc.get("Progress").toString());
 
-                    habitArrayList.add(new Habit(doc.getId(), UID, title, reason, dateToStart, weekdays, privacySetting));
+
+                    habitArrayList.add(new Habit(doc.getId(), UID, title, reason, dateToStart, weekdays, privacySetting, progress));
                 }
             }
             habitAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
