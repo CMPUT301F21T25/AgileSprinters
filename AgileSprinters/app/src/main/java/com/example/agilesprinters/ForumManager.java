@@ -1,18 +1,24 @@
 package com.example.agilesprinters;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ForumManager extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
     private String UID;
@@ -21,10 +27,15 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
     private FirebaseFirestore db;
 
 
-    ListView instanceList;
-    ArrayAdapter<User> userAdapter;
-    ArrayList<User> userDataList;
+    ListView forumList;
+    ArrayAdapter<Forum> forumAdapter;
+    ArrayList<Forum> forumDataList;
     ArrayList<String> userTempList;
+    ArrayList<HashMap> habitList = new ArrayList<>();
+    ArrayList<HashMap> userList = new ArrayList<>();
+
+    private TextView titleTextView;
+    private String firstName, lastName, eventDate, duration;
 
 
     @Override
@@ -35,11 +46,42 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
         if (UID == null) {
             user = (User) getIntent().getSerializableExtra("user");
             UID = user.getUser();
+            userTempList = user.getFollowingList();
+            userTempList.add(UID);
         }
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
         bottomNavigationView.setSelectedItemId(R.id.forumn);
+
+        titleTextView = findViewById(R.id.forumTitleTextView);
+        forumList = findViewById(R.id.forumListView);
+
+        forumDataList = new ArrayList<>();
+        forumAdapter = new forumPostList(this, forumDataList);
+
+        forumList.setAdapter(forumAdapter);
+
+        titleTextView.setText("Forum");
+
+        db = FirebaseFirestore.getInstance();
+        CollectionReference collectionReference = db.collection("Forum");
+
+        collectionReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (QueryDocumentSnapshot doc: queryDocumentSnapshots){
+                    if(userTempList.contains((String) doc.getData().get("UID"))){
+                        firstName = (String) doc.getData().get("First Name");
+                        lastName = (String) doc.getData().get("Last Name");
+                        duration = (String) doc.getData().get("duration");
+                        eventDate = (String) doc.getData().get("Event Date");
+                        forumDataList.add(new Forum(firstName, lastName, eventDate, duration));
+                    }
+                }
+                forumAdapter.notifyDataSetChanged();
+            }
+        });
 
     }
 

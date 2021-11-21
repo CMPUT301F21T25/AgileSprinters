@@ -6,6 +6,29 @@
     android:layout_height="match_parent"
     tools:context=".ForumManager">
 
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="409dp"
+        android:layout_height="729dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/forumTitleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="TextView" />
+
+        <ListView
+            android:id="@+id/forumListView"
+            android:layout_width="match_parent"
+            android:layout_height="604dp">
+
+        </ListView>
+    </LinearLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"

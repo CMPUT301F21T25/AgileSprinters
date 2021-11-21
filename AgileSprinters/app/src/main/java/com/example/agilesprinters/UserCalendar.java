@@ -52,10 +52,8 @@ public class UserCalendar extends AppCompatActivity
         DatePickerDialog.OnDateSetListener, BottomNavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "Instance";
-
     private ArrayAdapter<Habit> toDoEventAdapter;
     private final ArrayList<Habit> toDoEvents = new ArrayList<>();
-
     private ArrayAdapter<HabitInstance> completedEventAdapter;
     private final ArrayList<HabitInstance> completedEvents = new ArrayList<>();
     private final ArrayList<String> completedEventIds = new ArrayList<>();
@@ -244,7 +242,6 @@ public class UserCalendar extends AppCompatActivity
                         if ((eventDate.isEqual(currentDate))) {
                             HabitInstance newInstance = new HabitInstance(doc.getString("EID"), doc.getString("UID"), doc.getString("HID"),
                                     doc.getString("Opt_comment"), doc.getString("Date"), Integer.parseInt(doc.get("Duration").toString()), doc.getString("IID"));
-
                             completedEvents.add(newInstance);
                             completedEventIds.add(doc.getId()); // Adding habit events from Firestore
                         }
@@ -265,12 +262,50 @@ public class UserCalendar extends AppCompatActivity
      */
     @Override
     public void onSavePressed(HabitInstance habitInstance, Bitmap bitmap) {
-        System.out.println(bitmap);
         addHabitEventDatabase(habitInstance, bitmap);
+        updateForum(habitInstance);
         completedEventsScreenSetup();
 
         updateProgressInDatabase(habitInstance, "ADD");
 
+    }
+
+    private void updateForum(HabitInstance habitInstance) {
+        String HID = habitInstance.getHID();
+        String privacySetting = "";
+        HashMap<String, String> data = new HashMap();
+
+        for (int i = 0; i < toDoEvents.size(); i++){
+            if (HID.matches(toDoEvents.get(i).getHID())){
+                privacySetting = toDoEvents.get(i).getPrivacySetting();
+            }
+        }
+        String duration = String.valueOf(habitInstance.getDuration());
+        if (privacySetting.matches("Public")){
+            data.put("Event Date", habitInstance.getDate());
+            data.put("First Name", user.getFirstName());
+            data.put("Last Name", user.getLastName());
+            data.put("duration", duration);
+            data.put("UID", habitInstance.getUID());
+            data.put("Opt Cmt", habitInstance.getOpt_comment());
+
+            DocumentReference newHabitRef = db.collection("Habit").document();
+            String forumID = stringChange(newHabitRef.getId());
+
+            collectionPath = "ForumPosts";
+            database.addData(collectionPath, forumID, data, "Forum Post");
+        }
+
+
+    }
+
+    public String stringChange(String str) {
+        for (int i = 0; i < 3; i++){
+            if (str != null && str.length() > 0 && str.charAt(str.length() - 1) == 'x') {
+                str = str.substring(0, str.length() - 1);
+            }
+        }
+        return str;
     }
 
     /**
@@ -281,7 +316,6 @@ public class UserCalendar extends AppCompatActivity
      */
     @Override
     public void onEditSavePressed(HabitInstance instance, Bitmap bitmap) {
-        System.out.println("imagesPath"+instance.getIID()+instance.getEID());
         if (instance.getIID() == null){
             path = "images/"+System.currentTimeMillis() +".jpg";
         } else {
@@ -330,9 +364,11 @@ public class UserCalendar extends AppCompatActivity
      */
     public void addHabitEventDatabase(HabitInstance instance, Bitmap bitmap) {
         final CollectionReference collectionReference = db.collection("HabitEvents");
-        String path = "images/"+System.currentTimeMillis() +".jpg";
 
-        database.addImage(path, bitmap);
+        if (bitmap != null) {
+            String path = "images/"+System.currentTimeMillis() +".jpg";
+            database.addImage(path, bitmap);
+        }
 
         String instanceId = instance.getEID();
         HashMap<String, Object> data = new HashMap<>();

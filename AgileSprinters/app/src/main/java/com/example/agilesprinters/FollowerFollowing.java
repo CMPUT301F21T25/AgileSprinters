@@ -32,7 +32,7 @@ public class FollowerFollowing extends AppCompatActivity {
     ArrayAdapter<User> userAdapter;
     ArrayList<User> userDataList;
     ArrayList<String> userTempList;
-    HashMap<String, User> hashmap = new HashMap();
+
 
 
     private User currentUser = new User();
@@ -54,7 +54,6 @@ public class FollowerFollowing extends AppCompatActivity {
             title = (String) getIntent().getStringExtra("Title");
 
             if (title.matches("Following")){
-                System.out.println("inside");
                 userTempList = user.getFollowingList();
             } else if (title.matches( "Followers")) {
                 userTempList = user.getFollowersList();

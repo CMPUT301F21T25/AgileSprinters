@@ -12,13 +12,13 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
-public class forumPostList extends ArrayAdapter<HabitInstance> {
-    private ArrayList<HabitInstance> instances;
+public class forumPostList extends ArrayAdapter<Forum> {
+    private ArrayList<Forum> forumPost;
     private Context context;
 
-    public forumPostList(Context context, ArrayList<HabitInstance> instances) {
-        super(context, 0, instances);
-        this.instances = instances;
+    public forumPostList(Context context, ArrayList<Forum> forumPost) {
+        super(context, 0, forumPost);
+        this.forumPost = forumPost;
         this.context = context;
     }
 
@@ -31,10 +31,10 @@ public class forumPostList extends ArrayAdapter<HabitInstance> {
             view = LayoutInflater.from(context).inflate(R.layout.user_list_content, parent, false);
         }
 
-        HabitInstance instance = instances.get(position);
+        Forum forumItem = forumPost.get(position);
 
         TextView userFullNameTextView = view.findViewById(R.id.user_name_text_view);
-        String temp = instance.getOpt_comment();
+        String temp = forumItem.getFirstName()+" "+ forumItem.getLastName();
         userFullNameTextView.setText(temp);
 
         return view;
