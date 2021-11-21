@@ -9,11 +9,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -34,6 +36,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * The home class is an activity which displays the habits of a user upon login. From here a user
@@ -89,7 +92,6 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             user = (User) getIntent().getSerializableExtra("user");
             UID = user.getUser();
             firstNameStr = (String) user.getFirstName();
-
         }
 
         TextView firstName = findViewById(R.id.userIdTextView);
@@ -346,6 +348,9 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                     FirebaseFirestoreException error) {
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     Log.d(TAG, String.valueOf(doc.getData().get("UID")));
+                    if (HID == null) {
+                        return;
+                    }
                     if (HID.matches((String) doc.getData().get("HID"))) {
                         if(doc.getId() == null){
                             return;
@@ -362,6 +367,9 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         return;
     }
 
+    /**
+     * This method is for the creation of the options menu
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -369,10 +377,45 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         return true;
     }
 
+    /**
+     * This method lets a user sign out or delete their account on a menu.
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent = null;
         switch (item.getItemId()) {
+            case R.id.signOutItem:
+                confirmMenuSelection(item.getItemId(), getString(R.string.SIGN_OUT));
+                return true;
+            case R.id.deleteItem:
+                confirmMenuSelection(item.getItemId(), getString(R.string.DEL_USER));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+    }
+
+    /**
+     * This function handles sign in/ authentication when the user clicks the sign in button,
+     * email and password fields must be non-empty
+     */
+    private void confirmMenuSelection(int itemId, String titleStr) {
+
+        AlertDialog.Builder confirmDialog = new AlertDialog.Builder(Home.this);
+        confirmDialog.setTitle(titleStr);
+        confirmDialog.setMessage(getString(R.string.SURE_STR)+titleStr.toLowerCase()+"?");
+
+        // Calling the function to reset password here
+        confirmDialog.setPositiveButton(R.string.CONFIRM_STR, (dialog, which) -> {
+            select(itemId);
+        });
+        confirmDialog.setNegativeButton(R.string.CANCEL_STR, (dialog, which) -> dialog.cancel());
+        confirmDialog.show();
+    }
+
+    private boolean select(int itemId){
+        Intent intent = null;
+        switch (itemId) {
             case R.id.signOutItem:
                 FirebaseAuth.getInstance().signOut();
                 intent = new Intent(this, Login.class);
@@ -383,40 +426,53 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             case R.id.deleteItem:
                 deleteUser();
                 user = null;
-                intent = new Intent(this, Login.class);
+                FirebaseAuth.getInstance().signOut();
+                intent = new Intent(Home.this, Login.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 finish();
-                return true;
             default:
-                return super.onOptionsItemSelected(item);
+                return true;
         }
-
     }
-
-    private void deleteUser(){
-        deleteUserHabits();
+    /**
+     * This method deletes a user from the database and all its associated data and habits and events.
+     */
+    private void deleteUser() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         user.delete()
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            Log.d(TAG, "User account deleted.");
+                            Log.d(TAG, getString(R.string.USER_DEL_LOG));
+                            deleteUserHabits();
+                            deleteUserData();
+                        }
+                        else {
+                            Log.d(TAG, getString(R.string.USER_NOT_DEL_LOG));
                         }
                     }
                 });
+    }
+
+    /**
+     * This method deletes all data (email, password etc) associated with a user.
+     */
+    private void deleteUserData(){
         CollectionReference collectionReference = db.collection("users");
         collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
                     FirebaseFirestoreException error) {
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    Log.d(TAG, String.valueOf(doc.getData().get("UID")));
-                    if (UID.matches((String) doc.getData().get("UID"))) {
+                    Log.d(TAG, String.valueOf(doc.getData().get(getString(R.string.UID))));
+                    if (UID.matches((String) doc.getData().get(getString(R.string.UID)))) {
                         if(doc.getId() == null){
                             return;
                         } else {
-                            collectionPath = "users";
+                            collectionPath = getString(R.string.USERS);
                             database.deleteData(collectionPath, doc.getId(), TAG);
                         }
                     }
@@ -424,33 +480,30 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 // from the cloud
             }
         });
-        user = null;
-        return;
     }
 
     /**
      * This method deletes all of the user's habit and associated events when the user is deleted.
      */
     private void deleteUserHabits() {
-        CollectionReference collectionReference = db.collection("Habit");
+        CollectionReference collectionReference = db.collection(getString(R.string.HABIT));
         collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
                     FirebaseFirestoreException error) {
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    Log.d(TAG, String.valueOf(doc.getData().get("UID")));
-                    if (UID.matches((String) doc.getData().get("UID"))) {
+                    Log.d(TAG, String.valueOf(doc.getData().get(getString(R.string.UID))));
+                    if (UID.matches((String) doc.getData().get(getString(R.string.UID)))) {
                         if(doc.getId() == null){
                             return;
                         } else {
-                            collectionPath = "Habit";
-                            deleteHabitInstances((String) doc.getData().get("HID"));
+                            collectionPath = getString(R.string.HABIT);
+                            System.out.println(getString(R.string.HID_IS)+(String) doc.getData().get(getString(R.string.HID)));
+                            deleteHabitInstances((String) doc.getData().get(getString(R.string.HID)));
                             database.deleteData(collectionPath, doc.getId(), TAG);
                         }
                     }
                 }
-                habitAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
-                // from the cloud
             }
         });
         return;

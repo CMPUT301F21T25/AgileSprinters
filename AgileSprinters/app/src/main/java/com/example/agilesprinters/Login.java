@@ -110,7 +110,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = auth.getCurrentUser();
-        if ( currentUser != null){
+        if (currentUser != null){
+            System.out.println("UID IS:" + currentUser.getUid());
             //Do anything here which needs to be done after user is set is complete
             getUser(currentUser);
         }
@@ -255,7 +256,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         switch(v.getId()){
             case R.id.register:  //if the register text is clicked, direct to the register page
                 intent = new Intent(Login.this, Register.class);
-                finish();
                 break;
             case R.id.loginBtn:  //if the login button is clicked, attempt to sign in
                 signIn();
