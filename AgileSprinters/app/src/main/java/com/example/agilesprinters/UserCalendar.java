@@ -1,5 +1,7 @@
 package com.example.agilesprinters;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,8 +19,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -29,11 +34,13 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -78,7 +85,6 @@ public class UserCalendar extends AppCompatActivity
 
     /**
      * This function creates the UI on the screen and listens for user input
-     *
      * @param savedInstanceState the instance state
      */
     @Override
@@ -214,9 +220,9 @@ public class UserCalendar extends AppCompatActivity
 
                 if (doc.getString("UID").equals(UID)
                         && (startDate.isBefore(currentDate) || startDate.isEqual(currentDate))
-                        && (habitDays.contains(todayDay))) {
-                    Habit newHabit = new Habit(doc.getId(), doc.getString("UID"), doc.getString("Title"), doc.getString("Reason"),
-                            doc.getString("Date to Start"), weekdays2, doc.getString("PrivacySetting"));
+                        && (habitDays.contains(todayDay))){
+                    Habit newHabit = new Habit(doc.getId(),doc.getString("UID"),doc.getString("Title"), doc.getString("Reason"),
+                            doc.getString("Date to Start"), weekdays2, doc.getString("PrivacySetting"), Integer.parseInt(doc.get("Progress").toString()));
                     toDoEvents.add(newHabit); // Adding habits from Firestore
                     toDoEventIds.add(doc.getId());
                 }
@@ -224,7 +230,7 @@ public class UserCalendar extends AppCompatActivity
 
             toDoEventAdapter.notifyDataSetChanged();
         });
-
+        
     }
 
     /**
@@ -245,7 +251,8 @@ public class UserCalendar extends AppCompatActivity
                         if ((eventDate.isEqual(currentDate))) {
                             HabitInstance newInstance = new HabitInstance(doc.getString("EID"), doc.getString("UID"), doc.getString("HID"),
                                     doc.getString("Opt_comment"), doc.getString("Date"), Integer.parseInt(doc.get("Duration").toString()), doc.getString("IID"));
-                            completedEventAdapter.add(newInstance);
+
+                            completedEvents.add(newInstance);
                             completedEventIds.add(doc.getId()); // Adding habit events from Firestore
                         }
 
@@ -268,6 +275,8 @@ public class UserCalendar extends AppCompatActivity
         System.out.println(bitmap);
         addHabitEventDatabase(habitInstance, bitmap);
         completedEventsScreenSetup();
+
+        updateProgressInDatabase(habitInstance, "ADD");
 
     }
 
@@ -318,11 +327,12 @@ public class UserCalendar extends AppCompatActivity
         database.deleteData(collectionPath, instance.getEID(), TAG);
 
         completedEventsScreenSetup();
+
+        updateProgressInDatabase(instance, "DELETE");
     }
 
     /**
      * This function adds a habit event/instance object to the database.
-     *
      * @param instance The habit instance that needs to be added to the database.
      */
     public void addHabitEventDatabase(HabitInstance instance, Bitmap bitmap) {
@@ -349,6 +359,31 @@ public class UserCalendar extends AppCompatActivity
         }
     }
 
+    private Integer getNewProgress(HabitInstance instance, String toDo) {
+
+        int completed = 0;
+
+        for (Habit habit1 : toDoEvents) {
+            if (habit1.getHID().equals(instance.getHID())) {
+                if (toDo == "ADD") {
+                    completed = habit1.getOverallProgress() + 1;
+                    //updateHomePage(habit1);
+                    break;
+                } else if (toDo == "DELETE") {
+                    completed = habit1.getOverallProgress() - 1;
+                    break;
+                }
+            }
+        }
+
+        return completed;
+    }
+
+    public void updateProgressInDatabase(HabitInstance instance, String toDo){
+        db.collection("Habit")
+                .document(instance.getHID())
+                .update("Progress", getNewProgress(instance, toDo));
+    }
 
     /**
      * This function captures the date chosen by the user once they press ok on the datePicker
@@ -423,6 +458,7 @@ public class UserCalendar extends AppCompatActivity
 
             case R.id.forumn:
                 break;
+
         }
         return false;
     }

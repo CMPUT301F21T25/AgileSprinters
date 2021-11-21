@@ -22,40 +22,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
                 android:layout_weight="50"
+                android:layout_marginLeft="6dp"
                 android:gravity="left"
                 android:text="Date"
 
                 />
 
             <TextView
-                android:id="@+id/habit_tag_textView"
+                android:id="@+id/privacy_setting_list"
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
                 android:layout_weight="50"
-                android:gravity="left"/>
+                android:gravity="right"
+                android:text = "Privacy Setting"
+                android:layout_marginRight="6dp"
+                />
             <!--                android:text="Tags to be added later"-->
 
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/habit_list_title_textView"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_marginLeft="6dp"
-            android:text="Habit Title"
-            android:textSize="18sp"/>
-
-
-        <TextView
-            android:id="@+id/habit_list_reason_textView"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_marginLeft="6dp"
-            android:text="Habit Reason"
-            android:layout_gravity="right"
-            android:textStyle="italic"
-            android:textSize="16sp"
-            />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -64,25 +48,55 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/privacy_setting_list"
+                android:id="@+id/habit_list_title_textView"
                 android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginLeft="6dp"
+                android:text="Habit Title"
+                android:layout_weight="50"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+
+
+            <TextView
+                android:id="@+id/habit_list_reason_textView"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:text="Habit Reason"
+                android:layout_marginRight="6dp"
+                android:layout_weight="50"
+                android:textStyle="italic"
+                android:textSize="16sp"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="50"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="270dp"
                 android:layout_height="20dp"
                 android:layout_weight="50"
                 android:layout_marginLeft="6dp"
                 android:layout_gravity="left"
-                android:text = "Privacy Setting"
-                />
+                android:text = "@string/PROGRESS_STR" />
 
-            <TextView
-                android:id="@+id/buttons_textView"
+            <ProgressBar
+                android:id="@+id/habit_list_progress_bar"
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
-                android:text="Buttons to be added later"
                 android:layout_weight="50"
+                android:layout_marginRight="6dp"
                 android:gravity="left"
-                />
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
 
         </LinearLayout>
+
+
 
     </LinearLayout>
 

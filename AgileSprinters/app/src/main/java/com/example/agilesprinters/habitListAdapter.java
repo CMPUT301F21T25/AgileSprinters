@@ -1,16 +1,22 @@
 package com.example.agilesprinters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * This class provides a custom layout for items in the habit list on the home page.
@@ -57,12 +63,37 @@ public class habitListAdapter extends ArrayAdapter<Habit> {
         TextView privacyText = view.findViewById(R.id.privacy_setting_list);
         TextView titleText = view.findViewById(R.id.habit_list_title_textView);
         TextView reasonText = view.findViewById(R.id.habit_list_reason_textView);
+        ProgressBar progressSoFar = view.findViewById(R.id.habit_list_progress_bar);
+
+        // Calculate progress
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+
+        LocalDate startDate = LocalDate.parse(habit.getDateToStart(), formatter);
+        System.out.println("dates " + currentDate + startDate);
+
+        Period period = Period.between(currentDate, startDate);
+
+        int numDaysForHabit = 0;
+        for (Boolean value : habit.getWeekdays().values()) {
+            if (value) {
+                numDaysForHabit += 1;
+            }
+        }
+
+        double totalDays = Math.ceil( (-1 * period.getDays()) / 7);
+        int k = (habit.getOverallProgress() / (int)(numDaysForHabit * totalDays)) * 100;
+
+        /**System.out.println("period " + period);
+        System.out.println("Total days " + totalDays);
+        System.out.println("Printing progress " + k);**/
 
         //pass values to variables
-        dateText.setText(mContext.getString(R.string.dateStarted) + habit.getDateToStart());
+        dateText.setText(mContext.getString(R.string.DATE_STARTED) + habit.getDateToStart());
         privacyText.setText(habit.getPrivacySetting());
         titleText.setText(habit.getTitle());
         reasonText.setText(habit.getReason());
+        progressSoFar.setProgress((habit.getOverallProgress() / (int)(numDaysForHabit * totalDays)) * 100);
 
         return view;
     }

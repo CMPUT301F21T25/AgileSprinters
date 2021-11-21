@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * This class is a fragment allows a user to view all the details of a habit and edit any details
@@ -40,6 +41,7 @@ public class viewEditHabitFragment extends DialogFragment {
     private Button saturdayButton;
     private Spinner privacySpinner;
     private Button[] weekdayEditButtonArray;
+    private Integer progress;
     private HashMap<String, Boolean> weekdaysHashMap;
     private HashMap<String, Boolean> originalWeekdaysHashMap;
     private viewEditHabitFragment.OnFragmentInteractionListener editFragmentListener;
@@ -137,6 +139,7 @@ public class viewEditHabitFragment extends DialogFragment {
         weekdaysHashMap = new HashMap<>();
         weekdaysHashMap.putAll(habit.getWeekdays());
         currentDate = habit.getDateToStart();
+        progress = habit.getOverallProgress();
 
 
         // Make sure spinner for privacy settings is set to the correct option
@@ -175,6 +178,7 @@ public class viewEditHabitFragment extends DialogFragment {
                 }
             });
         }
+
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         return builder
@@ -267,7 +271,7 @@ public class viewEditHabitFragment extends DialogFragment {
                     // If everything has been filled out, call the listener and send the edited
                     // habit back to the Home class and dismiss the dialog.
                     if (readyToClose) {
-                        editFragmentListener.onEditViewSaveChangesPressed(new Habit(HID, UID, newHabitTitle, newHabitReason, currentDate, weekdaysHashMap, newPrivacySetting));
+                        editFragmentListener.onEditViewSaveChangesPressed(new Habit(HID, UID, newHabitTitle, newHabitReason, currentDate, weekdaysHashMap, newPrivacySetting, progress));
                         dialog.dismiss();
                     }
                 }
