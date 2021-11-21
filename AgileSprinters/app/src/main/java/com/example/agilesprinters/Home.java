@@ -83,7 +83,6 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             user = (User) getIntent().getSerializableExtra("user");
             UID = user.getUser();
             firstNameStr = (String) user.getFirstName();
-
         }
 
         TextView firstName = findViewById(R.id.userIdTextView);

@@ -4,16 +4,24 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+
+import java.io.IOException;
 
 /**
  * This class is a fragment allows a user to view all the details of a habit and edit any details
@@ -29,6 +37,11 @@ public class editHabitEventFragment extends DialogFragment {
     private String UID;
     private String HID;
     private String IID;
+    private ImageView imageContainer;
+    private ImageView addCamPhotoBtn;
+    private ImageView addGalPhotoBtn;
+    private Uri selectedImg;
+    private Bitmap bitmapOfImg;
 
     private editHabitEventFragment.OnFragmentInteractionListener listener;
 
@@ -54,7 +67,7 @@ public class editHabitEventFragment extends DialogFragment {
      * to the user calendar class for it to implement.
      */
     public interface OnFragmentInteractionListener {
-        void onEditSavePressed(HabitInstance instance);
+        void onEditSavePressed(HabitInstance instance, Bitmap bitmapOfImg);
 
         void onDeletePressed(HabitInstance instance);
     }
@@ -101,6 +114,26 @@ public class editHabitEventFragment extends DialogFragment {
         optional_comment.setText(habitInstance.getOpt_comment());
         input_date.setText(habitInstance.getDate());
         input_duration.setText(String.valueOf(habitInstance.getDuration()));
+        imageContainer = view.findViewById(R.id.imageContainer);
+        addCamPhotoBtn = view.findViewById(R.id.add_Cam_Photo);
+        addGalPhotoBtn = view.findViewById(R.id.add_Gal_Photo);
+
+        addCamPhotoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //if(runtimePermissionForCamera()){
+                getCameraPicture();
+                //}
+            }
+        });
+
+        addGalPhotoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getGalleryPicture();
+                //hides alert dialog after gallery func is finished
+            }
+        });
 
         EID = habitInstance.getEID();
         UID = habitInstance.getUID();
@@ -119,6 +152,61 @@ public class editHabitEventFragment extends DialogFragment {
                      */
                 }).create();
 
+    }
+
+    //switches view to gallery and allows user to pick photo
+    private void getGalleryPicture() {
+        //allow user to pick a photo from gallery
+        Intent pickFromGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(pickFromGallery, 1);
+
+    }
+
+    private void getCameraPicture(){
+        //have to give permission to app to use camera
+        //android manifest give permission and then take permission at runtime from user
+        //switch view to camera view
+        Intent cameraView = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(cameraView, 2);
+    }
+
+    //overrides the method when activity is returning data (prev intent on line 82)
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+
+            case 1:
+                if(resultCode == -1){
+                    //URI is string of characters used to identify a resource (either by location name or both)
+                    //use android net uri
+                    selectedImg =  data.getData();
+                    try {
+                        bitmapOfImg = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(),selectedImg);
+                    } catch (IOException e) {
+                        System.out.println(e+"I error");
+                    }
+                    //set the original placeholder img to be the selected img
+                    imageContainer.setImageBitmap(bitmapOfImg);
+                }
+                break;
+
+            case 2:
+                Log.d("CAMERA", "case 2 for camera return result ");
+                if(resultCode == -1 && data != null){
+                    //retrieve data sent back from activity thru bundle
+                    Bundle bundle = data.getExtras();
+
+                    //bitmap of the image matrix of dots (each dot corresponds to pixel)
+                    //grabs img data from extra
+                    bitmapOfImg = (Bitmap) bundle.get("data");
+
+                    //set placeholder to bitmap of the img taken by camera
+                    imageContainer.setImageBitmap(bitmapOfImg);
+
+                }
+                break;
+        }
     }
 
     /**
@@ -160,7 +248,7 @@ public class editHabitEventFragment extends DialogFragment {
                 // If everything has been filled out, call the listener and send the edited
                 // habit back to the Home class and dismiss the dialog.
                 if (readyToClose) {
-                    listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date, Integer.parseInt(duration), IID));
+                    listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date, Integer.parseInt(duration), IID), bitmapOfImg);
                     dialog.dismiss();
                 }
             });

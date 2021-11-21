@@ -6,7 +6,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import android.app.DatePickerDialog;
+import android.app.WallpaperManager;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -18,6 +21,8 @@ import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -26,7 +31,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -48,7 +57,7 @@ import java.util.Map;
 public class UserCalendar extends AppCompatActivity
         implements addHabitEventFragment.OnFragmentInteractionListener,
         editHabitEventFragment.OnFragmentInteractionListener,
-        DatePickerDialog.OnDateSetListener, BottomNavigationView.OnNavigationItemSelectedListener{
+        DatePickerDialog.OnDateSetListener, BottomNavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "Instance";
 
@@ -59,13 +68,15 @@ public class UserCalendar extends AppCompatActivity
     private final ArrayList<HabitInstance> completedEvents = new ArrayList<>();
     private final ArrayList<String> completedEventIds = new ArrayList<>();
     private final ArrayList<String> toDoEventIds = new ArrayList<>();
-    BottomNavigationView bottomNavigationView;
+    private BottomNavigationView bottomNavigationView;
     private TextView title1;
-    FirebaseFirestore db;
+    private FirebaseFirestore db;
     private String UID;
     private User user;
     private String collectionPath;
     private Database database = new Database();
+    private String path;
+
 
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
@@ -76,6 +87,7 @@ public class UserCalendar extends AppCompatActivity
 
     /**
      * This function creates the UI on the screen and listens for user input
+     *
      * @param savedInstanceState the instance state
      */
     @Override
@@ -84,7 +96,7 @@ public class UserCalendar extends AppCompatActivity
         setContentView(R.layout.user_calendar);
 
 
-        if (UID == null){
+        if (UID == null) {
             user = (User) getIntent().getSerializableExtra("user");
             UID = user.getUser();
         }
@@ -166,15 +178,14 @@ public class UserCalendar extends AppCompatActivity
     /**
      * This function checks which day of the week is true
      * to see the habit days planned by the user
-     * @param weekdays
-     * This is a candidate map to check for the positive days
-     * @return
-     * Return a ArrayList of strings
+     *
+     * @param weekdays This is a candidate map to check for the positive days
+     * @return Return a ArrayList of strings
      */
     public ArrayList<String> getHabitDays(Map<String, Object> weekdays) {
-        String[] days = new String[]{ getString(R.string.SUNDAY_STR), getString(R.string.MONDAY_STR), getString(R.string.TUESDAY_STR),
+        String[] days = new String[]{getString(R.string.SUNDAY_STR), getString(R.string.MONDAY_STR), getString(R.string.TUESDAY_STR),
                 getString(R.string.WEDNESDAY_STR), getString(R.string.THURSDAY_STR), getString(R.string.FRIDAY_STR),
-                getString(R.string.SATURDAY_STR) };
+                getString(R.string.SATURDAY_STR)};
         ArrayList<String> habitDays = new ArrayList<>();
 
         for (String day : days) {
@@ -201,19 +212,19 @@ public class UserCalendar extends AppCompatActivity
         db.collection("Habit").addSnapshotListener((value, error) -> {
             toDoEvents.clear();
             toDoEventIds.clear();
-            for(QueryDocumentSnapshot doc: value) {
+            for (QueryDocumentSnapshot doc : value) {
                 Log.d(TAG, "Habits to do today " + String.valueOf(doc.getData().get("Title")));
                 System.out.println(doc.getString("Date to Start"));
                 // Gives the start date
                 LocalDate startDate = LocalDate.parse(doc.getString("Date to Start"), formatter);
                 Map<String, Object> weekdays = (Map<String, Object>) doc.getData().get("Weekdays");
-                HashMap<String,Boolean> weekdays2 = (HashMap<String, Boolean>) doc.getData().get("Weekdays");
+                HashMap<String, Boolean> weekdays2 = (HashMap<String, Boolean>) doc.getData().get("Weekdays");
                 ArrayList<String> habitDays = getHabitDays(weekdays);
 
                 if (doc.getString("UID").equals(UID)
                         && (startDate.isBefore(currentDate) || startDate.isEqual(currentDate))
-                        && (habitDays.contains(todayDay))){
-                    Habit newHabit = new Habit(doc.getId(),doc.getString("UID"),doc.getString("Title"), doc.getString("Reason"),
+                        && (habitDays.contains(todayDay))) {
+                    Habit newHabit = new Habit(doc.getId(), doc.getString("UID"), doc.getString("Title"), doc.getString("Reason"),
                             doc.getString("Date to Start"), weekdays2, doc.getString("PrivacySetting"));
                     toDoEvents.add(newHabit); // Adding habits from Firestore
                     toDoEventIds.add(doc.getId());
@@ -222,7 +233,7 @@ public class UserCalendar extends AppCompatActivity
 
             toDoEventAdapter.notifyDataSetChanged();
         });
-        
+
     }
 
     /**
@@ -236,11 +247,11 @@ public class UserCalendar extends AppCompatActivity
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 completedEvents.clear();
                 completedEventIds.clear();
-                for(QueryDocumentSnapshot doc: value) {
+                for (QueryDocumentSnapshot doc : value) {
                     Log.d(TAG, String.valueOf(doc.getData().get("Opt_comment")));
-                    if (doc.getString("UID").equals(UID) ){
+                    if (doc.getString("UID").equals(UID)) {
                         LocalDate eventDate = LocalDate.parse(doc.get("Date").toString(), formatter);
-                        if( (eventDate.isEqual(currentDate))){
+                        if ((eventDate.isEqual(currentDate))) {
                             HabitInstance newInstance = new HabitInstance(doc.getString("EID"), doc.getString("UID"), doc.getString("HID"),
                                     doc.getString("Opt_comment"), doc.getString("Date"), Integer.parseInt(doc.get("Duration").toString()), doc.getString("IID"));
                             completedEventAdapter.add(newInstance);
@@ -262,10 +273,9 @@ public class UserCalendar extends AppCompatActivity
      * @param habitInstance The instance object created by the addHabitEventFragment
      */
     @Override
-    public void onSavePressed(HabitInstance habitInstance) {
-
-        addHabitEventDatabase(habitInstance);
-
+    public void onSavePressed(HabitInstance habitInstance, Bitmap bitmap) {
+        System.out.println(bitmap);
+        addHabitEventDatabase(habitInstance, bitmap);
         completedEventsScreenSetup();
 
     }
@@ -273,73 +283,90 @@ public class UserCalendar extends AppCompatActivity
     /**
      * This function passes a habit instance to be updated once a user clicks
      * Save in the editHabitEventFragment dialog fragment.
+     *
      * @param instance The habit instance object changed in the editHabitEventFragment
      */
     @Override
-    public void onEditSavePressed(HabitInstance instance) {
-            HashMap<String, String> data = new HashMap<>();
-            data.put("EID", instance.getEID());
-            data.put("UID", instance.getUID());
-            data.put("HID", instance.getHID());
-            data.put("Date", instance.getDate());
-            data.put("Opt_comment",instance.getOpt_comment());
-            data.put("Duration",String.valueOf(instance.getDuration()));
-
-            // Makes a call to the database which handles it
-            collectionPath = "HabitEvents";
-            database.updateData(collectionPath, selectedHabitInstanceId, data, TAG);
-
-            completedEventsScreenSetup();
+    public void onEditSavePressed(HabitInstance instance, Bitmap bitmap) {
+        System.out.println("imagesPath"+instance.getIID()+instance.getEID());
+        if (instance.getIID() == null){
+            path = "images/"+System.currentTimeMillis() +".jpg";
+        } else {
+            path = instance.getIID();
         }
+
+        database.addImage(path, bitmap);
+
+        HashMap<String, String> data = new HashMap<>();
+        data.put("EID", instance.getEID());
+        data.put("UID", instance.getUID());
+        data.put("HID", instance.getHID());
+        data.put("IID", path);
+        data.put("Date", instance.getDate());
+        data.put("Opt_comment", instance.getOpt_comment());
+        data.put("Duration", String.valueOf(instance.getDuration()));
+
+        // Makes a call to the database which handles it
+        collectionPath = "HabitEvents";
+        database.updateData(collectionPath, selectedHabitInstanceId, data, TAG);
+
+        completedEventsScreenSetup();
+    }
 
 
     /**
      * This function deletes a habit instance object from the database once a user clicks
      * Delete in the editHabitEventFragment dialog fragment.
+     *
      * @param instance The habit instance object deleted in the editHabitEventFragment
      */
     @Override
     public void onDeletePressed(HabitInstance instance) {
-            collectionPath = "HabitEvents";
-            // Makes a call to the database which handles it
-            database.deleteData(collectionPath, instance.getEID(), TAG);
+        collectionPath = "HabitEvents";
+        // Makes a call to the database which handles it
+        database.deleteData(collectionPath, instance.getEID(), TAG);
 
-            completedEventsScreenSetup();
-        }
+        completedEventsScreenSetup();
+    }
 
     /**
      * This function adds a habit event/instance object to the database.
+     *
      * @param instance The habit instance that needs to be added to the database.
      */
-    public void addHabitEventDatabase(HabitInstance instance){
-            final CollectionReference collectionReference  =  db.collection("HabitEvents");
+    public void addHabitEventDatabase(HabitInstance instance, Bitmap bitmap) {
+        final CollectionReference collectionReference = db.collection("HabitEvents");
+        String path = "images/"+System.currentTimeMillis() +".jpg";
 
-            String instanceId = instance.getEID();
-            HashMap<String, Object> data = new HashMap<>();
+        database.addImage(path, bitmap);
 
-            if (instanceId != null){
-                data.put("EID", instance.getEID());
-                data.put("UID", instance.getUID());
-                data.put("HID", instance.getHID());
-                data.put("IID", instance.getIID());
-                data.put("Date", instance.getDate());
-                data.put("Opt_comment",instance.getOpt_comment());
-                data.put("Duration",instance.getDuration());
+        String instanceId = instance.getEID();
+        HashMap<String, Object> data = new HashMap<>();
 
-                // Makes a call to the database which handles it
-                collectionPath = "HabitEvents";
-                database.addData(collectionPath, instanceId, data, TAG);
-            }
+        if (instanceId != null) {
+            data.put("EID", instance.getEID());
+            data.put("UID", instance.getUID());
+            data.put("HID", instance.getHID());
+            data.put("IID", path);
+            data.put("Date", instance.getDate());
+            data.put("Opt_comment", instance.getOpt_comment());
+            data.put("Duration", instance.getDuration());
+
+            // Makes a call to the database which handles it
+            collectionPath = "HabitEvents";
+            database.addData(collectionPath, instanceId, data, TAG);
         }
+    }
 
 
     /**
      * This function captures the date chosen by the user once they press ok on the datePicker
      * fragment.
+     *
      * @param datePicker the datePicker dialog view
-     * @param year year of the date chosen by the user
-     * @param month month of the date chosen by the user
-     * @param day day of the month of the date chosen by the user
+     * @param year       year of the date chosen by the user
+     * @param month      month of the date chosen by the user
+     * @param day        day of the month of the date chosen by the user
      */
     @Override
     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
@@ -351,10 +378,10 @@ public class UserCalendar extends AppCompatActivity
         //make sure date is empty before setting it to the date picked
         String date = "";
 
-        if(month+1 < 10) date+= "0";
+        if (month + 1 < 10) date += "0";
         date += (month + 1) + "/";
 
-        if (day < 10 ) date += "0";
+        if (day < 10) date += "0";
         date += day + "/";
 
         date += String.valueOf(year);
@@ -368,9 +395,9 @@ public class UserCalendar extends AppCompatActivity
     /**
      * This method contains the logic for switching screens by selecting an item from the navigation
      * bar.
+     *
      * @param item This is the item selected by the user
-     * @return
-     * Returns a boolean based on which activity the user is currently in and which item was
+     * @return Returns a boolean based on which activity the user is currently in and which item was
      * clicked.
      */
     @Override
@@ -384,7 +411,7 @@ public class UserCalendar extends AppCompatActivity
                 break;
 
             case R.id.calendar:
-                if(this instanceof UserCalendar){
+                if (this instanceof UserCalendar) {
                     return true;
                 } else {
                     Intent intent2 = new Intent(this, UserCalendar.class);
