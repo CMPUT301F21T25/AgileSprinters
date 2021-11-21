@@ -238,6 +238,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                     Intent intent = new Intent(this, Home.class);
                     //add bundle to send data if need
                     startActivity(intent);
+                    finish();
                 }
                 break;
 
@@ -246,6 +247,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 intent.putExtra("user", user);
                 //add bundle to send data if need
                 startActivity(intent);
+                finish();
                 break;
 
             case R.id.notification:
@@ -253,6 +255,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 intentNotification.putExtra("user", user);
                 //add bundle to send data if need
                 startActivity(intentNotification);
+                finish();
                 break;
 
             case R.id.forumn:
