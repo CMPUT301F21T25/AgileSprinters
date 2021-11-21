@@ -4,8 +4,11 @@ import static android.content.ContentValues.TAG;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -89,5 +92,15 @@ public class FollowerFollowing extends AppCompatActivity {
             }
         });
 
+        userList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                User user = (User) adapterView.getItemAtPosition(i);
+                Intent intent = new Intent(FollowerFollowing.this, OtherUserScreen.class);
+                intent.putExtra(getString(R.string.USER_STR), user);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 }

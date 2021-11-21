@@ -55,7 +55,6 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     private String collectionPath;
     private Database database = new Database();
 
-
     /**
      * This function creates the UI on the screen and listens for user input
      * @param savedInstanceState the instance state
@@ -76,8 +75,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         habitArrayList = new ArrayList<>();
         habitAdapter = new habitListAdapter(this, habitArrayList);
         habitList.setAdapter(habitAdapter);
-        db = FirebaseFirestore.getInstance();
-        CollectionReference habitCollectionReference = db.collection("Habit");
+
 
         if (user == null) {
             user = (User) getIntent().getSerializableExtra("user");
@@ -87,6 +85,10 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
         TextView firstName = findViewById(R.id.userIdTextView);
         firstName.setText(firstNameStr);
+
+
+        db = FirebaseFirestore.getInstance();
+        CollectionReference habitCollectionReference = db.collection("Habit");
         /**
          * This is a database listener. Each time the Home page is created, it will read the contents
          * of the database and put it in our listview.
@@ -113,8 +115,6 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 // from the cloud
             }
         });
-
-
 
         /**
          * This is an on item click listener which listens for when a user taps on an item in the
@@ -183,7 +183,6 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         });
 
     }
-
 
     /**
      * This function passes a habit to be added to the list once the user clicks add on the
