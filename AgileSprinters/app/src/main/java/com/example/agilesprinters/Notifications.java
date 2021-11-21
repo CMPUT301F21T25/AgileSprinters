@@ -3,6 +3,8 @@ package com.example.agilesprinters;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -13,10 +15,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 
-public class Notifications extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
-    private ArrayList<String> notificationList;
+public class Notifications extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener,
+        AcceptDeclineFollowRequestFragment.OnFragmentInteractionListener{
+    private ArrayList<User> notificationList;
     private ListView notificationListView;
-    private ArrayAdapter<String> notificationAdapter;
+    private ArrayAdapter<User> notificationAdapter;
     BottomNavigationView bottomNavigationView;
     private static final String TAG = "Notifications";
     private String UID;
@@ -40,9 +43,24 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
 
         notificationListView= findViewById(R.id.notification_list);
         notificationList = new ArrayList<>();
-
-        notificationAdapter = new ArrayAdapter<String>(this, R.layout.notifications_content,notificationList);
+        notificationAdapter = new NotificationsListAdapter(this, notificationList);
         notificationListView.setAdapter(notificationAdapter);
+
+        for(int i = 0; i < 20; i++){
+            User mockUser = new User();
+            mockUser.setFirstName("John");
+            mockUser.setLastName("Doe");
+            notificationAdapter.add(mockUser);
+        }
+
+        notificationListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                User requestingUser = (User) adapterView.getItemAtPosition(i);
+                AcceptDeclineFollowRequestFragment values = new AcceptDeclineFollowRequestFragment().newInstance(requestingUser);
+                values.show(getSupportFragmentManager(), "ACCEPT/DECLINE FRAGMENT");
+            }
+        });
 
 
     }
@@ -76,5 +94,15 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
                 }
         }
         return false;
+    }
+
+    @Override
+    public void onAcceptPressed(User user) {
+
+    }
+
+    @Override
+    public void onDeclinePressed(User user) {
+
     }
 }

@@ -177,14 +177,6 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         updateHabitDatabase(habit);
     }
 
-    /**
-     * This method is called when the user presses cancel on the editViewCancel fragment. Will not
-     * change the habit.
-     */
-    @Override
-    public void onEditViewCancelPressed() {
-    }
-
 
     //onclick for follow and followers. Not to be implemented until after the halfway checkpoint
     public void follow(View view) {

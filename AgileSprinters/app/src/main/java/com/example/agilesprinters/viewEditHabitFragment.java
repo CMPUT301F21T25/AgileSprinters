@@ -68,8 +68,6 @@ public class viewEditHabitFragment extends DialogFragment {
      */
     public interface OnFragmentInteractionListener {
         void onEditViewSaveChangesPressed(Habit habit);
-
-        void onEditViewCancelPressed();
     }
 
     /**
@@ -183,7 +181,10 @@ public class viewEditHabitFragment extends DialogFragment {
                 .setNegativeButton(getString(R.string.CANCEL_BTN_STR), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-
+                        /*
+                         * Do not do anything here and instead define what to do below in overridden
+                         * negative button.
+                         */
                     }
                 })
                 .setPositiveButton(getString(R.string.SAVE_BTN_STR), new DialogInterface.OnClickListener() {

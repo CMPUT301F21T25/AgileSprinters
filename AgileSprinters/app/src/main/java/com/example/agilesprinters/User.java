@@ -14,9 +14,10 @@ import java.io.Serializable;
  * @author Hari Bheesetti
  */
 public class User implements Serializable {
-
     private String userID;
     private String firstName;
+    private String lastName;
+    private String emailId;
 
     public User() { }
 
@@ -26,9 +27,6 @@ public class User implements Serializable {
         this.lastName = lastName;
         this.emailId = emailId;
     }
-
-    private String lastName;
-    private String emailId;
 
     public String getFirstName() {
         return firstName;
