@@ -68,28 +68,26 @@ public class FollowerFollowing extends AppCompatActivity {
 
         titleTextView.setText(title);
 
-        for(int i = 0; i < userTempList.size(); i++) {
-            db = FirebaseFirestore.getInstance();
-            CollectionReference collectionReference = db.collection("users");
-            uniqueId = userTempList.get(i);
-            collectionReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                @Override
-                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                        Log.d(TAG, String.valueOf(doc.getData().get("UID")));
-                        if (uniqueId.matches((String) doc.getData().get("UID"))) {
-                            emailId = (String) doc.getData().get("Email ID");
-                            firstName = (String)  doc.getData().get("First Name");
-                            lastName = (String) doc.getData().get("Last Name");
-                            followersList = (ArrayList<String>) doc.getData().get("followers");
-                            followingList = (ArrayList<String>) doc.getData().get("following");
-                            followRequestList = (ArrayList<String>) doc.getData().get("follow request list");
-                            userDataList.add(new User(uniqueId, firstName, lastName, emailId, followersList, followingList, followRequestList));
-                        }
+        db = FirebaseFirestore.getInstance();
+        CollectionReference collectionReference = db.collection("users");
+        collectionReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    Log.d(TAG, String.valueOf(doc.getData().get("UID")));
+                    if (userTempList.contains((String) doc.getData().get("UID"))) {
+                        emailId = (String) doc.getData().get("Email ID");
+                        firstName = (String)  doc.getData().get("First Name");
+                        lastName = (String) doc.getData().get("Last Name");
+                        followersList = (ArrayList<String>) doc.getData().get("followers");
+                        followingList = (ArrayList<String>) doc.getData().get("following");
+                        followRequestList = (ArrayList<String>) doc.getData().get("follow request list");
+                        userDataList.add(new User((String) doc.getData().get("UID"), firstName, lastName, emailId, followersList, followingList, followRequestList));
                     }
-                    userAdapter.notifyDataSetChanged();
                 }
-            });
-        }
+                userAdapter.notifyDataSetChanged();
+            }
+        });
+
     }
 }
