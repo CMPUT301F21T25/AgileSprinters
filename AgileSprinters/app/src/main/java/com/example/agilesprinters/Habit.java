@@ -16,7 +16,7 @@ public class Habit implements Serializable {
     private String dateToStart;
     private HashMap<String, Boolean> weekdays;
     private String privacySetting;
-    private HashMap<String, Integer> overallProgress;
+    private int overallProgress;
 
     /**
      * This will return the value of the user ID, UID.
@@ -67,7 +67,7 @@ public class Habit implements Serializable {
      * @param privacySetting The privacy setting of the habit given as a string.
      */
     public Habit(String HID, String UID, String title, String reason, String dateToStart,
-                 HashMap<String, Boolean> weekdays, String privacySetting, HashMap<String,Integer> overallProgress) {
+                 HashMap<String, Boolean> weekdays, String privacySetting, int overallProgress) {
         this.UID = UID;
         this.HID = HID;
         this.title = title;
@@ -171,11 +171,11 @@ public class Habit implements Serializable {
         this.dateToStart = dateToStart;
     }
 
-    public HashMap<String,Integer> getOverallProgress() {
+    public int getOverallProgress() {
         return overallProgress;
     }
 
-    public void setOverallProgress(HashMap<String,Integer> overallProgress) {
+    public void setOverallProgress(int overallProgress) {
         this.overallProgress = overallProgress;
     }
 }

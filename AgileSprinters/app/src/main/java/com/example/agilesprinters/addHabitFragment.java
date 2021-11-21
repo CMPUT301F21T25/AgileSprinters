@@ -272,7 +272,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
                         db = FirebaseFirestore.getInstance();
                         DocumentReference newHabitRef = db.collection(getString(R.string.HABIT_COLLECTION_PATH)).document();
                         fragmentListener.onAddPressed(new Habit(newHabitRef.getId(),user.getUser(),habit_title
-                                ,habit_reason,date, weekdaysHashMap, privacySetting, progressSoFar));
+                                ,habit_reason,date, weekdaysHashMap, privacySetting, 0));
                         dialog.dismiss();
                     }
                 }

@@ -1,5 +1,7 @@
 package com.example.agilesprinters;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,8 +18,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -28,6 +33,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
@@ -214,7 +220,7 @@ public class UserCalendar extends AppCompatActivity
                         && (startDate.isBefore(currentDate) || startDate.isEqual(currentDate))
                         && (habitDays.contains(todayDay))){
                     Habit newHabit = new Habit(doc.getId(),doc.getString("UID"),doc.getString("Title"), doc.getString("Reason"),
-                            doc.getString("Date to Start"), weekdays2, doc.getString("PrivacySetting"), (HashMap<String,Integer>) doc.getData().get("Progress"));
+                            doc.getString("Date to Start"), weekdays2, doc.getString("PrivacySetting"), Integer.parseInt(doc.get("Progress").toString()));
                     toDoEvents.add(newHabit); // Adding habits from Firestore
                     toDoEventIds.add(doc.getId());
                 }
@@ -269,8 +275,20 @@ public class UserCalendar extends AppCompatActivity
 
         completedEventsScreenSetup();
 
-        updateProgressInDatabase(habitInstance);
+        updateProgressInDatabase(habitInstance, "ADD");
 
+    }
+
+    public void updateHomePage(Habit habit) {
+        ProgressBar progressSoFar = findViewById(R.id.habit_list_progress_bar);
+        // Calculate progress
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+
+        LocalDate startDate = LocalDate.parse(habit.getDateToStart(), formatter);
+
+        Period period = Period.between(currentDate, startDate);
+        int diff = Math.abs(period.getDays());
     }
 
     /**
@@ -308,6 +326,8 @@ public class UserCalendar extends AppCompatActivity
         database.deleteData(collectionPath, instance.getEID(), TAG);
 
         completedEventsScreenSetup();
+
+        updateProgressInDatabase(instance, "DELETE");
     }
 
     /**
@@ -335,40 +355,30 @@ public class UserCalendar extends AppCompatActivity
         }
     }
 
-    private HashMap<String,Integer> getNewProgress(HabitInstance instance) {
-        int completedEventsNum = 1;
-        int totalEventsNum = 0;
+    private Integer getNewProgress(HabitInstance instance, String toDo) {
 
-        HashMap<String,Integer> updatedProgress = new HashMap<String, Integer>();
-        System.out.println("Completed events"+completedEvents);
-        for (HabitInstance ins : completedEvents) {
-            if (ins.getHID().equals(instance.getHID())) {
-                completedEventsNum++;
-            }
-        }
+        int completed = 0;
 
-        for (Habit habit : toDoEvents) {
-            if (habit.getHID().equals(instance.getHID())) {
-                int totalDays = 0;
-                for (Boolean value : habit.getWeekdays().values()) {
-                    if (value) {
-                        totalDays = totalDays + 1;
-                    }
+        for (Habit habit1 : toDoEvents) {
+            if (habit1.getHID().equals(instance.getHID())) {
+                if (toDo == "ADD") {
+                    completed = habit1.getOverallProgress() + 1;
+                    //updateHomePage(habit1);
+                    break;
+                } else if (toDo == "DELETE") {
+                    completed = habit1.getOverallProgress() - 1;
+                    break;
                 }
-                totalEventsNum = totalDays * 12;
             }
         }
 
-        updatedProgress.put("Completed", completedEventsNum);
-        updatedProgress.put("Total", totalEventsNum);
-
-        return updatedProgress;
+        return completed;
     }
 
-    public void updateProgressInDatabase(HabitInstance instance){
+    public void updateProgressInDatabase(HabitInstance instance, String toDo){
         db.collection("Habit")
                 .document(instance.getHID())
-                .update("Progress", getNewProgress(instance));
+                .update("Progress", getNewProgress(instance, toDo));
     }
 
     /**
@@ -419,6 +429,7 @@ public class UserCalendar extends AppCompatActivity
                 intent.putExtra("user", user);
                 //add bundle to send data if need
                 startActivity(intent);
+                finish();
                 break;
 
             case R.id.calendar:
@@ -428,6 +439,7 @@ public class UserCalendar extends AppCompatActivity
                     Intent intent2 = new Intent(this, UserCalendar.class);
                     //add bundle to send data if need
                     startActivity(intent2);
+                    finish();
                     break;
                 }
 

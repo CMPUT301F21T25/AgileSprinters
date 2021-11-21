@@ -39,7 +39,7 @@ public class viewEditHabitFragment extends DialogFragment {
     private Button fridayButton;
     private Button saturdayButton;
     private Spinner privacySpinner;
-    private HashMap<String, Integer> progressSoFar;
+    private Integer progress;
     private HashMap<String, Boolean> weekdaysHashMap;
     private viewEditHabitFragment.OnFragmentInteractionListener editFragmentListener;
     private String HID;
@@ -133,6 +133,7 @@ public class viewEditHabitFragment extends DialogFragment {
         currentDateTextView.setText("Date Started: " + habit.getDateToStart());
         weekdaysHashMap = habit.getWeekdays();
         currentDate = habit.getDateToStart();
+        progress = habit.getOverallProgress();
 
 
         // Make sure spinner for privacy settings is set to the correct option
@@ -242,21 +243,10 @@ public class viewEditHabitFragment extends DialogFragment {
                         buttonError.setText(getString(R.string.WEEKDAY_BTN_ERR_MSG));
                     }
 
-                    // Adding for progress
-                    progressSoFar = new HashMap<>();
-                    int totalDays = 0;
-                    for (Boolean value : weekdaysHashMap.values()) {
-                        if (value) {
-                            totalDays = totalDays + 1;
-                        }
-                    }
-                    progressSoFar.put("Completed", 0);
-                    progressSoFar.put("Total",totalDays*12);
-
                     // If everything has been filled out, call the listener and send the edited
                     // habit back to the Home class and dismiss the dialog.
                     if (readyToClose) {
-                        editFragmentListener.onEditViewSaveChangesPressed(new Habit(HID, UID, newHabitTitle, newHabitReason, currentDate, weekdaysHashMap, newPrivacySetting, progressSoFar));
+                        editFragmentListener.onEditViewSaveChangesPressed(new Habit(HID, UID, newHabitTitle, newHabitReason, currentDate, weekdaysHashMap, newPrivacySetting, progress));
                         dialog.dismiss();
                     }
                 }

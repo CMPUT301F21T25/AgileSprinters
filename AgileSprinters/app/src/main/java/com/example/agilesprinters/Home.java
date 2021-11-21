@@ -101,11 +101,12 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                         String dateToStart = (String) doc.getData().get("Date to Start");
                         HashMap<String, Boolean> weekdays = (HashMap<String, Boolean>) doc.getData().get("Weekdays");
                         String privacySetting = (String) doc.getData().get("PrivacySetting");
-                        HashMap<String,Integer> progress = (HashMap<String,Integer>) doc.getData().get("Progress");
+                        int progress = Integer.parseInt(doc.get("Progress").toString());
 
                         habitArrayList.add(new Habit(doc.getId(), UID, title, reason, dateToStart, weekdays, privacySetting, progress));
                     }
                 }
+                System.out.println("List " + habitArrayList);
                 habitAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
                 // from the cloud
             }
@@ -212,6 +213,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                     Intent intent = new Intent(this, Home.class);
                     //add bundle to send data if need
                     startActivity(intent);
+                    finish();
                 }
                 break;
 
@@ -220,6 +222,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 intent.putExtra("user", user);
                 //add bundle to send data if need
                 startActivity(intent);
+                finish();
                 break;
 
             case R.id.forumn:

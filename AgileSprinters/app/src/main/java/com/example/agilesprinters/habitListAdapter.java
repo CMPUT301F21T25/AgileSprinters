@@ -12,6 +12,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -62,25 +65,35 @@ public class habitListAdapter extends ArrayAdapter<Habit> {
         TextView reasonText = view.findViewById(R.id.habit_list_reason_textView);
         ProgressBar progressSoFar = view.findViewById(R.id.habit_list_progress_bar);
 
-        //calculate progress
-        ProgressBarHabit bar = new ProgressBarHabit();
-        bar.setTotalEventsPlanned(habit.getWeekdays());
+        // Calculate progress
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
-        // get total events completed
-        // access the database
-        // check for files with the same UID and HID
-        // send as a parameter
-        // bar.setEventsCompleted(habit.getUID(), habit.getHID());
-        // System.out.println("Events completed " + bar.getEventsCompleted());
+        LocalDate startDate = LocalDate.parse(habit.getDateToStart(), formatter);
+        System.out.println("dates " + currentDate + startDate);
 
-        //double progress = (habit.getOverallProgress().get(0) / habit.getOverallProgress().get(1)) * 100;
-        double progress = 0;
+        Period period = Period.between(currentDate, startDate);
+
+        int numDaysForHabit = 0;
+        for (Boolean value : habit.getWeekdays().values()) {
+            if (value) {
+                numDaysForHabit += 1;
+            }
+        }
+
+        double totalDays = Math.ceil( (-1 * period.getDays()) / 7);
+        int k = (habit.getOverallProgress() / (int)(numDaysForHabit * totalDays)) * 100;
+
+        /**System.out.println("period " + period);
+        System.out.println("Total days " + totalDays);
+        System.out.println("Printing progress " + k);**/
+
         //pass values to variables
         dateText.setText(mContext.getString(R.string.DATE_STARTED) + habit.getDateToStart());
         privacyText.setText(habit.getPrivacySetting());
         titleText.setText(habit.getTitle());
         reasonText.setText(habit.getReason());
-        progressSoFar.setProgress((int) progress);
+        progressSoFar.setProgress((habit.getOverallProgress() / (int)(numDaysForHabit * totalDays)) * 100);
 
         return view;
     }
