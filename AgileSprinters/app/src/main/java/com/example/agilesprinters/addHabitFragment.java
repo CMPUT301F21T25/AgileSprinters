@@ -22,8 +22,10 @@ import androidx.fragment.app.DialogFragment;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * This class is a dialog fragment that allows the user to add a new habit.
@@ -42,6 +44,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
     private Button saturdayBtn;
     private String date = "";
     private HashMap<String, Boolean> weekdaysHashMap;
+    private HashMap<String,Integer> progressSoFar;
     private Spinner privacySpinner;
     private String UID;
     private addHabitFragment.OnFragmentInteractionListener fragmentListener;
@@ -55,7 +58,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
     public static addHabitFragment newInstance(String UID) {
         addHabitFragment frag = new addHabitFragment();
         Bundle args = new Bundle();
-        args.putString(String.valueOf(R.string.hidKey), UID);
+        args.putString(String.valueOf(R.string.HID), UID);
         frag.setArguments(args);
 
         return frag;
@@ -127,7 +130,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
         //inflate the layout for this fragment
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.add_habit_fragment, null);
 
-        UID = getArguments().getString(getString(R.string.hidKey));
+        UID = getArguments().getString(getString(R.string.HID));
 
         String[] weekdayStrArray = new String[]{getString(R.string.SUNDAY_STR), getString(R.string.MONDAY_STR), getString(R.string.TUESDAY_STR),
                 getString(R.string.WEDNESDAY_STR), getString(R.string.THURSDAY_STR), getString(R.string.FRIDAY_STR),
@@ -259,7 +262,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
                         db = FirebaseFirestore.getInstance();
                         DocumentReference newHabitRef = db.collection(getString(R.string.HABIT_COLLECTION_PATH)).document();
                         fragmentListener.onAddPressed(new Habit(newHabitRef.getId(),user.getUser(),habit_title
-                                ,habit_reason,date, weekdaysHashMap, privacySetting));
+                                ,habit_reason,date, weekdaysHashMap, privacySetting, 0));
                         dialog.dismiss();
                     }
                 }

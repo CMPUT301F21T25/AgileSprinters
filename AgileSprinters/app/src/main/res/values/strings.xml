@@ -20,7 +20,7 @@
     <string name="lastNameErr">Last name can not be empty</string>
     <string name="passwordErr">password can not be empty</string>
     <string name="confirmPasswordErr">confirm password can not be empty</string>
-    <string name="emailErr" >email can not be empty</string>
+    <string name="emailErr">email can not be empty</string>
     <string name="passwordMatchErr" type="id">passwords do not match</string>
     <string name="emptyString">dummy</string>
     <string name="userExistsErr">The email address is already in use by another account</string>
@@ -50,7 +50,7 @@
     <string name="LAST_NAME_ERR">Last name can not be empty</string>
     <string name="PASSWORD_ERR">Password can not be empty</string>
     <string name="CONFIRM_PASSWORD_ERR">Confirm password can not be empty</string>
-    <string name="EMAIL_ERR" >Email can not be empty</string>
+    <string name="EMAIL_ERR">Email can not be empty</string>
     <string name="PASSWORD_MATCH_ERR" type="id">passwords do not match</string>
     <string name="CANCEL_STR">Cancel</string>
     <string name="USER_STR">user</string>
@@ -74,9 +74,6 @@
     <string name="EMAIL_SENT">Email Sent</string>
     <string name="ON_FRAGMENT_IMPLEMENT_ERR">must implement OnFragmentInteractionListener</string>
     <string name="POSITION_KEY">position</string>
-    <string name="UID_KEY">UID</string>
-    <string name="HID_KEY">HID</string>
-    <string name="EID_KEY">EID</string>
     <string name="datePickerTag">DATE PICKER</string>
     <string name="AddHabitInstanceFragmentTitle">Add Habit Event</string>
     <string name="cancelBtnStr">Cancel</string>
@@ -103,7 +100,7 @@
     <string name="HID">HID</string>
     <string name="UID">UID</string>
     <string name="EID">EID</string>
-    <string name="habit">Habit</string>
+    <string name="HABIT">Habit</string>
     <string name="HabitEvents">HabitEvents</string>
     <string name="delDocErr">Error deleting document</string>
     <string name="delDocSuccess">DocumentSnapshot successfully deleted!</string>
@@ -112,7 +109,7 @@
     <string name="delFrag">DELETE</string>
     <string name="addFrag">ADD</string>
     <string name="viewEditFrag">VIEW/EDIT</string>
-    <string name="dateStarted">\"  Date Started: \"</string>
+    <string name="dateStarted">\ Date Started: </string>
     <string name="addhabitBtn">addHabitBtn</string>
     <string name="CANCEL_BTN_STR">Cancel</string>
     <string name="SAVE_BTN_STR">Save</string>
@@ -137,7 +134,7 @@
     <string name="EMPTY_STRING">dummy</string>
     <string name="HABIT_TEXT">habit</string>
     <string name="FRAG_ERROR_MSG">must implement OnFragmentInteractionListener</string>
-    <string name="POSITION_TEXT" >position</string>
+    <string name="POSITION_TEXT">position</string>
     <string name="PRIVATE_TEXT">private</string>
     <string name="VIEW_EDIT_HABIT_FRAG_TITLE">View/Edit Habit</string>
     <string name="EMPTY_FIELD_ERR_MSG">This field cannot be blank</string>
@@ -152,8 +149,18 @@
     <string name="DELETE_HABIT_CONFIRM_STR">Would you like to delete this habit and all it\'s corresponding events?</string>
     <string name="RED_HEX_CODE">#ff0000</string>
     <string name="DATE_PICKER_STR">DATE PICKER</string>
-    <string name="hidKey">HID</string>
+    <string name="SIGN_OUT">Sign out</string>
+    <string name="DEL_ACCOUNT">Delete account</string>
     <string name="IID">IID</string>
+    <string name="CONFIRM_STR">Confirm</string>
+    <string name="SURE_STR">\Are you sure you want to&#160;</string>
+    <string name="DEL_USER">Delete user</string>
+    <string name="USER_DEL_LOG">User account deleted.</string>
+    <string name="USER_NOT_DEL_LOG">User account could not deleted.</string>
+    <string name="USERS">users</string>
+    <string name="HID_IS">HID IS: </string>
+    <string name="PROGRESS_STR">Progress</string>
+    <string name="DATE_STARTED">Date started:</string>
     <string name="FOLLOW_REQUEST_MESSAGE">has requested to follow you</string>
     <string name="FOLLOW_REQUEST_FRAGMENT_MESSAGE">has requested to follow you!</string>
     <string name="ACCEPT_BUTTON_COLOR">#86ff70</string>

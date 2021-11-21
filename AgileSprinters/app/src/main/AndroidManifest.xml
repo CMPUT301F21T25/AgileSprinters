@@ -12,6 +12,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AgileSprinters">
         <activity
+            android:name=".ForumManager"
+            android:exported="false" />
+        <activity
+            android:name=".OtherUserScreen"
+            android:exported="true" />
+        <activity
+            android:name=".FollowerFollowing"
+            android:exported="true" />
+        <activity
             android:name=".Notifications"
             android:exported="false" />
         <activity

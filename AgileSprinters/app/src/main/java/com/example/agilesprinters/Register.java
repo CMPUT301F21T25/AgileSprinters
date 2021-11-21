@@ -123,7 +123,7 @@ public class Register extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         // Register success, update UI accordingly
-                        Log.d(TAG, getString(R.string.USER_CREATION_FAILURE_MSG) );
+                        Log.d(TAG, getString(R.string.USER_CREATION_SUCCESS_MSG) );
                         FirebaseUser user = auth.getCurrentUser();
                         System.out.println(user.getUid());
                         createUserDoc(user, firstName, lastName);
@@ -154,6 +154,7 @@ public class Register extends AppCompatActivity {
             auth.signOut();
             Intent intent = new Intent(Register.this, Login.class);
             startActivity(intent);
+            finish();
         }
     }
 
@@ -176,6 +177,7 @@ public class Register extends AppCompatActivity {
         HashMap<String, Object> data = new HashMap<>();
         ArrayList<String> followers = new ArrayList<>();
         ArrayList<String> following = new ArrayList<>();
+        ArrayList<String> followRequestList = new ArrayList<>();
 
         data.put("UID", userId);
         data.put(getString(R.string.EMAIL_ID_STR), emailID);
@@ -183,6 +185,7 @@ public class Register extends AppCompatActivity {
         data.put(getString(R.string.LAST_NAME_STR), lastName);
         data.put("followers", followers);
         data.put("following", following);
+        data.put("follow request list", followRequestList);
 
         collectionReference
                 .document(userId)
