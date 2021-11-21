@@ -159,4 +159,6 @@
     <string name="USER_NOT_DEL_LOG">User account could not deleted.</string>
     <string name="USERS">users</string>
     <string name="HID_IS">HID IS: </string>
+    <string name="PROGRESS_STR">Progress</string>
+    <string name="DATE_STARTED">Date started:</string>
 </resources>
