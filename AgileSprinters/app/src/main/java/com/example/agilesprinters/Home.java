@@ -14,8 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
@@ -28,7 +26,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * The home class is an activity which displays the habits of a user upon login. From here a user
@@ -261,6 +258,10 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 break;
 
             case R.id.forumn:
+                Intent forumIntent = new Intent(this, ForumManager.class);
+                forumIntent.putExtra("user", user);
+                startActivity(forumIntent);
+                finish();
                 break;
 
         }

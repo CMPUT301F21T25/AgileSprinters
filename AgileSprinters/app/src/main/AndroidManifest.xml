@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.agilesprinters" >
+    package="com.example.agilesprinters">
 
     <application
         android:allowBackup="true"
@@ -10,7 +10,10 @@
         android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AgileSprinters" >
+        android:theme="@style/Theme.AgileSprinters">
+        <activity
+            android:name=".ForumManager"
+            android:exported="false" />
         <activity
             android:name=".OtherUserScreen"
             android:exported="true" />

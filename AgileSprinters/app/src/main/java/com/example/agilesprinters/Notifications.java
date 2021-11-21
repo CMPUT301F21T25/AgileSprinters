@@ -17,7 +17,7 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
     private ArrayList<String> notificationList;
     private ListView notificationListView;
     private ArrayAdapter<String> notificationAdapter;
-    BottomNavigationView bottomNavigationView;
+    private BottomNavigationView bottomNavigationView;
     private static final String TAG = "Notifications";
     private String UID;
     private User user;
@@ -63,8 +63,7 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
 
                 startActivity(intentCalendar);
                 break;
-            case R.id.forumn:
-                break;
+
             case R.id.notification:
                 if(this instanceof Notifications){
                     return true;
@@ -74,6 +73,14 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
                     startActivity(intent2);
                     break;
                 }
+
+            case R.id.forumn:
+                Intent forumIntent = new Intent(this, ForumManager.class);
+                forumIntent.putExtra("user", user);
+                startActivity(forumIntent);
+                finish();
+                break;
+
         }
         return false;
     }
