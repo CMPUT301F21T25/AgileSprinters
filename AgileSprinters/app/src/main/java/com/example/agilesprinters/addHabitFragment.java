@@ -117,7 +117,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
     /**
      * This function creates the actual dialog on the screen and listens for user input, returning
      * the information through the listener based on which button is clicked.
-     * @param savedInstanceState
+     * @param savedInstanceState The instance state of the fragment.
      * @return
      * Returns the Dialog created
      */
@@ -181,6 +181,9 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
             });
         }
 
+        /**
+         * This method builds the dialog of the fragment
+         */
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         return builder
                 .setView(view)

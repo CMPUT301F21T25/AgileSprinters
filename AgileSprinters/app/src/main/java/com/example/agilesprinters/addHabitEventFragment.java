@@ -27,6 +27,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -47,6 +48,8 @@ public class addHabitEventFragment extends DialogFragment{
     private ImageView imageContainer;
     private ImageView addCamPhotoBtn;
     private ImageView addGalPhotoBtn;
+    private Uri selectedImg;
+    private Bitmap bitmapOfImg;
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
@@ -78,7 +81,7 @@ public class addHabitEventFragment extends DialogFragment{
      * to the User Calendar class for it to implement.
      */
     public interface OnFragmentInteractionListener {
-        void onSavePressed(HabitInstance habitInstance);
+        void onSavePressed(HabitInstance habitInstance, Bitmap bitmapOfImg);
     }
 
     /**
@@ -186,10 +189,14 @@ public class addHabitEventFragment extends DialogFragment{
                 if(resultCode == -1){
                     //URI is string of characters used to identify a resource (either by location name or both)
                     //use android net uri
-                    Uri selectedImg = data.getData();
-
+                    selectedImg =  data.getData();
+                    try {
+                        bitmapOfImg = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(),selectedImg);
+                    } catch (IOException e) {
+                        System.out.println(e+"I error");
+                    }
                     //set the original placeholder img to be the selected img
-                    imageContainer.setImageURI(selectedImg);
+                    imageContainer.setImageBitmap(bitmapOfImg);
                 }
                 break;
 
@@ -201,15 +208,17 @@ public class addHabitEventFragment extends DialogFragment{
 
                     //bitmap of the image matrix of dots (each dot corresponds to pixel)
                     //grabs img data from extra
-                    Bitmap bitmapOfImg = (Bitmap) bundle.get("data");
+                    bitmapOfImg = (Bitmap) bundle.get("data");
+
                     //set placeholder to bitmap of the img taken by camera
                     imageContainer.setImageBitmap(bitmapOfImg);
+
                 }
                 break;
         }
     }
 
-    /**
+    /*
     public boolean runtimePermissionForCamera(){
         //only have to check runtime permission if android version is greater than 23
         //if less than 23 then auto permission using manifest file
@@ -240,7 +249,7 @@ public class addHabitEventFragment extends DialogFragment{
 
     }
 
-    **/
+    */
 
 
     /**
@@ -286,7 +295,7 @@ public class addHabitEventFragment extends DialogFragment{
                 if(readyToClose){
                     
                     listener.onSavePressed(new HabitInstance(EID, UID, HID, comment, date_entry,
-                            Integer.parseInt(duration), IID));
+                            Integer.parseInt(duration), IID), bitmapOfImg);
                     dialog.dismiss();
                 }
             });

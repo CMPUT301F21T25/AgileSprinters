@@ -138,8 +138,6 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             }
         });
 
-
-
         /**
          * This is a floating action button which listens for when a user taps it. If tapped it will
          * begin the addHabitFragment.
@@ -258,6 +256,13 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 intent.putExtra("user", user);
                 //add bundle to send data if need
                 startActivity(intent);
+                break;
+
+            case R.id.notification:
+                Intent intentNotification = new Intent(this, Notifications.class);
+                intentNotification.putExtra("user", user);
+                //add bundle to send data if need
+                startActivity(intentNotification);
                 break;
 
             case R.id.forumn:
