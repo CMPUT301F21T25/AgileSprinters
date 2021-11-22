@@ -94,9 +94,10 @@ public class FollowerFollowing extends AppCompatActivity {
         userList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                User user = (User) adapterView.getItemAtPosition(i);
+                User otherUser = (User) adapterView.getItemAtPosition(i);
                 Intent intent = new Intent(FollowerFollowing.this, OtherUserScreen.class);
-                intent.putExtra(getString(R.string.USER_STR), user);
+                intent.putExtra("currentUser", user);
+                intent.putExtra("otherUser", otherUser);
                 startActivity(intent);
                 finish();
             }

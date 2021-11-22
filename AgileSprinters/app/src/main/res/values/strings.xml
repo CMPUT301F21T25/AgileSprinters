@@ -165,4 +165,8 @@
     <string name="FOLLOW_REQUEST_FRAGMENT_MESSAGE">has requested to follow you!</string>
     <string name="ACCEPT_BUTTON_COLOR">#86ff70</string>
     <string name="DECLINE_BUTTON_COLOR">#ff7a70</string>
+    <string name="FOLLOW_BUTTON_TEXT">Follow</string>
+    <string name="FOLLOW_REQUEST_PENDING_COLOR">#d5a8ff</string>
+    <string name="FOLLOW_REQUEST_PENDING_TEXT">Follow Request Pending</string>
+    <string name="UNFOLLOW_BUTTON_TEXT">Unfollow</string>
 </resources>
