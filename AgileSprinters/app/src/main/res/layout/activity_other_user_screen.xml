@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".OtherUserScreen">
 
-
     <TextView
         android:id="@+id/userIdTextView"
         android:layout_width="136dp"

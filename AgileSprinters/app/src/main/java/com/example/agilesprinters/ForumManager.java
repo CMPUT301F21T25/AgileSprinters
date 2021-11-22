@@ -40,10 +40,7 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
     ArrayAdapter<Forum> forumAdapter;
     final private ArrayList<Forum> forumDataList = new ArrayList<>();;
     ArrayList<String> userTempList;
-    ArrayList<HashMap> habitList = new ArrayList<>();
-    ArrayList<HashMap> userList = new ArrayList<>();
 
-    private TextView titleTextView;
     private String firstName, lastName, eventDate, duration, optComment;
 
     private String emailId;
@@ -112,7 +109,7 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
         db.collection("users").addSnapshotListener((value, error) -> {
             arrayAdapter_users.clear();
             for (QueryDocumentSnapshot doc : value) {
-                if(!doc.getId().matches(user.getUser())){
+                if(!doc.getId().matches(user.getUserID()) && userTempList.contains(doc.getId())){
                     emailId = (String) doc.getData().get("Email ID");
                     firstName = (String)  doc.getData().get("First Name");
                     lastName = (String) doc.getData().get("Last Name");

@@ -47,6 +47,7 @@ public class FollowerFollowing extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_follower_following);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (user == null) {
             user = (User) getIntent().getSerializableExtra("user");
