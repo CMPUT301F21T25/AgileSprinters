@@ -6,17 +6,22 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-
-    <TextView
-        android:id="@+id/forumTitleTextView"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/user_search_drop_down"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:textSize="25sp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginRight="5dp"
-        android:textColor="#a4c639"/>
+        android:layout_margin="5dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+        app:startIconDrawable="@drawable/ic_baseline_search_24"
+        >
+
+        <AutoCompleteTextView
+            android:id="@+id/users_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:hint="User name" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <ListView
         android:id="@+id/forumListView"
