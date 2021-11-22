@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -68,11 +69,9 @@ public class habitListAdapter extends ArrayAdapter<Habit> {
         // Calculate progress
         LocalDate currentDate = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-
         LocalDate startDate = LocalDate.parse(habit.getDateToStart(), formatter);
-        System.out.println("dates " + currentDate + startDate);
 
-        Period period = Period.between(currentDate, startDate);
+        int days = (int) ChronoUnit.WEEKS.between(startDate, currentDate);
 
         int numDaysForHabit = 0;
         for (Boolean value : habit.getWeekdays().values()) {
@@ -81,19 +80,17 @@ public class habitListAdapter extends ArrayAdapter<Habit> {
             }
         }
 
-        //double totalDays = Math.ceil( (-1 * period.getDays()) / 7);
-        //int k = (habit.getOverallProgress() / (int)(numDaysForHabit * totalDays)) * 100;
-
-        /**System.out.println("period " + period);
-        System.out.println("Total days " + totalDays);
-        System.out.println("Printing progress " + k);**/
+        // Calculating progress value
+        double totalEvents = Math.ceil(days * numDaysForHabit);
+        double div = habit.getOverallProgress() / (totalEvents);
+        double progressPercent = div * 100;
 
         //pass values to variables
         dateText.setText(mContext.getString(R.string.DATE_STARTED) + habit.getDateToStart());
         privacyText.setText(habit.getPrivacySetting());
         titleText.setText(habit.getTitle());
         reasonText.setText(habit.getReason());
-        progressSoFar.setProgress(100);
+        progressSoFar.setProgress((int) progressPercent);
 
         return view;
     }
