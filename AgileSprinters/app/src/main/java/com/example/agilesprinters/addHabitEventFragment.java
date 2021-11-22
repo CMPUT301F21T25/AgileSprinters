@@ -41,6 +41,7 @@ public class addHabitEventFragment extends DialogFragment{
     private String UID;
     private String HID;
     private String IID;
+    private String FID;
     private EditText optional_comment;
     private TextView input_date;
     private EditText input_duration;
@@ -143,6 +144,7 @@ public class addHabitEventFragment extends DialogFragment{
         HID = getArguments().getString(getString(R.string.HID));
         EID = getArguments().getString(getString(R.string.EID));
         IID = getArguments().getString(getString(R.string.IID));
+        FID = getArguments().getString("FID");
 
         LocalDate currentDate = LocalDate.now();
         input_date.setText(currentDate.format(formatter));
@@ -294,7 +296,7 @@ public class addHabitEventFragment extends DialogFragment{
                 if(readyToClose){
                     
                     listener.onSavePressed(new HabitInstance(EID, UID, HID, comment, date_entry,
-                            Integer.parseInt(duration), IID), bitmapOfImg);
+                            Integer.parseInt(duration), IID, FID), bitmapOfImg);
                     dialog.dismiss();
                 }
             });

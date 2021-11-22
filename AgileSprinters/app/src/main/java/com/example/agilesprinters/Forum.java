@@ -51,11 +51,12 @@ public class Forum {
         this.duration = duration;
     }
 
-    public Forum(String firstName, String lastName, String eventDate, String duration) {
+    public Forum(String firstName, String lastName, String eventDate, String duration, String comment) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.eventDate = eventDate;
         this.duration = duration;
+        this.comment = comment;
     }
 
 

@@ -37,6 +37,7 @@ public class editHabitEventFragment extends DialogFragment {
     private String UID;
     private String HID;
     private String IID;
+    private String FID;
     private ImageView imageContainer;
     private ImageView addCamPhotoBtn;
     private ImageView addGalPhotoBtn;
@@ -139,6 +140,7 @@ public class editHabitEventFragment extends DialogFragment {
         UID = habitInstance.getUID();
         HID = habitInstance.getHID();
         IID = habitInstance.getIID();
+        FID = habitInstance.getFID();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         return builder
@@ -248,7 +250,7 @@ public class editHabitEventFragment extends DialogFragment {
                 // If everything has been filled out, call the listener and send the edited
                 // habit back to the Home class and dismiss the dialog.
                 if (readyToClose) {
-                    listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date, Integer.parseInt(duration), IID), bitmapOfImg);
+                    listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date, Integer.parseInt(duration), IID, FID), bitmapOfImg);
                     dialog.dismiss();
                 }
             });

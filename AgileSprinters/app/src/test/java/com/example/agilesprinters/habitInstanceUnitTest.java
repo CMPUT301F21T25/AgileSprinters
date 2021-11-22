@@ -23,7 +23,7 @@ public class habitInstanceUnitTest {
      */
     private HabitInstance mockHabitInstance(){
 
-        HabitInstance habitInstance = new HabitInstance(EID,UID,HID, opt_comment, dateOfEvent, duration);
+        HabitInstance habitInstance = new HabitInstance(EID,UID,HID, opt_comment, dateOfEvent, duration,null);
 
         return habitInstance;
     }

@@ -2,6 +2,7 @@ package com.example.agilesprinters;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -17,8 +18,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class ForumManager extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
     private String UID;
@@ -29,13 +32,13 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
 
     ListView forumList;
     ArrayAdapter<Forum> forumAdapter;
-    ArrayList<Forum> forumDataList;
+    final private ArrayList<Forum> forumDataList = new ArrayList<>();;
     ArrayList<String> userTempList;
     ArrayList<HashMap> habitList = new ArrayList<>();
     ArrayList<HashMap> userList = new ArrayList<>();
 
     private TextView titleTextView;
-    private String firstName, lastName, eventDate, duration;
+    private String firstName, lastName, eventDate, duration, optComment;
 
 
     @Override
@@ -50,37 +53,64 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
             userTempList.add(UID);
         }
 
+        System.out.println("User list is " + userTempList);
+
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
         bottomNavigationView.setSelectedItemId(R.id.forumn);
 
         titleTextView = findViewById(R.id.forumTitleTextView);
-        forumList = findViewById(R.id.forumListView);
+        ListView forumList = findViewById(R.id.forumListView);
 
-        forumDataList = new ArrayList<>();
-        forumAdapter = new forumPostList(this, forumDataList);
-
-        forumList.setAdapter(forumAdapter);
+        //forumDataList = new ArrayList<>();
 
         titleTextView.setText("Forum");
 
         db = FirebaseFirestore.getInstance();
-        CollectionReference collectionReference = db.collection("Forum");
 
+        screenSetup();
+
+        System.out.println("Array list3 is " + forumDataList);
+        forumAdapter = new forumPostList(this, forumDataList);
+        forumList.setAdapter(forumAdapter);
+    }
+
+    public void screenSetup() {
+        /**CollectionReference collectionReference = db.collection("ForumPosts");
         collectionReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 for (QueryDocumentSnapshot doc: queryDocumentSnapshots){
+                    System.out.println("IDS are " + (String) doc.getData().get("UID"));
                     if(userTempList.contains((String) doc.getData().get("UID"))){
                         firstName = (String) doc.getData().get("First Name");
                         lastName = (String) doc.getData().get("Last Name");
                         duration = (String) doc.getData().get("duration");
                         eventDate = (String) doc.getData().get("Event Date");
                         forumDataList.add(new Forum(firstName, lastName, eventDate, duration));
+                        System.out.println("Array list1 is " + forumDataList);
                     }
                 }
                 forumAdapter.notifyDataSetChanged();
             }
+        });**/
+
+        db.collection("ForumPosts").addSnapshotListener((value, error) -> {
+            forumDataList.clear();
+            for (QueryDocumentSnapshot doc : value) {
+                System.out.println("IDS are " + (String) doc.getData().get("UID"));
+                if(userTempList.contains((String) doc.getData().get("UID"))){
+                    firstName = (String) doc.getData().get("First Name");
+                    lastName = (String) doc.getData().get("Last Name");
+                    duration = (String) doc.getData().get("duration");
+                    eventDate = (String) doc.getData().get("Event Date");
+                    optComment = (String) doc.getData().get("Opt Cmt");
+                    forumDataList.add(new Forum(firstName, lastName, eventDate, duration, optComment));
+                    System.out.println("Array list1 is " + forumDataList);
+                }
+            }
+
+            forumAdapter.notifyDataSetChanged();
         });
 
     }
