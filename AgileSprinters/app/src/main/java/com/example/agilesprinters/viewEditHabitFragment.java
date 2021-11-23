@@ -6,9 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -18,8 +18,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * This class is a fragment allows a user to view all the details of a habit and edit any details
@@ -27,6 +27,7 @@ import java.util.List;
  */
 public class viewEditHabitFragment extends DialogFragment {
     private int position;
+    private int listSize;
     private String currentDate;
     private EditText currentHabitTitle;
     private EditText currentHabitReason;
@@ -40,6 +41,7 @@ public class viewEditHabitFragment extends DialogFragment {
     private Button fridayButton;
     private Button saturdayButton;
     private Spinner privacySpinner;
+    private Spinner positionSpinner;
     private Button[] weekdayEditButtonArray;
     private Integer progress;
     private HashMap<String, Boolean> weekdaysHashMap;
@@ -53,12 +55,15 @@ public class viewEditHabitFragment extends DialogFragment {
      * This function saves the values sent to the fragment for future manipulation
      *
      * @param habit is the item that was tapped within the list
+     * @param position is the position of the item clicked
      * @return returns the fragment with the bundled parameters
      */
-    public static viewEditHabitFragment newInstance(Habit habit) {
+    public static viewEditHabitFragment newInstance(Habit habit, int position, int listSize) {
         viewEditHabitFragment frag = new viewEditHabitFragment();
         Bundle args = new Bundle();
         args.putSerializable("habit", habit);
+        args.putInt("position", position);
+        args.putInt("listSize", listSize);
         frag.setArguments(args);
 
         return frag;
@@ -69,7 +74,7 @@ public class viewEditHabitFragment extends DialogFragment {
      * to the Home class for it to implement.
      */
     public interface OnFragmentInteractionListener {
-        void onEditViewSaveChangesPressed(Habit habit);
+        void onEditViewSaveChangesPressed(Habit habit, int position);
     }
 
     /**
@@ -109,6 +114,7 @@ public class viewEditHabitFragment extends DialogFragment {
         currentHabitReason = view.findViewById(R.id.view_edit_habit_reason_editText);
         currentDateTextView = view.findViewById(R.id.view_edit_habit_date);
         privacySpinner = view.findViewById(R.id.view_edit_privacy_spinner);
+        positionSpinner = view.findViewById(R.id.view_edit_position_spinner);
         buttonError = view.findViewById(R.id.view_edit_habit_button_error);
 
         // Get weekday buttons and make sure they are set to blank
@@ -123,6 +129,7 @@ public class viewEditHabitFragment extends DialogFragment {
         // Get the arguments that were stored in the bundle
         Habit habit = (Habit) getArguments().getSerializable(getString(R.string.HABIT_TEXT));
         position = getArguments().getInt(getString(R.string.POSITION_TEXT));
+        listSize = getArguments().getInt(getString(R.string.HABIT_LIST_SIZE));
 
         HID = habit.getHID();
         UID = habit.getUID();
@@ -139,11 +146,22 @@ public class viewEditHabitFragment extends DialogFragment {
         currentDate = habit.getDateToStart();
         progress = habit.getOverallProgress();
 
-
         // Make sure spinner for privacy settings is set to the correct option
         if (habit.getPrivacySetting().equals(getString(R.string.PRIVATE_TEXT))) {
             privacySpinner.setSelection(1);
         }
+
+        ArrayList<Integer> listPositions = new ArrayList<Integer>();
+        for (int i = 1; i < listSize+1; i++){
+            listPositions.add(i);
+        }
+
+        ArrayAdapter<Integer> positionsAdapter = new ArrayAdapter<Integer>(getActivity(), android.R.layout.simple_spinner_item,listPositions);
+        positionsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        positionSpinner.setAdapter(positionsAdapter);
+        positionSpinner.setSelection(position);
+        //set up elements for position spinner
+
         // Array with all the Edit buttons for weekdays
         weekdayEditButtonArray = new Button[]{sundayButton, mondayButton, tuesdayButton, wednesdayButton, thursdayButton, fridayButton, saturdayButton};
         // Array with all the string values for weekdays
@@ -244,6 +262,7 @@ public class viewEditHabitFragment extends DialogFragment {
                     String newHabitTitle = currentHabitTitle.getText().toString();
                     String newHabitReason = currentHabitReason.getText().toString();
                     String newPrivacySetting = privacySpinner.getSelectedItem().toString();
+                    int newPosition = positionSpinner.getSelectedItemPosition();
 
                     if (newHabitTitle.matches("")) {
                         readyToClose = false;
@@ -272,7 +291,9 @@ public class viewEditHabitFragment extends DialogFragment {
                     // If everything has been filled out, call the listener and send the edited
                     // habit back to the Home class and dismiss the dialog.
                     if (readyToClose) {
-                        editFragmentListener.onEditViewSaveChangesPressed(new Habit(HID, UID, newHabitTitle, newHabitReason, currentDate, weekdaysHashMap, newPrivacySetting, progress));
+                        editFragmentListener.onEditViewSaveChangesPressed(
+                                new Habit(HID, UID, newHabitTitle, newHabitReason, currentDate,
+                                        weekdaysHashMap, newPrivacySetting, progress, newPosition), position);
                         dialog.dismiss();
                     }
                 }

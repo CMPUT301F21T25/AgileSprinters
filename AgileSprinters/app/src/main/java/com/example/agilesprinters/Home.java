@@ -113,8 +113,15 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                         HashMap<String, Boolean> weekdays = (HashMap<String, Boolean>) doc.getData().get("Weekdays");
                         String privacySetting = (String) doc.getData().get("PrivacySetting");
                         int progress = Integer.parseInt((doc.get("Progress").toString()));
+                        int position = Integer.parseInt((doc.get("List Position").toString()));
 
-                        habitArrayList.add(new Habit(doc.getId(), UID, title, reason, dateToStart, weekdays, privacySetting, progress));
+                        if (position > habitArrayList.size()-1){
+                            habitArrayList.add(new Habit(doc.getId(), UID, title, reason,
+                                    dateToStart, weekdays, privacySetting, progress, position));
+                        } else{
+                            habitArrayList.add(position, new Habit(doc.getId(), UID, title, reason,
+                                    dateToStart, weekdays, privacySetting, progress, position));
+                        }
                     }
                 }
                 habitAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
@@ -130,7 +137,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Habit habit = (Habit) adapterView.getItemAtPosition(i);
-                viewEditHabitFragment values = new viewEditHabitFragment().newInstance(habit);
+                viewEditHabitFragment values = new viewEditHabitFragment().newInstance(habit, i, habitArrayList.size());
                 values.show(getSupportFragmentManager(), "VIEW/EDIT");
             }
         });
@@ -143,7 +150,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addHabitFragment values = new addHabitFragment().newInstance(UID);
+                addHabitFragment values = new addHabitFragment().newInstance(UID, habitArrayList.size());
                 values.show(getSupportFragmentManager(), "ADD");
                 System.out.println(getIntent());
             }
@@ -208,7 +215,19 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
      * @param habit The habit object changed in the viewEditHabitFragment
      */
     @Override
-    public void onEditViewSaveChangesPressed(Habit habit) {
+    public void onEditViewSaveChangesPressed(Habit habit, int oldPosition) {
+        if (habit.getListPosition() > oldPosition){
+            for (int i = habit.getListPosition(); i > oldPosition; i--){
+                habitArrayList.get(i).setListPosition(i - 1);
+                updateHabitDatabase(habitArrayList.get(i));
+            }
+        }
+        if (habit.getListPosition() < oldPosition){
+            for (int i = habit.getListPosition(); i < oldPosition ; i ++){
+                habitArrayList.get(i).setListPosition(i + 1);
+                updateHabitDatabase(habitArrayList.get(i));
+            }
+        }
         updateHabitDatabase(habit);
     }
 
@@ -286,6 +305,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             data.put("Date to Start", habit.getDateToStart());
             data.put("Weekdays", habit.getWeekdays());
             data.put("Progress", habit.getOverallProgress());
+            data.put("List Position", habit.getListPosition());
 
             // Makes a call to the database which handles it.
             database.addData(collectionPath, HabitId, data, TAG);
@@ -309,6 +329,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         data.put("Date to Start", habit.getDateToStart());
         data.put("Weekdays", habit.getWeekdays());
         data.put("Progress", habit.getOverallProgress());
+        data.put("List Position", habit.getListPosition());
         collectionPath = "Habit";
         // Makes a call to the database which handles it
         database.updateData(collectionPath, habit.getHID(), data, TAG);
@@ -343,6 +364,13 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     @Override
     public void onDeleteHabitYesPressed(int position) {
         Habit habit = habitAdapter.getItem(position);
+
+        //Set all the positions of habits higher in the list down by one
+        while (position < habitArrayList.size()-1){
+            habitArrayList.get(position+1).setListPosition(position);
+            updateHabitDatabase(habitArrayList.get(position+1));
+            position++;
+        }
         deleteHabitInstances(habit.getHID());
         deleteHabitDb(habit.getHID());
         habitAdapter.notifyDataSetChanged();

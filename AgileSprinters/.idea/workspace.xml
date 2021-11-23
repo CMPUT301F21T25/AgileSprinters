@@ -6,8 +6,7 @@
     </shared>
   </component>
   <component name="AndroidLogFilters">
-    <option name="TOOL_WINDOW_CUSTOM_FILTER" value="onC" />
-    <option name="TOOL_WINDOW_LOG_LEVEL" value="error" />
+    <option name="TOOL_WINDOW_LOG_LEVEL" value="debug" />
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="AutoImportSettings">
@@ -16,8 +15,14 @@
   <component name="ChangeListManager">
     <list default="true" id="39765367-c128-463b-8ab9-c04f7900b86d" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/Notifications.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/Notifications.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/Habit.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/Habit.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/Home.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/Home.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/OtherUserScreen.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/OtherUserScreen.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/UserCalendar.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/UserCalendar.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/addHabitFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/addHabitFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/viewEditHabitFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/viewEditHabitFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/view_edit_habit_fragment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/view_edit_habit_fragment.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

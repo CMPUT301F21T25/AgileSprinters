@@ -14,6 +14,10 @@ public class Habit implements Serializable {
     private String title;
     private String reason;
     private String dateToStart;
+    private int listPosition;
+
+
+
     private HashMap<String, Boolean> weekdays;
     private String privacySetting;
     private int overallProgress;
@@ -67,7 +71,8 @@ public class Habit implements Serializable {
      * @param privacySetting The privacy setting of the habit given as a string.
      */
     public Habit(String HID, String UID, String title, String reason, String dateToStart,
-                 HashMap<String, Boolean> weekdays, String privacySetting, int overallProgress) {
+                 HashMap<String, Boolean> weekdays, String privacySetting, int overallProgress,
+                 int listPosition) {
         this.UID = UID;
         this.HID = HID;
         this.title = title;
@@ -76,6 +81,7 @@ public class Habit implements Serializable {
         this.weekdays = weekdays;
         this.privacySetting = privacySetting;
         this.overallProgress = overallProgress;
+        this.listPosition = listPosition;
     }
 
     /**
@@ -177,5 +183,13 @@ public class Habit implements Serializable {
 
     public void setOverallProgress(int overallProgress) {
         this.overallProgress = overallProgress;
+    }
+
+    public int getListPosition() {
+        return listPosition;
+    }
+
+    public void setListPosition(int listPosition) {
+        this.listPosition = listPosition;
     }
 }

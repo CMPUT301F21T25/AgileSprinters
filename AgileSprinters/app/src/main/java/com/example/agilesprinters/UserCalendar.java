@@ -213,7 +213,8 @@ public class UserCalendar extends AppCompatActivity
                         && (startDate.isBefore(currentDate) || startDate.isEqual(currentDate))
                         && (habitDays.contains(todayDay))){
                     Habit newHabit = new Habit(doc.getId(),doc.getString("UID"),doc.getString("Title"), doc.getString("Reason"),
-                            doc.getString("Date to Start"), weekdays2, doc.getString("PrivacySetting"), Integer.parseInt(doc.get("Progress").toString()));
+                            doc.getString("Date to Start"), weekdays2, doc.getString("PrivacySetting"),
+                            Integer.parseInt(doc.get("Progress").toString()), Integer.parseInt(doc.get("List Position").toString()));
                     toDoEvents.add(newHabit); // Adding habits from Firestore
                     toDoEventIds.add(doc.getId());
                 }

@@ -169,4 +169,6 @@
     <string name="FOLLOW_REQUEST_PENDING_COLOR">#d5a8ff</string>
     <string name="FOLLOW_REQUEST_PENDING_TEXT">Follow Request Pending</string>
     <string name="UNFOLLOW_BUTTON_TEXT">Unfollow</string>
+    <string name="HABIT_LIST_SIZE">listSize</string>
+    <string name="POSITION_IN_LIST_TEXTVIEW">Position in list:</string>
 </resources>
