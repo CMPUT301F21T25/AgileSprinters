@@ -7,8 +7,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -73,6 +75,8 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_home);
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
@@ -99,8 +103,8 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
         setTextFields(followingCount, followersCount);
 
-        TextView firstNameTextView = findViewById(R.id.userIdTextView);
-        firstNameTextView.setText(nameStr);
+        Button homeUserButton = findViewById(R.id.homeUserButton);
+        homeUserButton.setText(nameStr.substring(0,1));
 
 
         db = FirebaseFirestore.getInstance();
@@ -167,6 +171,8 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 intent.putExtra("Title", "Following");
                 intent.putExtra(getString(R.string.USER_STR), user);
                 startActivity(intent);
+
+                overridePendingTransition(0,0);
             }
         });
 
@@ -177,15 +183,19 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 intent.putExtra("Title", "Followers");
                 intent.putExtra(getString(R.string.USER_STR), user);
                 startActivity(intent);
+
+                overridePendingTransition(0,0);
             }
         });
 
-        firstNameTextView.setOnClickListener(new View.OnClickListener() {
+        homeUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(Home.this, EditUserActivity.class);
                 intent.putExtra(getString(R.string.USER_STR), user);
                 startActivity(intent);
+
+                overridePendingTransition(0,0);
             }
         });
 
@@ -247,52 +257,6 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
         followerCountTextView.setText(followersCount);
         followingCountTextView.setText(followingCount);
-    }
-
-    /**
-     * This method contains the logic for switching screens by selecting an item from the navigation
-     * bar.
-     * @param item This is the item selected by the user
-     * @return
-     * Returns a boolean based on which activity the user is currently in and which item was
-     * clicked.
-     */
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        //Context context = getApplicationContext();
-        switch (item.getItemId()) {
-            case R.id.home:
-                if (this instanceof Home) {
-                    return true;
-                } else {
-                    Intent intent = new Intent(this, Home.class);
-                    //add bundle to send data if need
-                    startActivity(intent);
-                }
-                break;
-
-            case R.id.calendar:
-                Intent intent = new Intent(this, UserCalendar.class);
-                intent.putExtra("user", user);
-                //add bundle to send data if need
-                startActivity(intent);
-                break;
-
-            case R.id.notification:
-                Intent intentNotification = new Intent(this, Notifications.class);
-                intentNotification.putExtra("user", user);
-                //add bundle to send data if need
-                startActivity(intentNotification);
-                break;
-
-            case R.id.forumn:
-                Intent forumIntent = new Intent(this, ForumManager.class);
-                forumIntent.putExtra("user", user);
-                startActivity(forumIntent);
-                break;
-
-        }
-        return false;
     }
 
     /**
@@ -401,5 +365,55 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             }
         });
         return;
+    }
+
+    /**
+     * This method contains the logic for switching screens by selecting an item from the navigation
+     * bar.
+     * @param item This is the item selected by the user
+     * @return
+     * Returns a boolean based on which activity the user is currently in and which item was
+     * clicked.
+     */
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        //Context context = getApplicationContext();
+        switch (item.getItemId()) {
+            case R.id.home:
+                if (this instanceof Home) {
+                    return true;
+                } else {
+                    Intent intent = new Intent(this, Home.class);
+                    //add bundle to send data if need
+                    startActivity(intent);
+                    overridePendingTransition(0,0);
+                }
+                break;
+
+            case R.id.calendar:
+                Intent intent = new Intent(this, UserCalendar.class);
+                intent.putExtra("user", user);
+                //add bundle to send data if need
+                startActivity(intent);
+                overridePendingTransition(0,0);
+                break;
+
+            case R.id.notification:
+                Intent intentNotification = new Intent(this, Notifications.class);
+                intentNotification.putExtra("user", user);
+                //add bundle to send data if need
+                startActivity(intentNotification);
+                overridePendingTransition(0,0);
+                break;
+
+            case R.id.forumn:
+                Intent forumIntent = new Intent(this, ForumManager.class);
+                forumIntent.putExtra("user", user);
+                startActivity(forumIntent);
+                overridePendingTransition(0,0);
+                break;
+
+        }
+        return false;
     }
 }

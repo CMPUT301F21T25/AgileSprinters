@@ -4,7 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Window;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -19,8 +21,6 @@ public class OtherUserScreen extends AppCompatActivity {
     private String UID;
     private User user;
     private String nameStr;
-    private String followingCount;
-    private String followersCount;
     private ArrayList<Habit> habitArrayList;
     private ArrayAdapter<Habit> habitAdapter;
     private static final String TAG = "Habit";
@@ -28,6 +28,8 @@ public class OtherUserScreen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_other_user_screen);
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -44,12 +46,9 @@ public class OtherUserScreen extends AppCompatActivity {
             user = (User) getIntent().getSerializableExtra("user");
             UID = user.getUser();
             nameStr = user.getFirstName()+ " " + user.getLastName();
-
-            followersCount = String.valueOf(user.getFollowersList().size());
-            followingCount = String.valueOf(user.getFollowingList().size());
         }
 
-        setTextFields(followingCount, followersCount, nameStr);
+        setTextFields(nameStr);
 
         habitCollectionReference.addSnapshotListener((queryDocumentSnapshots, error) -> {
             // Clear the old list
@@ -74,13 +73,17 @@ public class OtherUserScreen extends AppCompatActivity {
 
     }
 
-    private void setTextFields(String followingCount, String followersCount, String firstNameStr) {
-        TextView firstNameTextView = findViewById(R.id.userIdTextView);
-        TextView followingCountTextView = findViewById(R.id.followingCount);
-        TextView followerCountTextView = findViewById(R.id.followerCount);
+    private void setTextFields( String firstNameStr) {
+        Button userButton = findViewById(R.id.otherUserButton);
 
-        followerCountTextView.setText(followersCount);
-        followingCountTextView.setText(followingCount);
-        firstNameTextView.setText(firstNameStr);
+        userButton.setText(firstNameStr.substring(0,1));
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        this.finish();
+
+        overridePendingTransition(0,0);
     }
 }

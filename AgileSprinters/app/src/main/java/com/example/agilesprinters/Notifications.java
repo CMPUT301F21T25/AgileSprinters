@@ -3,6 +3,7 @@ package com.example.agilesprinters;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -27,6 +28,8 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_notifications);
 
         if (user == null) {
@@ -55,6 +58,7 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
                 intent.putExtra("user", user);
                 //add bundle to send data if need
                 startActivity(intent);
+                overridePendingTransition(0,0);
                 break;
 
             case R.id.calendar:
@@ -62,6 +66,7 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
                 intentCalendar.putExtra("user", user);
 
                 startActivity(intentCalendar);
+                overridePendingTransition(0,0);
                 break;
 
             case R.id.notification:
@@ -71,6 +76,7 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
                     Intent intent2 = new Intent(this, Notifications.class);
                     //add bundle to send data if need
                     startActivity(intent2);
+                    overridePendingTransition(0,0);
                     break;
                 }
 
@@ -78,6 +84,7 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
                 Intent forumIntent = new Intent(this, ForumManager.class);
                 forumIntent.putExtra("user", user);
                 startActivity(forumIntent);
+                overridePendingTransition(0,0);
                 break;
 
         }

@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -83,6 +84,8 @@ public class UserCalendar extends AppCompatActivity
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getSupportActionBar().hide();
         setContentView(R.layout.user_calendar);
 
 
@@ -530,6 +533,7 @@ public class UserCalendar extends AppCompatActivity
                 intent.putExtra("user", user);
                 //add bundle to send data if need
                 startActivity(intent);
+                overridePendingTransition(0,0);
                 break;
 
             case R.id.calendar:
@@ -539,6 +543,7 @@ public class UserCalendar extends AppCompatActivity
                     Intent intent2 = new Intent(this, UserCalendar.class);
                     //add bundle to send data if need
                     startActivity(intent2);
+                    overridePendingTransition(0,0);
                     break;
                 }
 
@@ -547,12 +552,14 @@ public class UserCalendar extends AppCompatActivity
                 intentNotification.putExtra("user", user);
                 //add bundle to send data if need
                 startActivity(intentNotification);
+                overridePendingTransition(0,0);
                 break;
 
             case R.id.forumn:
                 Intent forumIntent = new Intent(this, ForumManager.class);
                 forumIntent.putExtra("user", user);
                 startActivity(forumIntent);
+                overridePendingTransition(0,0);
                 break;
 
         }

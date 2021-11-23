@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -37,31 +38,29 @@ public class EditUserActivity extends AppCompatActivity {
     FirebaseFirestore db;
     private Intent intent;
     private String collectionPath;
-    private ImageView imageContainer;
-    private ImageView addCamPhotoBtn;
-    private ImageView addGalPhotoBtn;
-    private Uri selectedImg;
-    private Bitmap bitmapOfImg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_edit_user);
 
         if (user == null) {
             user = (User) getIntent().getSerializableExtra("user");
             UID = user.getUser();
-            nameStr = user.getFirstName()+ " " + user.getLastName();
+            nameStr = user.getFirstName() + " " + user.getLastName();
         }
 
         TextView nameTextView = findViewById(R.id.userNameTextView);
+        Button letterButton = findViewById(R.id.userButton);
+
         nameTextView.setText(nameStr);
+        letterButton.setText(nameStr.substring(0, 1));
 
         Button signOutButton = findViewById(R.id.signOutbutton);
         Button deleteUserButton = findViewById(R.id.deleteUserButton);
-        imageContainer = findViewById(R.id.userImageView);
-        addCamPhotoBtn = findViewById(R.id.add_Cam_Photo);
-        addGalPhotoBtn = findViewById(R.id.add_Gal_Photo);
+
 
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,6 +69,7 @@ public class EditUserActivity extends AppCompatActivity {
                 intent = new Intent(EditUserActivity.this, Login.class);
                 user = null;
                 startActivity(intent);
+                overridePendingTransition(0, 0);
                 finish();
             }
         });
@@ -84,28 +84,17 @@ public class EditUserActivity extends AppCompatActivity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
+                overridePendingTransition(0, 0);
                 finish();
-            }
-        });
-
-        addCamPhotoBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //if(runtimePermissionForCamera()){
-                getCameraPicture();
-                //}
-            }
-        });
-
-        addGalPhotoBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getGalleryPicture();
-                //hides alert dialog after gallery func is finished
             }
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(0, 0);
+    }
 
     /**
      * This method deletes a user from the database and all its associated data and habits and events.
@@ -120,8 +109,7 @@ public class EditUserActivity extends AppCompatActivity {
                             Log.d(TAG, getString(R.string.USER_DEL_LOG));
                             deleteUserHabits();
                             deleteUserData();
-                        }
-                        else {
+                        } else {
                             Log.d(TAG, getString(R.string.USER_NOT_DEL_LOG));
                         }
                     }
@@ -131,7 +119,7 @@ public class EditUserActivity extends AppCompatActivity {
     /**
      * This method deletes all data (email, password etc) associated with a user.
      */
-    private void deleteUserData(){
+    private void deleteUserData() {
         CollectionReference collectionReference = db.collection("users");
         collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -140,7 +128,7 @@ public class EditUserActivity extends AppCompatActivity {
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     Log.d(TAG, String.valueOf(doc.getData().get(getString(R.string.UID))));
                     if (UID.matches((String) doc.getData().get(getString(R.string.UID)))) {
-                        if(doc.getId() == null){
+                        if (doc.getId() == null) {
                             return;
                         } else {
                             collectionPath = getString(R.string.USERS);
@@ -187,7 +175,7 @@ public class EditUserActivity extends AppCompatActivity {
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     Log.d(TAG, String.valueOf(doc.getData().get("UID")));
                     if (HID.matches((String) doc.getData().get("HID"))) {
-                        if(doc.getId() == null){
+                        if (doc.getId() == null) {
                             return;
                         } else {
                             collectionPath = "HabitEvents";
@@ -199,61 +187,4 @@ public class EditUserActivity extends AppCompatActivity {
         });
         return;
     }
-
-    //switches view to gallery and allows user to pick photo
-    private void getGalleryPicture() {
-        //allow user to pick a photo from gallery
-        Intent pickFromGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(pickFromGallery, 1);
-
-    }
-
-    private void getCameraPicture(){
-        //have to give permission to app to use camera
-        //android manifest give permission and then take permission at runtime from user
-        //switch view to camera view
-        Intent cameraView = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(cameraView, 2);
-    }
-
-
-    //overrides the method when activity is returning data (prev intent on line 82)
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode){
-
-            case 1:
-                if(resultCode == -1){
-                    //URI is string of characters used to identify a resource (either by location name or both)
-                    //use android net uri
-                    selectedImg =  data.getData();
-                    try {
-                        bitmapOfImg = MediaStore.Images.Media.getBitmap(this.getContentResolver(),selectedImg);
-                    } catch (IOException e) {
-                        System.out.println(e+"I error");
-                    }
-                    //set the original placeholder img to be the selected img
-                    imageContainer.setImageBitmap(bitmapOfImg);
-                }
-                break;
-
-            case 2:
-                Log.d("CAMERA", "case 2 for camera return result ");
-                if(resultCode == -1 && data != null){
-                    //retrieve data sent back from activity thru bundle
-                    Bundle bundle = data.getExtras();
-
-                    //bitmap of the image matrix of dots (each dot corresponds to pixel)
-                    //grabs img data from extra
-                    bitmapOfImg = (Bitmap) bundle.get("data");
-
-                    //set placeholder to bitmap of the img taken by camera
-                    imageContainer.setImageBitmap(bitmapOfImg);
-
-                }
-                break;
-        }
-    }
-
 }

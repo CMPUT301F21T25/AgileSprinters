@@ -8,51 +8,42 @@
 
 
     <TextView
-        android:id="@+id/userIdTextView"
-        android:layout_width="136dp"
-        android:layout_height="100dp"
-        android:gravity="center"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/followerCount"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
         android:id="@+id/followers"
         android:layout_width="136dp"
         android:layout_height="30dp"
+        android:layout_marginStart="20dp"
         android:clickable="true"
         android:gravity="center"
         android:text="@string/followers_text"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/userIdTextView"
+        app:layout_constraintStart_toEndOf="@+id/homeUserButton"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/followerCount"
         android:layout_width="136dp"
         android:layout_height="70dp"
+        android:layout_marginStart="136dp"
         android:clickable="true"
         android:gravity="center"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/userIdTextView"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/followers" />
 
     <TextView
         android:id="@+id/followingCount"
         android:layout_width="136dp"
         android:layout_height="70dp"
-        android:layout_marginStart="4dp"
+        android:layout_marginStart="3dp"
         android:clickable="true"
         android:gravity="center"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/followerCount"
+        app:layout_constraintBottom_toTopOf="@+id/habit_list"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/followerCount"
         app:layout_constraintTop_toBottomOf="@+id/following"
         app:layout_constraintVertical_bias="0.0" />
@@ -66,6 +57,7 @@
         android:text="@string/following_text"
         android:textSize="18sp"
         android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/followers"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -73,8 +65,10 @@
     <ListView
         android:id="@+id/habit_list"
         android:layout_width="404dp"
-        android:layout_height="496dp"
+        android:layout_height="477dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/followerCount">
 
@@ -106,5 +100,16 @@
         app:layout_constraintTop_toBottomOf="@id/add_habit_button"
         app:layout_constraintVertical_bias="1.0"
         app:menu="@menu/bottom_nav_menu" />
+
+    <Button
+        android:id="@+id/homeUserButton"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@drawable/round_button"
+        android:textSize="48sp"
+        app:layout_constraintBottom_toBottomOf="@+id/followerCount"
+        app:layout_constraintEnd_toStartOf="@+id/followerCount"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

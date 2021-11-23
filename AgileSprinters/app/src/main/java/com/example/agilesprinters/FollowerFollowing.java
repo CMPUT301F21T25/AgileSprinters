@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -46,6 +47,8 @@ public class FollowerFollowing extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_follower_following);
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -85,8 +88,7 @@ public class FollowerFollowing extends AppCompatActivity {
                         followersList = (ArrayList<String>) doc.getData().get("followers");
                         followingList = (ArrayList<String>) doc.getData().get("following");
                         followRequestList = (ArrayList<String>) doc.getData().get("follow request list");
-                        IID = (String) doc.getData().get("IID");
-                        userDataList.add(new User((String) doc.getData().get("UID"), firstName, lastName, emailId, followersList, followingList, followRequestList, IID));
+                        userDataList.add(new User((String) doc.getData().get("UID"), firstName, lastName, emailId, followersList, followingList, followRequestList));
                     }
                 }
                 userAdapter.notifyDataSetChanged();
@@ -100,8 +102,17 @@ public class FollowerFollowing extends AppCompatActivity {
                 Intent intent = new Intent(FollowerFollowing.this, OtherUserScreen.class);
                 intent.putExtra(getString(R.string.USER_STR), user);
                 startActivity(intent);
+                overridePendingTransition(0,0);
                 finish();
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+
+        overridePendingTransition(0,0);
     }
 }

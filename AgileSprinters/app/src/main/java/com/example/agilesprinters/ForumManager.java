@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -53,6 +54,8 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_forum_manager);
 
         if (UID == null) {
@@ -117,12 +120,11 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
                     followersList = (ArrayList<String>) doc.getData().get("followers");
                     followingList = (ArrayList<String>) doc.getData().get("following");
                     followRequestList = (ArrayList<String>) doc.getData().get("follow request list");
-                    IID = (String) doc.getData().get("IID");
 
                     arrayList_users.add(emailId);
                     array_user_objects.add(
                             new User((String) doc.getData().get("UID"), firstName, lastName,
-                                    emailId, followersList, followingList, followRequestList, IID));
+                                    emailId, followersList, followingList, followRequestList));
 
                 }
             }
@@ -170,6 +172,7 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
                 intent.putExtra("user", user);
                 //add bundle to send data if need
                 startActivity(intent);
+                overridePendingTransition(0,0);
                 break;
 
             case R.id.calendar:
@@ -177,6 +180,7 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
                 calendarIntent.putExtra("user", user);
                 //add bundle to send data if need
                 startActivity(calendarIntent);
+                overridePendingTransition(0,0);
                 break;
 
             case R.id.notification:
@@ -184,6 +188,7 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
                 intentNotification.putExtra("user", user);
                 //add bundle to send data if need
                 startActivity(intentNotification);
+                overridePendingTransition(0,0);
                 break;
 
             case R.id.forumn:
@@ -193,6 +198,7 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
                     Intent forumIntent = new Intent(this, ForumManager.class);
                     //add bundle to send data if need
                     startActivity(forumIntent);
+                    overridePendingTransition(0,0);
                     break;
                 }
         }
