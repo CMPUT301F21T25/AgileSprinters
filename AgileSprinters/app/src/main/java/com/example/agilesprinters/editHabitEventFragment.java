@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -33,6 +34,7 @@ public class editHabitEventFragment extends DialogFragment {
     private EditText optional_comment;
     private TextView input_date;
     private EditText input_duration;
+    private Spinner durationSpinner;
     private String EID;
     private String UID;
     private String HID;
@@ -109,6 +111,7 @@ public class editHabitEventFragment extends DialogFragment {
         optional_comment = view.findViewById(R.id.editText_comment);
         input_date = view.findViewById(R.id.editText_date);
         input_duration = view.findViewById(R.id.editText_duration);
+        durationSpinner = view.findViewById(R.id.duration_spinner);
 
         HabitInstance habitInstance = (HabitInstance) getArguments().getSerializable("Habit instance");
 
@@ -231,6 +234,7 @@ public class editHabitEventFragment extends DialogFragment {
                 String comment = optional_comment.getText().toString();
                 String date = input_date.getText().toString();
                 String duration = input_duration.getText().toString();
+                String durationSetting = durationSpinner.getSelectedItem().toString();
 
                 if (optional_comment.length() > 20) {
                     readyToClose = false;
@@ -245,6 +249,22 @@ public class editHabitEventFragment extends DialogFragment {
                 if (duration.matches("")) {
                     readyToClose = false;
                     input_duration.setError("This field cannot be blank");
+                }
+
+                if (durationSetting.matches("mins")) {
+                    if (Integer.parseInt(duration) < 0 || Integer.parseInt(duration) > 60) {
+                        readyToClose = false;
+                        input_duration.setError("Invalid value");
+                    }
+                }
+
+                if (durationSetting.matches("hr")) {
+                    if (Integer.parseInt(duration) < 0 || Integer.parseInt(duration) > 2) {
+                        readyToClose = false;
+                        input_duration.setError("Invalid value");
+                    } else {
+                        duration = String.valueOf(Integer.parseInt(duration) * 60);
+                    }
                 }
 
                 // If everything has been filled out, call the listener and send the edited

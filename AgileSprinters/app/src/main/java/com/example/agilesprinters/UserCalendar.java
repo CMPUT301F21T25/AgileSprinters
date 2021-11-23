@@ -51,7 +51,9 @@ import java.util.Map;
 public class UserCalendar extends AppCompatActivity
         implements addHabitEventFragment.OnFragmentInteractionListener,
         editHabitEventFragment.OnFragmentInteractionListener,
-        DatePickerDialog.OnDateSetListener, BottomNavigationView.OnNavigationItemSelectedListener {
+        DatePickerDialog.OnDateSetListener,
+        BottomNavigationView.OnNavigationItemSelectedListener,
+        deleteHabitEventFragment.OnFragmentInteractionListener{
 
     private static final String TAG = "Instance";
     private ArrayAdapter<Habit> toDoEventAdapter;
@@ -99,7 +101,6 @@ public class UserCalendar extends AppCompatActivity
         ListView completedEventsList = findViewById(R.id.completedEventsList);
 
         title1 = findViewById(R.id.title1);
-        Button calendar_button = findViewById(R.id.calendar_button);
 
         db = FirebaseFirestore.getInstance();
 
@@ -142,7 +143,7 @@ public class UserCalendar extends AppCompatActivity
 
         // When the past events button is clicked, it asks for a date input and shows
         // habits planned for that day and events actually completed
-        calendar_button.setOnClickListener(new View.OnClickListener() {
+        title1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 DialogFragment datePicker = new datePickerCalendar();
@@ -162,7 +163,7 @@ public class UserCalendar extends AppCompatActivity
      */
     public void setDate() {
         String formattedDate = currentDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG));
-        title1.setText("Tasks for " + formattedDate + ")");
+        title1.setText("Tasks for " + formattedDate);
     }
 
     /**
@@ -394,7 +395,22 @@ public class UserCalendar extends AppCompatActivity
     @Override
     public void onDeletePressed(HabitInstance instance) {
         collectionPath = "HabitEvents";
+
+        // Show up a fragment
+        deleteHabitEventFragment delete = new deleteHabitEventFragment().newInstance(instance);
+        delete.show(getSupportFragmentManager(), "DELETE");
+    }
+
+    /**
+     * This function deletes the habit event selected by the user in the list
+     * in the deleteHabitEventFragment dialog fragment.
+     *
+     * @param instance The position of the object clicked in the list.
+     */
+    @Override
+    public void onDeleteHabitEventYesPressed(HabitInstance instance) {
         // Makes a call to the database which handles it
+        System.out.println(instance.getUID());
         database.deleteData(collectionPath, instance.getEID(), TAG);
         deleteForumElement(instance);
 

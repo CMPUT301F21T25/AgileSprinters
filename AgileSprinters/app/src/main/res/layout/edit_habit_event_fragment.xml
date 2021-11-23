@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:layout_margin="10dp"/>
+            android:layout_margin="5dp"/>
 
         <EditText
             android:id="@+id/editText_duration"
@@ -35,9 +35,20 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:inputType="number"
-            android:hint="Duration of the event\n(in minutes)"
-            android:minHeight="48dp"
-            android:layout_margin="10dp"/>
+            android:hint="duration"
+            android:layout_margin="5dp"/>
+
+        <Spinner
+            android:id="@+id/duration_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:background="@android:drawable/btn_dropdown"
+            android:spinnerMode="dropdown"
+            android:entries="@array/duration_options"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"/>
 
     </LinearLayout>
 
