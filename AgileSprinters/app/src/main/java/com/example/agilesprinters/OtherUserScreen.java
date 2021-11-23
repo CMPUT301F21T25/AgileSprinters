@@ -71,7 +71,7 @@ public class OtherUserScreen extends AppCompatActivity {
                     otherUser.getFollowRequestList().add(currentUser.getUserID());
                     updateUserDoc(otherUser);
                 }
-                if (follow.getText().toString().matches(getString(R.string.UNFOLLOW_BUTTON_TEXT))){
+                else if (follow.getText().toString().matches(getString(R.string.UNFOLLOW_BUTTON_TEXT))){
                     otherUser.getFollowersList().remove(currentUser.getUserID());
                     currentUser.getFollowingList().remove(otherUser.getUserID());
                     followersCount--;
@@ -140,7 +140,6 @@ public class OtherUserScreen extends AppCompatActivity {
 
     public void updateUserDoc(User user) {
         db = FirebaseFirestore.getInstance();
-        final CollectionReference collectionReference = db.collection("users");
         HashMap<String, Object> data = new HashMap<>();
         String collectionPath = "users";
 
