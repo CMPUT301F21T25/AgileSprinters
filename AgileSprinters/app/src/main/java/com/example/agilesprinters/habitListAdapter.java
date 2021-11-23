@@ -27,6 +27,7 @@ import java.util.HashMap;
 public class habitListAdapter extends ArrayAdapter<Habit> {
     private final Context mContext;
     private final ArrayList<Habit> habitArrayList;
+    double progressPercent;
 
     /**
      * This function initializes the array list of habits and the context of the screen.
@@ -79,11 +80,10 @@ public class habitListAdapter extends ArrayAdapter<Habit> {
                 numDaysForHabit += 1;
             }
         }
-
         // Calculating progress value
         double totalEvents = Math.ceil(days * numDaysForHabit);
         double div = habit.getOverallProgress() / (totalEvents);
-        double progressPercent = div * 100;
+        progressPercent = div * 100;
 
         //pass values to variables
         dateText.setText(mContext.getString(R.string.DATE_STARTED) + habit.getDateToStart());

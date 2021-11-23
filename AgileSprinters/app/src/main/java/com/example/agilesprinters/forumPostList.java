@@ -57,7 +57,6 @@ public class forumPostList extends ArrayAdapter<Forum> {
         if (!forumItem.getComment().matches("")) {
             opt_cmt.setText(forumItem.getComment());
         }
-
         return convertView;
     }
 }

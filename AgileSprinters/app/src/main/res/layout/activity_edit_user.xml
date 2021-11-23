@@ -50,4 +50,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <LinearLayout
+        android:layout_width="79dp"
+        android:layout_height="129dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/userNameTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <ImageView
+            android:id="@+id/add_Cam_Photo"
+            android:layout_width="83dp"
+            android:layout_height="64dp"
+            app:srcCompat="@drawable/ic_add_photo" />
+
+        <ImageView
+            android:id="@+id/add_Gal_Photo"
+            android:layout_width="83dp"
+            android:layout_height="64dp"
+            app:srcCompat="@drawable/ic_add_photo_gallery" />
+
+
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
