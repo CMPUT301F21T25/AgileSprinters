@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -22,7 +23,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * This class is a fragment allows a user to view all the details of a habit and edit any details
@@ -45,6 +55,8 @@ public class editHabitEventFragment extends DialogFragment {
     private ImageView addGalPhotoBtn;
     private Uri selectedImg;
     private Bitmap bitmapOfImg;
+    private FirebaseFirestore db;
+    private Database database = new Database();
 
     private editHabitEventFragment.OnFragmentInteractionListener listener;
 
@@ -118,9 +130,13 @@ public class editHabitEventFragment extends DialogFragment {
         optional_comment.setText(habitInstance.getOpt_comment());
         input_date.setText(habitInstance.getDate());
         input_duration.setText(String.valueOf(habitInstance.getDuration()));
+
         imageContainer = view.findViewById(R.id.imageContainer);
         addCamPhotoBtn = view.findViewById(R.id.add_Cam_Photo);
         addGalPhotoBtn = view.findViewById(R.id.add_Gal_Photo);
+
+        getIID(habitInstance);
+
 
         addCamPhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,7 +158,6 @@ public class editHabitEventFragment extends DialogFragment {
         EID = habitInstance.getEID();
         UID = habitInstance.getUID();
         HID = habitInstance.getHID();
-        IID = habitInstance.getIID();
         FID = habitInstance.getFID();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -156,6 +171,55 @@ public class editHabitEventFragment extends DialogFragment {
                      * filled out and display error messages if they have been left blank.
                      */
                 }).create();
+
+    }
+
+    private void getIID(HabitInstance instance) {
+        db = FirebaseFirestore.getInstance();
+        db.collection("HabitEvents").addSnapshotListener((value, error) -> {
+
+            for (QueryDocumentSnapshot doc : value) {
+                if (doc.getId().matches(instance.getEID())
+                        && ((String) doc.getData().get("HID")).matches(instance.getHID())
+                        && ((String) doc.getData().get("UID")).matches(instance.getUID())) {
+
+                    IID = (String) doc.getData().get("IID");
+                    setImageToDialog(IID);
+
+                }
+            }
+        });
+    }
+
+    private void setImageToDialog(String iid) {
+        if (iid != null){
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            // Create a storage reference from our app
+            StorageReference storageRef = storage.getReference();
+
+            StorageReference islandRef = storageRef.child(iid);
+
+            final long ONE_MEGABYTE = 2*(1024 * 1024);
+            islandRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    // Data for "images/island.jpg" is returns, use this as needed
+                    //convert bytes to bitmap
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes , 0, bytes.length);
+
+                    //set image to bitmap data
+                    imageContainer.setImageBitmap(bitmap);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle any errors
+                }
+            });
+        }
+
+
+
 
     }
 
@@ -208,7 +272,6 @@ public class editHabitEventFragment extends DialogFragment {
 
                     //set placeholder to bitmap of the img taken by camera
                     imageContainer.setImageBitmap(bitmapOfImg);
-
                 }
                 break;
         }

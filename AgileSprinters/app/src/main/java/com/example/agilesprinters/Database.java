@@ -113,5 +113,31 @@ public class Database {
             }
         });
     }
+
+    public void deleteImg(String IID) {
+        // Create a storage reference from our app
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+
+        // Create a reference to the file to delete
+        StorageReference desertRef = storageRef.child(IID);
+
+        System.out.println("IID DEL" + desertRef);
+        // Delete the file
+        desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                // File deleted successfully
+                System.out.printf("SUCCESSSSS IMAGE IS GONE!!");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Uh-oh, an error occurred!
+                System.out.printf("Failure to delete");
+            }
+        });
+    }
+
 }
 
