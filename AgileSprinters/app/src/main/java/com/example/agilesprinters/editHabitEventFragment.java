@@ -217,10 +217,6 @@ public class editHabitEventFragment extends DialogFragment {
                 }
             });
         }
-
-
-
-
     }
 
     //switches view to gallery and allows user to pick photo
@@ -317,14 +313,14 @@ public class editHabitEventFragment extends DialogFragment {
                 if (durationSetting.matches("mins")) {
                     if (Integer.parseInt(duration) < 0 || Integer.parseInt(duration) > 60) {
                         readyToClose = false;
-                        input_duration.setError("Invalid value");
+                        input_duration.setError("Mins value  muust be between 0 and 60");
                     }
                 }
 
                 if (durationSetting.matches("hr")) {
                     if (Integer.parseInt(duration) < 0 || Integer.parseInt(duration) > 2) {
                         readyToClose = false;
-                        input_duration.setError("Invalid value");
+                        input_duration.setError("Hour value must be below 2");
                     } else {
                         duration = String.valueOf(Integer.parseInt(duration) * 60);
                     }
