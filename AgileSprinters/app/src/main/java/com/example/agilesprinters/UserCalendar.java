@@ -54,7 +54,8 @@ public class UserCalendar extends AppCompatActivity
         editHabitEventFragment.OnFragmentInteractionListener,
         DatePickerDialog.OnDateSetListener,
         BottomNavigationView.OnNavigationItemSelectedListener,
-        deleteHabitEventFragment.OnFragmentInteractionListener {
+        deleteHabitEventFragment.OnFragmentInteractionListener,
+        shareHabitEventFragment.OnFragmentInteractionListener{
 
     private static final String TAG = "Instance";
     private ArrayAdapter<Habit> toDoEventAdapter;
@@ -268,14 +269,14 @@ public class UserCalendar extends AppCompatActivity
         String forumID = stringChange(newHabitRef.getId());
 
         addHabitEventDatabase(habitInstance, bitmap, forumID);
-        updateForum(habitInstance, forumID, "ADD");
+        updateForum(habitInstance, forumID);
         completedEventsScreenSetup();
 
         updateProgressInDatabase(habitInstance, "ADD");
 
     }
 
-    private void updateForum(HabitInstance habitInstance, String FID, String toDo) {
+    private void updateForum(HabitInstance habitInstance, String FID) {
         String HID = habitInstance.getHID();
         String privacySetting = "";
         HashMap<String, String> data = new HashMap();
@@ -296,18 +297,36 @@ public class UserCalendar extends AppCompatActivity
             data.put("EID", habitInstance.getEID());
             data.put("FID", FID);
 
-            //DocumentReference newHabitRef = db.collection("Habit").document();
-            //String forumID = stringChange(newHabitRef.getId());
-
             collectionPath = "ForumPosts";
-            if (toDo.matches("EDIT")) {
-                System.out.println("general is " + FID);
-                database.updateData("ForumPosts", FID, data, TAG);
-                return;
-            }
             database.addData(collectionPath, FID, data, "Forum Post");
 
         }
+    }
+
+    private void editForum(HabitInstance habitInstance) {
+        System.out.println("Printing!!!");
+        db.collection("ForumPosts").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
+                    FirebaseFirestoreException error) {
+                HashMap<String, String> data = new HashMap();
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    if (habitInstance.getFID().matches(doc.getId())) {
+                        String duration = String.valueOf(habitInstance.getDuration());
+                        data.put("Event Date", habitInstance.getDate());
+                        data.put("First Name", user.getFirstName());
+                        data.put("Last Name", user.getLastName());
+                        data.put("duration", duration);
+                        data.put("UID", habitInstance.getUID());
+                        data.put("Opt Cmt", habitInstance.getOpt_comment());
+                        data.put("EID", habitInstance.getEID());
+                        data.put("FID", habitInstance.getFID());
+                    }
+                }
+                database.updateData("ForumPosts", habitInstance.getFID(), data, TAG);
+                // from the cloud
+            }
+        });
     }
 
     public String stringChange(String str) {
@@ -351,40 +370,10 @@ public class UserCalendar extends AppCompatActivity
 
         // Makes a call to the database which handles it
         collectionPath = "HabitEvents";
+        editForum(instance);
         database.updateData(collectionPath, selectedHabitInstanceId, data, TAG);
-        updateForum(instance, instance.getFID(),"EDIT");
-
         completedEventsScreenSetup();
     }
-
-    private void editForumElement(HabitInstance instance) {
-        String EID = instance.getEID();
-        db.collection("ForumPosts").addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
-                    FirebaseFirestoreException error) {
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    if (EID.matches((String) doc.getData().get("EID"))) {
-
-                        HashMap<String, String> data = new HashMap<>();
-                        data.put("Event Date", instance.getDate());
-                        data.put("First Name", user.getFirstName());
-                        data.put("Last Name", user.getLastName());
-                        data.put("duration", String.valueOf(instance.getDuration()));
-                        data.put("UID", instance.getUID());
-                        data.put("Opt Cmt", instance.getOpt_comment());
-                        data.put("EID", instance.getEID());
-
-                        // Makes a call to the database which handles it
-                        database.updateData("ForumPosts", doc.getId(), data, TAG);
-                        break;
-                    }
-                }
-                // from the cloud
-            }
-        });
-    }
-
 
     /**
      * This function deletes a habit instance object from the database once a user clicks
@@ -403,7 +392,12 @@ public class UserCalendar extends AppCompatActivity
 
     @Override
     public void onSharePressed(HabitInstance instance) {
-        System.out.println("Sharing works");
+        collectionPath = "HabitEvents";
+
+        // Show up a fragment
+        shareHabitEventFragment share = new shareHabitEventFragment().newInstance(instance);
+        share.show(getSupportFragmentManager(), "SHARE");
+
     }
 
     /**
@@ -416,11 +410,11 @@ public class UserCalendar extends AppCompatActivity
     public void onDeleteHabitEventYesPressed(HabitInstance instance) {
         // Makes a call to the database which handles it
         System.out.println(instance.getUID());
+        database.deleteData(collectionPath, instance.getEID(), TAG);
         getImageToDelete(instance);
+
         deleteForumElement(instance);
         database.deleteData(collectionPath, instance.getEID(), TAG);
-
-
 
         completedEventsScreenSetup();
 
@@ -450,6 +444,8 @@ public class UserCalendar extends AppCompatActivity
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
                     FirebaseFirestoreException error) {
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    System.out.println("EID is " + EID);
+                    System.out.println("from data base is "+ (String) doc.getData().get("EID"));
                     if (EID.matches((String) doc.getData().get("EID"))) {
                         System.out.println("ID is " + doc.getId());
                         if(doc.getId() == null){
@@ -606,4 +602,23 @@ public class UserCalendar extends AppCompatActivity
     }
 
 
+    @Override
+    public void onShareHabitEventYesPressed(HabitInstance eventToShare) {
+        HashMap<String, String> data = new HashMap();
+        String FID = eventToShare.getFID();
+
+        String duration = String.valueOf(eventToShare.getDuration());
+
+        data.put("Event Date", eventToShare.getDate());
+        data.put("First Name", user.getFirstName());
+        data.put("Last Name", user.getLastName());
+        data.put("duration", duration);
+        data.put("UID", eventToShare.getUID());
+        data.put("Opt Cmt", eventToShare.getOpt_comment());
+        data.put("EID", eventToShare.getEID());
+        data.put("FID", FID);
+
+        collectionPath = "ForumPosts";
+        database.addData(collectionPath, FID, data, "Forum Post");
+    }
 }

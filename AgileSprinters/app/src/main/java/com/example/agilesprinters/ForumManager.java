@@ -36,7 +36,6 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
     private ArrayAdapter<String> arrayAdapter_users;
     private ArrayList<User> array_user_objects = new ArrayList<>();
 
-    ListView forumList;
     ArrayAdapter<Forum> forumAdapter;
     final private ArrayList<Forum> forumDataList = new ArrayList<>();;
     ArrayList<String> userTempList;
