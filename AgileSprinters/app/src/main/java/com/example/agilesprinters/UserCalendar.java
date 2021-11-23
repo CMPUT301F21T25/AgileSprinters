@@ -194,7 +194,6 @@ public class UserCalendar extends AppCompatActivity
      */
     public void screenSetup() {
         setDate();
-
         // Gives the day of the week
         String todayDay = currentDate.getDayOfWeek().toString();
 
@@ -332,10 +331,12 @@ public class UserCalendar extends AppCompatActivity
             path = "images/"+System.currentTimeMillis() +".jpg";
         } else {
             path = instance.getIID();
+
         }
 
         if (bitmap != null) {
             database.addImage(path, bitmap);
+            instance.setIID(path);
         }
 
         HashMap<String, String> data = new HashMap<>();
@@ -395,12 +396,31 @@ public class UserCalendar extends AppCompatActivity
     public void onDeletePressed(HabitInstance instance) {
         collectionPath = "HabitEvents";
         // Makes a call to the database which handles it
-        database.deleteData(collectionPath, instance.getEID(), TAG);
+        getImageToDelete(instance);
         deleteForumElement(instance);
+        database.deleteData(collectionPath, instance.getEID(), TAG);
+
+
 
         completedEventsScreenSetup();
 
         updateProgressInDatabase(instance, "DELETE");
+    }
+
+    private void getImageToDelete(HabitInstance instance) {
+        db = FirebaseFirestore.getInstance();
+        db.collection("HabitEvents").addSnapshotListener((value, error) -> {
+
+            for (QueryDocumentSnapshot doc : value) {
+                if (instance.getEID().matches(doc.getId())
+                        && (instance.getHID().matches((String) doc.getData().get("HID")))
+                        && (instance.getUID().matches((String) doc.getData().get("UID")))) {
+                    System.out.println("hello form user");
+                    database.deleteImg((String) doc.getData().get("IID"));
+
+                }
+            }
+        });
     }
 
     private void deleteForumElement(HabitInstance instance) {
@@ -433,8 +453,9 @@ public class UserCalendar extends AppCompatActivity
         final CollectionReference collectionReference = db.collection("HabitEvents");
 
         if (bitmap != null) {
-            String path = "images/"+System.currentTimeMillis() +".jpg";
+            path = "images/"+System.currentTimeMillis() +".jpg";
             database.addImage(path, bitmap);
+            instance.setIID(path);
         }
 
         String instanceId = instance.getEID();
