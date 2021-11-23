@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -53,7 +54,7 @@ public class UserCalendar extends AppCompatActivity
         editHabitEventFragment.OnFragmentInteractionListener,
         DatePickerDialog.OnDateSetListener,
         BottomNavigationView.OnNavigationItemSelectedListener,
-        deleteHabitEventFragment.OnFragmentInteractionListener{
+        deleteHabitEventFragment.OnFragmentInteractionListener {
 
     private static final String TAG = "Instance";
     private ArrayAdapter<Habit> toDoEventAdapter;
@@ -69,8 +70,6 @@ public class UserCalendar extends AppCompatActivity
     private String collectionPath;
     private Database database = new Database();
     private String path;
-
-
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
@@ -402,6 +401,11 @@ public class UserCalendar extends AppCompatActivity
         delete.show(getSupportFragmentManager(), "DELETE");
     }
 
+    @Override
+    public void onSharePressed(HabitInstance instance) {
+        System.out.println("Sharing works");
+    }
+
     /**
      * This function deletes the habit event selected by the user in the list
      * in the deleteHabitEventFragment dialog fragment.
@@ -412,7 +416,6 @@ public class UserCalendar extends AppCompatActivity
     public void onDeleteHabitEventYesPressed(HabitInstance instance) {
         // Makes a call to the database which handles it
         System.out.println(instance.getUID());
-        database.deleteData(collectionPath, instance.getEID(), TAG);
         getImageToDelete(instance);
         deleteForumElement(instance);
         database.deleteData(collectionPath, instance.getEID(), TAG);

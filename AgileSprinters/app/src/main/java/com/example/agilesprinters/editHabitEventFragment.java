@@ -53,12 +53,14 @@ public class editHabitEventFragment extends DialogFragment {
     private ImageView imageContainer;
     private ImageView addCamPhotoBtn;
     private ImageView addGalPhotoBtn;
+    private Button shareButton;
     private Uri selectedImg;
     private Bitmap bitmapOfImg;
-    private FirebaseFirestore db;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private Database database = new Database();
 
     private editHabitEventFragment.OnFragmentInteractionListener listener;
+    private Boolean status;
 
     /**
      * This function saves the values sent to the fragment for future manipulation
@@ -85,6 +87,8 @@ public class editHabitEventFragment extends DialogFragment {
         void onEditSavePressed(HabitInstance instance, Bitmap bitmapOfImg);
 
         void onDeletePressed(HabitInstance instance);
+
+        void onSharePressed(HabitInstance instance);
     }
 
     /**
@@ -124,6 +128,7 @@ public class editHabitEventFragment extends DialogFragment {
         input_date = view.findViewById(R.id.editText_date);
         input_duration = view.findViewById(R.id.editText_duration);
         durationSpinner = view.findViewById(R.id.duration_spinner);
+        shareButton = view.findViewById(R.id.share_event_button);
 
         HabitInstance habitInstance = (HabitInstance) getArguments().getSerializable("Habit instance");
 
@@ -135,9 +140,9 @@ public class editHabitEventFragment extends DialogFragment {
         addCamPhotoBtn = view.findViewById(R.id.add_Cam_Photo);
         addGalPhotoBtn = view.findViewById(R.id.add_Gal_Photo);
 
+        setVisibilityForShareButton(habitInstance.getHID(), shareButton);
+
         getIID(habitInstance);
-
-
         addCamPhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -161,17 +166,105 @@ public class editHabitEventFragment extends DialogFragment {
         FID = habitInstance.getFID();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setView(view);
+
+        Button deleteButton = (Button) view.findViewById(R.id.delete_event_button);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                listener.onDeletePressed(habitInstance);
+                dismiss();
+
+            }
+        });
+
+        Button saveButton = view.findViewById(R.id.save_event_button);
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Boolean readyToClose = true;
+                String comment = optional_comment.getText().toString();
+                String date = input_date.getText().toString();
+                String duration = input_duration.getText().toString();
+                String durationSetting = durationSpinner.getSelectedItem().toString();
+
+                if (optional_comment.length() > 20) {
+                    readyToClose = false;
+                    optional_comment.setError("This field cannot have more than 20 chars");
+                }
+
+                if (date.matches("")) {
+                    readyToClose = false;
+                    input_date.setError("This field cannot be blank");
+                }
+
+                if (duration.matches("")) {
+                    readyToClose = false;
+                    input_duration.setError("This field cannot be blank");
+                }
+
+                if (durationSetting.matches("mins")) {
+                    if (Integer.parseInt(duration) < 0 || Integer.parseInt(duration) > 60) {
+                        readyToClose = false;
+                        input_duration.setError("Mins value  muust be between 0 and 60");
+                    }
+                }
+
+                if (durationSetting.matches("hr")) {
+                    if (Integer.parseInt(duration) < 0 || Integer.parseInt(duration) > 2) {
+                        readyToClose = false;
+                        input_duration.setError("Hour value must be below 2");
+                    } else {
+                        duration = String.valueOf(Integer.parseInt(duration) * 60);
+                    }
+                }
+
+                // If everything has been filled out, call the listener and send the edited
+                // habit back to the Home class and dismiss the dialog.
+                if (readyToClose) {
+                    listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date, Integer.parseInt(duration), IID, FID), bitmapOfImg);
+                    dismiss();
+                }
+            }
+        });
+
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onSharePressed(habitInstance);
+                dismiss();
+            }
+        });
+
+        AlertDialog alertD = builder.create();
+        return alertD;
+
+        /**
         return builder
                 .setView(view)
                 .setTitle("View/Edit Habit Event")
                 .setNegativeButton("Delete", (dialog, id) -> listener.onDeletePressed(habitInstance))
-                .setPositiveButton("Save", (dialogInterface, i) -> {
+                .setPositiveButton("Save", (dialogInterface, i) -> {**/
                     /* Do not implement anything here in order to override the button
                      * to only call the listener once all the information required has been
                      * filled out and display error messages if they have been left blank.
                      */
-                }).create();
+                //}).create();
 
+    }
+
+    private void setVisibilityForShareButton(String HID, Button shareButton) {
+        db.collection("Habit").addSnapshotListener((value, error) -> {
+            for (QueryDocumentSnapshot doc : value) {
+                if (doc.getId().equals(HID)) {
+                    if (((String) doc.getData().get("PrivacySetting"))
+                            .matches("Private")) {
+                        shareButton.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        });
     }
 
     private void getIID(HabitInstance instance) {
@@ -277,7 +370,6 @@ public class editHabitEventFragment extends DialogFragment {
      * This function overrides the buttons clicked in order to only allow the dialog to be dismissed
      * when all requirements have been met.
      */
-    @Override
     public void onResume() {
         super.onResume();
 

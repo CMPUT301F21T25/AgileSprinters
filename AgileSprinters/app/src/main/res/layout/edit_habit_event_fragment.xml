@@ -86,4 +86,40 @@
         android:layout_height="365dp"
         tools:srcCompat="@tools:sample/avatars" />
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right">
+
+        <Button
+            android:id="@+id/delete_event_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Delete"
+            android:layout_weight="10"/>
+
+        <Button
+            android:id="@+id/save_event_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Save"
+            android:layout_weight="10"/>
+
+        <Button
+            android:id="@+id/share_event_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Share"
+            android:layout_weight="10"
+            android:visibility="invisible"/>
+
+
+
+
+    </LinearLayout>
+
+
 </LinearLayout>

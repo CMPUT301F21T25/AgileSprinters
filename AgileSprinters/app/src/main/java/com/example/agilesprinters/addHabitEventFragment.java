@@ -279,8 +279,6 @@ public class addHabitEventFragment extends DialogFragment{
                 String duration = input_duration.getText().toString();
                 String durationSetting = durationSpinner.getSelectedItem().toString();
 
-
-
                 if (comment.length() > 20) {
                     readyToClose = false;
                     optional_comment.setError("This field cannot have more than 20 chars");
