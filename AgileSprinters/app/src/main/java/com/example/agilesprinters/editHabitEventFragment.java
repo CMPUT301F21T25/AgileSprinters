@@ -12,16 +12,23 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.loader.app.LoaderManager;
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * This class is a fragment allows a user to view all the details of a habit and edit any details
@@ -41,6 +48,7 @@ public class editHabitEventFragment extends DialogFragment {
     private ImageView imageContainer;
     private ImageView addCamPhotoBtn;
     private ImageView addGalPhotoBtn;
+    private ImageView addLocBtn;
     private Uri selectedImg;
     private Bitmap bitmapOfImg;
 
@@ -62,6 +70,7 @@ public class editHabitEventFragment extends DialogFragment {
 
         return fragment;
     }
+
 
     /**
      * This interface listens for when dialog is ended and sends the information and the function
@@ -118,6 +127,7 @@ public class editHabitEventFragment extends DialogFragment {
         imageContainer = view.findViewById(R.id.imageContainer);
         addCamPhotoBtn = view.findViewById(R.id.add_Cam_Photo);
         addGalPhotoBtn = view.findViewById(R.id.add_Gal_Photo);
+        addLocBtn = view.findViewById(R.id.add_location);
 
         addCamPhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,6 +135,14 @@ public class editHabitEventFragment extends DialogFragment {
                 //if(runtimePermissionForCamera()){
                 getCameraPicture();
                 //}
+            }
+        });
+
+        addLocBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MapsFragment mapsFragment = new MapsFragment();
+                mapsFragment.show(Objects.requireNonNull(getChildFragmentManager()), "null");
             }
         });
 
@@ -155,6 +173,7 @@ public class editHabitEventFragment extends DialogFragment {
                 }).create();
 
     }
+
 
     //switches view to gallery and allows user to pick photo
     private void getGalleryPicture() {
@@ -210,6 +229,7 @@ public class editHabitEventFragment extends DialogFragment {
                 break;
         }
     }
+
 
     /**
      * This function overrides the buttons clicked in order to only allow the dialog to be dismissed
