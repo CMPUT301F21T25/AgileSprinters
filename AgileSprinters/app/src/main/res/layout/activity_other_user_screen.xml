@@ -41,42 +41,41 @@
         app:layout_constraintTop_toBottomOf="@+id/followers" />
 
     <TextView
-        android:id="@+id/followingCount"
-        android:layout_width="136dp"
-        android:layout_height="70dp"
-        android:layout_marginStart="4dp"
-        android:clickable="true"
-        android:gravity="center"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/followerCount"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/followerCount"
-        app:layout_constraintTop_toBottomOf="@+id/following"
-        app:layout_constraintVertical_bias="0.0" />
+            android:id="@+id/followingCount"
+            android:layout_width="136dp"
+            android:layout_height="70dp"
+            android:layout_marginStart="4dp"
+            android:clickable="true"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/followerCount"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/followerCount"
+            app:layout_constraintTop_toBottomOf="@+id/following"
+            app:layout_constraintVertical_bias="0.0" />
 
-    <TextView
-        android:id="@+id/following"
-        android:layout_width="136dp"
-        android:layout_height="30dp"
-        android:clickable="true"
-        android:gravity="center"
-        android:text="@string/following_text"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/followers"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/following"
+            android:layout_width="136dp"
+            android:layout_height="30dp"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="@string/following_text"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/followers"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
-    <ListView
-        android:id="@+id/habit_list"
-        android:layout_width="410dp"
-        android:layout_height="631dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/followerCount">
-
-    </ListView>
+        <ListView
+            android:id="@+id/habit_list"
+            android:layout_width="410dp"
+            android:layout_height="631dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/followerCount">
+        </ListView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

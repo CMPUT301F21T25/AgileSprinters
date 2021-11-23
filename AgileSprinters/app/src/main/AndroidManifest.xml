@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AgileSprinters">
         <activity
+            android:name=".EditUserActivity"
+            android:exported="true" />
+        <activity
             android:name=".ForumManager"
             android:exported="false" />
         <activity

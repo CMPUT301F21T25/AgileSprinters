@@ -78,7 +78,6 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
                 Intent forumIntent = new Intent(this, ForumManager.class);
                 forumIntent.putExtra("user", user);
                 startActivity(forumIntent);
-                finish();
                 break;
 
         }

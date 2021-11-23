@@ -60,8 +60,10 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     private static final String TAG = "Habit";
     private String UID;
     private User user;
-    private String firstNameStr;
     private String collectionPath;
+    private String nameStr;
+    private String followingCount;
+    private String followersCount;
     private Database database = new Database();
 
     /**
@@ -89,11 +91,16 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         if (user == null) {
             user = (User) getIntent().getSerializableExtra("user");
             UID = user.getUser();
-            firstNameStr = (String) user.getFirstName();
+            nameStr = user.getFirstName()+ " " + user.getLastName();
+
+            followersCount = String.valueOf(user.getFollowersList().size());
+            followingCount = String.valueOf(user.getFollowingList().size());
         }
 
-        TextView firstName = findViewById(R.id.userIdTextView);
-        firstName.setText(firstNameStr);
+        setTextFields(followingCount, followersCount);
+
+        TextView firstNameTextView = findViewById(R.id.userIdTextView);
+        firstNameTextView.setText(nameStr);
 
 
         db = FirebaseFirestore.getInstance();
@@ -160,7 +167,6 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 intent.putExtra("Title", "Following");
                 intent.putExtra(getString(R.string.USER_STR), user);
                 startActivity(intent);
-                finish();
             }
         });
 
@@ -171,11 +177,17 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 intent.putExtra("Title", "Followers");
                 intent.putExtra(getString(R.string.USER_STR), user);
                 startActivity(intent);
-                finish();
             }
         });
 
-
+        firstNameTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Home.this, EditUserActivity.class);
+                intent.putExtra(getString(R.string.USER_STR), user);
+                startActivity(intent);
+            }
+        });
 
         /**
          * This is a long item click listener which overrides the regular item click listener.
@@ -229,6 +241,14 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     public void follow(View view) {
     }
 
+    private void setTextFields(String followingCount, String followersCount) {
+        TextView followingCountTextView = findViewById(R.id.followingCount);
+        TextView followerCountTextView = findViewById(R.id.followerCount);
+
+        followerCountTextView.setText(followersCount);
+        followingCountTextView.setText(followingCount);
+    }
+
     /**
      * This method contains the logic for switching screens by selecting an item from the navigation
      * bar.
@@ -248,7 +268,6 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                     Intent intent = new Intent(this, Home.class);
                     //add bundle to send data if need
                     startActivity(intent);
-                    finish();
                 }
                 break;
 
@@ -257,7 +276,6 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 intent.putExtra("user", user);
                 //add bundle to send data if need
                 startActivity(intent);
-                finish();
                 break;
 
             case R.id.notification:
@@ -265,14 +283,12 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 intentNotification.putExtra("user", user);
                 //add bundle to send data if need
                 startActivity(intentNotification);
-                finish();
                 break;
 
             case R.id.forumn:
                 Intent forumIntent = new Intent(this, ForumManager.class);
                 forumIntent.putExtra("user", user);
                 startActivity(forumIntent);
-                finish();
                 break;
 
         }

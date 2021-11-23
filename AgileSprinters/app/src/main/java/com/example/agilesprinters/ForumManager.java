@@ -47,6 +47,7 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
     private ArrayList<String> followersList = new ArrayList<>();
     private ArrayList<String> followingList = new ArrayList<>();
     private ArrayList<String> followRequestList = new ArrayList<>();
+    private String IID;
 
 
     @Override
@@ -98,7 +99,7 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
                         Intent intent = new Intent(ForumManager.this, OtherUserScreen.class);
                         intent.putExtra(getString(R.string.USER_STR), userToSend);
                         startActivity(intent);
-                        finish();
+
                     }
                 }
             }
@@ -109,18 +110,19 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
         db.collection("users").addSnapshotListener((value, error) -> {
             arrayAdapter_users.clear();
             for (QueryDocumentSnapshot doc : value) {
-                if(!doc.getId().matches(user.getUserID()) && userTempList.contains(doc.getId())){
+                if(!doc.getId().matches(user.getUserID())){
                     emailId = (String) doc.getData().get("Email ID");
                     firstName = (String)  doc.getData().get("First Name");
                     lastName = (String) doc.getData().get("Last Name");
                     followersList = (ArrayList<String>) doc.getData().get("followers");
                     followingList = (ArrayList<String>) doc.getData().get("following");
                     followRequestList = (ArrayList<String>) doc.getData().get("follow request list");
+                    IID = (String) doc.getData().get("IID");
 
                     arrayList_users.add(emailId);
                     array_user_objects.add(
                             new User((String) doc.getData().get("UID"), firstName, lastName,
-                                    emailId, followersList, followingList, followRequestList));
+                                    emailId, followersList, followingList, followRequestList, IID));
 
                 }
             }
@@ -160,13 +162,14 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
      */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+
         switch (item.getItemId()) {
             case R.id.home:
                 Intent intent = new Intent(this, Home.class);
                 intent.putExtra("user", user);
                 //add bundle to send data if need
                 startActivity(intent);
-                finish();
                 break;
 
             case R.id.calendar:
@@ -174,7 +177,6 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
                 calendarIntent.putExtra("user", user);
                 //add bundle to send data if need
                 startActivity(calendarIntent);
-                finish();
                 break;
 
             case R.id.notification:
@@ -182,7 +184,6 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
                 intentNotification.putExtra("user", user);
                 //add bundle to send data if need
                 startActivity(intentNotification);
-                finish();
                 break;
 
             case R.id.forumn:
@@ -192,13 +193,9 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
                     Intent forumIntent = new Intent(this, ForumManager.class);
                     //add bundle to send data if need
                     startActivity(forumIntent);
-                    finish();
                     break;
                 }
         }
         return false;
     }
-
-
-
 }

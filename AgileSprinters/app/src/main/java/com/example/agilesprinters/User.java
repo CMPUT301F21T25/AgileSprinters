@@ -23,10 +23,19 @@ public class User implements Serializable {
     private ArrayList<String> followersList;
     private ArrayList<String> followingList;
     private ArrayList<String> followRequestList;
+    private String profilePhotoPath;
 
     public User() { }
 
-    public User(String userID, String firstName, String lastName, String emailId, ArrayList<String> followersList, ArrayList<String> followingList, ArrayList<String> followRequestList) {
+    public String getProfilePhotoPath() {
+        return profilePhotoPath;
+    }
+
+    public void setProfilePhotoPath(String profilePhotoPath) {
+        this.profilePhotoPath = profilePhotoPath;
+    }
+
+    public User(String userID, String firstName, String lastName, String emailId, ArrayList<String> followersList, ArrayList<String> followingList, ArrayList<String> followRequestList, String profilePhotoPath) {
         this.userID = userID;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -34,6 +43,7 @@ public class User implements Serializable {
         this.followersList = followersList;
         this.followingList = followingList;
         this.followRequestList = followRequestList;
+        this.profilePhotoPath = profilePhotoPath;
     }
 
     public ArrayList<String> getFollowRequestList() {

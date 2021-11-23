@@ -186,6 +186,7 @@ public class Register extends AppCompatActivity {
         data.put("followers", followers);
         data.put("following", following);
         data.put("follow request list", followRequestList);
+        data.put("IID", null);
 
         collectionReference
                 .document(userId)

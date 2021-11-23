@@ -37,11 +37,11 @@ public class FollowerFollowing extends AppCompatActivity {
 
     private User currentUser = new User();
     private FirebaseFirestore db;
-    private Database database = new Database();
-    private String firstName, lastName, emailId, uniqueId;
+    private String firstName, lastName, emailId;
     private ArrayList<String> followersList = new ArrayList<>();
     private ArrayList<String> followingList = new ArrayList<>();
     private ArrayList<String> followRequestList = new ArrayList<>();
+    private String IID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +85,8 @@ public class FollowerFollowing extends AppCompatActivity {
                         followersList = (ArrayList<String>) doc.getData().get("followers");
                         followingList = (ArrayList<String>) doc.getData().get("following");
                         followRequestList = (ArrayList<String>) doc.getData().get("follow request list");
-                        userDataList.add(new User((String) doc.getData().get("UID"), firstName, lastName, emailId, followersList, followingList, followRequestList));
+                        IID = (String) doc.getData().get("IID");
+                        userDataList.add(new User((String) doc.getData().get("UID"), firstName, lastName, emailId, followersList, followingList, followRequestList, IID));
                     }
                 }
                 userAdapter.notifyDataSetChanged();

@@ -431,9 +431,8 @@ public class UserCalendar extends AppCompatActivity
      */
     public void addHabitEventDatabase(HabitInstance instance, Bitmap bitmap, String FID) {
         final CollectionReference collectionReference = db.collection("HabitEvents");
-
         if (bitmap != null) {
-            String path = "images/"+System.currentTimeMillis() +".jpg";
+            path = "images/"+System.currentTimeMillis() +".jpg";
             database.addImage(path, bitmap);
         }
 
@@ -531,7 +530,6 @@ public class UserCalendar extends AppCompatActivity
                 intent.putExtra("user", user);
                 //add bundle to send data if need
                 startActivity(intent);
-                finish();
                 break;
 
             case R.id.calendar:
@@ -541,7 +539,6 @@ public class UserCalendar extends AppCompatActivity
                     Intent intent2 = new Intent(this, UserCalendar.class);
                     //add bundle to send data if need
                     startActivity(intent2);
-                    finish();
                     break;
                 }
 
@@ -550,14 +547,12 @@ public class UserCalendar extends AppCompatActivity
                 intentNotification.putExtra("user", user);
                 //add bundle to send data if need
                 startActivity(intentNotification);
-                finish();
                 break;
 
             case R.id.forumn:
                 Intent forumIntent = new Intent(this, ForumManager.class);
                 forumIntent.putExtra("user", user);
                 startActivity(forumIntent);
-                finish();
                 break;
 
         }
