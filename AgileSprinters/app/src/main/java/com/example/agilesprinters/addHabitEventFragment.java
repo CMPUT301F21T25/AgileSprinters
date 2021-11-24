@@ -41,7 +41,6 @@ public class addHabitEventFragment extends DialogFragment{
     private String EID;
     private String UID;
     private String HID;
-    private String IID;
     private String FID;
     private EditText optional_comment;
     private TextView input_date;
@@ -65,14 +64,13 @@ public class addHabitEventFragment extends DialogFragment{
      * @param position is the selected item position
      * @return returns the fragment with the bundled parameters
      */
-    public static addHabitEventFragment newInstance(int position, String UID, String HID, String EID, String IID) {
+    public static addHabitEventFragment newInstance(int position, String UID, String HID, String EID) {
         addHabitEventFragment fragment = new addHabitEventFragment();
         Bundle args = new Bundle();
         args.putInt("position", position);
         args.putString("UID", UID);
         args.putString("HID", HID);
         args.putString("EID", EID);
-        args.putString("IID", IID);
         fragment.setArguments(args);
 
         return fragment;
@@ -147,7 +145,6 @@ public class addHabitEventFragment extends DialogFragment{
         UID = getArguments().getString(getString(R.string.UID));
         HID = getArguments().getString(getString(R.string.HID));
         EID = getArguments().getString(getString(R.string.EID));
-        IID = getArguments().getString(getString(R.string.IID));
         FID = getArguments().getString("FID");
 
         LocalDate currentDate = LocalDate.now();
@@ -316,7 +313,7 @@ public class addHabitEventFragment extends DialogFragment{
                 if(readyToClose){
                     
                     listener.onSavePressed(new HabitInstance(EID, UID, HID, comment, date_entry,
-                            Integer.parseInt(duration), IID, FID, false), bitmapOfImg);
+                            Integer.parseInt(duration), null, FID, false), bitmapOfImg);
                     dialog.dismiss();
                 }
             });

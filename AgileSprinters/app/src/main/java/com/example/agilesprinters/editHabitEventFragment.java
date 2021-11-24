@@ -143,7 +143,8 @@ public class editHabitEventFragment extends DialogFragment {
 
         setVisibilityForShareButton(habitInstance.getHID(), shareButton);
 
-        getIID(habitInstance);
+        //getIID(habitInstance);
+        setImageToDialog(habitInstance.getIID());
         addCamPhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -165,6 +166,7 @@ public class editHabitEventFragment extends DialogFragment {
         UID = habitInstance.getUID();
         HID = habitInstance.getHID();
         FID = habitInstance.getFID();
+        IID = habitInstance.getIID();
         isShared = habitInstance.getShared();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -224,6 +226,7 @@ public class editHabitEventFragment extends DialogFragment {
 
                 // If everything has been filled out, call the listener and send the edited
                 // habit back to the Home class and dismiss the dialog.
+                System.out.println("Checking ahain " + IID);
                 if (readyToClose) {
                     listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date,
                             Integer.parseInt(duration), IID, FID, isShared), bitmapOfImg);
@@ -270,25 +273,9 @@ public class editHabitEventFragment extends DialogFragment {
         });
     }
 
-    private void getIID(HabitInstance instance) {
-        db = FirebaseFirestore.getInstance();
-        db.collection("HabitEvents").addSnapshotListener((value, error) -> {
-
-            for (QueryDocumentSnapshot doc : value) {
-                if (doc.getId().matches(instance.getEID())
-                        && ((String) doc.getData().get("HID")).matches(instance.getHID())
-                        && ((String) doc.getData().get("UID")).matches(instance.getUID())) {
-
-                    IID = (String) doc.getData().get("IID");
-                    setImageToDialog(IID);
-
-                }
-            }
-        });
-    }
-
     private void setImageToDialog(String iid) {
         if (iid != null){
+            IID = iid;
             FirebaseStorage storage = FirebaseStorage.getInstance();
             // Create a storage reference from our app
             StorageReference storageRef = storage.getReference();
@@ -373,7 +360,7 @@ public class editHabitEventFragment extends DialogFragment {
      * This function overrides the buttons clicked in order to only allow the dialog to be dismissed
      * when all requirements have been met.
      */
-    public void onResume() {
+    /**public void onResume() {
         super.onResume();
 
         final AlertDialog dialog = (AlertDialog) getDialog();
@@ -430,5 +417,5 @@ public class editHabitEventFragment extends DialogFragment {
                 }
             });
         }
-    }
+    }**/
 }

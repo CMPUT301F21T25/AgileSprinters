@@ -360,6 +360,12 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         habitAdapter.notifyDataSetChanged();
     }
 
+    public void deleteForumEventsDb(String FID) {
+        collectionPath = "ForumPosts";
+        // Makes a call to the database which handles it
+        database.deleteData(collectionPath, FID, TAG);
+    }
+
     /**
      * This method deletes habit events from the database based on the habit object passed to it.
      * @param HID this is the habit object the user wishes to be deleted
@@ -377,6 +383,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                             return;
                         } else {
                             deleteHabitEventsDb(doc.getId());
+                            deleteForumEventsDb((String) doc.getData().get("FID"));
                         }
                     }
                 }

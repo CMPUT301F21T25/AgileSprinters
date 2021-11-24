@@ -70,7 +70,7 @@ public class UserCalendar extends AppCompatActivity
     private User user;
     private String collectionPath;
     private Database database = new Database();
-    private String path;
+    private String path = null;
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
@@ -121,7 +121,7 @@ public class UserCalendar extends AppCompatActivity
 
                 // get hid here
                 addHabitEventFragment values =
-                        new addHabitEventFragment().newInstance(i, UID, selectedHabitInstanceId, instanceId, IID);
+                        new addHabitEventFragment().newInstance(i, UID, selectedHabitInstanceId, instanceId);
                 values.show(getSupportFragmentManager(), "ADD");
 
             }
@@ -134,6 +134,7 @@ public class UserCalendar extends AppCompatActivity
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedHabitInstance = completedEvents.get(i);
                 selectedHabitInstanceId = completedEventIds.get(i);
+                System.out.println("image id is "+selectedHabitInstance.getIID());
 
                 editHabitEventFragment values =
                         new editHabitEventFragment().newInstance(i, selectedHabitInstance);
@@ -240,7 +241,6 @@ public class UserCalendar extends AppCompatActivity
                 for (QueryDocumentSnapshot doc : value) {
                     Log.d(TAG, String.valueOf(doc.getData().get("Opt_comment")));
                     if (doc.getString("UID").equals(UID)) {
-                        System.out.println("ID is "+ doc.getId());
                         LocalDate eventDate = LocalDate.parse(doc.get("Date").toString(), formatter);
                         if ((eventDate.isEqual(currentDate))) {
                             HabitInstance newInstance = new HabitInstance(doc.getString("EID"), doc.getString("UID"), doc.getString("HID"),
@@ -288,7 +288,6 @@ public class UserCalendar extends AppCompatActivity
             }
         }
         String duration = String.valueOf(habitInstance.getDuration());
-        System.out.println("checking "+privacySetting+habitInstance);
         if ( privacySetting.matches("Public") || (
                 (privacySetting.matches("Private")) && habitInstance.getShared()) ){
             data.put("Event Date", habitInstance.getDate());
@@ -299,6 +298,7 @@ public class UserCalendar extends AppCompatActivity
             data.put("Opt Cmt", habitInstance.getOpt_comment());
             data.put("EID", habitInstance.getEID());
             data.put("FID", FID);
+            data.put("IID", habitInstance.getIID());
 
             collectionPath = "ForumPosts";
             if (toDo.matches("EDIT")) {
@@ -330,7 +330,6 @@ public class UserCalendar extends AppCompatActivity
             path = "images/"+System.currentTimeMillis() +".jpg";
         } else {
             path = instance.getIID();
-
         }
 
         if (bitmap != null) {
@@ -451,6 +450,7 @@ public class UserCalendar extends AppCompatActivity
         final CollectionReference collectionReference = db.collection("HabitEvents");
 
         if (bitmap != null) {
+            System.out.println();
             path = "images/"+System.currentTimeMillis() +".jpg";
             database.addImage(path, bitmap);
             instance.setIID(path);
@@ -464,7 +464,7 @@ public class UserCalendar extends AppCompatActivity
             data.put("EID", instance.getEID());
             data.put("UID", instance.getUID());
             data.put("HID", instance.getHID());
-            data.put("IID", path);
+            data.put("IID", instance.getIID());
             data.put("Date", instance.getDate());
             data.put("Opt_comment", instance.getOpt_comment());
             data.put("Duration", instance.getDuration());
@@ -600,6 +600,7 @@ public class UserCalendar extends AppCompatActivity
         data.put("Opt Cmt", eventToShare.getOpt_comment());
         data.put("EID", eventToShare.getEID());
         data.put("FID", FID);
+        data.put("IID", eventToShare.getIID());
 
         collectionPath = "ForumPosts";
         database.addData(collectionPath, FID, data, "Forum Post");

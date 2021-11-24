@@ -41,6 +41,7 @@ public class HabitInstance implements Serializable {
         this.EID = EID;
         this.UID = UID;
         this.HID = HID;
+        this.IID = IID;
         this.opt_comment = opt_comment;
         this.date = date;
         this.duration = duration;

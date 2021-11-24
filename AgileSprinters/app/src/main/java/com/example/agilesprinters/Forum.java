@@ -9,7 +9,7 @@ public class Forum {
     private String duration;
     private String comment;
     private String location;
-    private Image image;
+    private String image;
 
     public String getFirstName() {
         return firstName;
@@ -51,12 +51,21 @@ public class Forum {
         this.duration = duration;
     }
 
-    public Forum(String firstName, String lastName, String eventDate, String duration, String comment) {
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public Forum(String firstName, String lastName, String eventDate, String duration, String comment, String image) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.eventDate = eventDate;
         this.duration = duration;
         this.comment = comment;
+        this.image = image;
     }
 
 
