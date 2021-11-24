@@ -59,13 +59,18 @@
             android:layout_height="64dp"
             app:srcCompat="@drawable/ic_add_photo_gallery" />
 
+        <ImageView
+            android:id="@+id/add_location"
+            android:layout_width="83dp"
+            android:layout_height="64dp"
+            app:srcCompat="@drawable/ic_location" />
 
     </LinearLayout>
-
-    <ImageView
-        android:id="@+id/imageContainer"
         android:layout_width="match_parent"
-        android:layout_height="365dp"
-        tools:srcCompat="@tools:sample/avatars" />
-
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/imageContainer"
+            android:layout_width="match_parent"
+            android:layout_height="365dp"
+            tools:srcCompat="@tools:sample/avatars" />
 </LinearLayout>

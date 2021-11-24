@@ -3,7 +3,6 @@ package com.example.agilesprinters;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -16,12 +15,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * This class is a fragment allows a user to view all the details of a habit and edit any details
@@ -37,9 +38,11 @@ public class editHabitEventFragment extends DialogFragment {
     private String UID;
     private String HID;
     private String IID;
+    private String FID;
     private ImageView imageContainer;
     private ImageView addCamPhotoBtn;
     private ImageView addGalPhotoBtn;
+    private ImageView addLocBtn;
     private Uri selectedImg;
     private Bitmap bitmapOfImg;
 
@@ -61,6 +64,7 @@ public class editHabitEventFragment extends DialogFragment {
 
         return fragment;
     }
+
 
     /**
      * This interface listens for when dialog is ended and sends the information and the function
@@ -117,6 +121,7 @@ public class editHabitEventFragment extends DialogFragment {
         imageContainer = view.findViewById(R.id.imageContainer);
         addCamPhotoBtn = view.findViewById(R.id.add_Cam_Photo);
         addGalPhotoBtn = view.findViewById(R.id.add_Gal_Photo);
+        addLocBtn = view.findViewById(R.id.add_location);
 
         addCamPhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,6 +131,14 @@ public class editHabitEventFragment extends DialogFragment {
                 //}
             }
         });
+
+        /**addLocBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MapsFragment mapsFragment = new MapsFragment().newInstance(habitInstance);
+                mapsFragment.show(Objects.requireNonNull(getChildFragmentManager()), "EDIT LOCATION");
+            }
+        });**/
 
         addGalPhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,6 +152,7 @@ public class editHabitEventFragment extends DialogFragment {
         UID = habitInstance.getUID();
         HID = habitInstance.getHID();
         IID = habitInstance.getIID();
+        FID = habitInstance.getFID();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         return builder
@@ -153,6 +167,7 @@ public class editHabitEventFragment extends DialogFragment {
                 }).create();
 
     }
+
 
     //switches view to gallery and allows user to pick photo
     private void getGalleryPicture() {
@@ -209,6 +224,7 @@ public class editHabitEventFragment extends DialogFragment {
         }
     }
 
+
     /**
      * This function overrides the buttons clicked in order to only allow the dialog to be dismissed
      * when all requirements have been met.
@@ -248,7 +264,7 @@ public class editHabitEventFragment extends DialogFragment {
                 // If everything has been filled out, call the listener and send the edited
                 // habit back to the Home class and dismiss the dialog.
                 if (readyToClose) {
-                    listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date, Integer.parseInt(duration), IID), bitmapOfImg);
+                    listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date, Integer.parseInt(duration), IID, FID), bitmapOfImg);
                     dialog.dismiss();
                 }
             });

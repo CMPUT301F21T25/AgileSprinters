@@ -43,7 +43,6 @@ public class toDoEventsListAdapter extends ArrayAdapter<Habit> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-
         if (convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.todo_habits_content, parent, false);
         }

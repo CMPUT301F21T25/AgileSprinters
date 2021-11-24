@@ -38,7 +38,7 @@ class CalendarUnitTest {
      */
     private HabitInstance mockHabitInstance() {
         return new HabitInstance("uniqueInstanceID1", "uniqueUserID1", "uniqueHabitID1",
-                "Read 5 pages", "11/04/2021", 30);
+                "Read 5 pages", "11/04/2021", 30, null);
     }
 
     /**
@@ -62,7 +62,7 @@ class CalendarUnitTest {
         // Creates a new habit
         Habit habit1 = new Habit("uniqueHabitID1", "uniqueUserID1",
                 "Reading 20 pages a day", "To get better at reading",
-                "11/01/2021", weekdays, "Public");
+                "11/01/2021", weekdays, "Public", 0);
 
         // Adds the habit if it is planned for today
         myHabitsForToday.addToday(habit1, "11/04/2021", "THURSDAY");
@@ -70,7 +70,7 @@ class CalendarUnitTest {
 
         weekdays.put("THURSDAY", false);
         Habit habit2 = new Habit("uniqueHabitID2", "uniqueUserID1", "Go for a walk",
-                "To maintain fitness", "10/20/2021", weekdays, "Public");
+                "To maintain fitness", "10/20/2021", weekdays, "Public", 0);
 
         // Throws assertion if the habit is not planned for the current today
         assertThrows(IllegalArgumentException.class, () ->
@@ -102,7 +102,7 @@ class CalendarUnitTest {
 
         // Adds a habit event
         HabitInstance instance2 = new HabitInstance("uniqueInstanceID2", "uniqueUserID1",
-                "uniqueHabitID1", "Read 2 pages", "11/04/2021", 40);
+                "uniqueHabitID1", "Read 2 pages", "11/04/2021", 40, null);
         habitInstanceList.add(instance2);
 
         // Checks to see if the habit event is added correctly
@@ -115,7 +115,7 @@ class CalendarUnitTest {
         // Throws assertion if the comment has more than 20 characters
         HabitInstance instance3 = new HabitInstance("uniqueInstanceID3", "uniqueUserID1",
                 "uniqueHabitID2", "Morning meditation in the hills",
-                "11/04/2021", 10);
+                "11/04/2021", 10, null);
         assertThrows(IllegalArgumentException.class, () -> habitInstanceList.add(instance3));
     }
 
@@ -129,14 +129,14 @@ class CalendarUnitTest {
 
         // Adds completed habit events
         HabitInstance instance2 = new HabitInstance("uniqueInstanceID2", "uniqueUserID1",
-                "uniqueHabitID1", "Read 2 pages", "11/04/2021", 40);
+                "uniqueHabitID1", "Read 2 pages", "11/04/2021", 40, null);
         HabitInstance instance3 = new HabitInstance("uniqueInstanceID3", "uniqueUserID1",
-                "uniqueHabitID2", "Morning meditation", "11/04/2021", 10);
+                "uniqueHabitID2", "Morning meditation", "11/04/2021", 10, null);
         habitInstanceList.add(instance2);
         habitInstanceList.add(instance3);
 
         HabitInstance instance4 = new HabitInstance("uniqueInstanceID4", "uniqueUserID1",
-                "uniqueHabitID1", "", "11/04/2021", 60);
+                "uniqueHabitID1", "", "11/04/2021", 60, null);
 
         // Checking if the habit event exists in the list
         assertTrue(habitInstanceList.hasInstances(instance2));
@@ -160,9 +160,9 @@ class CalendarUnitTest {
 
         // Adds habit events
         HabitInstance instance2 = new HabitInstance("uniqueInstanceID2", "uniqueUserID1",
-                "uniqueHabitID1", "Read 2 pages", "11/04/2021", 40);
+                "uniqueHabitID1", "Read 2 pages", "11/04/2021", 40, null);
         HabitInstance instance3 = new HabitInstance("uniqueInstanceID3", "uniqueUserID1",
-                "uniqueHabitID2", "Morning meditation", "11/04/2021", 10);
+                "uniqueHabitID2", "Morning meditation", "11/04/2021", 10, null);
         habitInstanceList.add(instance2);
         habitInstanceList.add(instance3);
 
@@ -191,9 +191,9 @@ class CalendarUnitTest {
 
         // Adds habit events
         HabitInstance instance2 = new HabitInstance("uniqueInstanceID2", "uniqueUserID1",
-                "uniqueHabitID1", "Read 2 pages", "11/04/2021", 40);
+                "uniqueHabitID1", "Read 2 pages", "11/04/2021", 40, null);
         HabitInstance instance3 = new HabitInstance("uniqueInstanceID3", "uniqueUserID1",
-                "uniqueHabitID2", "Morning meditation", "11/04/2021", 10);
+                "uniqueHabitID2", "Morning meditation", "11/04/2021", 10, null);
         habitInstanceList.add(instance2);
         habitInstanceList.add(instance3);
 

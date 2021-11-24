@@ -6,14 +6,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import android.app.DatePickerDialog;
-import android.app.WallpaperManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -31,11 +30,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -60,15 +55,12 @@ public class UserCalendar extends AppCompatActivity
         DatePickerDialog.OnDateSetListener, BottomNavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "Instance";
-
     private ArrayAdapter<Habit> toDoEventAdapter;
     private final ArrayList<Habit> toDoEvents = new ArrayList<>();
-
     private ArrayAdapter<HabitInstance> completedEventAdapter;
     private final ArrayList<HabitInstance> completedEvents = new ArrayList<>();
     private final ArrayList<String> completedEventIds = new ArrayList<>();
     private final ArrayList<String> toDoEventIds = new ArrayList<>();
-    private BottomNavigationView bottomNavigationView;
     private TextView title1;
     private FirebaseFirestore db;
     private String UID;
@@ -87,12 +79,13 @@ public class UserCalendar extends AppCompatActivity
 
     /**
      * This function creates the UI on the screen and listens for user input
-     *
      * @param savedInstanceState the instance state
      */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getSupportActionBar().hide();
         setContentView(R.layout.user_calendar);
 
 
@@ -101,7 +94,7 @@ public class UserCalendar extends AppCompatActivity
             UID = user.getUser();
         }
 
-        bottomNavigationView = findViewById(R.id.bottomNavigationView2);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView2);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
         bottomNavigationView.setSelectedItemId(R.id.calendar);
 
@@ -223,9 +216,9 @@ public class UserCalendar extends AppCompatActivity
 
                 if (doc.getString("UID").equals(UID)
                         && (startDate.isBefore(currentDate) || startDate.isEqual(currentDate))
-                        && (habitDays.contains(todayDay))) {
-                    Habit newHabit = new Habit(doc.getId(), doc.getString("UID"), doc.getString("Title"), doc.getString("Reason"),
-                            doc.getString("Date to Start"), weekdays2, doc.getString("PrivacySetting"));
+                        && (habitDays.contains(todayDay))){
+                    Habit newHabit = new Habit(doc.getId(),doc.getString("UID"),doc.getString("Title"), doc.getString("Reason"),
+                            doc.getString("Date to Start"), weekdays2, doc.getString("PrivacySetting"), Integer.parseInt(doc.get("Progress").toString()));
                     toDoEvents.add(newHabit); // Adding habits from Firestore
                     toDoEventIds.add(doc.getId());
                 }
@@ -250,11 +243,12 @@ public class UserCalendar extends AppCompatActivity
                 for (QueryDocumentSnapshot doc : value) {
                     Log.d(TAG, String.valueOf(doc.getData().get("Opt_comment")));
                     if (doc.getString("UID").equals(UID)) {
+                        System.out.println("ID is "+ doc.getId());
                         LocalDate eventDate = LocalDate.parse(doc.get("Date").toString(), formatter);
                         if ((eventDate.isEqual(currentDate))) {
                             HabitInstance newInstance = new HabitInstance(doc.getString("EID"), doc.getString("UID"), doc.getString("HID"),
-                                    doc.getString("Opt_comment"), doc.getString("Date"), Integer.parseInt(doc.get("Duration").toString()), doc.getString("IID"));
-                            completedEventAdapter.add(newInstance);
+                                    doc.getString("Opt_comment"), doc.getString("Date"), Integer.parseInt(doc.get("Duration").toString()), doc.getString("IID"), doc.getString("FID"));
+                            completedEvents.add(newInstance);
                             completedEventIds.add(doc.getId()); // Adding habit events from Firestore
                         }
 
@@ -274,10 +268,59 @@ public class UserCalendar extends AppCompatActivity
      */
     @Override
     public void onSavePressed(HabitInstance habitInstance, Bitmap bitmap) {
-        System.out.println(bitmap);
-        addHabitEventDatabase(habitInstance, bitmap);
+        DocumentReference newHabitRef = db.collection("Habit").document();
+        String forumID = stringChange(newHabitRef.getId());
+
+        addHabitEventDatabase(habitInstance, bitmap, forumID);
+        updateForum(habitInstance, forumID, "ADD");
         completedEventsScreenSetup();
 
+        updateProgressInDatabase(habitInstance, "ADD");
+
+    }
+
+    private void updateForum(HabitInstance habitInstance, String FID, String toDo) {
+        String HID = habitInstance.getHID();
+        String privacySetting = "";
+        HashMap<String, String> data = new HashMap();
+
+        for (int i = 0; i < toDoEvents.size(); i++){
+            if (HID.matches(toDoEvents.get(i).getHID())){
+                privacySetting = toDoEvents.get(i).getPrivacySetting();
+            }
+        }
+        String duration = String.valueOf(habitInstance.getDuration());
+        if (privacySetting.matches("Public")){
+            data.put("Event Date", habitInstance.getDate());
+            data.put("First Name", user.getFirstName());
+            data.put("Last Name", user.getLastName());
+            data.put("duration", duration);
+            data.put("UID", habitInstance.getUID());
+            data.put("Opt Cmt", habitInstance.getOpt_comment());
+            data.put("EID", habitInstance.getEID());
+            data.put("FID", FID);
+
+            //DocumentReference newHabitRef = db.collection("Habit").document();
+            //String forumID = stringChange(newHabitRef.getId());
+
+            collectionPath = "ForumPosts";
+            if (toDo.matches("EDIT")) {
+                System.out.println("general is " + FID);
+                database.updateData("ForumPosts", FID, data, TAG);
+                return;
+            }
+            database.addData(collectionPath, FID, data, "Forum Post");
+
+        }
+    }
+
+    public String stringChange(String str) {
+        for (int i = 0; i < 3; i++){
+            if (str != null && str.length() > 0 && str.charAt(str.length() - 1) == 'x') {
+                str = str.substring(0, str.length() - 1);
+            }
+        }
+        return str;
     }
 
     /**
@@ -288,16 +331,18 @@ public class UserCalendar extends AppCompatActivity
      */
     @Override
     public void onEditSavePressed(HabitInstance instance, Bitmap bitmap) {
-        System.out.println("imagesPath"+instance.getIID()+instance.getEID());
         if (instance.getIID() == null){
             path = "images/"+System.currentTimeMillis() +".jpg";
         } else {
             path = instance.getIID();
         }
 
-        database.addImage(path, bitmap);
+        if (bitmap != null) {
+            database.addImage(path, bitmap);
+        }
 
         HashMap<String, String> data = new HashMap<>();
+        data.put("FID", instance.getFID());
         data.put("EID", instance.getEID());
         data.put("UID", instance.getUID());
         data.put("HID", instance.getHID());
@@ -309,8 +354,37 @@ public class UserCalendar extends AppCompatActivity
         // Makes a call to the database which handles it
         collectionPath = "HabitEvents";
         database.updateData(collectionPath, selectedHabitInstanceId, data, TAG);
+        updateForum(instance, instance.getFID(),"EDIT");
 
         completedEventsScreenSetup();
+    }
+
+    private void editForumElement(HabitInstance instance) {
+        String EID = instance.getEID();
+        db.collection("ForumPosts").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
+                    FirebaseFirestoreException error) {
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    if (EID.matches((String) doc.getData().get("EID"))) {
+
+                        HashMap<String, String> data = new HashMap<>();
+                        data.put("Event Date", instance.getDate());
+                        data.put("First Name", user.getFirstName());
+                        data.put("Last Name", user.getLastName());
+                        data.put("duration", String.valueOf(instance.getDuration()));
+                        data.put("UID", instance.getUID());
+                        data.put("Opt Cmt", instance.getOpt_comment());
+                        data.put("EID", instance.getEID());
+
+                        // Makes a call to the database which handles it
+                        database.updateData("ForumPosts", doc.getId(), data, TAG);
+                        break;
+                    }
+                }
+                // from the cloud
+            }
+        });
     }
 
 
@@ -325,25 +399,51 @@ public class UserCalendar extends AppCompatActivity
         collectionPath = "HabitEvents";
         // Makes a call to the database which handles it
         database.deleteData(collectionPath, instance.getEID(), TAG);
+        deleteForumElement(instance);
 
         completedEventsScreenSetup();
+
+        updateProgressInDatabase(instance, "DELETE");
+    }
+
+    private void deleteForumElement(HabitInstance instance) {
+        String EID = instance.getEID();
+        db.collection("ForumPosts").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
+                    FirebaseFirestoreException error) {
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    if (EID.matches((String) doc.getData().get("EID"))) {
+                        System.out.println("ID is " + doc.getId());
+                        if(doc.getId() == null){
+                            return;
+                        } else {
+                            database.deleteData("ForumPosts", doc.getId(), TAG);
+                        }
+                        break;
+                    }
+                }
+                // from the cloud
+            }
+        });
     }
 
     /**
      * This function adds a habit event/instance object to the database.
-     *
      * @param instance The habit instance that needs to be added to the database.
      */
-    public void addHabitEventDatabase(HabitInstance instance, Bitmap bitmap) {
+    public void addHabitEventDatabase(HabitInstance instance, Bitmap bitmap, String FID) {
         final CollectionReference collectionReference = db.collection("HabitEvents");
-        String path = "images/"+System.currentTimeMillis() +".jpg";
-
-        database.addImage(path, bitmap);
+        if (bitmap != null) {
+            path = "images/"+System.currentTimeMillis() +".jpg";
+            database.addImage(path, bitmap);
+        }
 
         String instanceId = instance.getEID();
         HashMap<String, Object> data = new HashMap<>();
 
         if (instanceId != null) {
+            data.put("FID", FID);
             data.put("EID", instance.getEID());
             data.put("UID", instance.getUID());
             data.put("HID", instance.getHID());
@@ -358,6 +458,31 @@ public class UserCalendar extends AppCompatActivity
         }
     }
 
+    private Integer getNewProgress(HabitInstance instance, String toDo) {
+
+        int completed = 0;
+
+        for (Habit habit1 : toDoEvents) {
+            if (habit1.getHID().equals(instance.getHID())) {
+                if (toDo == "ADD") {
+                    completed = habit1.getOverallProgress() + 1;
+                    //updateHomePage(habit1);
+                    break;
+                } else if (toDo == "DELETE") {
+                    completed = habit1.getOverallProgress() - 1;
+                    break;
+                }
+            }
+        }
+
+        return completed;
+    }
+
+    public void updateProgressInDatabase(HabitInstance instance, String toDo){
+        db.collection("Habit")
+                .document(instance.getHID())
+                .update("Progress", getNewProgress(instance, toDo));
+    }
 
     /**
      * This function captures the date chosen by the user once they press ok on the datePicker
@@ -408,6 +533,7 @@ public class UserCalendar extends AppCompatActivity
                 intent.putExtra("user", user);
                 //add bundle to send data if need
                 startActivity(intent);
+                overridePendingTransition(0,0);
                 break;
 
             case R.id.calendar:
@@ -417,6 +543,7 @@ public class UserCalendar extends AppCompatActivity
                     Intent intent2 = new Intent(this, UserCalendar.class);
                     //add bundle to send data if need
                     startActivity(intent2);
+                    overridePendingTransition(0,0);
                     break;
                 }
 
@@ -425,9 +552,14 @@ public class UserCalendar extends AppCompatActivity
                 intentNotification.putExtra("user", user);
                 //add bundle to send data if need
                 startActivity(intentNotification);
+                overridePendingTransition(0,0);
                 break;
 
             case R.id.forumn:
+                Intent forumIntent = new Intent(this, ForumManager.class);
+                forumIntent.putExtra("user", user);
+                startActivity(forumIntent);
+                overridePendingTransition(0,0);
                 break;
 
         }

@@ -1,14 +1,14 @@
 package com.example.agilesprinters;
 
-import android.Manifest;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
+
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -18,14 +18,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
+
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
+
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -42,6 +41,7 @@ public class addHabitEventFragment extends DialogFragment{
     private String UID;
     private String HID;
     private String IID;
+    private String FID;
     private EditText optional_comment;
     private TextView input_date;
     private EditText input_duration;
@@ -144,6 +144,7 @@ public class addHabitEventFragment extends DialogFragment{
         HID = getArguments().getString(getString(R.string.HID));
         EID = getArguments().getString(getString(R.string.EID));
         IID = getArguments().getString(getString(R.string.IID));
+        FID = getArguments().getString("FID");
 
         LocalDate currentDate = LocalDate.now();
         input_date.setText(currentDate.format(formatter));
@@ -295,7 +296,7 @@ public class addHabitEventFragment extends DialogFragment{
                 if(readyToClose){
                     
                     listener.onSavePressed(new HabitInstance(EID, UID, HID, comment, date_entry,
-                            Integer.parseInt(duration), IID), bitmapOfImg);
+                            Integer.parseInt(duration), IID, FID), bitmapOfImg);
                     dialog.dismiss();
                 }
             });

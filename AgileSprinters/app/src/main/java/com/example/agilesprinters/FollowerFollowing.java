@@ -4,8 +4,12 @@ import static android.content.ContentValues.TAG;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -29,21 +33,24 @@ public class FollowerFollowing extends AppCompatActivity {
     ArrayAdapter<User> userAdapter;
     ArrayList<User> userDataList;
     ArrayList<String> userTempList;
-    HashMap<String, User> hashmap = new HashMap();
+
 
 
     private User currentUser = new User();
     private FirebaseFirestore db;
-    private Database database = new Database();
-    private String firstName, lastName, emailId, uniqueId;
+    private String firstName, lastName, emailId;
     private ArrayList<String> followersList = new ArrayList<>();
     private ArrayList<String> followingList = new ArrayList<>();
     private ArrayList<String> followRequestList = new ArrayList<>();
+    private String IID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_follower_following);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (user == null) {
             user = (User) getIntent().getSerializableExtra("user");
@@ -51,7 +58,6 @@ public class FollowerFollowing extends AppCompatActivity {
             title = (String) getIntent().getStringExtra("Title");
 
             if (title.matches("Following")){
-                System.out.println("inside");
                 userTempList = user.getFollowingList();
             } else if (title.matches( "Followers")) {
                 userTempList = user.getFollowersList();
@@ -68,28 +74,45 @@ public class FollowerFollowing extends AppCompatActivity {
 
         titleTextView.setText(title);
 
-        for(int i = 0; i < userTempList.size(); i++) {
-            db = FirebaseFirestore.getInstance();
-            CollectionReference collectionReference = db.collection("users");
-            uniqueId = userTempList.get(i);
-            collectionReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                @Override
-                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                        Log.d(TAG, String.valueOf(doc.getData().get("UID")));
-                        if (uniqueId.matches((String) doc.getData().get("UID"))) {
-                            emailId = (String) doc.getData().get("Email ID");
-                            firstName = (String)  doc.getData().get("First Name");
-                            lastName = (String) doc.getData().get("Last Name");
-                            followersList = (ArrayList<String>) doc.getData().get("followers");
-                            followingList = (ArrayList<String>) doc.getData().get("following");
-                            followRequestList = (ArrayList<String>) doc.getData().get("follow request list");
-                            userDataList.add(new User(uniqueId, firstName, lastName, emailId, followersList, followingList, followRequestList));
-                        }
+        db = FirebaseFirestore.getInstance();
+        CollectionReference collectionReference = db.collection("users");
+        collectionReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    Log.d(TAG, String.valueOf(doc.getData().get("UID")));
+                    if (userTempList.contains((String) doc.getData().get("UID"))) {
+                        emailId = (String) doc.getData().get("Email ID");
+                        firstName = (String)  doc.getData().get("First Name");
+                        lastName = (String) doc.getData().get("Last Name");
+                        followersList = (ArrayList<String>) doc.getData().get("followers");
+                        followingList = (ArrayList<String>) doc.getData().get("following");
+                        followRequestList = (ArrayList<String>) doc.getData().get("follow request list");
+                        userDataList.add(new User((String) doc.getData().get("UID"), firstName, lastName, emailId, followersList, followingList, followRequestList));
                     }
-                    userAdapter.notifyDataSetChanged();
                 }
-            });
-        }
+                userAdapter.notifyDataSetChanged();
+            }
+        });
+
+        userList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                User user = (User) adapterView.getItemAtPosition(i);
+                Intent intent = new Intent(FollowerFollowing.this, OtherUserScreen.class);
+                intent.putExtra(getString(R.string.USER_STR), user);
+                startActivity(intent);
+                overridePendingTransition(0,0);
+                finish();
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+
+        overridePendingTransition(0,0);
     }
 }
