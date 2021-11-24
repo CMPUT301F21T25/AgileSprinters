@@ -12,12 +12,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class provides a custom layout for items in the habit list on the home page.
@@ -27,7 +30,6 @@ import java.util.HashMap;
 public class habitListAdapter extends ArrayAdapter<Habit> {
     private final Context mContext;
     private final ArrayList<Habit> habitArrayList;
-    double progressPercent;
 
     /**
      * This function initializes the array list of habits and the context of the screen.
@@ -68,22 +70,38 @@ public class habitListAdapter extends ArrayAdapter<Habit> {
         ProgressBar progressSoFar = view.findViewById(R.id.habit_list_progress_bar);
 
         // Calculate progress
-        LocalDate currentDate = LocalDate.now();
+
+        // Getting the start date and end date
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         LocalDate startDate = LocalDate.parse(habit.getDateToStart(), formatter);
+        LocalDate endDate = LocalDate.now();
 
-        int days = (int) ChronoUnit.WEEKS.between(startDate, currentDate);
-
-        int numDaysForHabit = 0;
-        for (Boolean value : habit.getWeekdays().values()) {
-            if (value) {
-                numDaysForHabit += 1;
+        // Getting the days of the week the habit is scheduled for
+        ArrayList<String> chosenWeekDays = new ArrayList<>();
+        for (Map.Entry me : habit.getWeekdays().entrySet()) {
+            if (me.getValue().equals(true)) {
+                chosenWeekDays.add((String) me.getKey());
             }
         }
-        // Calculating progress value
-        double totalEvents = Math.ceil(days * numDaysForHabit);
-        double div = habit.getOverallProgress() / (totalEvents);
-        progressPercent = div * 100;
+
+        // Getting the total number of events planned between start and end date
+        double totalEvents = 0;
+        for (String weekday : chosenWeekDays) {
+            LocalDate day = startDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.valueOf(weekday)));
+            while (day.isBefore(endDate)){
+                totalEvents++;
+                day = day.plusWeeks(1);
+            }
+        }
+
+//        System.out.println("Overall progress " + habit.getOverallProgress());
+//        System.out.println("Total events are " + totalEvents);
+//        System.out.println("Progress is " + progress);
+//        System.out.println("Progress percent " + progressPercent);
+
+        // Calculating the progress percentage
+        double progress = (double) habit.getOverallProgress() / (totalEvents);
+        double progressPercent = progress * 100;
 
         //pass values to variables
         dateText.setText(mContext.getString(R.string.DATE_STARTED) + habit.getDateToStart());
