@@ -1,63 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Home">
 
 
     <TextView
-        android:id="@+id/userIdTextView"
-        android:layout_width="87dp"
-        android:layout_height="28dp"
+        android:id="@+id/followers"
+        android:layout_width="136dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="20dp"
+        android:clickable="true"
         android:gravity="center"
-        android:textStyle="bold"
+        android:text="@string/followers_text"
         android:textSize="18sp"
-        app:layout_constraintEnd_toStartOf="@+id/followers"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/homeUserButton"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/followers"
-        android:layout_width="145dp"
-        android:layout_height="96dp"
-        android:text="@string/followers_text"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:textSize="18sp"
+        android:id="@+id/followerCount"
+        android:layout_width="136dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="136dp"
         android:clickable="true"
-        app:layout_constraintBaseline_toBaselineOf="@+id/userIdTextView"
-        app:layout_constraintEnd_toStartOf="@id/following"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/userIdTextView" />
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/followers" />
+
+    <TextView
+        android:id="@+id/followingCount"
+        android:layout_width="136dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="3dp"
+        android:clickable="true"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/habit_list"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/followerCount"
+        app:layout_constraintTop_toBottomOf="@+id/following"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/following"
-        android:layout_width="145dp"
-        android:layout_height="93dp"
-        android:text="@string/following_text"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:textSize="18sp"
+        android:layout_width="136dp"
+        android:layout_height="30dp"
         android:clickable="true"
-        app:layout_constraintBaseline_toBaselineOf="@+id/followers"
+        android:gravity="center"
+        android:text="@string/following_text"
+        android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/followers" />
+        app:layout_constraintStart_toEndOf="@+id/followers"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <ListView
         android:id="@+id/habit_list"
-        android:layout_width="match_parent"
-        android:layout_height="457dp"
-        android:layout_marginTop="6dp"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
+        android:layout_width="404dp"
+        android:layout_height="477dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/followers">
+        app:layout_constraintTop_toBottomOf="@+id/followerCount">
 
     </ListView>
 
@@ -66,12 +79,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
-        android:layout_margin="16dp"
+        android:layout_marginTop="4dp"
         android:clickable="true"
         android:focusable="true"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/habit_list"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/habit_list"
         app:srcCompat="@android:drawable/ic_input_add"
         tools:ignore="SpeakableTextPresentCheck" />
 
@@ -81,8 +95,21 @@
         android:layout_height="75dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/add_habit_button"
+        app:layout_constraintVertical_bias="1.0"
         app:menu="@menu/bottom_nav_menu" />
+
+    <Button
+        android:id="@+id/homeUserButton"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@drawable/round_button"
+        android:textSize="48sp"
+        app:layout_constraintBottom_toBottomOf="@+id/followerCount"
+        app:layout_constraintEnd_toStartOf="@+id/followerCount"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
