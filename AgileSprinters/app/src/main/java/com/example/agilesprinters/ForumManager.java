@@ -147,7 +147,10 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
                 }
             }
             forumAdapter.notifyDataSetChanged();
-            userTempList.remove(userTempList.size()-1);
+            if(userTempList.size() > 0){
+                userTempList.remove(userTempList.size()-1);
+            }
+
         });
 
     }
