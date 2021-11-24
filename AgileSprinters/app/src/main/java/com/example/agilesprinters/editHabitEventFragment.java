@@ -27,6 +27,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.loader.app.LoaderManager;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.io.IOException;
 import java.util.Objects;
 
@@ -36,7 +38,7 @@ import java.util.Objects;
  *
  * @author Sai Rasazna Ajerla and Riyaben Patel
  */
-public class editHabitEventFragment extends DialogFragment {
+public class editHabitEventFragment extends DialogFragment implements MapsFragment.OnFragmentInteractionListener{
     private EditText optional_comment;
     private TextView input_date;
     private EditText input_duration;
@@ -51,6 +53,7 @@ public class editHabitEventFragment extends DialogFragment {
     private ImageView addLocBtn;
     private Uri selectedImg;
     private Bitmap bitmapOfImg;
+    private String opt_loc = "";
 
     private editHabitEventFragment.OnFragmentInteractionListener listener;
 
@@ -69,6 +72,11 @@ public class editHabitEventFragment extends DialogFragment {
         fragment.setArguments(args);
 
         return fragment;
+    }
+
+    @Override
+    public void onSaveMapPressed(String opt_loc) {
+        this.opt_loc = opt_loc;
     }
 
 
@@ -142,7 +150,7 @@ public class editHabitEventFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 MapsFragment mapsFragment = new MapsFragment();
-                mapsFragment.show(Objects.requireNonNull(getChildFragmentManager()), "null");
+                mapsFragment.show(Objects.requireNonNull(getChildFragmentManager()), "EDIT LOCATION");
             }
         });
 
@@ -270,7 +278,7 @@ public class editHabitEventFragment extends DialogFragment {
                 // If everything has been filled out, call the listener and send the edited
                 // habit back to the Home class and dismiss the dialog.
                 if (readyToClose) {
-                    listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date, Integer.parseInt(duration), IID, FID), bitmapOfImg);
+                    listener.onEditSavePressed(new HabitInstance(getContext(),EID, UID, HID, comment, date, Integer.parseInt(duration), IID, FID, opt_loc), bitmapOfImg);
                     dialog.dismiss();
                 }
             });

@@ -6,8 +6,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -31,12 +34,15 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -68,7 +74,6 @@ public class UserCalendar extends AppCompatActivity
     private String collectionPath;
     private Database database = new Database();
     private String path;
-
 
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
@@ -107,7 +112,7 @@ public class UserCalendar extends AppCompatActivity
         db = FirebaseFirestore.getInstance();
 
         screenSetup();
-        completedEventsScreenSetup();
+        completedEventsScreenSetup(this);
 
         // When a item in the to do events is clicked, input is taken,
         // a habit event object is created and added to the database
@@ -234,7 +239,7 @@ public class UserCalendar extends AppCompatActivity
      * This function sets the completed tasks part of the screen on the UI
      * according to the habit events retrieved from the database
      */
-    public void completedEventsScreenSetup() {
+    public void completedEventsScreenSetup(Context context) {
         // Get a list of habit events of the user logged in on the current day
         db.collection("HabitEvents").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -247,8 +252,8 @@ public class UserCalendar extends AppCompatActivity
                         System.out.println("ID is "+ doc.getId());
                         LocalDate eventDate = LocalDate.parse(doc.get("Date").toString(), formatter);
                         if ((eventDate.isEqual(currentDate))) {
-                            HabitInstance newInstance = new HabitInstance(doc.getString("EID"), doc.getString("UID"), doc.getString("HID"),
-                                    doc.getString("Opt_comment"), doc.getString("Date"), Integer.parseInt(doc.get("Duration").toString()), doc.getString("IID"), doc.getString("FID"));
+                            HabitInstance newInstance = new HabitInstance(context, doc.getString("EID"), doc.getString("UID"), doc.getString("HID"),
+                                    doc.getString("Opt_comment"), doc.getString("Date"), Integer.parseInt(doc.get("Duration").toString()), doc.getString("IID"), doc.getString("FID"), doc.getString("Opt_Loc"));
                             completedEvents.add(newInstance);
                             completedEventIds.add(doc.getId()); // Adding habit events from Firestore
                         }
@@ -274,7 +279,7 @@ public class UserCalendar extends AppCompatActivity
 
         addHabitEventDatabase(habitInstance, bitmap, forumID);
         updateForum(habitInstance, forumID, "ADD");
-        completedEventsScreenSetup();
+        completedEventsScreenSetup(this);
 
         updateProgressInDatabase(habitInstance, "ADD");
 
@@ -300,6 +305,7 @@ public class UserCalendar extends AppCompatActivity
             data.put("Opt Cmt", habitInstance.getOpt_comment());
             data.put("EID", habitInstance.getEID());
             data.put("FID", FID);
+            data.put("opt_loc", habitInstance.getDisplayLocStr());
 
             //DocumentReference newHabitRef = db.collection("Habit").document();
             //String forumID = stringChange(newHabitRef.getId());
@@ -357,7 +363,7 @@ public class UserCalendar extends AppCompatActivity
         database.updateData(collectionPath, selectedHabitInstanceId, data, TAG);
         updateForum(instance, instance.getFID(),"EDIT");
 
-        completedEventsScreenSetup();
+        completedEventsScreenSetup(this);
     }
 
     private void editForumElement(HabitInstance instance) {
@@ -377,6 +383,8 @@ public class UserCalendar extends AppCompatActivity
                         data.put("UID", instance.getUID());
                         data.put("Opt Cmt", instance.getOpt_comment());
                         data.put("EID", instance.getEID());
+                        data.put("opt_loc", instance.getDisplayLocStr());
+
 
                         // Makes a call to the database which handles it
                         database.updateData("ForumPosts", doc.getId(), data, TAG);
@@ -402,7 +410,7 @@ public class UserCalendar extends AppCompatActivity
         database.deleteData(collectionPath, instance.getEID(), TAG);
         deleteForumElement(instance);
 
-        completedEventsScreenSetup();
+        completedEventsScreenSetup(this);
 
         updateProgressInDatabase(instance, "DELETE");
     }
@@ -452,6 +460,7 @@ public class UserCalendar extends AppCompatActivity
             data.put("Date", instance.getDate());
             data.put("Opt_comment", instance.getOpt_comment());
             data.put("Duration", instance.getDuration());
+            data.put("Opt_comment", instance.getOpt_comment());
 
             // Makes a call to the database which handles it
             collectionPath = "HabitEvents";
@@ -515,7 +524,7 @@ public class UserCalendar extends AppCompatActivity
         currentDate = LocalDate.parse(date, formatter);
         setDate();
         screenSetup();
-        completedEventsScreenSetup();
+        completedEventsScreenSetup(this);
     }
 
     /**

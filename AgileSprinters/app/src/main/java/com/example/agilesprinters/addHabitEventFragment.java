@@ -2,6 +2,7 @@ package com.example.agilesprinters;
 
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -26,16 +27,20 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.firestore.DocumentReference;
+
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 /**
  * This class is a dialog fragment that allows the user to add a new habit event.
  *
  * @author Sai Rasazna Ajerla and Riyaben Patel
  */
-public class addHabitEventFragment extends DialogFragment{
+public class addHabitEventFragment extends DialogFragment implements MapsFragment.OnFragmentInteractionListener{
     private int position;
     private String EID;
     private String UID;
@@ -48,8 +53,10 @@ public class addHabitEventFragment extends DialogFragment{
     private ImageView imageContainer;
     private ImageView addCamPhotoBtn;
     private ImageView addGalPhotoBtn;
+    private ImageView addLocBtn;
     private Uri selectedImg;
     private Bitmap bitmapOfImg;
+    private String opt_loc = "";
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
@@ -74,6 +81,11 @@ public class addHabitEventFragment extends DialogFragment{
         fragment.setArguments(args);
 
         return fragment;
+    }
+
+    @Override
+    public void onSaveMapPressed(String opt_loc) {
+        this.opt_loc = opt_loc;
     }
 
     /**
@@ -122,6 +134,7 @@ public class addHabitEventFragment extends DialogFragment{
         imageContainer = view.findViewById(R.id.imageContainer);
         addCamPhotoBtn = view.findViewById(R.id.add_Cam_Photo);
         addGalPhotoBtn = view.findViewById(R.id.add_Gal_Photo);
+        addLocBtn = view.findViewById(R.id.add_location);
 
         addCamPhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,6 +150,13 @@ public class addHabitEventFragment extends DialogFragment{
             public void onClick(View v) {
                 getGalleryPicture();
                 //hides alert dialog after gallery func is finished
+            }
+        });
+
+        addLocBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getLocation();
             }
         });
 
@@ -171,6 +191,11 @@ public class addHabitEventFragment extends DialogFragment{
 
     }
 
+    //switches view to map and allows user to pick location
+    private void getLocation() {
+        MapsFragment mapsFragment = new MapsFragment();
+        mapsFragment.show(Objects.requireNonNull(getChildFragmentManager()), "ADD LOCATION");
+    }
     private void getCameraPicture(){
         //have to give permission to app to use camera
         //android manifest give permission and then take permission at runtime from user
@@ -178,7 +203,6 @@ public class addHabitEventFragment extends DialogFragment{
         Intent cameraView = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(cameraView, 2);
     }
-
 
     //overrides the method when activity is returning data (prev intent on line 82)
     @Override
@@ -219,6 +243,7 @@ public class addHabitEventFragment extends DialogFragment{
         }
     }
 
+
     /*
     public boolean runtimePermissionForCamera(){
         //only have to check runtime permission if android version is greater than 23
@@ -244,7 +269,7 @@ public class addHabitEventFragment extends DialogFragment{
             getCameraPicture();
         }
         else{
-            Toast.makeText(this.getContext(), "Camera Permission Denied", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this.getContext(), "Camera Permission Denied", Toast.LENGTH_SHORT).Fshow();
 
         }
 
@@ -295,8 +320,8 @@ public class addHabitEventFragment extends DialogFragment{
                 // habit back to the Home class and dismiss the dialog.
                 if(readyToClose){
                     
-                    listener.onSavePressed(new HabitInstance(EID, UID, HID, comment, date_entry,
-                            Integer.parseInt(duration), IID, FID), bitmapOfImg);
+                    listener.onSavePressed(new HabitInstance(getContext(),EID, UID, HID, comment, date_entry,
+                            Integer.parseInt(duration), IID, FID, opt_loc), bitmapOfImg);
                     dialog.dismiss();
                 }
             });
