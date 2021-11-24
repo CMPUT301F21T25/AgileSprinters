@@ -161,7 +161,16 @@
     <string name="HID_IS">HID IS: </string>
     <string name="PROGRESS_STR">Progress</string>
     <string name="DATE_STARTED">Date started:</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="FOLLOW_REQUEST_MESSAGE">has requested to follow you</string>
+    <string name="FOLLOW_REQUEST_FRAGMENT_MESSAGE">has requested to follow you!</string>
+    <string name="ACCEPT_BUTTON_COLOR">#86ff70</string>
+    <string name="DECLINE_BUTTON_COLOR">#ff7a70</string>
+    <string name="FOLLOW_BUTTON_TEXT">Follow</string>
+    <string name="FOLLOW_REQUEST_PENDING_COLOR">#d5a8ff</string>
+    <string name="FOLLOW_REQUEST_PENDING_TEXT">Follow Request Pending</string>
+    <string name="UNFOLLOW_BUTTON_TEXT">Unfollow</string>
+    <string name="HABIT_LIST_SIZE">listSize</string>
+    <string name="POSITION_IN_LIST_TEXTVIEW">Position in list:</string>
 </resources>

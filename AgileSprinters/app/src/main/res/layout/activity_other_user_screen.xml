@@ -60,6 +60,14 @@
             app:layout_constraintStart_toEndOf="@+id/followers"
             app:layout_constraintTop_toTopOf="parent" />
 
+    <Button
+        android:id="@+id/followButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/followerCount"
+        app:layout_constraintEnd_toStartOf="@+id/habit_list"
+        android:background="@color/purple_200"
+        />
 
         <ListView
             android:id="@+id/habit_list"

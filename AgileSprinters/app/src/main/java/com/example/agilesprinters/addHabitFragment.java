@@ -46,6 +46,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
     private HashMap<String, Boolean> weekdaysHashMap;
     private HashMap<String,Integer> progressSoFar;
     private Spinner privacySpinner;
+    private int position;
     private String UID;
     private addHabitFragment.OnFragmentInteractionListener fragmentListener;
     FirebaseFirestore db;
@@ -55,10 +56,11 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
      * @param UID is the id of the user
      * @return returns the fragment with the bundled parameters
      */
-    public static addHabitFragment newInstance(String UID) {
+    public static addHabitFragment newInstance(String UID, int listSize) {
         addHabitFragment frag = new addHabitFragment();
         Bundle args = new Bundle();
         args.putString(String.valueOf(R.string.HID), UID);
+        args.putInt("listSize", listSize);
         frag.setArguments(args);
 
         return frag;
@@ -131,6 +133,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.add_habit_fragment, null);
 
         UID = getArguments().getString(getString(R.string.HID));
+        position = getArguments().getInt(getString(R.string.HABIT_LIST_SIZE));
 
         String[] weekdayStrArray = new String[]{getString(R.string.SUNDAY_STR), getString(R.string.MONDAY_STR), getString(R.string.TUESDAY_STR),
                 getString(R.string.WEDNESDAY_STR), getString(R.string.THURSDAY_STR), getString(R.string.FRIDAY_STR),
@@ -262,7 +265,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
                         db = FirebaseFirestore.getInstance();
                         DocumentReference newHabitRef = db.collection(getString(R.string.HABIT_COLLECTION_PATH)).document();
                         fragmentListener.onAddPressed(new Habit(newHabitRef.getId(),user.getUser(),habit_title
-                                ,habit_reason,date, weekdaysHashMap, privacySetting, 0));
+                                ,habit_reason,date, weekdaysHashMap, privacySetting, 0, position));
                         dialog.dismiss();
                     }
                 }
