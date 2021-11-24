@@ -148,8 +148,8 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
                     System.out.println("Array list1 is " + forumDataList);
                 }
             }
-
             forumAdapter.notifyDataSetChanged();
+            userTempList.remove(userTempList.size()-1);
         });
 
     }

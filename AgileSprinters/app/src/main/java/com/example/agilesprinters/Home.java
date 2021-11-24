@@ -58,6 +58,8 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     FirebaseFirestore db;
     private TextView followingTextView;
     private TextView followersTextView;
+    private TextView followingCountTextView;
+    private TextView followerCountTextView;
 
     private static final String TAG = "Habit";
     private String UID;
@@ -86,6 +88,8 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         habitList = findViewById(R.id.habit_list);
         followingTextView = findViewById(R.id.following);
         followersTextView = findViewById(R.id.followers);
+        followingCountTextView = findViewById(R.id.followingCount);
+        followerCountTextView = findViewById(R.id.followerCount);
 
         habitArrayList = new ArrayList<>();
         habitAdapter = new habitListAdapter(this, habitArrayList);
@@ -176,9 +180,33 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             }
         });
 
+        followingCountTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Home.this, FollowerFollowing.class);
+                intent.putExtra("Title", "Following");
+                intent.putExtra(getString(R.string.USER_STR), user);
+                startActivity(intent);
+
+                overridePendingTransition(0,0);
+            }
+        });
+
         followersTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent(Home.this, FollowerFollowing.class);
+                intent.putExtra("Title", "Followers");
+                intent.putExtra(getString(R.string.USER_STR), user);
+                startActivity(intent);
+
+                overridePendingTransition(0,0);
+            }
+        });
+
+        followerCountTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 Intent intent = new Intent(Home.this, FollowerFollowing.class);
                 intent.putExtra("Title", "Followers");
                 intent.putExtra(getString(R.string.USER_STR), user);
@@ -252,8 +280,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     }
 
     private void setTextFields(String followingCount, String followersCount) {
-        TextView followingCountTextView = findViewById(R.id.followingCount);
-        TextView followerCountTextView = findViewById(R.id.followerCount);
+
 
         followerCountTextView.setText(followersCount);
         followingCountTextView.setText(followingCount);
