@@ -533,7 +533,9 @@ public class UserCalendar extends AppCompatActivity
                 Intent intent = new Intent(this, Home.class);
                 intent.putExtra("user", user);
                 //add bundle to send data if need
+
                 startActivity(intent);
+                finish();
                 overridePendingTransition(0,0);
                 break;
 
@@ -544,6 +546,7 @@ public class UserCalendar extends AppCompatActivity
                     Intent intent2 = new Intent(this, UserCalendar.class);
                     //add bundle to send data if need
                     startActivity(intent2);
+                    finish();
                     overridePendingTransition(0,0);
                     break;
                 }
@@ -553,6 +556,7 @@ public class UserCalendar extends AppCompatActivity
                 intentNotification.putExtra("user", user);
                 //add bundle to send data if need
                 startActivity(intentNotification);
+                finish();
                 overridePendingTransition(0,0);
                 break;
 
@@ -560,6 +564,7 @@ public class UserCalendar extends AppCompatActivity
                 Intent forumIntent = new Intent(this, ForumManager.class);
                 forumIntent.putExtra("user", user);
                 startActivity(forumIntent);
+                finish();
                 overridePendingTransition(0,0);
                 break;
 

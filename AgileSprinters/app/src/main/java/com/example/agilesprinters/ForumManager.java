@@ -8,9 +8,8 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
+
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,7 +20,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class ForumManager extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
     private String UID;
@@ -37,7 +35,6 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
     private ArrayAdapter<String> arrayAdapter_users;
     private ArrayList<User> array_user_objects = new ArrayList<>();
 
-    ListView forumList;
     ArrayAdapter<Forum> forumAdapter;
     final private ArrayList<Forum> forumDataList = new ArrayList<>();;
     ArrayList<String> userTempList;
@@ -48,7 +45,6 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
     private ArrayList<String> followersList = new ArrayList<>();
     private ArrayList<String> followingList = new ArrayList<>();
     private ArrayList<String> followRequestList = new ArrayList<>();
-    private String IID;
 
 
     @Override
@@ -91,6 +87,7 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
         users_list.setAdapter(arrayAdapter_users);
         users_list.setThreshold(2);
 
+
         users_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -100,7 +97,8 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
                     if (user.getEmailId().matches((String) adapterView.getItemAtPosition(i))) {
                         User userToSend = user;
                         Intent intent = new Intent(ForumManager.this, OtherUserScreen.class);
-                        intent.putExtra(getString(R.string.USER_STR), userToSend);
+                        intent.putExtra("currentUser", user);
+                        intent.putExtra("otherUser", userToSend);
                         startActivity(intent);
 
                     }
@@ -164,14 +162,14 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
      */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-
         switch (item.getItemId()) {
             case R.id.home:
                 Intent intent = new Intent(this, Home.class);
                 intent.putExtra("user", user);
                 //add bundle to send data if need
+
                 startActivity(intent);
+                finish();
                 overridePendingTransition(0,0);
                 break;
 
@@ -180,6 +178,7 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
                 calendarIntent.putExtra("user", user);
                 //add bundle to send data if need
                 startActivity(calendarIntent);
+                finish();
                 overridePendingTransition(0,0);
                 break;
 
@@ -187,7 +186,9 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
                 Intent intentNotification = new Intent(this, Notifications.class);
                 intentNotification.putExtra("user", user);
                 //add bundle to send data if need
+
                 startActivity(intentNotification);
+                finish();
                 overridePendingTransition(0,0);
                 break;
 
@@ -198,6 +199,7 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
                     Intent forumIntent = new Intent(this, ForumManager.class);
                     //add bundle to send data if need
                     startActivity(forumIntent);
+                    finish();
                     overridePendingTransition(0,0);
                     break;
                 }

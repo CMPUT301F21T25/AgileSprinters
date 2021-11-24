@@ -85,6 +85,8 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         habitList = findViewById(R.id.habit_list);
         followingTextView = findViewById(R.id.following);
         followersTextView = findViewById(R.id.followers);
+        followingCountTextView = findViewById(R.id.followingCount);
+        followerCountTextView = findViewById(R.id.followerCount);
 
         habitArrayList = new ArrayList<>();
         habitAdapter = new habitListAdapter(this, habitArrayList);
@@ -104,6 +106,8 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
         Button homeUserButton = findViewById(R.id.homeUserButton);
         homeUserButton.setText(nameStr.substring(0,1));
+        followerCountTextView.setText(followersCount);
+        followingCountTextView.setText(followingCount);
 
 
         db = FirebaseFirestore.getInstance();
@@ -181,6 +185,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 overridePendingTransition(0,0);
             }
         });
+
 
         followingCountTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -286,8 +291,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     }
 
     private void setTextFields(String followingCount, String followersCount) {
-        followerCountTextView.setText(followersCount);
-        followingCountTextView.setText(followingCount);
+
     }
 
     /**
@@ -425,7 +429,9 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 } else {
                     Intent intent = new Intent(this, Home.class);
                     //add bundle to send data if need
+
                     startActivity(intent);
+                    finish();
                     overridePendingTransition(0,0);
                 }
                 break;
@@ -434,7 +440,9 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 Intent intent = new Intent(this, UserCalendar.class);
                 intent.putExtra("user", user);
                 //add bundle to send data if need
+
                 startActivity(intent);
+                finish();
                 overridePendingTransition(0,0);
                 break;
 
@@ -442,14 +450,18 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 Intent intentNotification = new Intent(this, Notifications.class);
                 intentNotification.putExtra("user", user);
                 //add bundle to send data if need
+
                 startActivity(intentNotification);
+                finish();
                 overridePendingTransition(0,0);
                 break;
 
             case R.id.forumn:
                 Intent forumIntent = new Intent(this, ForumManager.class);
                 forumIntent.putExtra("user", user);
+
                 startActivity(forumIntent);
+                finish();
                 overridePendingTransition(0,0);
                 break;
 

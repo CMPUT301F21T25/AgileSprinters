@@ -139,13 +139,13 @@ public class OtherUserScreen extends AppCompatActivity {
     }
 
     private void setTextFields(String followingCount, String followersCount, String firstNameStr) {
-        TextView firstNameTextView = findViewById(R.id.userIdTextView);
         TextView followingCountTextView = findViewById(R.id.followingCount);
         TextView followerCountTextView = findViewById(R.id.followerCount);
+        Button otherUserButton = findViewById(R.id.otherUserButton);
 
         followerCountTextView.setText(followersCount);
         followingCountTextView.setText(followingCount);
-        firstNameTextView.setText(firstNameStr);
+        otherUserButton.setText(firstNameStr.substring(0,1));
     }
 
     public void updateUserDoc(User user) {

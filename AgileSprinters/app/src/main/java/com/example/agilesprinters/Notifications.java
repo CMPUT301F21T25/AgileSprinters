@@ -123,15 +123,17 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
                 Intent intent = new Intent(this, Home.class);
                 intent.putExtra("user", user);
                 //add bundle to send data if need
+
                 startActivity(intent);
+                finish();
                 overridePendingTransition(0,0);
                 break;
 
             case R.id.calendar:
                 Intent intentCalendar = new Intent(this, UserCalendar.class);
                 intentCalendar.putExtra("user", user);
-
                 startActivity(intentCalendar);
+                finish();
                 overridePendingTransition(0,0);
                 break;
 
@@ -141,7 +143,9 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
                 } else {
                     Intent intent2 = new Intent(this, Notifications.class);
                     //add bundle to send data if need
+
                     startActivity(intent2);
+                    finish();
                     overridePendingTransition(0,0);
                     break;
                 }
@@ -150,6 +154,7 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
                 Intent forumIntent = new Intent(this, ForumManager.class);
                 forumIntent.putExtra("user", user);
                 startActivity(forumIntent);
+                finish();
                 overridePendingTransition(0,0);
                 break;
 
