@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,7 +24,7 @@ public class completedEventsListAdapter extends ArrayAdapter<HabitInstance> {
 
     private final Context mContext;
     int mResource;
-    FirebaseFirestore db;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     /**
      * This function initializes the current screen and the list of habits to be
@@ -55,8 +57,10 @@ public class completedEventsListAdapter extends ArrayAdapter<HabitInstance> {
         // attach and pass variables to the textview in the list
         TextView eventContent = convertView.findViewById(R.id.EventContent);
         TextView durationContent = convertView.findViewById(R.id.duration_content);
+        TextView privacyContent = convertView.findViewById(R.id.privacy_content);
+
         // Check if optional comment is empty or not and pass the content to TextView accordingly
-        db = FirebaseFirestore.getInstance();
+        //db = FirebaseFirestore.getInstance();
         if (habitInstance.getOpt_comment().matches("")) {
             db.collection("Habit").addSnapshotListener((value, error) -> {
                 for (QueryDocumentSnapshot doc : value) {
@@ -68,7 +72,26 @@ public class completedEventsListAdapter extends ArrayAdapter<HabitInstance> {
         } else {
             eventContent.setText(habitInstance.getOpt_comment());
         }
-        durationContent.setText(habitInstance.getDuration() + " minutes");
+
+        if (habitInstance.getDuration() > 0 && habitInstance.getDuration() <= 60) {
+            durationContent.setText(habitInstance.getDuration() + " minutes");
+        } else {
+            durationContent.setText((habitInstance.getDuration()/60) + " hours");
+        }
+
+        db.collection("Habit").addSnapshotListener((value, error) -> {
+            for (QueryDocumentSnapshot doc : value) {
+                if (doc.getId().equals(habitInstance.getHID())) {
+                    if (((String) doc.getData().get("PrivacySetting"))
+                            .matches("Private")) {
+                        System.out.println("Privacy setting");
+                        privacyContent.setVisibility(View.VISIBLE);
+                        privacyContent.setText("Private Event");
+                    }
+                }
+            }
+        });
+
         return convertView;
     }
 }

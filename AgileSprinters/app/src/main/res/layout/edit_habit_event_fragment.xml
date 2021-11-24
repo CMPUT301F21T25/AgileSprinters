@@ -6,28 +6,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/editText_comment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Comment"
-        android:inputType="textPersonName"
-        android:maxLength="20"
-        android:minHeight="48dp"
-        android:layout_margin="10dp"/>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/editText_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Comment"
+            android:inputType="textPersonName"
+            android:maxLength="20"
+            android:layout_margin="5dp"
+            android:layout_weight="10"/>
 
         <TextView
             android:id="@+id/editText_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:layout_margin="10dp"/>
+            android:layout_margin="5dp"
+            android:layout_weight="10"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <EditText
             android:id="@+id/editText_duration"
@@ -35,9 +43,19 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:inputType="number"
-            android:hint="Duration of the event\n(in minutes)"
-            android:minHeight="48dp"
-            android:layout_margin="10dp"/>
+            android:hint="duration"
+            android:layout_margin="5dp"
+            android:layout_weight="10"/>
+
+        <Spinner
+            android:id="@+id/duration_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/btn_dropdown"
+            android:spinnerMode="dropdown"
+            android:entries="@array/duration_options"
+            android:layout_margin="5dp"
+            android:layout_weight="10"/>
 
     </LinearLayout>
 
@@ -66,11 +84,47 @@
             app:srcCompat="@drawable/ic_location" />
 
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imageContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <ImageView
-            android:id="@+id/imageContainer"
-            android:layout_width="match_parent"
-            android:layout_height="365dp"
-            tools:srcCompat="@tools:sample/avatars" />
+        android:layout_height="365dp"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right">
+
+        <Button
+            android:id="@+id/delete_event_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Delete"
+            android:layout_weight="10"/>
+
+        <Button
+            android:id="@+id/save_event_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Save"
+            android:layout_weight="10"/>
+
+        <Button
+            android:id="@+id/share_event_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Share"
+            android:layout_weight="10"
+            android:visibility="invisible"/>
+
+
+
+
+    </LinearLayout>
+
+
 </LinearLayout>
