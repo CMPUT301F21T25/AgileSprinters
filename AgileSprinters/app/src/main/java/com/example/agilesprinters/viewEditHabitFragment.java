@@ -149,6 +149,8 @@ public class viewEditHabitFragment extends DialogFragment {
         // Make sure spinner for privacy settings is set to the correct option
         if (habit.getPrivacySetting().equals(getString(R.string.PRIVATE_TEXT))) {
             privacySpinner.setSelection(1);
+        } else {
+            privacySpinner.setSelection(0);
         }
 
         ArrayList<Integer> listPositions = new ArrayList<Integer>();

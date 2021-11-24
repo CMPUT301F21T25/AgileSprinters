@@ -104,7 +104,6 @@ public class UserCalendar extends AppCompatActivity
         ListView completedEventsList = findViewById(R.id.completedEventsList);
 
         title1 = findViewById(R.id.title1);
-        Button calendar_button = findViewById(R.id.calendar_button);
 
         db = FirebaseFirestore.getInstance();
 

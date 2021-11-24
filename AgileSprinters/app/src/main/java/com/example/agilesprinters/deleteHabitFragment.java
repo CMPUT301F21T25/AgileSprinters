@@ -28,7 +28,7 @@ public class deleteHabitFragment extends DialogFragment {
         //Keep track of item the user wishes to delete.
         deleteHabitFragment frag = new deleteHabitFragment();
         Bundle args = new Bundle();
-        args.putInt(String.valueOf(R.string.POSITION_TEXT), position);
+        args.putInt("position", position);
         frag.setArguments(args);
 
         return frag;
@@ -75,7 +75,7 @@ public class deleteHabitFragment extends DialogFragment {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.delete_habit_fragment, null);
 
         // Get arguments from the bundle
-        int position = getArguments().getInt(getString(R.string.POSITION_TEXT));
+        int position = getArguments().getInt("position");
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         return builder

@@ -189,6 +189,7 @@ public class editHabitEventFragment extends DialogFragment {
         builder.setView(view);
 
         Button deleteButton = (Button) view.findViewById(R.id.delete_event_button);
+        deleteButton.setVisibility(View.VISIBLE);
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -200,6 +201,7 @@ public class editHabitEventFragment extends DialogFragment {
         });
 
         Button saveButton = view.findViewById(R.id.save_event_button);
+        saveButton.setVisibility(View.VISIBLE);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

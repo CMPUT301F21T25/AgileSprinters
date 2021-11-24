@@ -108,6 +108,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
      * This function runs when the activity is becoming visible to the user and
      * is usually called after onCreate method or onRestart method
      */
+
     @Override
     public void onStart() {
         super.onStart();

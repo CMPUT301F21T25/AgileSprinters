@@ -1,5 +1,7 @@
 package com.example.agilesprinters;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +23,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -57,6 +60,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     private TextView followersTextView;
     private TextView followingCountTextView;
     private TextView followerCountTextView;
+    private FirebaseAuth auth;
 
     private static final String TAG = "Habit";
     private String UID;
@@ -66,6 +70,11 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     private String followingCount;
     private String followersCount;
     private Database database = new Database();
+
+    private String  firstName, lastName, emailId;
+    private ArrayList<String> followersList = new ArrayList<>();
+    private ArrayList<String> followingList = new ArrayList<>();
+    private ArrayList<String> followRequestList = new ArrayList<>();
 
     /**
      * This function creates the UI on the screen and listens for user input
@@ -241,6 +250,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         habitList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                System.out.println("pos"+i);
                 deleteHabitFragment delete = new deleteHabitFragment().newInstance(i);
                 delete.show(getSupportFragmentManager(), "DELETE");
 
@@ -270,6 +280,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
      */
     @Override
     public void onEditViewSaveChangesPressed(Habit habit, int oldPosition) {
+
         if (habit.getListPosition() > oldPosition){
             for (int i = habit.getListPosition(); i > oldPosition; i--){
                 habitArrayList.get(i).setListPosition(i - 1);
@@ -282,6 +293,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 updateHabitDatabase(habitArrayList.get(i));
             }
         }
+        System.out.println("list"+habitArrayList);
         updateHabitDatabase(habit);
     }
 
@@ -475,5 +487,56 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         }
         return false;
     }
+
+    /*
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+
+        FirebaseUser firebaseUser = auth.getCurrentUser();
+        if (firebaseUser != null){
+            System.out.println("UID IS:" + firebaseUser.getUid());
+            //Do anything here which needs to be done after user is set is complete
+            getUser(firebaseUser);
+        }
+    }
+
+    private void getUser(FirebaseUser firebaseUser) {
+        db = FirebaseFirestore.getInstance();
+        CollectionReference collectionReference = db.collection("users");
+
+        String uniqueId = firebaseUser.getUid();
+
+        user.setUser(uniqueId);
+        collectionReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    Log.d(TAG, String.valueOf(doc.getData().get("UID")));
+                    if (uniqueId.matches((String) doc.getData().get("UID"))) {
+                        emailId = (String) doc.getData().get("Email ID");
+                        firstName = (String) doc.getData().get("First Name");
+                        lastName = (String) doc.getData().get("Last Name");
+                        followersList = (ArrayList<String>) doc.getData().get("followers");
+                        followingList = (ArrayList<String>) doc.getData().get("following");
+                        followRequestList = (ArrayList<String>) doc.getData().get("follow request list");
+                        setFields(user, emailId, firstName, lastName, followersList, followingList, followRequestList);
+                    }
+                }
+            }
+        });
+    }
+
+    private void setFields(User user, String emailId, String firstName, String lastName, ArrayList<String> followersList, ArrayList<String> followingList, ArrayList<String> followRequestList) {
+        user.setEmailId(emailId);
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setFollowersList(followersList);
+        user.setFollowingList(followingList);
+        user.setFollowRequestList(followRequestList);
+    }
+
+     */
 
 }

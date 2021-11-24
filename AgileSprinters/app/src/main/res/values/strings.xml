@@ -135,7 +135,7 @@
     <string name="HABIT_TEXT">habit</string>
     <string name="FRAG_ERROR_MSG">must implement OnFragmentInteractionListener</string>
     <string name="POSITION_TEXT">position</string>
-    <string name="PRIVATE_TEXT">private</string>
+    <string name="PRIVATE_TEXT">Private</string>
     <string name="VIEW_EDIT_HABIT_FRAG_TITLE">View/Edit Habit</string>
     <string name="EMPTY_FIELD_ERR_MSG">This field cannot be blank</string>
     <string name="WEEKDAY_BTN_ERR_MSG">Please choose which days you would like this event to occur.</string>
