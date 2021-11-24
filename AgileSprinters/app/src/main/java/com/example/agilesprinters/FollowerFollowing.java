@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -37,15 +38,17 @@ public class FollowerFollowing extends AppCompatActivity {
 
     private User currentUser = new User();
     private FirebaseFirestore db;
-    private Database database = new Database();
-    private String firstName, lastName, emailId, uniqueId;
+    private String firstName, lastName, emailId;
     private ArrayList<String> followersList = new ArrayList<>();
     private ArrayList<String> followingList = new ArrayList<>();
     private ArrayList<String> followRequestList = new ArrayList<>();
+    private String IID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_follower_following);
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -99,8 +102,17 @@ public class FollowerFollowing extends AppCompatActivity {
                 Intent intent = new Intent(FollowerFollowing.this, OtherUserScreen.class);
                 intent.putExtra(getString(R.string.USER_STR), user);
                 startActivity(intent);
+                overridePendingTransition(0,0);
                 finish();
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+
+        overridePendingTransition(0,0);
     }
 }

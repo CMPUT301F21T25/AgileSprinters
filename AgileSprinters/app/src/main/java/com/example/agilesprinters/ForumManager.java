@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -47,11 +48,14 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
     private ArrayList<String> followersList = new ArrayList<>();
     private ArrayList<String> followingList = new ArrayList<>();
     private ArrayList<String> followRequestList = new ArrayList<>();
+    private String IID;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_forum_manager);
 
         if (UID == null) {
@@ -98,7 +102,7 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
                         Intent intent = new Intent(ForumManager.this, OtherUserScreen.class);
                         intent.putExtra(getString(R.string.USER_STR), userToSend);
                         startActivity(intent);
-                        finish();
+
                     }
                 }
             }
@@ -109,7 +113,7 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
         db.collection("users").addSnapshotListener((value, error) -> {
             arrayAdapter_users.clear();
             for (QueryDocumentSnapshot doc : value) {
-                if(!doc.getId().matches(user.getUserID()) && userTempList.contains(doc.getId())){
+                if(!doc.getId().matches(user.getUserID())){
                     emailId = (String) doc.getData().get("Email ID");
                     firstName = (String)  doc.getData().get("First Name");
                     lastName = (String) doc.getData().get("Last Name");
@@ -144,8 +148,8 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
                     System.out.println("Array list1 is " + forumDataList);
                 }
             }
-
             forumAdapter.notifyDataSetChanged();
+            userTempList.remove(userTempList.size()-1);
         });
 
     }
@@ -160,13 +164,15 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
      */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+
         switch (item.getItemId()) {
             case R.id.home:
                 Intent intent = new Intent(this, Home.class);
                 intent.putExtra("user", user);
                 //add bundle to send data if need
                 startActivity(intent);
-                finish();
+                overridePendingTransition(0,0);
                 break;
 
             case R.id.calendar:
@@ -174,7 +180,7 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
                 calendarIntent.putExtra("user", user);
                 //add bundle to send data if need
                 startActivity(calendarIntent);
-                finish();
+                overridePendingTransition(0,0);
                 break;
 
             case R.id.notification:
@@ -182,7 +188,7 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
                 intentNotification.putExtra("user", user);
                 //add bundle to send data if need
                 startActivity(intentNotification);
-                finish();
+                overridePendingTransition(0,0);
                 break;
 
             case R.id.forumn:
@@ -192,13 +198,10 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
                     Intent forumIntent = new Intent(this, ForumManager.class);
                     //add bundle to send data if need
                     startActivity(forumIntent);
-                    finish();
+                    overridePendingTransition(0,0);
                     break;
                 }
         }
         return false;
     }
-
-
-
 }
