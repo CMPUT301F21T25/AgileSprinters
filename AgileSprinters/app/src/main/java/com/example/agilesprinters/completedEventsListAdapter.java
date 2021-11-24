@@ -72,7 +72,12 @@ public class completedEventsListAdapter extends ArrayAdapter<HabitInstance> {
         } else {
             eventContent.setText(habitInstance.getOpt_comment());
         }
-        durationContent.setText(habitInstance.getDuration() + " minutes");
+
+        if (habitInstance.getDuration() > 0 && habitInstance.getDuration() <= 60) {
+            durationContent.setText(habitInstance.getDuration() + " minutes");
+        } else {
+            durationContent.setText((habitInstance.getDuration()/60) + " hours");
+        }
 
         db.collection("Habit").addSnapshotListener((value, error) -> {
             for (QueryDocumentSnapshot doc : value) {

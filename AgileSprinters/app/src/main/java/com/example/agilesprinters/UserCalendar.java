@@ -244,7 +244,8 @@ public class UserCalendar extends AppCompatActivity
                         LocalDate eventDate = LocalDate.parse(doc.get("Date").toString(), formatter);
                         if ((eventDate.isEqual(currentDate))) {
                             HabitInstance newInstance = new HabitInstance(doc.getString("EID"), doc.getString("UID"), doc.getString("HID"),
-                                    doc.getString("Opt_comment"), doc.getString("Date"), Integer.parseInt(doc.get("Duration").toString()), doc.getString("IID"), doc.getString("FID"));
+                                    doc.getString("Opt_comment"), doc.getString("Date"), Integer.parseInt(doc.get("Duration").toString()), doc.getString("IID"), doc.getString("FID"),
+                                    Boolean.parseBoolean((String) doc.getData().get("isShared")));
                             completedEvents.add(newInstance);
                             completedEventIds.add(doc.getId()); // Adding habit events from Firestore
                         }
@@ -269,14 +270,14 @@ public class UserCalendar extends AppCompatActivity
         String forumID = stringChange(newHabitRef.getId());
 
         addHabitEventDatabase(habitInstance, bitmap, forumID);
-        updateForum(habitInstance, forumID);
+        updateForum(habitInstance, forumID, "ADD");
         completedEventsScreenSetup();
 
         updateProgressInDatabase(habitInstance, "ADD");
 
     }
 
-    private void updateForum(HabitInstance habitInstance, String FID) {
+    private void updateForum(HabitInstance habitInstance, String FID, String toDo) {
         String HID = habitInstance.getHID();
         String privacySetting = "";
         HashMap<String, String> data = new HashMap();
@@ -287,7 +288,9 @@ public class UserCalendar extends AppCompatActivity
             }
         }
         String duration = String.valueOf(habitInstance.getDuration());
-        if (privacySetting.matches("Public")){
+        System.out.println("checking "+privacySetting+habitInstance);
+        if ( privacySetting.matches("Public") || (
+                (privacySetting.matches("Private")) && habitInstance.getShared()) ){
             data.put("Event Date", habitInstance.getDate());
             data.put("First Name", user.getFirstName());
             data.put("Last Name", user.getLastName());
@@ -298,35 +301,12 @@ public class UserCalendar extends AppCompatActivity
             data.put("FID", FID);
 
             collectionPath = "ForumPosts";
-            database.addData(collectionPath, FID, data, "Forum Post");
-
-        }
-    }
-
-    private void editForum(HabitInstance habitInstance) {
-        System.out.println("Printing!!!");
-        db.collection("ForumPosts").addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
-                    FirebaseFirestoreException error) {
-                HashMap<String, String> data = new HashMap();
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    if (habitInstance.getFID().matches(doc.getId())) {
-                        String duration = String.valueOf(habitInstance.getDuration());
-                        data.put("Event Date", habitInstance.getDate());
-                        data.put("First Name", user.getFirstName());
-                        data.put("Last Name", user.getLastName());
-                        data.put("duration", duration);
-                        data.put("UID", habitInstance.getUID());
-                        data.put("Opt Cmt", habitInstance.getOpt_comment());
-                        data.put("EID", habitInstance.getEID());
-                        data.put("FID", habitInstance.getFID());
-                    }
-                }
-                database.updateData("ForumPosts", habitInstance.getFID(), data, TAG);
-                // from the cloud
+            if (toDo.matches("EDIT")) {
+                database.updateData(collectionPath, habitInstance.getFID(), data, TAG);
+            } else if (toDo.matches("ADD")) {
+                database.addData(collectionPath, FID, data, "Forum Post");
             }
-        });
+        }
     }
 
     public String stringChange(String str) {
@@ -367,11 +347,13 @@ public class UserCalendar extends AppCompatActivity
         data.put("Date", instance.getDate());
         data.put("Opt_comment", instance.getOpt_comment());
         data.put("Duration", String.valueOf(instance.getDuration()));
+        data.put("isShared", String.valueOf(instance.getShared()));
+
 
         // Makes a call to the database which handles it
         collectionPath = "HabitEvents";
-        editForum(instance);
         database.updateData(collectionPath, selectedHabitInstanceId, data, TAG);
+        updateForum(instance, instance.getFID(), "EDIT");
         completedEventsScreenSetup();
     }
 
@@ -486,6 +468,7 @@ public class UserCalendar extends AppCompatActivity
             data.put("Date", instance.getDate());
             data.put("Opt_comment", instance.getOpt_comment());
             data.put("Duration", instance.getDuration());
+            data.put("isShared", String.valueOf(instance.getShared()));
 
             // Makes a call to the database which handles it
             collectionPath = "HabitEvents";
@@ -620,5 +603,10 @@ public class UserCalendar extends AppCompatActivity
 
         collectionPath = "ForumPosts";
         database.addData(collectionPath, FID, data, "Forum Post");
+
+
+        db.collection("HabitEvents")
+                .document(eventToShare.getEID())
+                .update("isShared", String.valueOf(true));
     }
 }

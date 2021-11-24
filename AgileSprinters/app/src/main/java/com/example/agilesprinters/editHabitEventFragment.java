@@ -50,6 +50,7 @@ public class editHabitEventFragment extends DialogFragment {
     private String HID;
     private String IID;
     private String FID;
+    private Boolean isShared;
     private ImageView imageContainer;
     private ImageView addCamPhotoBtn;
     private ImageView addGalPhotoBtn;
@@ -164,6 +165,7 @@ public class editHabitEventFragment extends DialogFragment {
         UID = habitInstance.getUID();
         HID = habitInstance.getHID();
         FID = habitInstance.getFID();
+        isShared = habitInstance.getShared();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setView(view);
@@ -223,7 +225,8 @@ public class editHabitEventFragment extends DialogFragment {
                 // If everything has been filled out, call the listener and send the edited
                 // habit back to the Home class and dismiss the dialog.
                 if (readyToClose) {
-                    listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date, Integer.parseInt(duration), IID, FID), bitmapOfImg);
+                    listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date,
+                            Integer.parseInt(duration), IID, FID, isShared), bitmapOfImg);
                     dismiss();
                 }
             }
@@ -421,7 +424,8 @@ public class editHabitEventFragment extends DialogFragment {
                 // If everything has been filled out, call the listener and send the edited
                 // habit back to the Home class and dismiss the dialog.
                 if (readyToClose) {
-                    listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date, Integer.parseInt(duration), IID, FID), bitmapOfImg);
+                    listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date,
+                            Integer.parseInt(duration), IID, FID, isShared), bitmapOfImg);
                     dialog.dismiss();
                 }
             });
