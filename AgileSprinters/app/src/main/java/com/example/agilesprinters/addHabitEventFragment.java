@@ -2,7 +2,6 @@ package com.example.agilesprinters;
 
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -27,9 +26,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentResultListener;
 
-
-import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.firestore.DocumentReference;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -57,7 +53,7 @@ public class addHabitEventFragment extends DialogFragment{
     private ImageView addLocBtn;
     private Uri selectedImg;
     private Bitmap bitmapOfImg;
-    private String opt_loc = "";
+    private String optLoc = "";
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
@@ -124,7 +120,7 @@ public class addHabitEventFragment extends DialogFragment{
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.edit_habit_event_fragment, null);
         this.getParentFragmentManager().setFragmentResultListener("Opt_Loc", this, new FragmentResultListener() {
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
-                opt_loc = bundle.getString("Opt_Loc");
+                optLoc = bundle.getString("Opt_Loc");
             }
         });
 
@@ -196,7 +192,7 @@ public class addHabitEventFragment extends DialogFragment{
     private void getLocation() {
         MapsFragment mapsFragment = new MapsFragment();
         mapsFragment.show(Objects.requireNonNull(getChildFragmentManager()), "ADD LOCATION");
-        System.out.println("opt_loc: "+opt_loc);
+        System.out.println("opt_loc: "+ optLoc);
     }
     private void getCameraPicture(){
         //have to give permission to app to use camera
@@ -323,7 +319,7 @@ public class addHabitEventFragment extends DialogFragment{
                 if(readyToClose){
                     
                     listener.onSavePressed(new HabitInstance(EID, UID, HID, comment, date_entry,
-                            Integer.parseInt(duration), IID, FID, opt_loc), bitmapOfImg);
+                            Integer.parseInt(duration), IID, FID, optLoc), bitmapOfImg);
                     dialog.dismiss();
                 }
             });

@@ -166,9 +166,9 @@ public class HabitInstance implements Serializable {
         this.FID = FID;
     }
 
-    public String getOpt_loc() { return opt_loc; }
+    public String getOptLoc() { return opt_loc; }
 
-    public void setOpt_loc(String opt_loc) {
+    public void setOptLoc(String opt_loc) {
         this.opt_loc = opt_loc;
     }
 

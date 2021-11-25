@@ -268,12 +268,12 @@ public class UserCalendar extends AppCompatActivity
             }
         });
     }
-    private String getDisplayLocStr(String opt_loc){
-        if (opt_loc == "") return "";
+    private String getDisplayLocStr(String optLoc){
+        if (optLoc == "") return "";
 
         List<Address> addresses = null;
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-        String[] latLng = opt_loc.split(",");
+        String[] latLng = optLoc.split(",");
         System.out.println(latLng);
         try {
             addresses = geocoder.getFromLocation(Double.parseDouble(latLng[0]), Double.parseDouble(latLng[1]),1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
@@ -324,7 +324,7 @@ public class UserCalendar extends AppCompatActivity
             data.put("Opt Cmt", habitInstance.getOpt_comment());
             data.put("EID", habitInstance.getEID());
             data.put("FID", FID);
-            data.put("opt_loc", getDisplayLocStr(habitInstance.getOpt_loc()));
+            data.put("opt_loc", getDisplayLocStr(habitInstance.getOptLoc()));
 
             //DocumentReference newHabitRef = db.collection("Habit").document();
             //String forumID = stringChange(newHabitRef.getId());
@@ -402,7 +402,7 @@ public class UserCalendar extends AppCompatActivity
                         data.put("UID", instance.getUID());
                         data.put("Opt Cmt", instance.getOpt_comment());
                         data.put("EID", instance.getEID());
-                        data.put("opt_loc", getDisplayLocStr(instance.getOpt_loc()));
+                        data.put("opt_loc", getDisplayLocStr(instance.getOptLoc()));
 
 
                         // Makes a call to the database which handles it
@@ -479,7 +479,7 @@ public class UserCalendar extends AppCompatActivity
             data.put("Date", instance.getDate());
             data.put("Opt_comment", instance.getOpt_comment());
             data.put("Duration", instance.getDuration());
-            data.put("Opt_Loc", instance.getOpt_loc());
+            data.put("Opt_Loc", instance.getOptLoc());
 
             // Makes a call to the database which handles it
             collectionPath = "HabitEvents";

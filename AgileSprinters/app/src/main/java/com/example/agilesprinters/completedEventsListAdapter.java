@@ -74,7 +74,7 @@ public class completedEventsListAdapter extends ArrayAdapter<HabitInstance> {
         } else {
             eventContent.setText(habitInstance.getOpt_comment());
         }
-        locationContent.setText(getDisplayLocStr(habitInstance.getOpt_loc()));
+        locationContent.setText(getDisplayLocStr(habitInstance.getOptLoc()));
         durationContent.setText(habitInstance.getDuration() + " minutes");
         return convertView;
     }

@@ -5,31 +5,19 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -44,18 +32,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.PlaceLikelihood;
-import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
-import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 
 
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
 
 public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
         GoogleMap.OnMarkerClickListener, GoogleMap.OnMarkerDragListener {
@@ -95,7 +75,7 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
     private String[] likelyPlaceAddresses;
     private List[] likelyPlaceAttributions;
     private LatLng[] likelyPlaceLatLngs;
-    private String opt_loc;
+    public String optLoc;
 
     public static MapsFragment newInstance() {
         MapsFragment fragment = new MapsFragment();
@@ -233,13 +213,13 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
                 String country = addresses.get(0).getCountryName();
                 System.out.println(address +"\n"+city+"\n"+state+"\n"+country);
                 **/
-                opt_loc = (String.valueOf(marker.getPosition().latitude)+","+String.valueOf(marker.getPosition().longitude));
+                optLoc = (String.valueOf(marker.getPosition().latitude)+","+String.valueOf(marker.getPosition().longitude));
                 // If everything has been filled out, call the listener and send the edited
                 // habit back to the Home class and dismiss the dialog.
 
                 Bundle result = new Bundle();
-                System.out.println("inside opt_loc: "+opt_loc);
-                result.putString("Opt_Loc", opt_loc);
+                System.out.println("inside opt_loc: "+ optLoc);
+                result.putString("Opt_Loc", optLoc);
                 getParentFragmentManager().setFragmentResult("Opt_Loc", result);
                 dismiss();
             }
