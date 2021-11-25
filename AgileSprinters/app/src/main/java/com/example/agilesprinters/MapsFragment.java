@@ -7,7 +7,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
 import android.content.pm.PackageManager;
-import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
@@ -16,8 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -25,29 +22,19 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.net.PlacesClient;
-
-
-import java.util.List;
 
 public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
         GoogleMap.OnMarkerClickListener, GoogleMap.OnMarkerDragListener {
     private Geocoder geocoder;
     private static final String TAG = MapsFragment.class.getSimpleName();
     private GoogleMap map;
-    private CameraPosition cameraPosition;
-    private Button saveAddressBtn;
     Marker marker;
-
-    // The entry point to the Places API.
-    private PlacesClient placesClient;
+    HabitInstance habitInstance;
 
     // The entry point to the Fused Location Provider.
     private FusedLocationProviderClient fusedLocationProviderClient;
@@ -69,17 +56,14 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
     private static final String KEY_LOCATION = "location";
     // [END maps_current_place_state_keys]
 
-    // Used for selecting the current place.
-    private static final int M_MAX_ENTRIES = 5;
-    private String[] likelyPlaceNames;
-    private String[] likelyPlaceAddresses;
-    private List[] likelyPlaceAttributions;
-    private LatLng[] likelyPlaceLatLngs;
     public String optLoc;
 
-    public static MapsFragment newInstance() {
+    public static MapsFragment newInstance(HabitInstance habitInstance) {
         MapsFragment fragment = new MapsFragment();
         Bundle args = new Bundle();
+        args.putSerializable("Habit instance", habitInstance);
+        fragment.setArguments(args);
+
         return fragment;
     }
 
@@ -95,15 +79,15 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        assert getArguments() != null;
+        habitInstance = (HabitInstance) getArguments().getSerializable("Habit instance");
+        //System.out.println(habitInstance.getDuration());
         // Retrieve location and camera position from saved instance state.
         if (savedInstanceState != null) {
             lastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
-            cameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
         }
 
         Places.initialize(getContext(), getString(R.string.MAPS_API_KEY));
-        placesClient = Places.createClient(getContext());
 
         // Construct a FusedLocationProviderClient.
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
@@ -127,34 +111,6 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
     @Override
     public void onMapReady(GoogleMap map) {
         this.map = map;
-
-        // [START_EXCLUDE]
-        // [START map_current_place_set_info_window_adapter]
-        // Use a custom info window adapter to handle multiple lines of text in the
-        // info window contents.
-        this.map.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-
-            @Override
-            // Return null here, so that getInfoContents() is called next.
-            public View getInfoWindow(Marker arg0) {
-                return null;
-            }
-
-            @Override
-            public View getInfoContents(Marker marker) {
-                // Inflate the layouts for the info window, title and snippet.
-                View infoWindow = getLayoutInflater().inflate(R.layout.fragment_maps,
-                        (FrameLayout) getView().findViewById(R.id.map), false);
-
-                TextView title = infoWindow.findViewById(R.id.title);
-                title.setText(marker.getTitle());
-
-                TextView snippet = infoWindow.findViewById(R.id.snippet);
-                snippet.setText(marker.getSnippet());
-
-                return infoWindow;
-            }
-        });
         // Prompt the user for permission.
         getLocationPermission();
         // [END_EXCLUDE]
@@ -192,38 +148,15 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
     @Override
     public void onResume() {
         super.onResume();
-
-        saveAddressBtn = getView().findViewById(R.id.saveAddressBtn);
-        saveAddressBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                List<Address> addresses = null;
-                /**geocoder = new Geocoder(getContext(), Locale.getDefault());
-
-                try {
-                    addresses = geocoder.getFromLocation(marker.getPosition()
-                            .latitude, marker.getPosition().longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-                String city = addresses.get(0).getLocality();
-                String state = addresses.get(0).getAdminArea();
-                String country = addresses.get(0).getCountryName();
-                System.out.println(address +"\n"+city+"\n"+state+"\n"+country);
-                **/
-                optLoc = (String.valueOf(marker.getPosition().latitude)+","+String.valueOf(marker.getPosition().longitude));
-                // If everything has been filled out, call the listener and send the edited
-                // habit back to the Home class and dismiss the dialog.
-
-                Bundle result = new Bundle();
-                System.out.println("inside opt_loc: "+ optLoc);
-                result.putString("Opt_Loc", optLoc);
-                getParentFragmentManager().setFragmentResult("Opt_Loc", result);
-                dismiss();
-            }
-            });
+        System.out.println("DURATION1: "+habitInstance.getDuration());
+        Button saveAddressBtn = getView().findViewById(R.id.saveAddressBtn);
+        saveAddressBtn.setOnClickListener(view -> {
+            optLoc = (marker.getPosition().latitude +","+ marker.getPosition().longitude);
+            // If everything has been filled out, call the listener and send the edited
+            // habit back to the Home class and dismiss the dialog.
+            habitInstance.setOptLoc(optLoc);
+            dismiss();
+        });
     }
     private void getDeviceLocation() {
 
@@ -234,30 +167,27 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
         try {
             if (locationPermissionGranted) {
                 Task<Location> locationResult = fusedLocationProviderClient.getLastLocation();
-                locationResult.addOnCompleteListener(getActivity(), new OnCompleteListener<Location>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Location> task) {
-                        if (task.isSuccessful()) {
-                            // Set the map's camera position to the current location of the device.
-                            lastKnownLocation = task.getResult();
-                            if (lastKnownLocation != null) {
-                                map.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                        new LatLng(lastKnownLocation.getLatitude(),
-                                                lastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+                locationResult.addOnCompleteListener(getActivity(), task -> {
+                    if (task.isSuccessful()) {
+                        // Set the map's camera position to the current location of the device.
+                        lastKnownLocation = task.getResult();
+                        if (lastKnownLocation != null) {
+                            map.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                    new LatLng(lastKnownLocation.getLatitude(),
+                                            lastKnownLocation.getLongitude()), DEFAULT_ZOOM));
 
-                                marker = map.addMarker(new MarkerOptions()
-                                        .position(
-                                                new LatLng(lastKnownLocation.getLatitude(),
-                                                        lastKnownLocation.getLongitude()))
-                                        .draggable(true).visible(true));
-                            }
-                        } else {
-                            Log.d(TAG, "Current location is null. Using defaults.");
-                            Log.e(TAG, "Exception: %s", task.getException());
-                            map.moveCamera(CameraUpdateFactory
-                                    .newLatLngZoom(defaultLocation, DEFAULT_ZOOM));
-                            map.getUiSettings().setMyLocationButtonEnabled(false);
+                            marker = map.addMarker(new MarkerOptions()
+                                    .position(
+                                            new LatLng(lastKnownLocation.getLatitude(),
+                                                    lastKnownLocation.getLongitude()))
+                                    .draggable(true).visible(true));
                         }
+                    } else {
+                        Log.d(TAG, "Current location is null. Using defaults.");
+                        Log.e(TAG, "Exception: %s", task.getException());
+                        map.moveCamera(CameraUpdateFactory
+                                .newLatLngZoom(defaultLocation, DEFAULT_ZOOM));
+                        map.getUiSettings().setMyLocationButtonEnabled(false);
                     }
                 });
             }

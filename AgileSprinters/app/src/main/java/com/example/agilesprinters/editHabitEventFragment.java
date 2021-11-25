@@ -3,7 +3,6 @@ package com.example.agilesprinters;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -12,23 +11,14 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentResultListener;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.loader.app.LoaderManager;
-
-import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -54,7 +44,7 @@ public class editHabitEventFragment extends DialogFragment {
     private ImageView addLocBtn;
     private Uri selectedImg;
     private Bitmap bitmapOfImg;
-    private String opt_loc = "";
+    private HabitInstance habitInstance;
 
     private editHabitEventFragment.OnFragmentInteractionListener listener;
 
@@ -96,7 +86,6 @@ public class editHabitEventFragment extends DialogFragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-
         if (context instanceof addHabitEventFragment.OnFragmentInteractionListener) {
             listener = (editHabitEventFragment.OnFragmentInteractionListener) context;
         } else {
@@ -117,21 +106,13 @@ public class editHabitEventFragment extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         //inflate the layout for this fragment
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.edit_habit_event_fragment, null);
-        this.getParentFragmentManager().setFragmentResultListener("Opt_Loc", this, new FragmentResultListener() {
-            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
-                // We use a String here, but any type that can be put in a Bundle is supported
-                opt_loc = bundle.getString("Opt_Loc");
-                System.out.println("opt_loc: "+opt_loc);
-                // Do something with the result
-            }
-        });
 
         // Display the calendar
         optional_comment = view.findViewById(R.id.editText_comment);
         input_date = view.findViewById(R.id.editText_date);
         input_duration = view.findViewById(R.id.editText_duration);
 
-        HabitInstance habitInstance = (HabitInstance) getArguments().getSerializable("Habit instance");
+        habitInstance = (HabitInstance) getArguments().getSerializable("Habit instance");
 
         optional_comment.setText(habitInstance.getOpt_comment());
         input_date.setText(habitInstance.getDate());
@@ -153,8 +134,7 @@ public class editHabitEventFragment extends DialogFragment {
         addLocBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MapsFragment mapsFragment = new MapsFragment();
-                mapsFragment.show(Objects.requireNonNull(getChildFragmentManager()), "EDIT LOCATION");
+                getLocation();
             }
         });
 
@@ -184,6 +164,13 @@ public class editHabitEventFragment extends DialogFragment {
                      */
                 }).create();
 
+    }
+
+
+    //switches view to map and allows user to pick location
+    private void getLocation() {
+        MapsFragment mapsFragment = new MapsFragment().newInstance((HabitInstance) getArguments().getSerializable("Habit instance"));
+        mapsFragment.show(Objects.requireNonNull(getChildFragmentManager()), "ADD LOCATION");
     }
 
 
@@ -282,7 +269,7 @@ public class editHabitEventFragment extends DialogFragment {
                 // If everything has been filled out, call the listener and send the edited
                 // habit back to the Home class and dismiss the dialog.
                 if (readyToClose) {
-                    listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date, Integer.parseInt(duration), IID, FID, opt_loc), bitmapOfImg);
+                    listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date, Integer.parseInt(duration), IID, FID, habitInstance.getOptLoc()), bitmapOfImg);
                     dialog.dismiss();
                 }
             });

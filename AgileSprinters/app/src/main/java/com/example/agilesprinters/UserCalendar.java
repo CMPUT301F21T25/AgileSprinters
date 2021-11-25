@@ -23,8 +23,6 @@ import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -324,7 +322,7 @@ public class UserCalendar extends AppCompatActivity
             data.put("Opt Cmt", habitInstance.getOpt_comment());
             data.put("EID", habitInstance.getEID());
             data.put("FID", FID);
-            data.put("opt_loc", getDisplayLocStr(habitInstance.getOptLoc()));
+            data.put("Opt_Loc", getDisplayLocStr(habitInstance.getOptLoc()));
 
             //DocumentReference newHabitRef = db.collection("Habit").document();
             //String forumID = stringChange(newHabitRef.getId());

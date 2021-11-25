@@ -56,12 +56,13 @@ public class Forum {
     public String getLocation(){return location;}
 
 
-    public Forum(String firstName, String lastName, String eventDate, String duration, String comment) {
+    public Forum(String firstName, String lastName, String eventDate, String duration, String comment, String location) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.eventDate = eventDate;
         this.duration = duration;
         this.comment = comment;
+        this.location = location;
     }
 
 
