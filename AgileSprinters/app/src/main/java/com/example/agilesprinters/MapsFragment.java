@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -27,6 +28,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
+import com.google.android.material.textfield.TextInputLayout;
 
 public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
         GoogleMap.OnMarkerClickListener, GoogleMap.OnMarkerDragListener {
@@ -57,6 +59,7 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
     // [END maps_current_place_state_keys]
 
     public String optLoc;
+    private TextView addressText;
 
     public static MapsFragment newInstance(HabitInstance habitInstance) {
         MapsFragment fragment = new MapsFragment();
@@ -137,7 +140,9 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
 
     @Override
     public void onMarkerDragEnd(@NonNull Marker marker) {
-
+        addressText = (TextView) getView().findViewById(R.id.etAddress);
+        String address = (marker.getPosition().latitude +","+ marker.getPosition().longitude);
+        addressText.setText(address);
     }
 
     @Override

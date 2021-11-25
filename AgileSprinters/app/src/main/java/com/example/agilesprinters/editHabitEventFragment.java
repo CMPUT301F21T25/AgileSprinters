@@ -3,7 +3,6 @@ package com.example.agilesprinters;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,25 +12,18 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.loader.app.LoaderManager;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -58,11 +50,6 @@ public class editHabitEventFragment extends DialogFragment {
     private String FID;
     private Boolean isShared;
     private ImageView imageContainer;
-    private ImageView addCamPhotoBtn;
-    private ImageView addGalPhotoBtn;
-    private ImageView addLocBtn;
-    private Button shareButton;
-    private Uri selectedImg;
     private Bitmap bitmapOfImg;
     private HabitInstance habitInstance;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -137,7 +124,7 @@ public class editHabitEventFragment extends DialogFragment {
         input_date = view.findViewById(R.id.editText_date);
         input_duration = view.findViewById(R.id.editText_duration);
         durationSpinner = view.findViewById(R.id.duration_spinner);
-        shareButton = view.findViewById(R.id.share_event_button);
+        Button shareButton = view.findViewById(R.id.share_event_button);
 
         habitInstance = (HabitInstance) getArguments().getSerializable("Habit instance");
 
@@ -146,9 +133,9 @@ public class editHabitEventFragment extends DialogFragment {
         input_duration.setText(String.valueOf(habitInstance.getDuration()));
 
         imageContainer = view.findViewById(R.id.imageContainer);
-        addCamPhotoBtn = view.findViewById(R.id.add_Cam_Photo);
-        addGalPhotoBtn = view.findViewById(R.id.add_Gal_Photo);
-        addLocBtn = view.findViewById(R.id.add_location);
+        ImageView addCamPhotoBtn = view.findViewById(R.id.add_Cam_Photo);
+        ImageView addGalPhotoBtn = view.findViewById(R.id.add_Gal_Photo);
+        ImageView addLocBtn = view.findViewById(R.id.add_location);
 
         setVisibilityForShareButton(habitInstance.getHID(), shareButton);
 
@@ -354,9 +341,9 @@ public class editHabitEventFragment extends DialogFragment {
                 if(resultCode == -1){
                     //URI is string of characters used to identify a resource (either by location name or both)
                     //use android net uri
-                    selectedImg =  data.getData();
+                    Uri selectedImg = data.getData();
                     try {
-                        bitmapOfImg = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(),selectedImg);
+                        bitmapOfImg = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImg);
                     } catch (IOException e) {
                         System.out.println(e+"I error");
                     }
@@ -423,7 +410,8 @@ public class editHabitEventFragment extends DialogFragment {
                 // If everything has been filled out, call the listener and send the edited
                 // habit back to the Home class and dismiss the dialog.
                 if (readyToClose) {
-                    listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date, Integer.parseInt(duration), IID, FID), bitmapOfImg);
+                    listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date,
+                            Integer.parseInt(duration), IID, FID, isShared, habitInstance.getOptLoc()), bitmapOfImg);
                     dialog.dismiss();
                 }
             });

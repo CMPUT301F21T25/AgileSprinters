@@ -259,7 +259,7 @@ public class UserCalendar extends AppCompatActivity
                         if ((eventDate.isEqual(currentDate))) {
                             HabitInstance newInstance = new HabitInstance(doc.getString("EID"), doc.getString("UID"), doc.getString("HID"),
                                     doc.getString("Opt_comment"), doc.getString("Date"), Integer.parseInt(doc.get("Duration").toString()), doc.getString("IID"), doc.getString("FID"),
-                                    Boolean.parseBoolean((String) doc.getData().get("isShared"), , doc.getString("Opt_Loc")));
+                                    Boolean.parseBoolean((String) doc.getData().get("isShared")), doc.getString("Opt_Loc"));
                             completedEvents.add(newInstance);
                             completedEventIds.add(doc.getId()); // Adding habit events from Firestore
                         }
@@ -271,23 +271,7 @@ public class UserCalendar extends AppCompatActivity
             }
         });
     }
-    private String getDisplayLocStr(String optLoc){
-        if (optLoc == "") return "";
 
-        List<Address> addresses = null;
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-        String[] latLng = optLoc.split(",");
-        System.out.println(latLng);
-        try {
-            addresses = geocoder.getFromLocation(Double.parseDouble(latLng[0]), Double.parseDouble(latLng[1]),1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String city = addresses.get(0).getLocality();
-        String state = addresses.get(0).getAdminArea();
-        String country = addresses.get(0).getCountryName();
-        return city+", "+state+", "+country;
-    }
     /**
      * This function passes a habit instance to be added to the database once
      * the user clicks save on the addHabitEventFragment dialog fragment
@@ -328,7 +312,7 @@ public class UserCalendar extends AppCompatActivity
             data.put("Opt Cmt", habitInstance.getOpt_comment());
             data.put("EID", habitInstance.getEID());
             data.put("FID", FID);
-            data.put("Opt_Loc", getDisplayLocStr(habitInstance.getOptLoc()));
+            data.put("Opt_Loc", habitInstance.getDisplayLocStr(new Geocoder(this, Locale.getDefault())));
             data.put("IID", habitInstance.getIID());
 
             collectionPath = "ForumPosts";
@@ -378,7 +362,7 @@ public class UserCalendar extends AppCompatActivity
         data.put("Opt_comment", instance.getOpt_comment());
         data.put("Duration", String.valueOf(instance.getDuration()));
         data.put("isShared", String.valueOf(instance.getShared()));
-
+        data.put("Opt_Loc", String.valueOf(instance.getOptLoc()));
 
         // Makes a call to the database which handles it
         collectionPath = "HabitEvents";
@@ -415,7 +399,6 @@ public class UserCalendar extends AppCompatActivity
             }
         });
     }
-
 
     /**
      * This function deletes a habit instance object from the database once a user clicks
@@ -457,7 +440,7 @@ public class UserCalendar extends AppCompatActivity
         deleteForumElement(instance);
         database.deleteData(collectionPath, instance.getEID(), TAG);
 
-        completedEventsScreenSetup(this);
+        completedEventsScreenSetup();
 
         updateProgressInDatabase(instance, "DELETE");
     }

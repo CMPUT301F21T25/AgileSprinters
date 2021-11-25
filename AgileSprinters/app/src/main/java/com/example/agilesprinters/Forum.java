@@ -59,20 +59,18 @@ public class Forum {
         this.image = image;
     }
 
-    public Forum(String firstName, String lastName, String eventDate, String duration, String comment, String image) {
     public void setLocation(String location){this.location=location;}
 
     public String getLocation(){return location;}
 
-
-    public Forum(String firstName, String lastName, String eventDate, String duration, String comment, String location) {
+    public Forum(String firstName, String lastName, String eventDate, String duration, String comment, String image, String location) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.eventDate = eventDate;
         this.duration = duration;
         this.comment = comment;
-        this.location = location;
         this.image = image;
+        this.location = location;
     }
 
 

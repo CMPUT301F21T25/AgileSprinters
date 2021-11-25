@@ -143,9 +143,8 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
                     eventDate = (String) doc.getData().get("Event Date");
                     optComment = (String) doc.getData().get("Opt Cmt");
                     imageId = (String) doc.getData().get("IID");
-                    forumDataList.add(new Forum(firstName, lastName, eventDate, duration, optComment, imageId));
                     location = (String) doc.getData().get("Opt_Loc");
-                    forumDataList.add(new Forum(firstName, lastName, eventDate, duration, optComment, location));
+                    forumDataList.add(new Forum(firstName, lastName, eventDate, duration, optComment, imageId, location));
                     System.out.println("Array list1 is " + forumDataList);
                 }
             }

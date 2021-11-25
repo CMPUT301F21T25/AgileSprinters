@@ -171,7 +171,7 @@ public class addHabitEventFragment extends DialogFragment {
 
     //switches view to map and allows user to pick location
     private void getLocation() {
-        habitInstance = new HabitInstance("null", "null", "null", "null", "null", 0, "null", "null", null);
+        habitInstance = new HabitInstance("null", "null", "null", "null", "null", 0, "null", "null", null,"null");
         MapsFragment mapsFragment = new MapsFragment().newInstance(habitInstance);
         mapsFragment.show(getChildFragmentManager(), "ADD LOCATION");
     }

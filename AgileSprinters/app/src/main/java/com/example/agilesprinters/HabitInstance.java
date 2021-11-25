@@ -1,6 +1,12 @@
 package com.example.agilesprinters;
 
+import android.location.Address;
+import android.location.Geocoder;
+
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * This class represents a habit instance/event
@@ -17,8 +23,7 @@ public class HabitInstance implements Serializable {
     private String IID;
     private String FID;
     private Boolean isShared;
-
-    private String opt_loc = "";
+    private String optLoc = "";
     /**
      * This is a constructor that takes the eventID, habitID, userID,
      * optional comment, date of the event, duration of the event as input
@@ -46,7 +51,7 @@ public class HabitInstance implements Serializable {
         this.opt_comment = opt_comment;
         this.date = date;
         this.duration = duration;
-        this.opt_loc = opt_loc;
+        this.optLoc = opt_loc;
         this.isShared = isShared;
     }
 
@@ -168,5 +173,36 @@ public class HabitInstance implements Serializable {
 
     public void setShared(Boolean shared) {
         isShared = shared;
+    }
+
+    public String getOptLoc() { return optLoc; }
+
+    public void setOptLoc(String opt_loc) {
+        this.optLoc = opt_loc;
+    }
+
+    public String getDisplayLocStr(Geocoder geocoder){
+        System.out.println("OPTLOC: "+ optLoc);
+        if (this.optLoc == "") return "";
+        List<Address> addresses = null;
+        String[] latLng = optLoc.split(",");
+        System.out.println(latLng);
+        try {
+            addresses = geocoder.getFromLocation(Double.parseDouble(latLng[0]), Double.parseDouble(latLng[1]),1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String[] location = new String[3];
+        String returnStr = "";
+        location[0] = addresses.get(0).getLocality();
+        location[1] = addresses.get(0).getAdminArea();
+        location[2] = addresses.get(0).getCountryName();
+        for (int i = 0; i<location.length;i++){
+            System.out.println("location: "+location[i]);
+            if (location[i]!=null)
+                returnStr += location[i]+", ";
+        }
+        System.out.printf("returnStr: "+returnStr);
+        return returnStr.substring(0,returnStr.length()-2);
     }
 }

@@ -79,7 +79,7 @@ public class completedEventsListAdapter extends ArrayAdapter<HabitInstance> {
         } else {
             eventContent.setText(habitInstance.getOpt_comment());
         }
-        locationContent.setText(getDisplayLocStr(habitInstance.getOptLoc()));
+        locationContent.setText(habitInstance.getDisplayLocStr(new Geocoder(getContext(), Locale.getDefault())));
         durationContent.setText(habitInstance.getDuration() + " minutes");
 
         if (habitInstance.getDuration() > 0 && habitInstance.getDuration() <= 60) {
@@ -102,24 +102,5 @@ public class completedEventsListAdapter extends ArrayAdapter<HabitInstance> {
         });
 
         return convertView;
-    }
-    private String getDisplayLocStr(String opt_loc){
-        if (opt_loc==null) return "";
-        System.out.println(opt_loc);
-        if (opt_loc.equals("")) return "";
-
-        List<Address> addresses = null;
-        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
-        String[] latLng = opt_loc.split(",");
-        System.out.println(latLng);
-        try {
-            addresses = geocoder.getFromLocation(Double.parseDouble(latLng[0]), Double.parseDouble(latLng[1]),1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String city = addresses.get(0).getLocality();
-        String state = addresses.get(0).getAdminArea();
-        String country = addresses.get(0).getCountryName();
-        return city+", "+state+", "+country;
     }
 }
