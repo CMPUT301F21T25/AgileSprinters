@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * This class represents a habit instance/event
@@ -23,7 +24,7 @@ public class HabitInstance implements Serializable {
     private String IID;
     private String FID;
     private Boolean isShared;
-    private String optLoc = "";
+    private String optLoc;
     /**
      * This is a constructor that takes the eventID, habitID, userID,
      * optional comment, date of the event, duration of the event as input
@@ -175,15 +176,17 @@ public class HabitInstance implements Serializable {
         isShared = shared;
     }
 
-    public String getOptLoc() { return optLoc; }
+    public String getOptLoc() {
+        if(optLoc==null) return "";
+        return optLoc; }
 
     public void setOptLoc(String opt_loc) {
         this.optLoc = opt_loc;
     }
 
     public String getDisplayLocStr(Geocoder geocoder){
-        System.out.println("OPTLOC: "+ optLoc);
-        if (this.optLoc == "") return "";
+        if (Objects.isNull(optLoc) | optLoc.equals("")) return "";
+
         List<Address> addresses = null;
         String[] latLng = optLoc.split(",");
         System.out.println(latLng);

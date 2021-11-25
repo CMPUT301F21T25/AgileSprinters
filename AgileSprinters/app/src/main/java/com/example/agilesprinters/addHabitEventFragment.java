@@ -28,8 +28,10 @@ import androidx.fragment.app.DialogFragment;
 
 
 import java.io.IOException;
+import java.sql.SQLOutput;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 /**
  * This class is a dialog fragment that allows the user to add a new habit event.
@@ -49,6 +51,7 @@ public class addHabitEventFragment extends DialogFragment {
     private Bitmap bitmapOfImg;
     private Uri selectedImg;
     private HabitInstance habitInstance;
+    private String optLoc;
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
@@ -171,7 +174,7 @@ public class addHabitEventFragment extends DialogFragment {
 
     //switches view to map and allows user to pick location
     private void getLocation() {
-        habitInstance = new HabitInstance("null", "null", "null", "null", "null", 0, "null", "null", null,"null");
+        habitInstance = new HabitInstance("null", "null", "null", "null", "null", 0, "null", "null", null,"");
         MapsFragment mapsFragment = new MapsFragment().newInstance(habitInstance);
         mapsFragment.show(getChildFragmentManager(), "ADD LOCATION");
     }
@@ -311,13 +314,18 @@ public class addHabitEventFragment extends DialogFragment {
                         duration = String.valueOf(Integer.parseInt(duration) * 60);
                     }
                 }
+                if (Objects.isNull(habitInstance)){
+                    optLoc = "";
+                }
+                else{
+                    optLoc = habitInstance.getOptLoc();
+                }
 
                 // If everything has been filled out, call the listener and send the edited
                 // habit back to the Home class and dismiss the dialog.
                 if(readyToClose){
-                    
                     listener.onSavePressed(new HabitInstance(EID, UID, HID, comment, date_entry,
-                            Integer.parseInt(duration), null, FID, false, habitInstance.getOptLoc()), bitmapOfImg);
+                            Integer.parseInt(duration), null, FID, false, optLoc), bitmapOfImg);
                     dialog.dismiss();
                 }
             });
