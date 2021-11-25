@@ -93,9 +93,8 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 System.out.println((String) adapterView.getItemAtPosition(i));
 
-                for (User user : array_user_objects) {
-                    if (user.getEmailId().matches((String) adapterView.getItemAtPosition(i))) {
-                        User userToSend = user;
+                for (User userToSend : array_user_objects) {
+                    if (userToSend.getEmailId().matches((String) adapterView.getItemAtPosition(i))) {
                         Intent intent = new Intent(ForumManager.this, OtherUserScreen.class);
                         intent.putExtra("currentUser", user);
                         intent.putExtra("otherUser", userToSend);
