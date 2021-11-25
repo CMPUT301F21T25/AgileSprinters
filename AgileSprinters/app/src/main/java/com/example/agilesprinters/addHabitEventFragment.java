@@ -124,9 +124,7 @@ public class addHabitEventFragment extends DialogFragment{
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.edit_habit_event_fragment, null);
         this.getParentFragmentManager().setFragmentResultListener("Opt_Loc", this, new FragmentResultListener() {
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
-                // We use a String here, but any type that can be put in a Bundle is supported
-                opt_loc = bundle.getString("bundleKey");
-                // Do something with the result
+                opt_loc = bundle.getString("Opt_Loc");
             }
         });
 
@@ -198,6 +196,7 @@ public class addHabitEventFragment extends DialogFragment{
     private void getLocation() {
         MapsFragment mapsFragment = new MapsFragment();
         mapsFragment.show(Objects.requireNonNull(getChildFragmentManager()), "ADD LOCATION");
+        System.out.println("opt_loc: "+opt_loc);
     }
     private void getCameraPicture(){
         //have to give permission to app to use camera

@@ -120,7 +120,8 @@ public class editHabitEventFragment extends DialogFragment {
         this.getParentFragmentManager().setFragmentResultListener("Opt_Loc", this, new FragmentResultListener() {
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
                 // We use a String here, but any type that can be put in a Bundle is supported
-                String opt_oc = bundle.getString("Opt_Loc");
+                opt_loc = bundle.getString("Opt_Loc");
+                System.out.println("opt_loc: "+opt_loc);
                 // Do something with the result
             }
         });

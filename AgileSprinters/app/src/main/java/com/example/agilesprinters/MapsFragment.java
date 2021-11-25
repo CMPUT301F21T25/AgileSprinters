@@ -100,32 +100,8 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
     public static MapsFragment newInstance() {
         MapsFragment fragment = new MapsFragment();
         Bundle args = new Bundle();
-        //args.putInt("position", position);
-        fragment.setArguments(args);
-
         return fragment;
     }
-
-    @Override
-    public boolean onMarkerClick(@NonNull Marker marker) {
-        return false;
-    }
-
-    @Override
-    public void onMarkerDrag(@NonNull Marker marker) {
-
-    }
-
-    @Override
-    public void onMarkerDragEnd(@NonNull Marker marker) {
-
-    }
-
-    @Override
-    public void onMarkerDragStart(@NonNull Marker marker) {
-
-    }
-
 
     @Nullable
     @Override
@@ -134,7 +110,6 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
                              @Nullable Bundle savedInstanceState) {
 
         return inflater.inflate(R.layout.fragment_maps, container, false);
-
     }
 
     @Override
@@ -159,9 +134,7 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
             mapFragment.getMapAsync(this);
         }
 
-
     }
-
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         if (map != null) {
@@ -215,6 +188,27 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
 
     }
 
+
+    @Override
+    public boolean onMarkerClick(@NonNull Marker marker) {
+        return false;
+    }
+
+    @Override
+    public void onMarkerDrag(@NonNull Marker marker) {
+
+    }
+
+    @Override
+    public void onMarkerDragEnd(@NonNull Marker marker) {
+
+    }
+
+    @Override
+    public void onMarkerDragStart(@NonNull Marker marker) {
+
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -240,17 +234,16 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
                 System.out.println(address +"\n"+city+"\n"+state+"\n"+country);
                 **/
                 opt_loc = (String.valueOf(marker.getPosition().latitude)+","+String.valueOf(marker.getPosition().longitude));
-                System.out.println("loc is:"+opt_loc);
-
                 // If everything has been filled out, call the listener and send the edited
                 // habit back to the Home class and dismiss the dialog.
 
                 Bundle result = new Bundle();
+                System.out.println("inside opt_loc: "+opt_loc);
                 result.putString("Opt_Loc", opt_loc);
                 getParentFragmentManager().setFragmentResult("Opt_Loc", result);
-                }
-            });
                 dismiss();
+            }
+            });
     }
     private void getDeviceLocation() {
 
