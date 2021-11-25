@@ -6,8 +6,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -32,12 +35,15 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -199,6 +205,7 @@ public class UserCalendar extends AppCompatActivity
      */
     public void screenSetup() {
         setDate();
+
         // Gives the day of the week
         String todayDay = currentDate.getDayOfWeek().toString();
 
@@ -210,19 +217,22 @@ public class UserCalendar extends AppCompatActivity
                 Log.d(TAG, "Habits to do today " + String.valueOf(doc.getData().get("Title")));
                 System.out.println(doc.getString("Date to Start"));
                 // Gives the start date
-                LocalDate startDate = LocalDate.parse(doc.getString("Date to Start"), formatter);
-                Map<String, Object> weekdays = (Map<String, Object>) doc.getData().get("Weekdays");
-                HashMap<String, Boolean> weekdays2 = (HashMap<String, Boolean>) doc.getData().get("Weekdays");
-                ArrayList<String> habitDays = getHabitDays(weekdays);
+                if (!String.valueOf(doc.getData().get("Title")).equals("dummy")) {
+                    LocalDate startDate = LocalDate.parse(doc.getString("Date to Start"), formatter);
 
-                if (doc.getString("UID").equals(UID)
-                        && (startDate.isBefore(currentDate) || startDate.isEqual(currentDate))
-                        && (habitDays.contains(todayDay))){
-                    Habit newHabit = new Habit(doc.getId(),doc.getString("UID"),doc.getString("Title"), doc.getString("Reason"),
-                            doc.getString("Date to Start"), weekdays2, doc.getString("PrivacySetting"),
-                            Integer.parseInt(doc.get("Progress").toString()), Integer.parseInt(doc.get("List Position").toString()));
-                    toDoEvents.add(newHabit); // Adding habits from Firestore
-                    toDoEventIds.add(doc.getId());
+                    Map<String, Object> weekdays = (Map<String, Object>) doc.getData().get("Weekdays");
+                    HashMap<String, Boolean> weekdays2 = (HashMap<String, Boolean>) doc.getData().get("Weekdays");
+                    ArrayList<String> habitDays = getHabitDays(weekdays);
+
+                    if (doc.getString("UID").equals(UID)
+                            && (startDate.isBefore(currentDate) || startDate.isEqual(currentDate))
+                            && (habitDays.contains(todayDay))) {
+                        Habit newHabit = new Habit(doc.getId(), doc.getString("UID"), doc.getString("Title"), doc.getString("Reason"),
+                                doc.getString("Date to Start"), weekdays2, doc.getString("PrivacySetting"),
+                                Integer.parseInt(doc.get("Progress").toString()), Integer.parseInt(doc.get("List Position").toString()));
+                        toDoEvents.add(newHabit); // Adding habits from Firestore
+                        toDoEventIds.add(doc.getId());
+                    }
                 }
             }
 
@@ -249,7 +259,7 @@ public class UserCalendar extends AppCompatActivity
                         if ((eventDate.isEqual(currentDate))) {
                             HabitInstance newInstance = new HabitInstance(doc.getString("EID"), doc.getString("UID"), doc.getString("HID"),
                                     doc.getString("Opt_comment"), doc.getString("Date"), Integer.parseInt(doc.get("Duration").toString()), doc.getString("IID"), doc.getString("FID"),
-                                    Boolean.parseBoolean((String) doc.getData().get("isShared")));
+                                    Boolean.parseBoolean((String) doc.getData().get("isShared"), , doc.getString("Opt_Loc")));
                             completedEvents.add(newInstance);
                             completedEventIds.add(doc.getId()); // Adding habit events from Firestore
                         }
@@ -261,7 +271,23 @@ public class UserCalendar extends AppCompatActivity
             }
         });
     }
+    private String getDisplayLocStr(String optLoc){
+        if (optLoc == "") return "";
 
+        List<Address> addresses = null;
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        String[] latLng = optLoc.split(",");
+        System.out.println(latLng);
+        try {
+            addresses = geocoder.getFromLocation(Double.parseDouble(latLng[0]), Double.parseDouble(latLng[1]),1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String city = addresses.get(0).getLocality();
+        String state = addresses.get(0).getAdminArea();
+        String country = addresses.get(0).getCountryName();
+        return city+", "+state+", "+country;
+    }
     /**
      * This function passes a habit instance to be added to the database once
      * the user clicks save on the addHabitEventFragment dialog fragment
@@ -302,6 +328,7 @@ public class UserCalendar extends AppCompatActivity
             data.put("Opt Cmt", habitInstance.getOpt_comment());
             data.put("EID", habitInstance.getEID());
             data.put("FID", FID);
+            data.put("Opt_Loc", getDisplayLocStr(habitInstance.getOptLoc()));
             data.put("IID", habitInstance.getIID());
 
             collectionPath = "ForumPosts";
@@ -356,9 +383,39 @@ public class UserCalendar extends AppCompatActivity
         // Makes a call to the database which handles it
         collectionPath = "HabitEvents";
         database.updateData(collectionPath, selectedHabitInstanceId, data, TAG);
-        updateForum(instance, instance.getFID(), "EDIT");
+        updateForum(instance, instance.getFID(),"EDIT");
+
         completedEventsScreenSetup();
     }
+
+    private void editForumElement(HabitInstance instance) {
+        String EID = instance.getEID();
+        db.collection("ForumPosts").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
+                    FirebaseFirestoreException error) {
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    if (EID.matches((String) doc.getData().get("EID"))) {
+
+                        HashMap<String, String> data = new HashMap<>();
+                        data.put("Event Date", instance.getDate());
+                        data.put("First Name", user.getFirstName());
+                        data.put("Last Name", user.getLastName());
+                        data.put("duration", String.valueOf(instance.getDuration()));
+                        data.put("UID", instance.getUID());
+                        data.put("Opt Cmt", instance.getOpt_comment());
+                        data.put("EID", instance.getEID());
+
+                        // Makes a call to the database which handles it
+                        database.updateData("ForumPosts", doc.getId(), data, TAG);
+                        break;
+                    }
+                }
+                // from the cloud
+            }
+        });
+    }
+
 
     /**
      * This function deletes a habit instance object from the database once a user clicks
@@ -394,14 +451,13 @@ public class UserCalendar extends AppCompatActivity
     @Override
     public void onDeleteHabitEventYesPressed(HabitInstance instance) {
         // Makes a call to the database which handles it
-        System.out.println(instance.getUID());
         database.deleteData(collectionPath, instance.getEID(), TAG);
         getImageToDelete(instance);
 
         deleteForumElement(instance);
         database.deleteData(collectionPath, instance.getEID(), TAG);
 
-        completedEventsScreenSetup();
+        completedEventsScreenSetup(this);
 
         updateProgressInDatabase(instance, "DELETE");
     }
@@ -429,8 +485,6 @@ public class UserCalendar extends AppCompatActivity
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
                     FirebaseFirestoreException error) {
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    System.out.println("EID is " + EID);
-                    System.out.println("from data base is "+ (String) doc.getData().get("EID"));
                     if (EID.matches((String) doc.getData().get("EID"))) {
                         System.out.println("ID is " + doc.getId());
                         if(doc.getId() == null){
@@ -455,7 +509,6 @@ public class UserCalendar extends AppCompatActivity
         if (bitmap != null) {
             path = "images/"+System.currentTimeMillis() +".jpg";
             database.addImage(path, bitmap);
-            instance.setIID(path);
         }
 
         String instanceId = instance.getEID();
@@ -471,6 +524,7 @@ public class UserCalendar extends AppCompatActivity
             data.put("Opt_comment", instance.getOpt_comment());
             data.put("Duration", instance.getDuration());
             data.put("isShared", String.valueOf(instance.getShared()));
+            data.put("Opt_Loc", instance.getOptLoc());
 
             // Makes a call to the database which handles it
             collectionPath = "HabitEvents";

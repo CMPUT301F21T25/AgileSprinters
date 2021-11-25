@@ -1,6 +1,9 @@
 package com.example.agilesprinters;
 
 import android.content.Context;
+
+import android.location.Address;
+import android.location.Geocoder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +18,10 @@ import androidx.annotation.Nullable;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * This class provides a custom layout for items in the completed events list on the user calendar page.
@@ -57,6 +63,7 @@ public class completedEventsListAdapter extends ArrayAdapter<HabitInstance> {
         // attach and pass variables to the textview in the list
         TextView eventContent = convertView.findViewById(R.id.EventContent);
         TextView durationContent = convertView.findViewById(R.id.duration_content);
+        TextView locationContent = convertView.findViewById(R.id.location_content);
         TextView privacyContent = convertView.findViewById(R.id.privacy_content);
 
         // Check if optional comment is empty or not and pass the content to TextView accordingly
@@ -72,6 +79,8 @@ public class completedEventsListAdapter extends ArrayAdapter<HabitInstance> {
         } else {
             eventContent.setText(habitInstance.getOpt_comment());
         }
+        locationContent.setText(getDisplayLocStr(habitInstance.getOptLoc()));
+        durationContent.setText(habitInstance.getDuration() + " minutes");
 
         if (habitInstance.getDuration() > 0 && habitInstance.getDuration() <= 60) {
             durationContent.setText(habitInstance.getDuration() + " minutes");
@@ -93,5 +102,24 @@ public class completedEventsListAdapter extends ArrayAdapter<HabitInstance> {
         });
 
         return convertView;
+    }
+    private String getDisplayLocStr(String opt_loc){
+        if (opt_loc==null) return "";
+        System.out.println(opt_loc);
+        if (opt_loc.equals("")) return "";
+
+        List<Address> addresses = null;
+        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+        String[] latLng = opt_loc.split(",");
+        System.out.println(latLng);
+        try {
+            addresses = geocoder.getFromLocation(Double.parseDouble(latLng[0]), Double.parseDouble(latLng[1]),1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String city = addresses.get(0).getLocality();
+        String state = addresses.get(0).getAdminArea();
+        String country = addresses.get(0).getCountryName();
+        return city+", "+state+", "+country;
     }
 }

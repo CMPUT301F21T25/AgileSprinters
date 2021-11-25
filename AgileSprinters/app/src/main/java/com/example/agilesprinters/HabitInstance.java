@@ -18,6 +18,7 @@ public class HabitInstance implements Serializable {
     private String FID;
     private Boolean isShared;
 
+    private String opt_loc = "";
     /**
      * This is a constructor that takes the eventID, habitID, userID,
      * optional comment, date of the event, duration of the event as input
@@ -36,7 +37,7 @@ public class HabitInstance implements Serializable {
      *  duration of the event given as an int
      */
     public HabitInstance(String EID, String UID, String HID,
-                         String opt_comment, String date, int duration, String IID, String FID, Boolean isShared) {
+                         String opt_comment, String date, int duration, String IID, String FID, Boolean isShared, String opt_loc) {
         this.FID = FID;
         this.EID = EID;
         this.UID = UID;
@@ -45,6 +46,7 @@ public class HabitInstance implements Serializable {
         this.opt_comment = opt_comment;
         this.date = date;
         this.duration = duration;
+        this.opt_loc = opt_loc;
         this.isShared = isShared;
     }
 

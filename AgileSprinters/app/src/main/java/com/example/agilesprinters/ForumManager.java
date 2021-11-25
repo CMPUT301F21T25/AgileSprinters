@@ -39,7 +39,7 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
     final private ArrayList<Forum> forumDataList = new ArrayList<>();;
     ArrayList<String> userTempList;
 
-    private String firstName, lastName, eventDate, duration, optComment, imageId;
+    private String firstName, lastName, eventDate, duration, optComment, imageId, location;
 
     private String emailId;
     private ArrayList<String> followersList = new ArrayList<>();
@@ -144,6 +144,8 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
                     optComment = (String) doc.getData().get("Opt Cmt");
                     imageId = (String) doc.getData().get("IID");
                     forumDataList.add(new Forum(firstName, lastName, eventDate, duration, optComment, imageId));
+                    location = (String) doc.getData().get("Opt_Loc");
+                    forumDataList.add(new Forum(firstName, lastName, eventDate, duration, optComment, location));
                     System.out.println("Array list1 is " + forumDataList);
                 }
             }

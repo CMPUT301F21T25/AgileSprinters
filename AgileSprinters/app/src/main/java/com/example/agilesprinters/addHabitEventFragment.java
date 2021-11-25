@@ -36,8 +36,7 @@ import java.time.format.DateTimeFormatter;
  *
  * @author Sai Rasazna Ajerla and Riyaben Patel
  */
-public class addHabitEventFragment extends DialogFragment{
-    private int position;
+public class addHabitEventFragment extends DialogFragment {
     private String EID;
     private String UID;
     private String HID;
@@ -47,10 +46,9 @@ public class addHabitEventFragment extends DialogFragment{
     private EditText input_duration;
     private Spinner durationSpinner;
     private ImageView imageContainer;
-    private ImageView addCamPhotoBtn;
-    private ImageView addGalPhotoBtn;
-    private Uri selectedImg;
     private Bitmap bitmapOfImg;
+    private Uri selectedImg;
+    private HabitInstance habitInstance;
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
@@ -58,9 +56,10 @@ public class addHabitEventFragment extends DialogFragment{
 
     /**
      * This function saves the values sent to the fragment for future manipulation
-     * @param UID is the id of the user
-     * @param HID is the id of the habit
-     * @param EID is the id of the instance
+     *
+     * @param UID      is the id of the user
+     * @param HID      is the id of the habit
+     * @param EID      is the id of the instance
      * @param position is the selected item position
      * @return returns the fragment with the bundled parameters
      */
@@ -122,26 +121,24 @@ public class addHabitEventFragment extends DialogFragment{
         durationSpinner = view.findViewById(R.id.duration_spinner);
 
         imageContainer = view.findViewById(R.id.imageContainer);
-        addCamPhotoBtn = view.findViewById(R.id.add_Cam_Photo);
-        addGalPhotoBtn = view.findViewById(R.id.add_Gal_Photo);
+        ImageView addCamPhotoBtn = view.findViewById(R.id.add_Cam_Photo);
+        ImageView addGalPhotoBtn = view.findViewById(R.id.add_Gal_Photo);
+        ImageView addLocBtn = view.findViewById(R.id.add_location);
 
-        addCamPhotoBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //if(runtimePermissionForCamera()){
-                    getCameraPicture();
-                //}
-            }
+        addCamPhotoBtn.setOnClickListener(view1 -> {
+            //if(runtimePermissionForCamera()){
+            getCameraPicture();
+            //}
         });
 
-        addGalPhotoBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getGalleryPicture();
-                //hides alert dialog after gallery func is finished
-            }
+        addGalPhotoBtn.setOnClickListener(v -> {
+            getGalleryPicture();
+            //hides alert dialog after gallery func is finished
         });
 
+        addLocBtn.setOnClickListener(v -> getLocation());
+
+        assert getArguments() != null;
         UID = getArguments().getString(getString(R.string.UID));
         HID = getArguments().getString(getString(R.string.HID));
         EID = getArguments().getString(getString(R.string.EID));
@@ -172,7 +169,14 @@ public class addHabitEventFragment extends DialogFragment{
 
     }
 
-    private void getCameraPicture(){
+    //switches view to map and allows user to pick location
+    private void getLocation() {
+        habitInstance = new HabitInstance("null", "null", "null", "null", "null", 0, "null", "null", null);
+        MapsFragment mapsFragment = new MapsFragment().newInstance(habitInstance);
+        mapsFragment.show(getChildFragmentManager(), "ADD LOCATION");
+    }
+
+    private void getCameraPicture() {
         //have to give permission to app to use camera
         //android manifest give permission and then take permission at runtime from user
         //switch view to camera view
@@ -263,7 +267,7 @@ public class addHabitEventFragment extends DialogFragment{
         super.onResume();
 
         final AlertDialog dialog = (AlertDialog) getDialog();
-        if(dialog != null){
+        if (dialog != null) {
             Button positive = dialog.getButton(Dialog.BUTTON_POSITIVE);
 
             positive.setOnClickListener(view -> {
@@ -313,7 +317,7 @@ public class addHabitEventFragment extends DialogFragment{
                 if(readyToClose){
                     
                     listener.onSavePressed(new HabitInstance(EID, UID, HID, comment, date_entry,
-                            Integer.parseInt(duration), null, FID, false), bitmapOfImg);
+                            Integer.parseInt(duration), null, FID, false, habitInstance.getOptLoc()), bitmapOfImg);
                     dialog.dismiss();
                 }
             });

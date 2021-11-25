@@ -64,6 +64,7 @@ public class editHabitEventFragment extends DialogFragment {
     private Button shareButton;
     private Uri selectedImg;
     private Bitmap bitmapOfImg;
+    private HabitInstance habitInstance;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private Database database = new Database();
 
@@ -87,6 +88,7 @@ public class editHabitEventFragment extends DialogFragment {
         return fragment;
     }
 
+
     /**
      * This interface listens for when dialog is ended and sends the information and the function
      * to the user calendar class for it to implement.
@@ -109,7 +111,6 @@ public class editHabitEventFragment extends DialogFragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-
         if (context instanceof addHabitEventFragment.OnFragmentInteractionListener) {
             listener = (editHabitEventFragment.OnFragmentInteractionListener) context;
         } else {
@@ -138,7 +139,7 @@ public class editHabitEventFragment extends DialogFragment {
         durationSpinner = view.findViewById(R.id.duration_spinner);
         shareButton = view.findViewById(R.id.share_event_button);
 
-        HabitInstance habitInstance = (HabitInstance) getArguments().getSerializable("Habit instance");
+        habitInstance = (HabitInstance) getArguments().getSerializable("Habit instance");
 
         optional_comment.setText(habitInstance.getOpt_comment());
         input_date.setText(habitInstance.getDate());
@@ -165,8 +166,7 @@ public class editHabitEventFragment extends DialogFragment {
         addLocBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MapsFragment mapsFragment = new MapsFragment();
-                mapsFragment.show(Objects.requireNonNull(getChildFragmentManager()), "null");
+                getLocation();
             }
         });
 
@@ -247,7 +247,7 @@ public class editHabitEventFragment extends DialogFragment {
                 System.out.println("Checking ahain " + IID);
                 if (readyToClose) {
                     listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date,
-                            Integer.parseInt(duration), IID, FID, isShared), bitmapOfImg);
+                            Integer.parseInt(duration), IID, FID, isShared, habitInstance.getOptLoc()), bitmapOfImg);
                     dismiss();
                 }
             }
@@ -269,7 +269,7 @@ public class editHabitEventFragment extends DialogFragment {
                 .setView(view)
                 .setTitle("View/Edit Habit Event")
                 .setNegativeButton("Delete", (dialog, id) -> listener.onDeletePressed(habitInstance))
-                .setPositiveButton("Save", (dialogInterface, i) -> {**/
+                .setPositiveButton("Save", (dialogInterface, i) -> {
                     /* Do not implement anything here in order to override the button
                      * to only call the listener once all the information required has been
                      * filled out and display error messages if they have been left blank.
@@ -318,6 +318,13 @@ public class editHabitEventFragment extends DialogFragment {
                 }
             });
         }
+    }
+
+
+    //switches view to map and allows user to pick location
+    private void getLocation() {
+        MapsFragment mapsFragment = new MapsFragment().newInstance((HabitInstance) getArguments().getSerializable("Habit instance"));
+        mapsFragment.show(Objects.requireNonNull(getChildFragmentManager()), "ADD LOCATION");
     }
 
 
@@ -370,8 +377,56 @@ public class editHabitEventFragment extends DialogFragment {
 
                     //set placeholder to bitmap of the img taken by camera
                     imageContainer.setImageBitmap(bitmapOfImg);
+
                 }
                 break;
+        }
+    }
+
+
+    /**
+     * This function overrides the buttons clicked in order to only allow the dialog to be dismissed
+     * when all requirements have been met.
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        final AlertDialog dialog = (AlertDialog) getDialog();
+        if (dialog != null) {
+            Button positive = dialog.getButton(Dialog.BUTTON_POSITIVE);
+
+            positive.setOnClickListener(view -> {
+                // Boolean tracks when the all the fields have been filled out. Will turn to false
+                // if anything has been left blank.
+                boolean readyToClose = true;
+
+                String comment = optional_comment.getText().toString();
+                String date = input_date.getText().toString();
+                String duration = input_duration.getText().toString();
+
+                if (optional_comment.length() > 20) {
+                    readyToClose = false;
+                    optional_comment.setError("This field cannot have more than 20 chars");
+                }
+
+                if (date.matches("")) {
+                    readyToClose = false;
+                    input_date.setError("This field cannot be blank");
+                }
+
+                if (duration.matches("")) {
+                    readyToClose = false;
+                    input_duration.setError("This field cannot be blank");
+                }
+
+                // If everything has been filled out, call the listener and send the edited
+                // habit back to the Home class and dismiss the dialog.
+                if (readyToClose) {
+                    listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date, Integer.parseInt(duration), IID, FID), bitmapOfImg);
+                    dialog.dismiss();
+                }
+            });
         }
     }
 }
