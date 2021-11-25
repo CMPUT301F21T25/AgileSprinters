@@ -346,7 +346,7 @@ public class UserCalendar extends AppCompatActivity
         data.put("EID", instance.getEID());
         data.put("UID", instance.getUID());
         data.put("HID", instance.getHID());
-        data.put("IID", path);
+        data.put("IID", instance.getIID());
         data.put("Date", instance.getDate());
         data.put("Opt_comment", instance.getOpt_comment());
         data.put("Duration", String.valueOf(instance.getDuration()));
