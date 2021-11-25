@@ -80,7 +80,7 @@ public class completedEventsListAdapter extends ArrayAdapter<HabitInstance> {
             eventContent.setText(habitInstance.getOpt_comment());
         }
         locationContent.setText(habitInstance.getDisplayLocStr(new Geocoder(getContext(), Locale.getDefault())));
-        durationContent.setText(habitInstance.getDuration() + " minutes");
+        durationContent.setText(habitInstance.getDuration() + " mins");
 
         if (habitInstance.getDuration() > 0 && habitInstance.getDuration() <= 60) {
             durationContent.setText(habitInstance.getDuration() + " minutes");

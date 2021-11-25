@@ -10,28 +10,29 @@
         android:id="@+id/EventContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_margin="5dp"
         android:paddingTop="10dp"
-        android:text="Event title"
+        android:text="Title"
         android:textSize="22sp"/>
 
     <TextView
         android:id="@+id/duration_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_margin="5dp"
         android:paddingTop="10dp"
-        android:text="Event Duration"
+        android:text="Duration"
         android:textSize="22sp"/>
+
 
     <TextView
         android:id="@+id/location_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_margin="5dp"
         android:paddingTop="10dp"
-        android:text="Location content"
-        android:textSize="18sp"/>
+        android:text="Location"
+        android:textSize="22sp"/>
 
 
     <TextView
