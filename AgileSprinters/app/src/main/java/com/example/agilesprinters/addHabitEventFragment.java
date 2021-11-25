@@ -25,6 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentResultListener;
 
 
 import com.google.android.gms.maps.model.LatLng;
@@ -40,7 +41,7 @@ import java.util.Objects;
  *
  * @author Sai Rasazna Ajerla and Riyaben Patel
  */
-public class addHabitEventFragment extends DialogFragment implements MapsFragment.OnFragmentInteractionListener{
+public class addHabitEventFragment extends DialogFragment{
     private int position;
     private String EID;
     private String UID;
@@ -83,11 +84,6 @@ public class addHabitEventFragment extends DialogFragment implements MapsFragmen
         return fragment;
     }
 
-    @Override
-    public void onSaveMapPressed(String opt_loc) {
-        this.opt_loc = opt_loc;
-    }
-
     /**
      * This interface listens for when dialog is ended and sends the information and the function
      * to the User Calendar class for it to implement.
@@ -126,6 +122,13 @@ public class addHabitEventFragment extends DialogFragment implements MapsFragmen
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         //inflate the layout for this fragment
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.edit_habit_event_fragment, null);
+        this.getParentFragmentManager().setFragmentResultListener("Opt_Loc", this, new FragmentResultListener() {
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
+                // We use a String here, but any type that can be put in a Bundle is supported
+                opt_loc = bundle.getString("bundleKey");
+                // Do something with the result
+            }
+        });
 
         // Display the calendar
         optional_comment = view.findViewById(R.id.editText_comment);
@@ -320,7 +323,7 @@ public class addHabitEventFragment extends DialogFragment implements MapsFragmen
                 // habit back to the Home class and dismiss the dialog.
                 if(readyToClose){
                     
-                    listener.onSavePressed(new HabitInstance(getContext(),EID, UID, HID, comment, date_entry,
+                    listener.onSavePressed(new HabitInstance(EID, UID, HID, comment, date_entry,
                             Integer.parseInt(duration), IID, FID, opt_loc), bitmapOfImg);
                     dialog.dismiss();
                 }

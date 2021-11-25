@@ -24,6 +24,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.loader.app.LoaderManager;
 
@@ -38,7 +39,7 @@ import java.util.Objects;
  *
  * @author Sai Rasazna Ajerla and Riyaben Patel
  */
-public class editHabitEventFragment extends DialogFragment implements MapsFragment.OnFragmentInteractionListener{
+public class editHabitEventFragment extends DialogFragment {
     private EditText optional_comment;
     private TextView input_date;
     private EditText input_duration;
@@ -72,11 +73,6 @@ public class editHabitEventFragment extends DialogFragment implements MapsFragme
         fragment.setArguments(args);
 
         return fragment;
-    }
-
-    @Override
-    public void onSaveMapPressed(String opt_loc) {
-        this.opt_loc = opt_loc;
     }
 
 
@@ -121,6 +117,13 @@ public class editHabitEventFragment extends DialogFragment implements MapsFragme
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         //inflate the layout for this fragment
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.edit_habit_event_fragment, null);
+        this.getParentFragmentManager().setFragmentResultListener("Opt_Loc", this, new FragmentResultListener() {
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle bundle) {
+                // We use a String here, but any type that can be put in a Bundle is supported
+                String opt_oc = bundle.getString("Opt_Loc");
+                // Do something with the result
+            }
+        });
 
         // Display the calendar
         optional_comment = view.findViewById(R.id.editText_comment);
@@ -278,7 +281,7 @@ public class editHabitEventFragment extends DialogFragment implements MapsFragme
                 // If everything has been filled out, call the listener and send the edited
                 // habit back to the Home class and dismiss the dialog.
                 if (readyToClose) {
-                    listener.onEditSavePressed(new HabitInstance(getContext(),EID, UID, HID, comment, date, Integer.parseInt(duration), IID, FID, opt_loc), bitmapOfImg);
+                    listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date, Integer.parseInt(duration), IID, FID, opt_loc), bitmapOfImg);
                     dialog.dismiss();
                 }
             });

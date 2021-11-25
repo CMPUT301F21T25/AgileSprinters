@@ -214,19 +214,22 @@ public class UserCalendar extends AppCompatActivity
                 Log.d(TAG, "Habits to do today " + String.valueOf(doc.getData().get("Title")));
                 System.out.println(doc.getString("Date to Start"));
                 // Gives the start date
-                LocalDate startDate = LocalDate.parse(doc.getString("Date to Start"), formatter);
-                Map<String, Object> weekdays = (Map<String, Object>) doc.getData().get("Weekdays");
-                HashMap<String, Boolean> weekdays2 = (HashMap<String, Boolean>) doc.getData().get("Weekdays");
-                ArrayList<String> habitDays = getHabitDays(weekdays);
+                if (!String.valueOf(doc.getData().get("Title")).equals("dummy")) {
+                    LocalDate startDate = LocalDate.parse(doc.getString("Date to Start"), formatter);
 
-                if (doc.getString("UID").equals(UID)
-                        && (startDate.isBefore(currentDate) || startDate.isEqual(currentDate))
-                        && (habitDays.contains(todayDay))){
-                    Habit newHabit = new Habit(doc.getId(),doc.getString("UID"),doc.getString("Title"), doc.getString("Reason"),
-                            doc.getString("Date to Start"), weekdays2, doc.getString("PrivacySetting"),
-                            Integer.parseInt(doc.get("Progress").toString()), Integer.parseInt(doc.get("List Position").toString()));
-                    toDoEvents.add(newHabit); // Adding habits from Firestore
-                    toDoEventIds.add(doc.getId());
+                    Map<String, Object> weekdays = (Map<String, Object>) doc.getData().get("Weekdays");
+                    HashMap<String, Boolean> weekdays2 = (HashMap<String, Boolean>) doc.getData().get("Weekdays");
+                    ArrayList<String> habitDays = getHabitDays(weekdays);
+
+                    if (doc.getString("UID").equals(UID)
+                            && (startDate.isBefore(currentDate) || startDate.isEqual(currentDate))
+                            && (habitDays.contains(todayDay))) {
+                        Habit newHabit = new Habit(doc.getId(), doc.getString("UID"), doc.getString("Title"), doc.getString("Reason"),
+                                doc.getString("Date to Start"), weekdays2, doc.getString("PrivacySetting"),
+                                Integer.parseInt(doc.get("Progress").toString()), Integer.parseInt(doc.get("List Position").toString()));
+                        toDoEvents.add(newHabit); // Adding habits from Firestore
+                        toDoEventIds.add(doc.getId());
+                    }
                 }
             }
 
@@ -252,7 +255,7 @@ public class UserCalendar extends AppCompatActivity
                         System.out.println("ID is "+ doc.getId());
                         LocalDate eventDate = LocalDate.parse(doc.get("Date").toString(), formatter);
                         if ((eventDate.isEqual(currentDate))) {
-                            HabitInstance newInstance = new HabitInstance(context, doc.getString("EID"), doc.getString("UID"), doc.getString("HID"),
+                            HabitInstance newInstance = new HabitInstance(doc.getString("EID"), doc.getString("UID"), doc.getString("HID"),
                                     doc.getString("Opt_comment"), doc.getString("Date"), Integer.parseInt(doc.get("Duration").toString()), doc.getString("IID"), doc.getString("FID"), doc.getString("Opt_Loc"));
                             completedEvents.add(newInstance);
                             completedEventIds.add(doc.getId()); // Adding habit events from Firestore
@@ -265,7 +268,23 @@ public class UserCalendar extends AppCompatActivity
             }
         });
     }
+    private String getDisplayLocStr(String opt_loc){
+        if (opt_loc == "") return "";
 
+        List<Address> addresses = null;
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        String[] latLng = opt_loc.split(",");
+        System.out.println(latLng);
+        try {
+            addresses = geocoder.getFromLocation(Double.parseDouble(latLng[0]), Double.parseDouble(latLng[1]),1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String city = addresses.get(0).getLocality();
+        String state = addresses.get(0).getAdminArea();
+        String country = addresses.get(0).getCountryName();
+        return city+", "+state+", "+country;
+    }
     /**
      * This function passes a habit instance to be added to the database once
      * the user clicks save on the addHabitEventFragment dialog fragment
@@ -305,7 +324,7 @@ public class UserCalendar extends AppCompatActivity
             data.put("Opt Cmt", habitInstance.getOpt_comment());
             data.put("EID", habitInstance.getEID());
             data.put("FID", FID);
-            data.put("opt_loc", habitInstance.getDisplayLocStr());
+            data.put("opt_loc", getDisplayLocStr(habitInstance.getOpt_loc()));
 
             //DocumentReference newHabitRef = db.collection("Habit").document();
             //String forumID = stringChange(newHabitRef.getId());
@@ -383,7 +402,7 @@ public class UserCalendar extends AppCompatActivity
                         data.put("UID", instance.getUID());
                         data.put("Opt Cmt", instance.getOpt_comment());
                         data.put("EID", instance.getEID());
-                        data.put("opt_loc", instance.getDisplayLocStr());
+                        data.put("opt_loc", getDisplayLocStr(instance.getOpt_loc()));
 
 
                         // Makes a call to the database which handles it
@@ -460,7 +479,7 @@ public class UserCalendar extends AppCompatActivity
             data.put("Date", instance.getDate());
             data.put("Opt_comment", instance.getOpt_comment());
             data.put("Duration", instance.getDuration());
-            data.put("Opt_comment", instance.getOpt_comment());
+            data.put("Opt_Loc", instance.getOpt_loc());
 
             // Makes a call to the database which handles it
             collectionPath = "HabitEvents";

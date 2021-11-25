@@ -88,8 +88,6 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
     private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
     // [END maps_current_place_state_keys]
-    private MapsFragment.OnFragmentInteractionListener listener;
-
 
     // Used for selecting the current place.
     private static final int M_MAX_ENTRIES = 5;
@@ -99,27 +97,15 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
     private LatLng[] likelyPlaceLatLngs;
     private String opt_loc;
 
-    public static MapsFragment newInstance(HabitInstance habitInstance) {
+    public static MapsFragment newInstance() {
         MapsFragment fragment = new MapsFragment();
         Bundle args = new Bundle();
         //args.putInt("position", position);
-        args.putSerializable("Habit instance", habitInstance);
         fragment.setArguments(args);
 
         return fragment;
     }
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-
-        if (context instanceof MapsFragment.OnFragmentInteractionListener) {
-            listener = (MapsFragment.OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
     @Override
     public boolean onMarkerClick(@NonNull Marker marker) {
         return false;
@@ -140,13 +126,6 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
 
     }
 
-    /**
-     * This interface listens for when dialog is ended and sends the information and the function
-     * to the user calendar class for it to implement.
-     */
-    public interface OnFragmentInteractionListener {
-        void onSaveMapPressed(String opt_loc);
-    }
 
     @Nullable
     @Override
@@ -161,18 +140,13 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        // [START_EXCLUDE silent]
-        // [START maps_current_place_on_create_save_instance_state]
+
         // Retrieve location and camera position from saved instance state.
         if (savedInstanceState != null) {
             lastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
             cameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
         }
-        // [END maps_current_place_on_create_save_instance_state]
-        // [END_EXCLUDE]
 
-        // [START_EXCLUDE silent]
-        // Construct a PlacesClient
         Places.initialize(getContext(), getString(R.string.MAPS_API_KEY));
         placesClient = Places.createClient(getContext());
 
@@ -249,9 +223,8 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
         saveAddressBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                HabitInstance habitInstance = (HabitInstance) getArguments().getSerializable("Habit instance");
                 List<Address> addresses = null;
-                geocoder = new Geocoder(getContext(), Locale.getDefault());
+                /**geocoder = new Geocoder(getContext(), Locale.getDefault());
 
                 try {
                     addresses = geocoder.getFromLocation(marker.getPosition()
@@ -265,15 +238,19 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
                 String state = addresses.get(0).getAdminArea();
                 String country = addresses.get(0).getCountryName();
                 System.out.println(address +"\n"+city+"\n"+state+"\n"+country);
+                **/
                 opt_loc = (String.valueOf(marker.getPosition().latitude)+","+String.valueOf(marker.getPosition().longitude));
                 System.out.println("loc is:"+opt_loc);
 
                 // If everything has been filled out, call the listener and send the edited
                 // habit back to the Home class and dismiss the dialog.
-                listener.onSaveMapPressed(opt_loc);
-                getActivity().getFragmentManager().popBackStack();
-            }
-        });
+
+                Bundle result = new Bundle();
+                result.putString("Opt_Loc", opt_loc);
+                getParentFragmentManager().setFragmentResult("Opt_Loc", result);
+                }
+            });
+                dismiss();
     }
     private void getDeviceLocation() {
 

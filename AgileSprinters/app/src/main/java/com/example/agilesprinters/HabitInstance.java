@@ -25,9 +25,7 @@ public class HabitInstance implements Serializable {
     private int duration;
     private String IID;
     private String FID;
-    private String opt_loc;
-    private Context context;
-
+    private String opt_loc = "";
     /**
      * This is a constructor that takes the eventID, habitID, userID,
      * optional comment, date of the event, duration of the event as input
@@ -45,10 +43,8 @@ public class HabitInstance implements Serializable {
      * @param duration
      *  duration of the event given as an int
      */
-    public HabitInstance(Context context, String EID, String UID, String HID,
-                         String opt_comment, String date, int duration, String IID, String FID, String opt_loc) {
-        this.context = context;
-        this.FID = FID;
+    public HabitInstance(String EID, String UID, String HID,
+                         String opt_comment, String date, int duration, String IID, String FID, String opt_loc) { this.FID = FID;
         this.EID = EID;
         this.UID = UID;
         this.HID = HID;
@@ -176,21 +172,5 @@ public class HabitInstance implements Serializable {
         this.opt_loc = opt_loc;
     }
 
-    public String getDisplayLocStr(){
-        if (opt_loc == "") return "";
 
-        List<Address> addresses = null;
-        Geocoder geocoder = new Geocoder(this.context, Locale.getDefault());
-        String[] latLng = opt_loc.split(",");
-        System.out.println(latLng);
-        try {
-            addresses = geocoder.getFromLocation(Double.parseDouble(latLng[0]), Double.parseDouble(latLng[1]),1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String city = addresses.get(0).getLocality();
-        String state = addresses.get(0).getAdminArea();
-        String country = addresses.get(0).getCountryName();
-        return city+", "+state+", "+country;
-    }
 }

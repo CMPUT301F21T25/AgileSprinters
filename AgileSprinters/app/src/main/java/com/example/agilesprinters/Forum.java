@@ -51,6 +51,11 @@ public class Forum {
         this.duration = duration;
     }
 
+    public void setLocation(String location){this.location=location;}
+
+    public String getLocation(){return location;}
+
+
     public Forum(String firstName, String lastName, String eventDate, String duration, String comment) {
         this.firstName = firstName;
         this.lastName = lastName;
