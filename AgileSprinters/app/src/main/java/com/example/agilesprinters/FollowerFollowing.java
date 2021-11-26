@@ -54,7 +54,7 @@ public class FollowerFollowing extends AppCompatActivity {
 
         if (user == null) {
             user = (User) getIntent().getSerializableExtra("user");
-            UID = user.getUser();
+            UID = user.getUserID();
             title = (String) getIntent().getStringExtra("Title");
 
             if (title.matches("Following")){

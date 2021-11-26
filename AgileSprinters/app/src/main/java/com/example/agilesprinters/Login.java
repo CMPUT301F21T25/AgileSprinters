@@ -210,7 +210,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         String uniqueId = user.getUid();
 
-        currentUser.setUser(uniqueId);
+        currentUser.setUserID(uniqueId);
         collectionReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {

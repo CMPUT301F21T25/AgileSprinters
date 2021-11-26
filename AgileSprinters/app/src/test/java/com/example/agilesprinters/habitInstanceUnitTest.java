@@ -22,8 +22,8 @@ public class habitInstanceUnitTest {
      * @return returns a habit instance object
      */
     private HabitInstance mockHabitInstance(){
-
-        HabitInstance habitInstance = new HabitInstance(EID,UID,HID, opt_comment, dateOfEvent, duration,null);
+        HabitInstance habitInstance = null;
+        //HabitInstance habitInstance = new HabitInstance(EID,UID,HID, opt_comment, dateOfEvent, duration,null);
 
         return habitInstance;
     }

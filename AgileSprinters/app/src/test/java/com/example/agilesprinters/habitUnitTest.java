@@ -33,9 +33,9 @@ public class habitUnitTest {
         weekdays.put("SATURDAY", true);
         weekdays.put("SUNDAY", false);
 
-        Habit habit = new Habit(HID,UID, title, reason, dateToStart, weekdays, privacySetting);
+        //Habit habit = new Habit(HID,UID, title, reason, dateToStart, weekdays, privacySetting);
 
-        return habit;
+        return null;
     }
 
     /**

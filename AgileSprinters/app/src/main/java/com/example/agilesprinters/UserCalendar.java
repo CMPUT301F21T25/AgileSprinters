@@ -99,7 +99,7 @@ public class UserCalendar extends AppCompatActivity
 
         if (UID == null) {
             user = (User) getIntent().getSerializableExtra("user");
-            UID = user.getUser();
+            UID = user.getUserID();
         }
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView2);

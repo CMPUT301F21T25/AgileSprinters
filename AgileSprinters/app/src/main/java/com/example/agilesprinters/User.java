@@ -91,12 +91,4 @@ public class User implements Serializable {
     public void setEmailId(String emailId) {
         this.emailId = emailId;
     }
-
-    public String getUser() {
-        return userID;
-    }
-
-    public void setUser(String user) {
-        this.userID = user;
-    }
 }

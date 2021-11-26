@@ -104,7 +104,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
         if (user == null) {
             user = (User) getIntent().getSerializableExtra("user");
-            UID = user.getUser();
+            UID = user.getUserID();
             nameStr = user.getFirstName()+ " " + user.getLastName();
 
             followersCount = String.valueOf(user.getFollowersList().size());

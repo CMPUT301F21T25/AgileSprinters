@@ -48,10 +48,10 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
 
         if (user == null) {
             user = (User) getIntent().getSerializableExtra("user");
-            UID = user.getUser();
+            UID = user.getUserID();
         }
 
-        DocumentReference userCollectionReference = db.collection("users").document(user.getUser());
+        DocumentReference userCollectionReference = db.collection("users").document(user.getUserID());
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
         bottomNavigationView.setSelectedItemId(R.id.notification);

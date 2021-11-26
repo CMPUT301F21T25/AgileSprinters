@@ -57,7 +57,7 @@ public class OtherUserScreen extends AppCompatActivity {
 
         if (otherUser == null) {
             otherUser = (User) getIntent().getSerializableExtra("otherUser");
-            UID = otherUser.getUser();
+            UID = otherUser.getUserID();
             nameStr = otherUser.getFirstName()+ " " + otherUser.getLastName();
 
             followersCount = otherUser.getFollowersList().size();
