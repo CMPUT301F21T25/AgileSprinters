@@ -63,7 +63,6 @@ public class CalendarAndroidTest {
 
         // checks to make sure the activity has switched to the Home activity
         solo.assertCurrentActivity("Wrong", Home.class);
-
     }
 
     /**
@@ -72,8 +71,6 @@ public class CalendarAndroidTest {
      */
     @Test
     public void stage2_checkAddHabit() {
-
-        // checks to make sure we are in the right activity
         solo.assertCurrentActivity("Wrong", Login.class);
 
         // Logging In to test account
