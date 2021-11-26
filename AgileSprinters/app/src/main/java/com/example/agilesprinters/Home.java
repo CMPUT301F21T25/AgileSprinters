@@ -290,7 +290,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 updateHabitDatabase(habitArrayList.get(i));
             }
         }
-        System.out.println("list"+habitArrayList);
+
         updateHabitDatabase(habit);
     }
 

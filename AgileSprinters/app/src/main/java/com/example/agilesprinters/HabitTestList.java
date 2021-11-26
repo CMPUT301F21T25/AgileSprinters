@@ -2,6 +2,7 @@ package com.example.agilesprinters;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -54,6 +55,30 @@ public class HabitTestList {
             habitList.remove(habit);
         } else {
             throw new IllegalArgumentException();
+        }
+    }
+
+    public void reorderHabitPositions(Habit habit, int newPosition){
+        if (habitList.isEmpty()){
+            throw new IllegalArgumentException();
+        } else if (newPosition > habitList.size()){
+            throw new IllegalArgumentException();
+        } else if (newPosition < 0){
+            throw new IllegalArgumentException();
+        } else{
+            if (newPosition > habit.getListPosition()){
+                for (int i = newPosition; i > habit.getListPosition(); i--){
+                    habitList.get(i).setListPosition(i - 1);
+                }
+            }
+            if (newPosition < habit.getListPosition()){
+                for (int i = newPosition; i < habit.getListPosition() ; i ++){
+                    habitList.get(i).setListPosition(i + 1);
+                }
+            }
+            habit.setListPosition(newPosition);
+
+            habitList.sort(Comparator.comparing(Habit::getListPosition));
         }
     }
 

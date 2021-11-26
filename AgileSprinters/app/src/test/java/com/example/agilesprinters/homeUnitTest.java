@@ -40,7 +40,7 @@ public class homeUnitTest {
         weekdays.put("SUNDAY", false);
 
         Habit habit = new Habit("Test0","Test0","Running","Get fit",
-                "Date", weekdays, "Public");
+                "Date", weekdays, "Public", 1, 0);
 
         return habit;
     }
@@ -63,7 +63,7 @@ public class homeUnitTest {
         weekdays.put("SUNDAY", false);
 
         Habit habit = new Habit("Test", "Test", "Running", "Get Fit",
-                "Date", weekdays, "Public" );
+                "Date", weekdays, "Public" ,0,1);
         habitList.addHabit(habit);
         assertEquals(2, habitList.getHabits().size());
         assertTrue(habitList.getHabits().contains(habit));
@@ -86,7 +86,7 @@ public class homeUnitTest {
         weekdays.put("SUNDAY", false);
 
         Habit habit = new Habit("Test", "Test", "Running", "Get Fit",
-                "Date", weekdays, "Public" );
+                "Date", weekdays, "Public", 0,1);
 
         habitList.editHabit(0, habit);
         assertEquals(1, habitList.getHabits().size());
@@ -113,7 +113,7 @@ public class homeUnitTest {
         weekdays.put("SUNDAY", false);
 
         Habit habit = new Habit("Test", "Test", "Running", "Get Fit",
-                "Date", weekdays, "Public");
+                "Date", weekdays, "Public",1,1);
         //list is empty so test that you cannot edit an empty list
         assertThrows(IllegalArgumentException.class, () -> {
             habitList.editHabit(0, habit);
@@ -152,7 +152,7 @@ public class homeUnitTest {
         weekdays.put("SUNDAY", false);
 
         Habit habit = new Habit("Test", "Test", "Running", "Get Fit",
-                "Date", weekdays, "Public");
+                "Date", weekdays, "Public",0,1);
 
         //test that we cannot delete a habit that does not exist in the list
         assertThrows(IllegalArgumentException.class, () -> {
@@ -166,4 +166,33 @@ public class homeUnitTest {
             habitList.deleteHabit(habit);
         });
     }
+
+    @Test
+    void testReorderHabit() {
+        HabitTestList habitList = mockHabitList();
+        assertTrue(habitList.getHabits().size() == 1);
+
+        Habit habit2 = mockHabit();
+        habit2.setListPosition(1);
+        habit2.setTitle("Swimming");
+        habitList.addHabit(habit2);
+
+        Habit habit3 = mockHabit();
+        habit3.setListPosition(2);
+        habit3.setTitle("Cleaning");
+        habitList.addHabit(habit3);
+
+        assertTrue(habitList.getHabits().size() == 3);
+        assertTrue(habitList.getHabits().get(0).getTitle().matches("Running"));
+        assertTrue(habitList.getHabits().get(1).getTitle().matches("Swimming"));
+        assertTrue(habitList.getHabits().get(2).getTitle().matches("Cleaning"));
+
+        habitList.reorderHabit(habit3, 0);
+
+        assertTrue(habitList.getHabits().get(0).getTitle().matches("Cleaning"));
+        assertTrue(habitList.getHabits().get(1).getTitle().matches("Running"));
+        assertTrue(habitList.getHabits().get(2).getTitle().matches("Swimming"));
+
+    }
+
 }
