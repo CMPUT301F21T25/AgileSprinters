@@ -15,13 +15,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37ab8b8f-7cdc-45d2-9a9b-1864eb51ea17" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/androidTest/java/com/example/agilesprinters/CalendarAndroidTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/androidTest/java/com/example/agilesprinters/CalendarAndroidTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/androidTest/java/com/example/agilesprinters/HomeAndroidTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/androidTest/java/com/example/agilesprinters/HomeAndroidTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/AcceptDeclineFollowRequestFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/AcceptDeclineFollowRequestFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/Notifications.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/Notifications.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/viewEditHabitFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/viewEditHabitFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/Home.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/Home.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,7 +62,7 @@
     <property name="memory.settings.postsync.last.time.stamp" value="1636667264616" />
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
-  <component name="RunManager" selected="Android Instrumented Tests.stage3_testAccept()">
+  <component name="RunManager" selected="Android App.app">
     <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
       <module name="AgileSprinters.app" />
       <option name="DEPLOY" value="true" />

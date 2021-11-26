@@ -38,6 +38,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 
 /**
@@ -142,13 +143,9 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                         int progress = Integer.parseInt((doc.get("Progress").toString()));
                         int position = Integer.parseInt((doc.get("List Position").toString()));
 
-                        if (position > habitArrayList.size()-1){
-                            habitArrayList.add(new Habit(doc.getId(), UID, title, reason,
-                                    dateToStart, weekdays, privacySetting, progress, position));
-                        } else{
-                            habitArrayList.add(position, new Habit(doc.getId(), UID, title, reason,
-                                    dateToStart, weekdays, privacySetting, progress, position));
-                        }
+                        habitArrayList.add(new Habit(doc.getId(), UID, title, reason,
+                                dateToStart, weekdays, privacySetting, progress, position));
+                        habitArrayList.sort(Comparator.comparing(Habit::getListPosition));
                     }
                 }
                 habitAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
