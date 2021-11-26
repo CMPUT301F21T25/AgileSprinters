@@ -2,9 +2,7 @@ name: Android CI
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches: [ justin ]
 
 jobs:
   build:
@@ -25,5 +23,3 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
-    - name: Look for gradlew
-      run: find / -type f -name "gradlew"
