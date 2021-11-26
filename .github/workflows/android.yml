@@ -1,3 +1,4 @@
+
 name: Android CI
 
 on:
@@ -25,5 +26,3 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
-    - name: Look for gradlew
-      run: find / -type f -name "gradlew"
