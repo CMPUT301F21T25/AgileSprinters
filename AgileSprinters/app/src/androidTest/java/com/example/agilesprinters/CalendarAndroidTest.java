@@ -57,8 +57,8 @@ public class CalendarAndroidTest {
         solo.assertCurrentActivity("Wrong", Login.class);
 
         // Logging In to test account
-        solo.enterText((EditText) solo.getView(R.id.email), "test10@email.com");
-        solo.enterText((EditText) solo.getView(R.id.password), "test10");
+        solo.enterText((EditText) solo.getView(R.id.email), "saiajerla@gmail.com");
+        solo.enterText((EditText) solo.getView(R.id.password), "password");
         solo.clickOnView(solo.getView(R.id.loginBtn));
 
         // checks to make sure the activity has switched to the Home activity
@@ -77,8 +77,8 @@ public class CalendarAndroidTest {
         solo.assertCurrentActivity("Wrong", Login.class);
 
         // Logging In to test account
-        solo.enterText((EditText) solo.getView(R.id.email), "test10@email.com");
-        solo.enterText((EditText) solo.getView(R.id.password), "test10");
+        solo.enterText((EditText) solo.getView(R.id.email), "saiajerla@gmail.com");
+        solo.enterText((EditText) solo.getView(R.id.password), "password");
         solo.clickOnView(solo.getView(R.id.loginBtn));
 
         solo.clickOnView(solo.getView(R.id.add_habit_button));
@@ -97,7 +97,7 @@ public class CalendarAndroidTest {
         solo.clickOnView(solo.getView(R.id.Date));
         // wait for datePicker dialog to open
         solo.waitForDialogToOpen(1000);
-        solo.setDatePicker(0, 2021, 9, 30);
+        solo.setDatePicker(0, 2021, 11, 01);
         solo.clickOnButton("OK");
         solo.waitForDialogToClose(1000);
 
@@ -127,16 +127,16 @@ public class CalendarAndroidTest {
         solo.enterText((EditText) solo.getView(R.id.habit_title_editText), "Running");
         solo.enterText((EditText) solo.getView(R.id.habit_reason_editText), "Run a 5k");
         solo.clickOnView(solo.getView(R.id.privacy_spinner));
-        solo.pressSpinnerItem(0, 0);
+        solo.pressSpinnerItem(0, 1);
 
         // make sure that spinner is set to item selected
-        assertTrue(solo.isSpinnerTextSelected(0, "Public"));
+        assertTrue(solo.isSpinnerTextSelected(0, "Private"));
         solo.clickOnView(solo.getView(R.id.Date));
 
         // wait for datePicker dialog to open
         solo.waitForDialogToOpen(1000);
 
-        solo.setDatePicker(0, 2021, 9, 30);
+        solo.setDatePicker(0, 2021, 11, 01);
         solo.clickOnButton("OK");
         solo.waitForDialogToClose(1000);
         solo.clickOnView(solo.getView(R.id.button_saturday));

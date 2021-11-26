@@ -492,6 +492,7 @@ public class UserCalendar extends AppCompatActivity
         if (bitmap != null) {
             path = "images/"+System.currentTimeMillis() +".jpg";
             database.addImage(path, bitmap);
+            instance.setIID(path);
         }
 
         String instanceId = instance.getEID();
