@@ -153,6 +153,7 @@ public class viewEditHabitFragment extends DialogFragment {
             privacySpinner.setSelection(0);
         }
 
+        //set up elements for position spinner and set the spinner to the habits current position
         ArrayList<Integer> listPositions = new ArrayList<Integer>();
         for (int i = 1; i < listSize+1; i++){
             listPositions.add(i);
@@ -162,7 +163,7 @@ public class viewEditHabitFragment extends DialogFragment {
         positionsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         positionSpinner.setAdapter(positionsAdapter);
         positionSpinner.setSelection(position);
-        //set up elements for position spinner
+
 
         // Array with all the Edit buttons for weekdays
         weekdayEditButtonArray = new Button[]{sundayButton, mondayButton, tuesdayButton, wednesdayButton, thursdayButton, fridayButton, saturdayButton};

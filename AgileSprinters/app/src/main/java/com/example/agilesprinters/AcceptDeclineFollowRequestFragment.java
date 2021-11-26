@@ -18,7 +18,6 @@ import androidx.fragment.app.DialogFragment;
 public class AcceptDeclineFollowRequestFragment extends DialogFragment {
     private AcceptDeclineFollowRequestFragment.OnFragmentInteractionListener fragmentListener;
     private User followRequestUser;
-    private TextView acceptDeclineTextView;
 
     public static AcceptDeclineFollowRequestFragment newInstance(User user) {
         AcceptDeclineFollowRequestFragment frag = new AcceptDeclineFollowRequestFragment();
@@ -52,8 +51,10 @@ public class AcceptDeclineFollowRequestFragment extends DialogFragment {
         //inflate the layout for this fragment
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.accept_decline_follow_request_fragment, null);
 
+        //Get user who is requesting to follow from the bundle
         followRequestUser = (User) getArguments().getSerializable("followRequestUser");
 
+        //Set the text view with the requesting users name
         TextView requestingUserTV = view.findViewById(R.id.accept_decline_user_TextView);
         requestingUserTV.setText(followRequestUser.getFirstName() + " " + followRequestUser.getLastName());
 

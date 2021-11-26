@@ -255,7 +255,7 @@ public class CalendarAndroidTest {
         solo.clickOnView(solo.getView(R.id.calendar));
         assertTrue(solo.waitForActivity(UserCalendar.class));
 
-        solo.clickOnView(solo.getView(R.id.calendar_button));
+        solo.clickOnView(solo.getView(R.id.title1));
 
         // wait for datePicker dialog to open
         solo.waitForDialogToOpen(1000);
@@ -267,7 +267,7 @@ public class CalendarAndroidTest {
         // checks to see if the planned habit is displayed in the past for that day
         assertTrue(solo.waitForText("Running", 1, 1000));
 
-        solo.clickOnView(solo.getView(R.id.calendar_button));
+        solo.clickOnView(solo.getView(R.id.title1));
 
         // wait for datePicker dialog to open
         solo.waitForDialogToOpen(1000);

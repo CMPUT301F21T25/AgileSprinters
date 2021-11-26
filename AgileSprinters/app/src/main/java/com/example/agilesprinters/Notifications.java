@@ -4,8 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.Window;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -16,11 +16,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,6 +50,7 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
         }
 
         DocumentReference userCollectionReference = db.collection("users").document(user.getUser());
+
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
         bottomNavigationView.setSelectedItemId(R.id.notification);
@@ -61,8 +60,6 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
         notificationAdapter = new NotificationsListAdapter(this, notificationList);
         notificationListView.setAdapter(notificationAdapter);
 
-
-
         userCollectionReference.addSnapshotListener((value, error) -> {
             // Clear the old list
             notificationList.clear();
@@ -70,6 +67,10 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
             if (UID.matches((String) value.getData().get("UID"))) {
                 ArrayList<String> followRequests = (ArrayList<String>) value.get("follow request list");
 
+                /* For each UID that is in the follow request list, find the corresponding user file
+                 * in the database and create a user object with their stored data. Add each created
+                 * user to the list.
+                 */
                 for (int i = 0 ; i < followRequests.size(); i++) {
                     DocumentReference otherUsersDoc = db.collection(collectionPath).document(followRequests.get(i));
                     otherUsersDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -86,6 +87,7 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
                                     ArrayList<String> followRequest = (ArrayList<String>) documentSnapshot.get("follow request list");
                                     ArrayList<String> followers = (ArrayList<String>) documentSnapshot.get("followers");
                                     ArrayList<String> following = (ArrayList<String>) documentSnapshot.get("following");
+
                                     User requestingUser = new User(otherUID, firstName, lastName, emailId, followers, following, followRequest);
                                     notificationList.add(requestingUser);
                                     notificationAdapter.notifyDataSetChanged();
@@ -101,8 +103,6 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
             }
             notificationAdapter.notifyDataSetChanged();
         });
-
-
 
         notificationListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
