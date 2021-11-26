@@ -278,6 +278,11 @@ public class editHabitEventFragment extends DialogFragment {
 
     }
 
+    /**
+     * This function saves the values sent to the fragment for future manipulation
+     * @param HID
+     * @param shareButton
+     */
     private void setVisibilityForShareButton(String HID, Button shareButton) {
         db.collection("Habit").addSnapshotListener((value, error) -> {
             for (QueryDocumentSnapshot doc : value) {
