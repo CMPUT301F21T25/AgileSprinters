@@ -66,6 +66,7 @@ public class addHabitEventFragment extends DialogFragment {
      * @param position is the selected item position
      * @return returns the fragment with the bundled parameters
      */
+
     public static addHabitEventFragment newInstance(int position, String UID, String HID, String EID) {
         addHabitEventFragment fragment = new addHabitEventFragment();
         Bundle args = new Bundle();

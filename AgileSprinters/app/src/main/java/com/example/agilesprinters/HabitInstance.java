@@ -41,6 +41,10 @@ public class HabitInstance implements Serializable {
      *  date of the event given as string
      * @param duration
      *  duration of the event given as an int
+     * @param IID
+     *
+     * @param FID
+     * @param isShared
      */
     public HabitInstance(String EID, String UID, String HID,
                          String opt_comment, String date, int duration, String IID, String FID, Boolean isShared, String opt_loc) {
@@ -160,18 +164,39 @@ public class HabitInstance implements Serializable {
         this.HID = HID;
     }
 
+
+    /**
+     * This  function is used to get the value of the user FID
+     * @return
+     *  return FID as a string
+     */
     public String getFID() {
         return FID;
     }
 
+    /**
+     * This  function is used to set the value of the user FID
+     * @param FID
+     * set the value of the user FID
+     */
     public void setFID(String FID) {
         this.FID = FID;
     }
 
+    /**
+     * This  function is used to get the boolean value of shared instance
+     * @return
+     *  return boolean expression of getShared instance
+     */
     public Boolean getShared() {
         return isShared;
     }
 
+    /**
+     * This  function is used to set the boolean value of shared instance
+     * @param shared
+     * set boolean expression of getShared instance
+     */
     public void setShared(Boolean shared) {
         isShared = shared;
     }

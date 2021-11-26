@@ -291,6 +291,15 @@ public class UserCalendar extends AppCompatActivity
 
     }
 
+    /**
+     *
+     * @param habitInstance
+     *  The instance object created by the addHabitEventFragment
+     * @param FID
+     *  get the instance of forum ID.
+     * @param toDo
+     *  update the forum
+     */
     private void updateForum(HabitInstance habitInstance, String FID, String toDo) {
         String HID = habitInstance.getHID();
         String privacySetting = "";
@@ -630,6 +639,11 @@ public class UserCalendar extends AppCompatActivity
     }
 
 
+    /**
+     * This function is used to display the forum post if the user share the habit event
+     * @param eventToShare
+     *  display the forum upon sharing by the users
+     */
     @Override
     public void onShareHabitEventYesPressed(HabitInstance eventToShare) {
         HashMap<String, String> data = new HashMap();
