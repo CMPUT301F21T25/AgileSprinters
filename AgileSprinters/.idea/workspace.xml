@@ -14,13 +14,21 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="37ab8b8f-7cdc-45d2-9a9b-1864eb51ea17" name="Default Changelist" comment="">
+    <list default="true" id="6f26c80e-617b-489c-9600-b8d6d9367cbf" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/androidTest/java/com/example/agilesprinters/HomeAndroidTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/androidTest/java/com/example/agilesprinters/HomeAndroidTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/androidTest/java/com/example/agilesprinters/NotificationsAndroidTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/androidTest/java/com/example/agilesprinters/NotificationsAndroidTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/AcceptDeclineFollowRequestFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/AcceptDeclineFollowRequestFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/Habit.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/Habit.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/HabitTestList.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/HabitTestList.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/Home.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/Home.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/test/java/com/example/agilesprinters/CalendarUnitTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/test/java/com/example/agilesprinters/CalendarUnitTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/test/java/com/example/agilesprinters/habitInstanceUnitTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/test/java/com/example/agilesprinters/habitInstanceUnitTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/test/java/com/example/agilesprinters/habitUnitTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/test/java/com/example/agilesprinters/habitUnitTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/NotificationTestList.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/NotificationTestList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/Notifications.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/Notifications.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/NotificationsListAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/NotificationsListAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/OtherUserScreen.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/OtherUserScreen.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/addHabitFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/addHabitFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/test/java/com/example/agilesprinters/NotificationsUnitTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/test/java/com/example/agilesprinters/NotificationsUnitTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/test/java/com/example/agilesprinters/homeUnitTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/test/java/com/example/agilesprinters/homeUnitTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -77,7 +85,7 @@
     <property name="memory.settings.postsync.last.time.stamp" value="1636667264616" />
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
-  <component name="RunManager" selected="Gradle.homeUnitTest.testReorderHabit">
+  <component name="RunManager" selected="Gradle.NotificationsUnitTest">
     <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
       <module name="AgileSprinters.app" />
       <option name="DEPLOY" value="true" />
@@ -136,12 +144,12 @@
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="habitInstanceUnitTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="NotificationsUnitTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="--tests &quot;com.example.agilesprinters.habitInstanceUnitTest&quot;" />
+        <option name="scriptParameters" value="--tests &quot;com.example.agilesprinters.NotificationsUnitTest&quot;" />
         <option name="taskDescriptions">
           <list />
         </option>
@@ -158,12 +166,12 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="habitUnitTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="NotificationsUnitTest.testAcceptExceptions" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="--tests &quot;com.example.agilesprinters.habitUnitTest&quot;" />
+        <option name="scriptParameters" value="--tests &quot;com.example.agilesprinters.NotificationsUnitTest.testAcceptExceptions&quot;" />
         <option name="taskDescriptions">
           <list />
         </option>
@@ -180,12 +188,12 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="homeUnitTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="NotificationsUnitTest.testAddNotification" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="--tests &quot;com.example.agilesprinters.homeUnitTest&quot;" />
+        <option name="scriptParameters" value="--tests &quot;com.example.agilesprinters.NotificationsUnitTest.testAddNotification&quot;" />
         <option name="taskDescriptions">
           <list />
         </option>
@@ -202,12 +210,12 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="homeUnitTest.testReorderHabit" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="NotificationsUnitTest.testDecline" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="--tests &quot;com.example.agilesprinters.homeUnitTest.testReorderHabit&quot;" />
+        <option name="scriptParameters" value="--tests &quot;com.example.agilesprinters.NotificationsUnitTest.testDecline&quot;" />
         <option name="taskDescriptions">
           <list />
         </option>
@@ -224,12 +232,12 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="userUnitTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="NotificationsUnitTest.testDeclineExceptions" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="--tests &quot;com.example.agilesprinters.userUnitTest&quot;" />
+        <option name="scriptParameters" value="--tests &quot;com.example.agilesprinters.NotificationsUnitTest.testDeclineExceptions&quot;" />
         <option name="taskDescriptions">
           <list />
         </option>
@@ -248,18 +256,18 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.homeUnitTest.testReorderHabit" />
-        <item itemvalue="Gradle.habitUnitTest" />
-        <item itemvalue="Gradle.userUnitTest" />
-        <item itemvalue="Gradle.homeUnitTest" />
-        <item itemvalue="Gradle.habitInstanceUnitTest" />
+        <item itemvalue="Gradle.NotificationsUnitTest" />
+        <item itemvalue="Gradle.NotificationsUnitTest.testDeclineExceptions" />
+        <item itemvalue="Gradle.NotificationsUnitTest.testDecline" />
+        <item itemvalue="Gradle.NotificationsUnitTest.testAcceptExceptions" />
+        <item itemvalue="Gradle.NotificationsUnitTest.testAddNotification" />
       </list>
     </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="37ab8b8f-7cdc-45d2-9a9b-1864eb51ea17" name="Default Changelist" comment="" />
+      <changelist id="6f26c80e-617b-489c-9600-b8d6d9367cbf" name="Default Changelist" comment="" />
       <created>1636667250708</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />

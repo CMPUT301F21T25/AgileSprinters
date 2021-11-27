@@ -23,6 +23,15 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * This is an activity which displays any follow requests the current user has. It displays them as
+ * a list with the name of the user requesting to follow them and a text saying "has requested to
+ * follow you." Once clicked the user can decide to accept or decline and this class will add the
+ * user who requested to follow to the appropriate lists saved in the current user User object as
+ * well as add the current user to the user who requested to follow's appropriate list.
+ *
+ * @author Hannah Desmarais
+ */
 public class Notifications extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener,
         AcceptDeclineFollowRequestFragment.OnFragmentInteractionListener{
     private ArrayList<User> notificationList;
@@ -36,6 +45,10 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
     private FirebaseFirestore db;
     private Database database = new Database();
 
+    /**
+     * This function creates the UI on the screen and listens for user input.
+     * @param savedInstanceState The instance state.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +73,11 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
         notificationAdapter = new NotificationsListAdapter(this, notificationList);
         notificationListView.setAdapter(notificationAdapter);
 
+        /**
+         * This is a database collection listener. Each time the Notifications activity is created,
+         * it will read the database and find all the users who have requested to follow the current
+         * user and build the notification list fom them.
+         */
         userCollectionReference.addSnapshotListener((value, error) -> {
             // Clear the old list
             notificationList.clear();
@@ -67,7 +85,8 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
             if (UID.matches((String) value.getData().get("UID"))) {
                 ArrayList<String> followRequests = (ArrayList<String>) value.get("follow request list");
 
-                /* For each UID that is in the follow request list, find the corresponding user file
+                /*
+                 * For each UID that is in the follow request list, find the corresponding user file
                  * in the database and create a user object with their stored data. Add each created
                  * user to the list.
                  */
@@ -104,6 +123,10 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
             notificationAdapter.notifyDataSetChanged();
         });
 
+        /**
+         * The following listener will listen for when an item in the notification list is clicked
+         * and begin the AcceptDeclineFollowRequestFragment.
+         */
         notificationListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -116,6 +139,14 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
 
     }
 
+    /**
+     * This method is for the navigation bar. It will begin the corresponding activity of the item
+     * on the navigation bar that was clicked.
+     * @param item The menu item clicked by the user.
+     * @return
+     * Returns true if the item clicked is the button for the current screen the user is already on.
+     * Returns false if the item clicked does not match any of the four appropriate activities.
+     */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
@@ -162,6 +193,13 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
         return false;
     }
 
+    /**
+     * This method is called from the AcceptDeclineFollowRequestFragment and will add the requesting
+     * user to the current user's follower list, add the current user to the requesting user's
+     * following list and delete the request from the follow request list. It will update the
+     * database for each user by calling updateUserDoc().
+     * @param requestingUser The user who sent the follow request to the current user.
+     */
     @Override
     public void onAcceptPressed(User requestingUser) {
         user.getFollowersList().add(requestingUser.getUserID());
@@ -174,6 +212,12 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
         notificationAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * This method is called from the AcceptDeclineFollowRequestFragment and will simply get rid
+     * of the request and update the current user doc in the database to match by calling
+     * updateUserDoc().
+     * @param requestingUser The user who requested to follow the current user.
+     */
     @Override
     public void onDeclinePressed(User requestingUser) {
         user.getFollowRequestList().remove(requestingUser.getUserID());
@@ -182,6 +226,11 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
         notificationAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * This method will get all parameters from a User object and update the corresponding document
+     * in the database.
+     * @param user The User object being updated.
+     */
     public void updateUserDoc(User user) {
         db = FirebaseFirestore.getInstance();
         HashMap<String, Object> data = new HashMap<>();

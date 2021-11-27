@@ -33,7 +33,6 @@ import java.util.HashMap;
 public class HomeAndroidTest {
     private Solo solo;
 
-
     @Rule
     public ActivityTestRule<Login> rule =
             new ActivityTestRule<>(Login.class, true, true);
@@ -414,6 +413,7 @@ public class HomeAndroidTest {
         title = (String) habit.getText();
         assertTrue(title.equals("Swimming"));
 
+        //delete all the habits
         for(int i = 0; i < 3; i++){
             //long click on habit
             solo.clickLongInList(1);

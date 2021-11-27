@@ -27,6 +27,11 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * This is an android testing class which will run UI testing for the notifications activity.
+ *
+ * @author Hannah Desmarais
+ */
 public class NotificationsAndroidTest {
     private Solo solo;
     private FirebaseFirestore db;
@@ -34,6 +39,10 @@ public class NotificationsAndroidTest {
     private static final String TAG = "users";
     private User user;
 
+    /**
+     * This method will update a user in the database.
+     * @param user The user being updated.
+     */
     public void updateUserDoc(User user) {
         db = FirebaseFirestore.getInstance();
         HashMap<String, Object> data = new HashMap<>();
@@ -50,6 +59,10 @@ public class NotificationsAndroidTest {
         database.updateData(collectionPath, user.getUserID(), data, TAG);
     }
 
+    /**
+     * This method will clear the follow and following fields for a user.
+     * @param UID The ID of the user we are clearing the lists for as a string.
+     */
     public void clearUserFollowFollowing(String UID){
         DocumentReference otherUsersDoc = db.collection("users").document(UID);
         otherUsersDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -101,6 +114,10 @@ public class NotificationsAndroidTest {
         Activity activity = rule.getActivity();
     }
 
+    /**
+     * This test method will check if the class builds the notifications/follow request list view
+     * correctly.
+     */
     @Test
     public void stage2_checkNotificationsList(){
         //Login to test account
@@ -130,6 +147,10 @@ public class NotificationsAndroidTest {
         updateUserDoc(user);
     }
 
+    /**
+     * This testing method will check that a user can accept a follow request. It will add the
+     * requesting user to the followers list and get rid of the user from the follow request list.
+     */
     @Test
     public void stage3_testAccept(){
         solo.assertCurrentActivity("Wrong Activity", Login.class);
@@ -166,6 +187,10 @@ public class NotificationsAndroidTest {
         clearUserFollowFollowing("JQKGab7QkWShfVLr3lJEflrj9gn1");
     }
 
+    /**
+     * This test method will check that a user may decline a request and the request will be deleted
+     * and the requesting user will not be added to the followers list.
+     */
     @Test
     public void stage_testDecline(){
         solo.assertCurrentActivity("Wrong Activity", Login.class);

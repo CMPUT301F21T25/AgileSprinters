@@ -1,34 +1,24 @@
 package com.example.agilesprinters;
 
-import static android.content.ContentValues.TAG;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
@@ -180,6 +170,10 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             }
         });
 
+        /**
+         * This is a textview for the following column which listens for when the user clicks it.
+         * Upon being clicked, it will begin the FollowerFollowing activity.
+         */
         followingTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -193,6 +187,11 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         });
 
 
+        /**
+         * This is a textview which displays the following count for the current user and listens
+         * for when the user clicks it. Upon being clicked, it will start the FollowerFollowing
+         * activity.
+         */
         followingCountTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -205,6 +204,10 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             }
         });
 
+        /**
+         * This is a textview for the follower column which listens for when the user clicks it.
+         * Upon being clicked, it will begin the FollowerFollowing activity.
+         */
         followersTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -217,6 +220,11 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             }
         });
 
+        /**
+         * This is a textview which displays the follower count for the current user and listens
+         * for when the user clicks it. Upon being clicked, it will start the FollowerFollowing
+         * activity.
+         */
         followerCountTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -229,6 +237,10 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             }
         });
 
+        /**
+         * This is a button which displays the first letter of the first name of the current user.
+         * Upon being clicked, it will begin the EditUserActivity.
+         */
         homeUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -15,10 +15,22 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+/**
+ * This class is a dialog fragment which allows a user to choose to either accept or decline a
+ * follow request from an other user.
+ *
+ * @author Hannah Desmarais
+ */
 public class AcceptDeclineFollowRequestFragment extends DialogFragment {
     private AcceptDeclineFollowRequestFragment.OnFragmentInteractionListener fragmentListener;
     private User followRequestUser;
 
+    /**
+     * This function saves the values sent to the fragment for future manipulation
+     * @param user The user has sent the follow request.
+     * @return
+     * Returns the fragment with the bundled parameters.
+     */
     public static AcceptDeclineFollowRequestFragment newInstance(User user) {
         AcceptDeclineFollowRequestFragment frag = new AcceptDeclineFollowRequestFragment();
         Bundle args = new Bundle();
@@ -28,11 +40,21 @@ public class AcceptDeclineFollowRequestFragment extends DialogFragment {
         return frag;
     }
 
+    /**
+     * This is an interface which implements a function in the Notifications class based on what
+     * button the user has pressed.
+     */
     public interface OnFragmentInteractionListener {
         void onAcceptPressed(User user);
         void onDeclinePressed(User user);
     }
 
+    /**
+     * This function attaches the fragment to the activity and keeps track of the context of the
+     * fragment so the listener knows what to listen to. Ensures that the proper methods are
+     * implemented by the Notifications class.
+     * @param context The current screen.
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -45,6 +67,13 @@ public class AcceptDeclineFollowRequestFragment extends DialogFragment {
         }
     }
 
+    /**
+     * This function creates the actual dialog on the screen and listens for user input, returning
+     * the information through the listener based on which button is clicked.
+     * @param savedInstanceState is a reference to the most recent object
+     * @return
+     * Returns the Dialog created
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
