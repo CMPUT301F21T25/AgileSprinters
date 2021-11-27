@@ -129,17 +129,17 @@ public class addHabitEventFragment extends DialogFragment {
         ImageView addGalPhotoBtn = view.findViewById(R.id.add_Gal_Photo);
         ImageView addLocBtn = view.findViewById(R.id.add_location);
 
+        // When camera icon is clicked, it gets image from the camera
         addCamPhotoBtn.setOnClickListener(view1 -> {
-            //if(runtimePermissionForCamera()){
             getCameraPicture();
-            //}
         });
 
+        // When gallery icon is clicked, it gets image from the gallery
         addGalPhotoBtn.setOnClickListener(v -> {
             getGalleryPicture();
-            //hides alert dialog after gallery func is finished
         });
 
+        // When location icon is clicked, it gets location from the map
         addLocBtn.setOnClickListener(v -> getLocation());
 
         assert getArguments() != null;
@@ -148,6 +148,7 @@ public class addHabitEventFragment extends DialogFragment {
         EID = getArguments().getString(getString(R.string.EID));
         FID = getArguments().getString("FID");
 
+        // Setting the date of the event
         LocalDate currentDate = LocalDate.now();
         input_date.setText(currentDate.format(formatter));
 
@@ -165,7 +166,10 @@ public class addHabitEventFragment extends DialogFragment {
 
     }
 
-    //switches view to gallery and allows user to pick photo
+    /**
+     * This function switches the current view of the screen to gallery and allows
+     * the user to pick a picture.
+     */
     private void getGalleryPicture() {
         //allow user to pick a photo from gallery
         Intent pickFromGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -173,23 +177,34 @@ public class addHabitEventFragment extends DialogFragment {
 
     }
 
-    //switches view to map and allows user to pick location
+    /**
+     * This function shows a popup of maps on the screen and allows
+     * the user to pick a location.
+     */
     private void getLocation() {
         habitInstance = new HabitInstance("null", "null", "null", "null", "null", 0, "null", "null", null,"");
         MapsFragment mapsFragment = new MapsFragment().newInstance(habitInstance);
         mapsFragment.show(getChildFragmentManager(), "ADD LOCATION");
     }
 
+    /**
+     * This function asks for camera usage permission and
+     * switches the current view of the screen to camera and allows
+     * the user to click a picture.
+     */
     private void getCameraPicture() {
-        //have to give permission to app to use camera
-        //android manifest give permission and then take permission at runtime from user
-        //switch view to camera view
         Intent cameraView = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(cameraView, 2);
     }
 
 
     //overrides the method when activity is returning data (prev intent on line 82)
+    /**
+     * This function ...
+     * @param requestCode      is the ...
+     * @param resultCode       is the ...
+     * @param data             is the ...
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -228,39 +243,6 @@ public class addHabitEventFragment extends DialogFragment {
         }
     }
 
-    /*
-    public boolean runtimePermissionForCamera(){
-        //only have to check runtime permission if android version is greater than 23
-        //if less than 23 then auto permission using manifest file
-        if(Build.VERSION.SDK_INT >= 23){
-            int cameraPermission = .checkSelfPermission(, Manifest.permission.CAMERA);
-            if(cameraPermission == PackageManager.PERMISSION_DENIED){
-                //asks user if allow permission or not
-                requestPermissions( new String[]{Manifest.permission.CAMERA}, 102);
-                return false;
-            }
-        }
-        return true;
-    }
-
-
-    //return result from requestPermission (line 132)
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == 102 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-            //user has granted permission so run func to take picture
-            getCameraPicture();
-        }
-        else{
-            Toast.makeText(this.getContext(), "Camera Permission Denied", Toast.LENGTH_SHORT).show();
-
-        }
-
-    }
-
-    */
-
 
     /**
      * This function overrides the buttons clicked in order to only allow the dialog to be dismissed
@@ -284,17 +266,19 @@ public class addHabitEventFragment extends DialogFragment {
                 String duration = input_duration.getText().toString();
                 String durationSetting = durationSpinner.getSelectedItem().toString();
 
+                // Error checking for comment
                 if (comment.length() > 20) {
                     readyToClose = false;
                     optional_comment.setError("This field cannot have more than 20 chars");
                 }
 
+                // Error checking for date
                 if (date_entry.matches("")) {
                     readyToClose = false;
                     input_date.setError("This field cannot be blank");
                 }
 
-
+                // Error checking for duration according to its chosen dropdown item
                 if (duration.matches("")) {
                     readyToClose = false;
                     input_duration.setError("This field cannot be blank");
@@ -316,6 +300,7 @@ public class addHabitEventFragment extends DialogFragment {
                     }
                 }
 
+                // Error checking for location
                 if (Objects.isNull(habitInstance)){
                     optLoc = "";
                 }
@@ -324,7 +309,7 @@ public class addHabitEventFragment extends DialogFragment {
                 }
 
                 // If everything has been filled out, call the listener and send the edited
-                // habit back to the Home class and dismiss the dialog.
+                // habit event back to the User calendar class and dismiss the dialog.
                 if(readyToClose){
                     listener.onSavePressed(new HabitInstance(EID, UID, HID, comment, date_entry,
                             Integer.parseInt(duration), null, FID, false, optLoc), bitmapOfImg);

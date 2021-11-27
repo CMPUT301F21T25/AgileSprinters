@@ -51,7 +51,8 @@ import java.util.Map;
  * From here a user may click on the habit to add a completed habit event, tap on the event to edit,
  * view or delete it. There is also a 'past view events' button, through which the user can see
  * what habits were actually planned for a specific day in the past and what events were completed
- * regarding that. There is a navigation bar on the bottom that the user may click
+ * regarding that. The user can also share public, private events to the forum from here.
+ * There is a navigation bar on the bottom that the user may click
  * to go to either home, forum, or notifications.
  *
  * @author Sai Rasazna Ajerla and Riyaben Patel
@@ -277,39 +278,51 @@ public class UserCalendar extends AppCompatActivity
      * the user clicks save on the addHabitEventFragment dialog fragment
      *
      * @param habitInstance The instance object created by the addHabitEventFragment
+     * @param bitmap        The image object added in the addHabitEventFragment
      */
     @Override
     public void onSavePressed(HabitInstance habitInstance, Bitmap bitmap) {
         DocumentReference newHabitRef = db.collection("Habit").document();
         String forumID = stringChange(newHabitRef.getId());
 
+        // Adds habit event to the database
         addHabitEventDatabase(habitInstance, bitmap, forumID);
+
+        // Adds forum event to the database
         updateForum(habitInstance, forumID, "ADD");
+
+        // Adds habit event to the UI
         completedEventsScreenSetup();
 
+        // Updates the progress bar in the Home page
         updateProgressInDatabase(habitInstance, "ADD");
 
     }
 
     /**
-     *
+     * This function passes a forum instance to be updated once a user clicks
+     * Save in the add or editHabitEventFragment dialog fragment.
      * @param habitInstance
      *  The instance object created by the addHabitEventFragment
      * @param FID
-     *  get the instance of forum ID.
+     *  the forum id that can be used for creating a event or updating
      * @param toDo
-     *  update the forum
+     *  tells which action to perform add or edit
      */
     private void updateForum(HabitInstance habitInstance, String FID, String toDo) {
         String HID = habitInstance.getHID();
         String privacySetting = "";
         HashMap<String, String> data = new HashMap();
 
+        // Gets the privacy setting of the event
         for (int i = 0; i < toDoEvents.size(); i++){
             if (HID.matches(toDoEvents.get(i).getHID())){
                 privacySetting = toDoEvents.get(i).getPrivacySetting();
             }
         }
+
+        // According to the privacy setting it adds/updates the forum
+        // event in the database
         String duration = String.valueOf(habitInstance.getDuration());
         if ( privacySetting.matches("Public") || (
                 (privacySetting.matches("Private")) && habitInstance.getShared()) ){
@@ -333,6 +346,11 @@ public class UserCalendar extends AppCompatActivity
         }
     }
 
+    /**
+     * This function ..
+     * @param str
+     * @return
+     */
     public String stringChange(String str) {
         for (int i = 0; i < 3; i++){
             if (str != null && str.length() > 0 && str.charAt(str.length() - 1) == 'x') {
@@ -346,21 +364,25 @@ public class UserCalendar extends AppCompatActivity
      * This function passes a habit instance to be updated once a user clicks
      * Save in the editHabitEventFragment dialog fragment.
      *
-     * @param instance The habit instance object changed in the editHabitEventFragment
+     * @param instance      The habit instance object changed in the editHabitEventFragment
+     * @param bitmap        The image object edited in the editHabitEventFragment
      */
     @Override
     public void onEditSavePressed(HabitInstance instance, Bitmap bitmap) {
+        // Creates a path for the image i.e., IID
         if (instance.getIID() == null){
             path = "images/"+System.currentTimeMillis() +".jpg";
         } else {
             path = instance.getIID();
         }
 
+        // Adds the image to the storage in database if present
         if (bitmap != null) {
             database.addImage(path, bitmap);
             instance.setIID(path);
         }
 
+        // Gets the updated information entered by the user
         HashMap<String, String> data = new HashMap<>();
         data.put("FID", instance.getFID());
         data.put("EID", instance.getEID());
@@ -378,36 +400,10 @@ public class UserCalendar extends AppCompatActivity
         database.updateData(collectionPath, selectedHabitInstanceId, data, TAG);
         updateForum(instance, instance.getFID(),"EDIT");
 
+        // Updates the information in the UI
         completedEventsScreenSetup();
     }
 
-    private void editForumElement(HabitInstance instance) {
-        String EID = instance.getEID();
-        db.collection("ForumPosts").addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
-                    FirebaseFirestoreException error) {
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    if (EID.matches((String) doc.getData().get("EID"))) {
-
-                        HashMap<String, String> data = new HashMap<>();
-                        data.put("Event Date", instance.getDate());
-                        data.put("First Name", user.getFirstName());
-                        data.put("Last Name", user.getLastName());
-                        data.put("duration", String.valueOf(instance.getDuration()));
-                        data.put("UID", instance.getUID());
-                        data.put("Opt Cmt", instance.getOpt_comment());
-                        data.put("EID", instance.getEID());
-
-                        // Makes a call to the database which handles it
-                        database.updateData("ForumPosts", doc.getId(), data, TAG);
-                        break;
-                    }
-                }
-                // from the cloud
-            }
-        });
-    }
 
     /**
      * This function deletes a habit instance object from the database once a user clicks
@@ -419,16 +415,23 @@ public class UserCalendar extends AppCompatActivity
     public void onDeletePressed(HabitInstance instance) {
         collectionPath = "HabitEvents";
 
-        // Show up a fragment
+        // Show up a fragment to ask the user if they really want to delete
         deleteHabitEventFragment delete = new deleteHabitEventFragment().newInstance(instance);
         delete.show(getSupportFragmentManager(), "DELETE");
     }
 
+    /**
+     * This function shares a private habit instance object once a user clicks
+     * Share in the editHabitEventFragment dialog fragment.
+     *
+     * @param instance The habit instance object deleted in the editHabitEventFragment
+     */
     @Override
     public void onSharePressed(HabitInstance instance) {
         collectionPath = "HabitEvents";
 
-        // Show up a fragment
+        // Show up a fragment to ask the user
+        // if they really want to share the private event
         shareHabitEventFragment share = new shareHabitEventFragment().newInstance(instance);
         share.show(getSupportFragmentManager(), "SHARE");
 
@@ -444,32 +447,48 @@ public class UserCalendar extends AppCompatActivity
     public void onDeleteHabitEventYesPressed(HabitInstance instance) {
         // Makes a call to the database which handles it
         database.deleteData(collectionPath, instance.getEID(), TAG);
+
+        // deletes the image from the database
         getImageToDelete(instance);
 
+        // deletes the event in the forum page
         deleteForumElement(instance);
+
+        // deletes the event from the database
         database.deleteData(collectionPath, instance.getEID(), TAG);
 
+        // updates the UI
         completedEventsScreenSetup();
 
+        // updates the progress bar in the Home page
         updateProgressInDatabase(instance, "DELETE");
     }
 
+    /**
+     * This function deletes the image in the database on the
+     * deletion of a habit event
+     *
+     * @param instance The position of the object clicked in the list.
+     */
     private void getImageToDelete(HabitInstance instance) {
         db = FirebaseFirestore.getInstance();
         db.collection("HabitEvents").addSnapshotListener((value, error) -> {
-
             for (QueryDocumentSnapshot doc : value) {
                 if (instance.getEID().matches(doc.getId())
                         && (instance.getHID().matches((String) doc.getData().get("HID")))
                         && (instance.getUID().matches((String) doc.getData().get("UID")))) {
-                    System.out.println("hello form user");
                     database.deleteImg((String) doc.getData().get("IID"));
-
                 }
             }
         });
     }
 
+    /**
+     * This function deletes the forum event in the database on the
+     * deletion of a habit event
+     *
+     * @param instance The position of the object clicked in the list.
+     */
     private void deleteForumElement(HabitInstance instance) {
         String EID = instance.getEID();
         db.collection("ForumPosts").addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -487,7 +506,6 @@ public class UserCalendar extends AppCompatActivity
                         break;
                     }
                 }
-                // from the cloud
             }
         });
     }
@@ -495,9 +513,11 @@ public class UserCalendar extends AppCompatActivity
     /**
      * This function adds a habit event/instance object to the database.
      * @param instance The habit instance that needs to be added to the database.
+     * @param bitmap   The image object added in the addHabitEventFragment
+     * @param FID      The forum id of the forum event to be created
      */
     public void addHabitEventDatabase(HabitInstance instance, Bitmap bitmap, String FID) {
-        final CollectionReference collectionReference = db.collection("HabitEvents");
+        // Creates a path and adds an image to the database
         if (bitmap != null) {
             path = "images/"+System.currentTimeMillis() +".jpg";
             database.addImage(path, bitmap);
@@ -507,6 +527,7 @@ public class UserCalendar extends AppCompatActivity
         String instanceId = instance.getEID();
         HashMap<String, Object> data = new HashMap<>();
 
+        // Gets the information added by the user
         if (instanceId != null) {
             data.put("FID", FID);
             data.put("EID", instance.getEID());
@@ -525,17 +546,24 @@ public class UserCalendar extends AppCompatActivity
         }
     }
 
-    private Integer getNewProgress(HabitInstance instance, String toDo) {
-
+    /**
+     * This function gets the progress values by checking how many events
+     * are completed related to the habit.
+     * @param instance     The habit instance that needs to be added to the database.
+     * @param toDoEvent    The status of event if its added or deleted
+     */
+    private Integer getNewProgress(HabitInstance instance, String toDoEvent) {
         int completed = 0;
 
         for (Habit habit1 : toDoEvents) {
             if (habit1.getHID().equals(instance.getHID())) {
-                if (toDo == "ADD") {
+                // On the addition of an event, increment progress
+                if (toDoEvent == "ADD") {
                     completed = habit1.getOverallProgress() + 1;
-                    //updateHomePage(habit1);
                     break;
-                } else if (toDo == "DELETE") {
+                }
+                // On the deletion of an event, decrement progress
+                else if (toDoEvent == "DELETE") {
                     completed = habit1.getOverallProgress() - 1;
                     break;
                 }
@@ -545,10 +573,16 @@ public class UserCalendar extends AppCompatActivity
         return completed;
     }
 
-    public void updateProgressInDatabase(HabitInstance instance, String toDo){
+    /**
+     * This function gets the updated progress value and
+     * updates it in the database
+     * @param instance      The habit instance that needs to be added to the database.
+     * @param toDoStatus    The status of event if its added or deleted
+     */
+    public void updateProgressInDatabase(HabitInstance instance, String toDoStatus){
         db.collection("Habit")
                 .document(instance.getHID())
-                .update("Progress", getNewProgress(instance, toDo));
+                .update("Progress", getNewProgress(instance, toDoStatus));
     }
 
     /**
@@ -640,9 +674,10 @@ public class UserCalendar extends AppCompatActivity
 
 
     /**
-     * This function is used to display the forum post if the user share the habit event
-     * @param eventToShare
-     *  display the forum upon sharing by the users
+     * This function passes a private habit instance to be added in the forum
+     * once a user clicks Yes in the shareHabitEventFragment dialog fragment.
+     *
+     * @param eventToShare The position of the object clicked in the list.
      */
     @Override
     public void onShareHabitEventYesPressed(HabitInstance eventToShare) {
@@ -661,10 +696,11 @@ public class UserCalendar extends AppCompatActivity
         data.put("FID", FID);
         data.put("IID", eventToShare.getIID());
 
+        // Add the event to the forum database
         collectionPath = "ForumPosts";
         database.addData(collectionPath, FID, data, "Forum Post");
 
-
+        // Update the is shared value of the event in the database
         db.collection("HabitEvents")
                 .document(eventToShare.getEID())
                 .update("isShared", String.valueOf(true));

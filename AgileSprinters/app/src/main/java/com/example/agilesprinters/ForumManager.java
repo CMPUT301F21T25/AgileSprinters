@@ -22,7 +22,13 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 
 /**
+ * The forum manager class is an activity which displays the habit events completed by the user in
+ * the forum page. From here a user may click on the search bar to search for other users in the app.
+ * If interested, the user can go to that users profile to checkout their profile. They can also
+ * follow/unfollow another user from here. There is a navigation bar on the bottom that the user
+ * may click to go to either home, user calendar, or notifications.
  *
+ * @author Sai Rasazna Ajerla and Haricharan Bheesetti
  */
 public class ForumManager extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
     private String UID;
@@ -30,18 +36,21 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
     private BottomNavigationView bottomNavigationView;
     private FirebaseFirestore db;
 
-    // For search bar
+    // Variables for search bar
     private TextInputLayout user_drop_down;
     private AutoCompleteTextView users_list;
 
+    // Variables for other user profiles
     private ArrayList<String> arrayList_users = new ArrayList<>();
     private ArrayAdapter<String> arrayAdapter_users;
     private ArrayList<User> array_user_objects = new ArrayList<>();
 
+    // Variables for forum page
     ArrayAdapter<Forum> forumAdapter;
     final private ArrayList<Forum> forumDataList = new ArrayList<>();;
     ArrayList<String> userTempList;
 
+    // Variables used to store the content of a forum event
     private String firstName, lastName, eventDate, duration, optComment, imageId, location;
 
     private String emailId;
@@ -49,7 +58,10 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
     private ArrayList<String> followingList = new ArrayList<>();
     private ArrayList<String> followRequestList = new ArrayList<>();
 
-
+    /**
+     * This function creates the UI on the screen and listens for user input
+     * @param savedInstanceState the instance state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +69,7 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
         getSupportActionBar().hide();
         setContentView(R.layout.activity_forum_manager);
 
+        // Gets the user information of the logged in user
         if (UID == null) {
             user = (User) getIntent().getSerializableExtra("user");
             UID = user.getUser();
@@ -64,33 +77,33 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
             userTempList.add(UID);
         }
 
-        System.out.println("User list is " + userTempList);
-
+        // connecting to the bottom navigation bar xml file
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
         bottomNavigationView.setSelectedItemId(R.id.forumn);
 
         // connecting to the search bar xml files
-        user_drop_down = (TextInputLayout) findViewById(R.id.user_search_drop_down);
-        users_list = (AutoCompleteTextView) findViewById(R.id.users_list);
+        user_drop_down = findViewById(R.id.user_search_drop_down);
+        users_list = findViewById(R.id.users_list);
 
-        //forumDataList = new ArrayList<>();
         ListView forumList = findViewById(R.id.forumListView);
         db = FirebaseFirestore.getInstance();
 
         screenSetup();
         buildUsersList();
 
-        System.out.println("Array list3 is " + forumDataList);
+        // Sets the forum events list to the UI
         forumAdapter = new forumPostList(this, forumDataList);
         forumList.setAdapter(forumAdapter);
 
+        // Sets all the users to the search bar
         arrayAdapter_users = new ArrayAdapter<>(getApplicationContext(),
                 R.layout.drop_down_menu, arrayList_users);
         users_list.setAdapter(arrayAdapter_users);
         users_list.setThreshold(2);
 
-
+        // When a item in the user search bar is clicked, it opens up the profile of
+        // that specific user
         users_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -109,6 +122,10 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
         });
     }
 
+    /**
+     * This function gets all the users in the database i.e., using the app
+     * and displays it in the search bar
+     */
     private void buildUsersList() {
         db.collection("users").addSnapshotListener((value, error) -> {
             arrayAdapter_users.clear();
@@ -132,8 +149,11 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
         });
     }
 
+    /**
+     * This function sets the forum events on the UI
+     * according to the completed habit events of the user and its following users
+     */
     public void screenSetup() {
-
         db.collection("ForumPosts").addSnapshotListener((value, error) -> {
             forumDataList.clear();
             for (QueryDocumentSnapshot doc : value) {

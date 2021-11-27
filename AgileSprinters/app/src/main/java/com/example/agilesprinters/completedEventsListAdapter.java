@@ -67,7 +67,6 @@ public class completedEventsListAdapter extends ArrayAdapter<HabitInstance> {
         TextView privacyContent = convertView.findViewById(R.id.privacy_content);
 
         // Check if optional comment is empty or not and pass the content to TextView accordingly
-        //db = FirebaseFirestore.getInstance();
         if (habitInstance.getOpt_comment().matches("")) {
             db.collection("Habit").addSnapshotListener((value, error) -> {
                 for (QueryDocumentSnapshot doc : value) {
@@ -79,21 +78,26 @@ public class completedEventsListAdapter extends ArrayAdapter<HabitInstance> {
         } else {
             eventContent.setText(habitInstance.getOpt_comment());
         }
+
+        // If given, set the location to event
         locationContent.setText(habitInstance.getDisplayLocStr(new Geocoder(getContext(), Locale.getDefault())));
+
+        // Setting the duration to the event
         durationContent.setText(habitInstance.getDuration() + " mins");
 
+        // Displaying the duration according to its input drop down selection
         if (habitInstance.getDuration() > 0 && habitInstance.getDuration() <= 60) {
             durationContent.setText(habitInstance.getDuration() + " mins");
         } else {
             durationContent.setText((habitInstance.getDuration()/60) + " hours");
         }
 
+        // Checks and displays the private tag if a given event is private
         db.collection("Habit").addSnapshotListener((value, error) -> {
             for (QueryDocumentSnapshot doc : value) {
                 if (doc.getId().equals(habitInstance.getHID())) {
                     if (((String) doc.getData().get("PrivacySetting"))
                             .matches("Private")) {
-                        System.out.println("Privacy setting");
                         privacyContent.setVisibility(View.VISIBLE);
                         privacyContent.setText("Private Event");
                     }

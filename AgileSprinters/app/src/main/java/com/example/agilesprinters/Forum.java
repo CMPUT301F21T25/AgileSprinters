@@ -1,9 +1,9 @@
 package com.example.agilesprinters;
 
-import android.media.Image;
-
 /**
- * This is an object class called Forum. It is used for creating forum instant and regarding information
+ * This class represents a forum event
+ *
+ * @author Riyaben Patel
  */
 public class Forum {
     private String firstName;
@@ -17,7 +17,7 @@ public class Forum {
     /**
      * This function is used to get the first name of the user
      * @return
-     *  return user's first name as a string
+     *  returns user's first name as a string
      */
     public String getFirstName() {
         return firstName;
@@ -26,7 +26,7 @@ public class Forum {
     /**
      * This function is used to set the first name of the user
      * @param firstName
-     *  set the firstname of the user
+     *  sets the firstname of the user
      */
     public void setFirstName(String firstName) {
         this.firstName = firstName;
@@ -35,7 +35,7 @@ public class Forum {
     /**
      * This function is used to get the last name of the user
      * @return
-     *  return user's last name as a string
+     *  returns user's last name as a string
      */
     public String getLastName() {
         return lastName;
@@ -44,41 +44,41 @@ public class Forum {
     /**
      * This function is used to set the last name of the user
      * @param lastName
-     *  set the lastname of the user
+     *  sets the lastname of the user
      */
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
     /**
-     * This function is used to get the starting date of habit event
+     * This function is used to get the date of forum event
      * @return
-     *  return the start date of the habit event as a string
+     *  returns the date of the habit event as a string
      */
     public String getEventDate() {
         return eventDate;
     }
 
     /**
-     * This function is used to set the starting date of habit event
+     * This function is used to set the date of forum event
      * @param eventDate
-     *  set the starting date of habit event
+     *  sets the date of habit event
      */
     public void setEventDate(String eventDate) {
         this.eventDate = eventDate;
     }
 
     /**
-     * This function is used to get the comment of habit event
+     * This function is used to get the comment of forum event
      * @return
-     *  return the comment of habit event as a string
+     *  returns the comment of habit event as a string
      */
     public String getComment() {
         return comment;
     }
 
     /**
-     * This function is used to set the comment of habit event
+     * This function is used to set the comment of forum event
      * @param comment
      * set the comment of habit event
      */
@@ -89,7 +89,7 @@ public class Forum {
     /**
      * This function is used to get the duration of the event
      * @return
-     *  return duration of the event as a string
+     *  returns duration of the event as a string
      */
     public String  getDuration() {
         return duration;
@@ -98,16 +98,16 @@ public class Forum {
     /**
      * This function is used to set the duration of the event
      * @param duration
-     * set the duration of the event
+     * sets the duration of the event
      */
     public void setDuration(String duration) {
         this.duration = duration;
     }
 
     /**
-     * This function is used to set the image of the event
+     * This function is used to get the image of the event
      * @return
-     * return the image of the event
+     * returns the image of the event
      */
     public String getImage() {
         return image;
@@ -116,14 +116,24 @@ public class Forum {
     /**
      * This function is used to set the image of the event
      * @param image
-     * set the image of the event
+     * sets the image of the event
      */
     public void setImage(String image) {
         this.image = image;
     }
 
+    /**
+     * This function is used to set the location of the event
+     * @return
+     * sets the location of the event
+     */
     public void setLocation(String location){this.location=location;}
 
+    /**
+     * This function is used to get the location of the event
+     * @return
+     * returns the location of the event
+     */
     public String getLocation(){return location;}
 
     /**
@@ -151,6 +161,7 @@ public class Forum {
         this.duration = duration;
         this.comment = comment;
         this.image = image;
+        this.location = location;
     }
 
 

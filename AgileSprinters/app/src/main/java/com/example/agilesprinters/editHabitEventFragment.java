@@ -53,10 +53,8 @@ public class editHabitEventFragment extends DialogFragment {
     private Bitmap bitmapOfImg;
     private HabitInstance habitInstance;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private Database database = new Database();
 
     private editHabitEventFragment.OnFragmentInteractionListener listener;
-    private Boolean status;
 
     /**
      * This function saves the values sent to the fragment for future manipulation
@@ -91,7 +89,7 @@ public class editHabitEventFragment extends DialogFragment {
     /**
      * This function attaches the fragment to the activity and keeps track of the context of the
      * fragment so the listener knows what to listen to. Ensures that the proper methods are
-     * implemented by the Home class.
+     * implemented by the User calendar class.
      *
      * @param context context of the current fragment
      */
@@ -119,18 +117,14 @@ public class editHabitEventFragment extends DialogFragment {
         //inflate the layout for this fragment
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.edit_habit_event_fragment, null);
 
-        // Display the calendar
+        // Getting the IDs to connect the information to UI
         optional_comment = view.findViewById(R.id.editText_comment);
         input_date = view.findViewById(R.id.editText_date);
         input_duration = view.findViewById(R.id.editText_duration);
         durationSpinner = view.findViewById(R.id.duration_spinner);
+        Button deleteButton = view.findViewById(R.id.delete_event_button);
         Button shareButton = view.findViewById(R.id.share_event_button);
-
-        habitInstance = (HabitInstance) getArguments().getSerializable("Habit instance");
-
-        optional_comment.setText(habitInstance.getOpt_comment());
-        input_date.setText(habitInstance.getDate());
-        input_duration.setText(String.valueOf(habitInstance.getDuration()));
+        Button saveButton = view.findViewById(R.id.save_event_button);
 
         imageContainer = view.findViewById(R.id.imageContainer);
         ImageView addCamPhotoBtn = view.findViewById(R.id.add_Cam_Photo);
@@ -139,9 +133,20 @@ public class editHabitEventFragment extends DialogFragment {
         Button deleteImageBtn = view.findViewById(R.id.delete_image);
         Button deleteLocBtn = view.findViewById(R.id.delete_location);
 
+        habitInstance = (HabitInstance) getArguments().getSerializable("Habit instance");
+
+        // Setting the current information so that the user can make changes accordingly
+        optional_comment.setText(habitInstance.getOpt_comment());
+        input_date.setText(habitInstance.getDate());
+        input_duration.setText(String.valueOf(habitInstance.getDuration()));
+
+        // Setting the visibility of share button
         setVisibilityForShareButton(habitInstance.getHID(), shareButton);
+
+        // Setting the visibility of delete image, location buttons
         setVisibilityForDeleteImageButton(habitInstance.getEID(), deleteImageBtn, deleteLocBtn);
 
+        // Setting the doc ids of all connected elements
         EID = habitInstance.getEID();
         UID = habitInstance.getUID();
         HID = habitInstance.getHID();
@@ -149,17 +154,19 @@ public class editHabitEventFragment extends DialogFragment {
         IID = habitInstance.getIID();
         isShared = habitInstance.getShared();
 
-        //getIID(habitInstance);
+        // Setting the stored image to the fragment so that the user can make
+        // changes accordingly
         setImageToDialog(habitInstance.getIID());
+
+        // When camera icon is clicked, it gets image from the camera
         addCamPhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //if(runtimePermissionForCamera()){
                 getCameraPicture();
-                //}
             }
         });
 
+        // When location icon is clicked, it gets location from the map
         addLocBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -167,6 +174,7 @@ public class editHabitEventFragment extends DialogFragment {
             }
         });
 
+        // When gallery icon is clicked, it gets image from the gallery
         addGalPhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -175,6 +183,7 @@ public class editHabitEventFragment extends DialogFragment {
             }
         });
 
+        // When delete image button is clicked, it sets the IID to null i.e., deletes it
         deleteImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -182,6 +191,7 @@ public class editHabitEventFragment extends DialogFragment {
             }
         });
 
+        // When delete location button is clicked, it sets the loc to "" i.e., deletes it
         deleteLocBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -192,7 +202,7 @@ public class editHabitEventFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setView(view);
 
-        Button deleteButton = (Button) view.findViewById(R.id.delete_event_button);
+        // When delete button is clicked, it calls the function to delete the event
         deleteButton.setVisibility(View.VISIBLE);
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -204,7 +214,8 @@ public class editHabitEventFragment extends DialogFragment {
             }
         });
 
-        Button saveButton = view.findViewById(R.id.save_event_button);
+        // When save button is clicked, it calls the function to save and update all
+        // the new information to the event
         saveButton.setVisibility(View.VISIBLE);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -215,16 +226,19 @@ public class editHabitEventFragment extends DialogFragment {
                 String duration = input_duration.getText().toString();
                 String durationSetting = durationSpinner.getSelectedItem().toString();
 
+                // Error checking for comment
                 if (optional_comment.length() > 20) {
                     readyToClose = false;
                     optional_comment.setError("This field cannot have more than 20 chars");
                 }
 
+                // Error checking for date
                 if (date.matches("")) {
                     readyToClose = false;
                     input_date.setError("This field cannot be blank");
                 }
 
+                // Error checking for duration according to its chosen dropdown item
                 if (duration.matches("")) {
                     readyToClose = false;
                     input_duration.setError("This field cannot be blank");
@@ -247,7 +261,7 @@ public class editHabitEventFragment extends DialogFragment {
                 }
 
                 // If everything has been filled out, call the listener and send the edited
-                // habit back to the Home class and dismiss the dialog.
+                // habit event back to the User calendar class and dismiss the dialog.
                 if (readyToClose) {
                     listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date,
                             Integer.parseInt(duration), IID, FID, isShared, habitInstance.getOptLoc()), bitmapOfImg);
@@ -256,6 +270,7 @@ public class editHabitEventFragment extends DialogFragment {
             }
         });
 
+        // When share button is clicked, it calls the function to share the private event to forum
         shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -267,28 +282,20 @@ public class editHabitEventFragment extends DialogFragment {
         AlertDialog alertD = builder.create();
         return alertD;
 
-        /**
-        return builder
-                .setView(view)
-                .setTitle("View/Edit Habit Event")
-                .setNegativeButton("Delete", (dialog, id) -> listener.onDeletePressed(habitInstance))
-                .setPositiveButton("Save", (dialogInterface, i) -> {
-                    /* Do not implement anything here in order to override the button
-                     * to only call the listener once all the information required has been
-                     * filled out and display error messages if they have been left blank.
-                     */
-                //}).create();
-
     }
 
     /**
-     * This function saves the values sent to the fragment for future manipulation
-     * @param HID
-     * @param shareButton
+     * This function checks if the current event is public or private
+     * and sets the visibility accordingly
+     * @param HID             is the habit id of the event
+     * @param shareButton     is the share button attached to the fragment
      */
     private void setVisibilityForShareButton(String HID, Button shareButton) {
         db.collection("Habit").addSnapshotListener((value, error) -> {
             for (QueryDocumentSnapshot doc : value) {
+
+                // Sets the button to visible, if the event is private
+                // so that it can be shared to forum if needed
                 if (doc.getId().equals(HID)) {
                     if (((String) doc.getData().get("PrivacySetting"))
                             .matches("Private")) {
@@ -299,6 +306,13 @@ public class editHabitEventFragment extends DialogFragment {
         });
     }
 
+    /**
+     * This function checks if the current event is public or private
+     * and sets the visibility accordingly
+     * @param EID             is the event id of the event
+     * @param delImageBtn     is the delete image button attached to the fragment
+     * @param delLocBtn       is the delete location button attached to the fragment
+     */
     private void setVisibilityForDeleteImageButton(String EID, Button delImageBtn, Button delLocBtn) {
         db.collection("HabitEvents").addSnapshotListener((value, error) -> {
             for (QueryDocumentSnapshot doc : value) {
@@ -306,10 +320,15 @@ public class editHabitEventFragment extends DialogFragment {
                     System.out.println();
                     String event_iid = (String)doc.getData().get("IID");
                     String event_location = (String)doc.getData().get("Opt_Loc");
+
+                    // If the user sets an image, this sets the delete image
+                    // button to visible
                     if ( (event_iid != null) ) {
                         delImageBtn.setVisibility(View.VISIBLE);
                     }
 
+                    // If the user sets a location, this sets the delete location
+                    // button to visible
                     if (!event_location.matches("")) {
                         delLocBtn.setVisibility(View.VISIBLE);
                     }
@@ -319,6 +338,10 @@ public class editHabitEventFragment extends DialogFragment {
         });
     }
 
+    /**
+     * This function ...
+     * @param iid     is the ...
+     */
     private void setImageToDialog(String iid) {
         if (iid != null){
             IID = iid;
@@ -349,14 +372,20 @@ public class editHabitEventFragment extends DialogFragment {
     }
 
 
-    //switches view to map and allows user to pick location
+    /**
+     * This function shows a popup of maps on the screen and allows
+     * the user to pick a location.
+     */
     private void getLocation() {
         MapsFragment mapsFragment = new MapsFragment().newInstance((HabitInstance) getArguments().getSerializable("Habit instance"));
         mapsFragment.show(Objects.requireNonNull(getChildFragmentManager()), "ADD LOCATION");
     }
 
 
-    //switches view to gallery and allows user to pick photo
+    /**
+     * This function switches the current view of the screen to gallery and allows
+     * the user to pick a picture.
+     */
     private void getGalleryPicture() {
         //allow user to pick a photo from gallery
         Intent pickFromGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -364,6 +393,11 @@ public class editHabitEventFragment extends DialogFragment {
 
     }
 
+    /**
+     * This function asks for camera usage permission and
+     * switches the current view of the screen to camera and allows
+     * the user to click a picture.
+     */
     private void getCameraPicture(){
         //have to give permission to app to use camera
         //android manifest give permission and then take permission at runtime from user
@@ -373,6 +407,12 @@ public class editHabitEventFragment extends DialogFragment {
     }
 
     //overrides the method when activity is returning data (prev intent on line 82)
+    /**
+     * This function ...
+     * @param requestCode      is the ...
+     * @param resultCode       is the ...
+     * @param data             is the ...
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -410,52 +450,4 @@ public class editHabitEventFragment extends DialogFragment {
                 break;
         }
     }
-
-
-//    /**
-//     * This function overrides the buttons clicked in order to only allow the dialog to be dismissed
-//     * when all requirements have been met.
-//     */
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//
-//        final AlertDialog dialog = (AlertDialog) getDialog();
-//        if (dialog != null) {
-//            Button positive = dialog.getButton(Dialog.BUTTON_POSITIVE);
-//
-//            positive.setOnClickListener(view -> {
-//                // Boolean tracks when the all the fields have been filled out. Will turn to false
-//                // if anything has been left blank.
-//                boolean readyToClose = true;
-//
-//                String comment = optional_comment.getText().toString();
-//                String date = input_date.getText().toString();
-//                String duration = input_duration.getText().toString();
-//
-//                if (optional_comment.length() > 20) {
-//                    readyToClose = false;
-//                    optional_comment.setError("This field cannot have more than 20 chars");
-//                }
-//
-//                if (date.matches("")) {
-//                    readyToClose = false;
-//                    input_date.setError("This field cannot be blank");
-//                }
-//
-//                if (duration.matches("")) {
-//                    readyToClose = false;
-//                    input_duration.setError("This field cannot be blank");
-//                }
-//
-//                // If everything has been filled out, call the listener and send the edited
-//                // habit back to the Home class and dismiss the dialog.
-//                if (readyToClose) {
-//                    listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date,
-//                            Integer.parseInt(duration), IID, FID, isShared, habitInstance.getOptLoc()), bitmapOfImg);
-//                    dialog.dismiss();
-//                }
-//            });
-//        }
-//    }
 }

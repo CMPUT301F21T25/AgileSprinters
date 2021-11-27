@@ -42,9 +42,11 @@ public class HabitInstance implements Serializable {
      * @param duration
      *  duration of the event given as an int
      * @param IID
-     *
+     *  image ID given as string
      * @param FID
+     *  forum ID given as string
      * @param isShared
+     *  shared status given as boolean
      */
     public HabitInstance(String EID, String UID, String HID,
                          String opt_comment, String date, int duration, String IID, String FID, Boolean isShared, String opt_loc) {
@@ -60,10 +62,18 @@ public class HabitInstance implements Serializable {
         this.isShared = isShared;
     }
 
+    /**
+     * This function is used to get the image id of the instance
+     * @return
+     *  returns the image ID as a string
+     */
     public String getIID() {
         return IID;
     }
 
+    /**
+     * This function is used to set the image ID of the instance
+     */
     public void setIID(String IID) {
         this.IID = IID;
     }
@@ -166,7 +176,7 @@ public class HabitInstance implements Serializable {
 
 
     /**
-     * This  function is used to get the value of the user FID
+     * This function is used to get the value of the forum id
      * @return
      *  return FID as a string
      */
@@ -175,7 +185,7 @@ public class HabitInstance implements Serializable {
     }
 
     /**
-     * This  function is used to set the value of the user FID
+     * This  function is used to set the value of the forum id
      * @param FID
      * set the value of the user FID
      */
@@ -201,14 +211,31 @@ public class HabitInstance implements Serializable {
         isShared = shared;
     }
 
+    /**
+     * This  function is used to get the location of the instance
+     * if its empty
+     * @return
+     *  return location as a empty string
+     */
     public String getOptLoc() {
-        if(optLoc==null) return "";
-        return optLoc; }
+        if (optLoc==null)
+            return "";
+        return optLoc;
+    }
 
+    /**
+     * This function is used to set the location of the instance
+     */
     public void setOptLoc(String opt_loc) {
         this.optLoc = opt_loc;
     }
 
+    /**
+     * This  function is used to get the longitude/latitude
+     * of the instance in terms of a string
+     * @return
+     *  return location as a string
+     */
     public String getDisplayLocStr(Geocoder geocoder){
         if (Objects.isNull(optLoc) | optLoc.equals("")) return "";
 
@@ -230,7 +257,7 @@ public class HabitInstance implements Serializable {
             if (location[i]!=null)
                 returnStr += location[i]+", ";
         }
-        System.out.printf("returnStr: "+returnStr);
+
         return returnStr.substring(0,returnStr.length()-2);
     }
 }

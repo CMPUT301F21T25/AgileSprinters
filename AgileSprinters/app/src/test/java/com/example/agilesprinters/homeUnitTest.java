@@ -40,7 +40,7 @@ public class homeUnitTest {
         weekdays.put("SUNDAY", false);
 
         Habit habit = new Habit("Test0","Test0","Running","Get fit",
-                "Date", weekdays, "Public");
+                "Date", weekdays, "Public", 0, 0);
 
         return habit;
     }
@@ -63,7 +63,7 @@ public class homeUnitTest {
         weekdays.put("SUNDAY", false);
 
         Habit habit = new Habit("Test", "Test", "Running", "Get Fit",
-                "Date", weekdays, "Public" );
+                "Date", weekdays, "Public", 0, 0);
         habitList.addHabit(habit);
         assertEquals(2, habitList.getHabits().size());
         assertTrue(habitList.getHabits().contains(habit));
@@ -86,7 +86,7 @@ public class homeUnitTest {
         weekdays.put("SUNDAY", false);
 
         Habit habit = new Habit("Test", "Test", "Running", "Get Fit",
-                "Date", weekdays, "Public" );
+                "Date", weekdays, "Public", 0, 0);
 
         habitList.editHabit(0, habit);
         assertEquals(1, habitList.getHabits().size());
@@ -113,7 +113,7 @@ public class homeUnitTest {
         weekdays.put("SUNDAY", false);
 
         Habit habit = new Habit("Test", "Test", "Running", "Get Fit",
-                "Date", weekdays, "Public");
+                "Date", weekdays, "Public", 0, 0);
         //list is empty so test that you cannot edit an empty list
         assertThrows(IllegalArgumentException.class, () -> {
             habitList.editHabit(0, habit);
@@ -152,7 +152,7 @@ public class homeUnitTest {
         weekdays.put("SUNDAY", false);
 
         Habit habit = new Habit("Test", "Test", "Running", "Get Fit",
-                "Date", weekdays, "Public");
+                "Date", weekdays, "Public", 0, 0);
 
         //test that we cannot delete a habit that does not exist in the list
         assertThrows(IllegalArgumentException.class, () -> {

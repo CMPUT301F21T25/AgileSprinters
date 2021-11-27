@@ -13,7 +13,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 /**
- * This class is a fragment that asks the user if they wish to delete a habit and all of its events.
+ * This class is a fragment that asks the user if they wish to share a
+ * private habit event to the forum.
  */
 public class shareHabitEventFragment extends DialogFragment {
     private shareHabitEventFragment.OnFragmentInteractionListener listener;
@@ -36,7 +37,7 @@ public class shareHabitEventFragment extends DialogFragment {
 
     /**
      * This interface listens for when dialog is ended and sends the information and the function
-     * to the Home class for it to implement.
+     * to the User calendar class for it to implement.
      */
     public interface OnFragmentInteractionListener {
         void onShareHabitEventYesPressed(HabitInstance eventToShare);
@@ -45,7 +46,7 @@ public class shareHabitEventFragment extends DialogFragment {
     /**
      * This function attaches the fragment to the activity and keeps track of the context of the
      * fragment so the listener knows what to listen to. Ensures that the proper methods are
-     * implemented by the Home class.
+     * implemented by the User calendar class.
      *
      * @param context context of the current fragment
      */
