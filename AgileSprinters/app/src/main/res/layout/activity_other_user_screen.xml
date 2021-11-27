@@ -1,93 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".OtherUserScreen">
+    tools:context=".OtherUserScreen"
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/followers"
-        android:layout_width="136dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="118dp"
-        android:clickable="true"
-        android:gravity="center"
-        android:text="@string/followers_text"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/otherUserButton"
-        app:layout_constraintTop_toTopOf="parent" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/followerCount"
-        android:layout_width="136dp"
-        android:layout_height="70dp"
-        android:layout_marginStart="136dp"
-        android:layout_marginTop="4dp"
-        android:clickable="true"
-        android:gravity="center"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/followers" />
+        <Button
+            android:id="@+id/otherUserButton"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@drawable/round_button"
+            android:textSize="48sp"
+            android:layout_margin="5dp"/>
 
-    <TextView
-        android:id="@+id/followingCount"
-        android:layout_width="136dp"
-        android:layout_height="70dp"
-        android:layout_marginStart="4dp"
-        android:clickable="true"
-        android:gravity="center"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/followerCount"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/followerCount"
-        app:layout_constraintTop_toBottomOf="@+id/following"
-        app:layout_constraintVertical_bias="1.0" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-    <TextView
-            android:id="@+id/following"
-            android:layout_width="136dp"
-            android:layout_height="30dp"
-            android:clickable="true"
-            android:gravity="center"
-            android:text="@string/following_text"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@+id/followers"
-            app:layout_constraintTop_toTopOf="parent" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="10">
+
+                <TextView
+                    android:id="@+id/followers"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:text="@string/followers_text"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_weight="10"
+                    android:layout_margin="10dp"/>
+
+                <TextView
+                    android:id="@+id/followerCount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_weight="10"
+                    android:layout_margin="10dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="10">
+
+                <TextView
+                    android:id="@+id/following"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:text="@string/following_text"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_weight="20"
+                    android:layout_margin="10dp"/>
+
+                <TextView
+                    android:id="@+id/followingCount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_weight="20"
+                    android:layout_margin="10dp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        </LinearLayout>
 
     <Button
         android:id="@+id/followButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/followerCount"
-        app:layout_constraintEnd_toStartOf="@+id/habit_list"
         android:background="@color/purple_200"
+        android:layout_margin="10dp"
         />
 
     <ListView
         android:id="@+id/habit_list"
-        android:layout_width="393dp"
-        android:layout_height="555dp"
-        android:layout_marginTop="56dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.444"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/followerCount"></ListView>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp">
+    </ListView>
 
-    <Button
-        android:id="@+id/otherUserButton"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:background="@drawable/round_button"
-        android:textSize="48sp"
-        app:layout_constraintBottom_toBottomOf="@+id/followerCount"
-        app:layout_constraintEnd_toStartOf="@+id/followerCount"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

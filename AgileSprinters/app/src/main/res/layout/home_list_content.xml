@@ -90,9 +90,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
                 android:layout_weight="50"
-                android:layout_marginRight="6dp"
                 android:gravity="left"
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
+
+            <TextView
+                android:id="@+id/progress_number"
+                android:layout_width="200dp"
+                android:layout_height="20dp"
+                android:layout_weight="50"
+                android:layout_gravity="center"
+                android:layout_marginLeft="6dp"
+                android:textStyle="italic"
+                android:text = "@string/PROGRESS_NUMBER" />
 
         </LinearLayout>
 

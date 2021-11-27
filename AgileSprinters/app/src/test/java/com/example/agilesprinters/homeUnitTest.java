@@ -94,7 +94,7 @@ public class homeUnitTest {
     }
 
     /**
-     * This tests that exceptions are thrown when appropriate while attempting to edit a habit.
+     * This tests that exceptions are thrown when appropriate
      */
     @Test
     void testEditHabitException() {

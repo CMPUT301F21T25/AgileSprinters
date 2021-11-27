@@ -13,7 +13,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 /**
- * This class is a fragment that asks the user if they wish to delete a habit and all of its events.
+ * This class is a fragment that asks the user if they wish to delete a habit event
+ * and all of its forum events.
  */
 public class deleteHabitEventFragment extends DialogFragment {
     private deleteHabitEventFragment.OnFragmentInteractionListener listener;
@@ -36,7 +37,7 @@ public class deleteHabitEventFragment extends DialogFragment {
 
     /**
      * This interface listens for when dialog is ended and sends the information and the function
-     * to the Home class for it to implement.
+     * to the User Calendar class for it to implement.
      */
     public interface OnFragmentInteractionListener {
         void onDeleteHabitEventYesPressed(HabitInstance eventToDelete);
@@ -65,8 +66,9 @@ public class deleteHabitEventFragment extends DialogFragment {
      * This function creates the actual dialog on the screen and listens for user input, returning
      * the information through the listener based on which button is clicked.
      *
-     * @param savedInstanceState
-     * @return
+     * @param savedInstanceState is the reference to the most recent object
+     * @return the dialog of the fragment
+     *
      */
     @NonNull
     @Override

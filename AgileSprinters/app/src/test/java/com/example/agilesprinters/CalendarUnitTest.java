@@ -15,7 +15,7 @@ class CalendarUnitTest {
      * This creates a new mock list initiated with one habit event
      * @return
      * Return a new empty list of habits
-     */
+     /
     private HabitInstanceList mockHabitInstanceList() {
         HabitInstanceList instanceList = new HabitInstanceList();
         instanceList.add(mockHabitInstance());
@@ -26,25 +26,25 @@ class CalendarUnitTest {
      * This creates a new mock list used for testing of habit objects
      * @return
      * Return a new empty list of habits
-     */
+
     private Habit_list mockHabitList() {
         return new Habit_list();
     }
-
+/**
     /**
      * This creates a new habit instance
      * @return
      * Return a habit instance
-     */
+     /
     private HabitInstance mockHabitInstance() {
         return new HabitInstance("uniqueInstanceID1", "uniqueUserID1", "uniqueHabitID1",
-                "Read 5 pages", "11/04/2021", 30, null, null, false);
+                "Read 5 pages", "11/04/2021", 30, null, null, Boolean.TRUE);
     }
 
     /**
      * This test will check to make sure that all the to do habits displayed
      * are planned for that day (user story 01.07.01)
-     */
+     /
     @Test
     void testSeeHabitsToDoToday() throws ParseException {
         Habit_list myHabitsForToday = mockHabitList();
@@ -62,7 +62,7 @@ class CalendarUnitTest {
         // Creates a new habit
         Habit habit1 = new Habit("uniqueHabitID1", "uniqueUserID1",
                 "Reading 20 pages a day", "To get better at reading",
-                "11/01/2021", weekdays, "Public", 0,0);
+                "11/01/2021", weekdays, "Public", 0, 0 );
 
         // Adds the habit if it is planned for today
         myHabitsForToday.addToday(habit1, "11/04/2021", "THURSDAY");
@@ -70,7 +70,7 @@ class CalendarUnitTest {
 
         weekdays.put("THURSDAY", false);
         Habit habit2 = new Habit("uniqueHabitID2", "uniqueUserID1", "Go for a walk",
-                "To maintain fitness", "10/20/2021", weekdays, "Public", 0,1);
+                "To maintain fitness", "10/20/2021", weekdays, "Public", 0, 0 );
 
         // Throws assertion if the habit is not planned for the current today
         assertThrows(IllegalArgumentException.class, () ->
@@ -90,11 +90,11 @@ class CalendarUnitTest {
         assertTrue(myHabitsForToday.getHabits().contains(habit2));
     }
 
-    /**
+    /
      * This test will check to make sure that a completed habit event
      * is added to the list with required information and throws assertions for
      * incorrect inputs (user story 02.01.01, 02.02.01)
-     */
+     /
     @Test
     void testAddHabitEvent() {
         HabitInstanceList habitInstanceList = mockHabitInstanceList();
@@ -102,7 +102,7 @@ class CalendarUnitTest {
 
         // Adds a habit event
         HabitInstance instance2 = new HabitInstance("uniqueInstanceID2", "uniqueUserID1",
-                "uniqueHabitID1", "Read 2 pages", "11/04/2021", 40, null, null, false);
+                "uniqueHabitID1", "Read 2 pages", "11/04/2021", 40, null, null, Boolean.TRUE);
         habitInstanceList.add(instance2);
 
         // Checks to see if the habit event is added correctly
@@ -115,31 +115,28 @@ class CalendarUnitTest {
         // Throws assertion if the comment has more than 20 characters
         HabitInstance instance3 = new HabitInstance("uniqueInstanceID3", "uniqueUserID1",
                 "uniqueHabitID2", "Morning meditation in the hills",
-                "11/04/2021", 10, null, null, false);
+                "11/04/2021", 10, null, null, Boolean.TRUE);
         assertThrows(IllegalArgumentException.class, () -> habitInstanceList.add(instance3));
     }
 
-    /**
+    /
      * This test will check to make sure that a completed habit event
      * is contained in the list to view (user story 02.04.01)
-     */
+     /
     @Test
     void testHasHabitEvent() {
         HabitInstanceList habitInstanceList = mockHabitInstanceList();
 
         // Adds completed habit events
         HabitInstance instance2 = new HabitInstance("uniqueInstanceID2", "uniqueUserID1",
-                "uniqueHabitID1", "Read 2 pages", "11/04/2021", 40,
-                null, null, false);
+                "uniqueHabitID1", "Read 2 pages", "11/04/2021", 40, null, null, Boolean.TRUE);
         HabitInstance instance3 = new HabitInstance("uniqueInstanceID3", "uniqueUserID1",
-                "uniqueHabitID2", "Morning meditation", "11/04/2021",
-                10, null, null, false);
+                "uniqueHabitID2", "Morning meditation", "11/04/2021", 10, null, null, Boolean.TRUE);
         habitInstanceList.add(instance2);
         habitInstanceList.add(instance3);
 
         HabitInstance instance4 = new HabitInstance("uniqueInstanceID4", "uniqueUserID1",
-                "uniqueHabitID1", "", "11/04/2021", 60, null,
-                null, false);
+                "uniqueHabitID1", "", "11/04/2021", 60, null, null, Boolean.TRUE);
 
         // Checking if the habit event exists in the list
         assertTrue(habitInstanceList.hasInstances(instance2));
@@ -152,22 +149,20 @@ class CalendarUnitTest {
                 .getOpt_comment(), "");
     }
 
-    /**
+    /
      * This test will check to make sure that the edits made to
      * a completed habit event are saved correctly and throws assertion for
      * incorrect inputs (user story 02.05.01)
-     */
+
     @Test
     void testEditHabitEvent() {
         HabitInstanceList habitInstanceList = mockHabitInstanceList();
 
         // Adds habit events
         HabitInstance instance2 = new HabitInstance("uniqueInstanceID2", "uniqueUserID1",
-                "uniqueHabitID1", "Read 2 pages", "11/04/2021", 40,
-                null, null, false);
+                "uniqueHabitID1", "Read 2 pages", "11/04/2021", 40, null, null, Boolean.TRUE);
         HabitInstance instance3 = new HabitInstance("uniqueInstanceID3", "uniqueUserID1",
-                "uniqueHabitID2", "Morning meditation", "11/04/2021",
-                10, null, null, false);
+                "uniqueHabitID2", "Morning meditation", "11/04/2021", 10, null, null, Boolean.TRUE);
         habitInstanceList.add(instance2);
         habitInstanceList.add(instance3);
 
@@ -186,21 +181,18 @@ class CalendarUnitTest {
 
     }
 
-    /**
+
      * This test will check to make sure that when a completed habit event
      * is deleted, it is also deleted from the list (user story 02.06.01)
-     */
     @Test
     void testDeleteHabitEvent() {
         HabitInstanceList habitInstanceList = mockHabitInstanceList();
 
         // Adds habit events
         HabitInstance instance2 = new HabitInstance("uniqueInstanceID2", "uniqueUserID1",
-                "uniqueHabitID1", "Read 2 pages", "11/04/2021", 40,
-                null, null, false);
+                "uniqueHabitID1", "Read 2 pages", "11/04/2021", 40, null, null, Boolean.TRUE);
         HabitInstance instance3 = new HabitInstance("uniqueInstanceID3", "uniqueUserID1",
-                "uniqueHabitID2", "Morning meditation", "11/04/2021",
-                10, null, null, false);
+                "uniqueHabitID2", "Morning meditation", "11/04/2021", 10, null, null, Boolean.TRUE);
         habitInstanceList.add(instance2);
         habitInstanceList.add(instance3);
 
@@ -213,6 +205,6 @@ class CalendarUnitTest {
         // Throws assertion if there is a deletion call on a non existent event
         assertThrows(IllegalArgumentException.class, () -> habitInstanceList.delete(instance2));
     }
-
+**/
 
 }

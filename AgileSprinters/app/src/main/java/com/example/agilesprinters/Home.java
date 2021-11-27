@@ -457,9 +457,9 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 } else {
                     Intent intent = new Intent(this, Home.class);
                     //add bundle to send data if need
-
-                    startActivity(intent);
                     finish();
+                    startActivity(intent);
+
                     overridePendingTransition(0,0);
                 }
                 break;
@@ -468,9 +468,9 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 Intent intent = new Intent(this, UserCalendar.class);
                 intent.putExtra("user", user);
                 //add bundle to send data if need
-
-                startActivity(intent);
                 finish();
+                startActivity(intent);
+
                 overridePendingTransition(0,0);
                 break;
 
@@ -478,18 +478,18 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 Intent intentNotification = new Intent(this, Notifications.class);
                 intentNotification.putExtra("user", user);
                 //add bundle to send data if need
-
-                startActivity(intentNotification);
                 finish();
+                startActivity(intentNotification);
+
                 overridePendingTransition(0,0);
                 break;
 
             case R.id.forumn:
                 Intent forumIntent = new Intent(this, ForumManager.class);
                 forumIntent.putExtra("user", user);
-
-                startActivity(forumIntent);
                 finish();
+                startActivity(forumIntent);
+
                 overridePendingTransition(0,0);
                 break;
 
