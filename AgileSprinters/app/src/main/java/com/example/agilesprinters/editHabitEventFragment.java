@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -30,6 +31,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -43,6 +45,9 @@ public class editHabitEventFragment extends DialogFragment {
     private TextView input_date;
     private EditText input_duration;
     private Spinner durationSpinner;
+    private TextView displayLocation;
+    private Button deleteImageBtn;
+    private Button deleteLocBtn;
     private String EID;
     private String UID;
     private String HID;
@@ -130,8 +135,9 @@ public class editHabitEventFragment extends DialogFragment {
         ImageView addCamPhotoBtn = view.findViewById(R.id.add_Cam_Photo);
         ImageView addGalPhotoBtn = view.findViewById(R.id.add_Gal_Photo);
         ImageView addLocBtn = view.findViewById(R.id.add_location);
-        Button deleteImageBtn = view.findViewById(R.id.delete_image);
-        Button deleteLocBtn = view.findViewById(R.id.delete_location);
+        deleteImageBtn = view.findViewById(R.id.delete_image);
+        deleteLocBtn = view.findViewById(R.id.delete_location);
+        displayLocation = view.findViewById(R.id.location_textview);
 
         habitInstance = (HabitInstance) getArguments().getSerializable("Habit instance");
 
@@ -144,7 +150,7 @@ public class editHabitEventFragment extends DialogFragment {
         setVisibilityForShareButton(habitInstance.getHID(), shareButton);
 
         // Setting the visibility of delete image, location buttons
-        setVisibilityForDeleteImageButton(habitInstance.getEID(), deleteImageBtn, deleteLocBtn);
+        setVisibilityForDeleteImageButton();
 
         // Setting the doc ids of all connected elements
         EID = habitInstance.getEID();
@@ -188,6 +194,7 @@ public class editHabitEventFragment extends DialogFragment {
             @Override
             public void onClick(View view) {
                 IID = null;
+                imageContainer.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -196,6 +203,7 @@ public class editHabitEventFragment extends DialogFragment {
             @Override
             public void onClick(View view) {
                 habitInstance.setOptLoc("");
+                displayLocation.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -284,6 +292,7 @@ public class editHabitEventFragment extends DialogFragment {
 
     }
 
+
     /**
      * This function checks if the current event is public or private
      * and sets the visibility accordingly
@@ -307,35 +316,20 @@ public class editHabitEventFragment extends DialogFragment {
     }
 
     /**
-     * This function checks if the current event is public or private
-     * and sets the visibility accordingly
-     * @param EID             is the event id of the event
-     * @param delImageBtn     is the delete image button attached to the fragment
-     * @param delLocBtn       is the delete location button attached to the fragment
+     * This function checks if the image and location are available and
+     * displays their delete buttons accordingly
      */
-    private void setVisibilityForDeleteImageButton(String EID, Button delImageBtn, Button delLocBtn) {
-        db.collection("HabitEvents").addSnapshotListener((value, error) -> {
-            for (QueryDocumentSnapshot doc : value) {
-                if (doc.getId().equals(EID)) {
-                    System.out.println();
-                    String event_iid = (String)doc.getData().get("IID");
-                    String event_location = (String)doc.getData().get("Opt_Loc");
+    private void setVisibilityForDeleteImageButton() {
+        if (habitInstance.getIID() != null) {
+            deleteImageBtn.setVisibility(View.VISIBLE);
+        }
 
-                    // If the user sets an image, this sets the delete image
-                    // button to visible
-                    if ( (event_iid != null) ) {
-                        delImageBtn.setVisibility(View.VISIBLE);
-                    }
-
-                    // If the user sets a location, this sets the delete location
-                    // button to visible
-                    if (!event_location.matches("")) {
-                        delLocBtn.setVisibility(View.VISIBLE);
-                    }
-
-                }
-            }
-        });
+        if (!habitInstance.getOptLoc().matches("")) {
+            deleteLocBtn.setVisibility(View.VISIBLE);
+            displayLocation.setVisibility(View.VISIBLE);
+            displayLocation.setText("Location: " +
+                    habitInstance.getDisplayLocStr(new Geocoder(getContext(), Locale.getDefault())));
+        }
     }
 
     /**

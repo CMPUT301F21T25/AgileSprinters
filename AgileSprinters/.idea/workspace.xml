@@ -14,23 +14,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6f26c80e-617b-489c-9600-b8d6d9367cbf" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/Forum.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/Forum.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/ForumManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/ForumManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/HabitInstance.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/HabitInstance.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/ProgressBarHabit.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/UserCalendar.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/UserCalendar.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/addHabitEventFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/addHabitEventFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/completedEventsListAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/completedEventsListAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/deleteHabitEventFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/deleteHabitEventFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/editHabitEventFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/editHabitEventFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/forumPostList.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/forumPostList.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/shareHabitEventFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/shareHabitEventFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/completed_habits_content.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/completed_habits_content.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/test/java/com/example/agilesprinters/ForumUnitTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/test/java/com/example/agilesprinters/habitInstanceUnitTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/test/java/com/example/agilesprinters/habitInstanceUnitTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/test/java/com/example/agilesprinters/habitUnitTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/test/java/com/example/agilesprinters/habitUnitTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/test/java/com/example/agilesprinters/homeUnitTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/test/java/com/example/agilesprinters/homeUnitTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/edit_habit_event_fragment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/edit_habit_event_fragment.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,9 +32,20 @@
       <ProjectState />
     </projectState>
   </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view />
+      </state>
+    </system>
+  </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Class" />
         <option value="layoutResourceFile" />
         <option value="resourceFile" />
         <option value="Class" />
@@ -55,7 +55,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$/.." value="main" />
+        <entry key="$PROJECT_DIR$/.." value="Sai" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />

@@ -112,10 +112,19 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/location_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:text="Location"
+        android:textSize="15sp"
+        android:visibility="gone"/>
+
     <ImageView
         android:id="@+id/imageContainer"
         android:layout_width="match_parent"
-        android:layout_height="365dp"
+        android:layout_height="265dp"
         tools:srcCompat="@tools:sample/avatars" />
 
     <LinearLayout
@@ -149,9 +158,6 @@
             android:text="Share"
             android:layout_weight="10"
             android:visibility="invisible"/>
-
-
-
 
     </LinearLayout>
 
