@@ -126,7 +126,6 @@ public class Forum {
 
     public String getLocation(){return location;}
 
-    public Forum(String firstName, String lastName, String eventDate, String duration, String comment, String image, String location) {
     /**
      * This is a constructor that takes the firstName, lastName, eventDate,
      * duration, comment, image of the event as input to create a forum instance
@@ -142,15 +141,16 @@ public class Forum {
      *  comment is given as a string
      * @param image
      *  image is given as string
+     *  @param location
+     *  location is given as string
      */
-    public Forum(String firstName, String lastName, String eventDate, String duration, String comment, String image) {
+    public Forum(String firstName, String lastName, String eventDate, String duration, String comment, String image, String location) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.eventDate = eventDate;
         this.duration = duration;
         this.comment = comment;
         this.image = image;
-        this.location = location;
     }
 
 

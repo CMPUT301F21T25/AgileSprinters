@@ -75,11 +75,12 @@ public class CalendarAndroidTest {
 
         // checks to make sure we are in the right activity
         solo.assertCurrentActivity("Wrong", Login.class);
+        solo.waitForDialogToOpen(1000);
 
         // Logging In to test account
-        solo.enterText((EditText) solo.getView(R.id.email), "saiajerla@gmail.com");
-        solo.enterText((EditText) solo.getView(R.id.password), "password");
-        solo.clickOnView(solo.getView(R.id.loginBtn));
+//        solo.enterText((EditText) solo.getView(R.id.email), "saiajerla@gmail.com");
+//        solo.enterText((EditText) solo.getView(R.id.password), "password");
+//        solo.clickOnView(solo.getView(R.id.loginBtn));
 
         solo.clickOnView(solo.getView(R.id.add_habit_button));
 
@@ -90,14 +91,14 @@ public class CalendarAndroidTest {
         solo.enterText((EditText) solo.getView(R.id.habit_title_editText), "Walking");
         solo.enterText((EditText) solo.getView(R.id.habit_reason_editText), "Walk 10,000 steps each week");
         solo.clickOnView(solo.getView(R.id.privacy_spinner));
-        solo.pressSpinnerItem(0, 0);
+        solo.pressMenuItem(2);
 
         // make sure that spinner is set to item selected
         assertTrue(solo.isSpinnerTextSelected(0, "Public"));
         solo.clickOnView(solo.getView(R.id.Date));
         // wait for datePicker dialog to open
         solo.waitForDialogToOpen(1000);
-        solo.setDatePicker(0, 2021, 11, 01);
+        solo.setDatePicker(0, 2021, 10, 01);
         solo.clickOnButton("OK");
         solo.waitForDialogToClose(1000);
 
@@ -118,7 +119,7 @@ public class CalendarAndroidTest {
         assertTrue(solo.waitForText("Walking", 1, 1000));
 
 
-        //Adding another habit here
+        //Adding a private habit here
         solo.clickOnView(solo.getView(R.id.add_habit_button));
 
         // wait for add habit fragment to open
@@ -127,7 +128,7 @@ public class CalendarAndroidTest {
         solo.enterText((EditText) solo.getView(R.id.habit_title_editText), "Running");
         solo.enterText((EditText) solo.getView(R.id.habit_reason_editText), "Run a 5k");
         solo.clickOnView(solo.getView(R.id.privacy_spinner));
-        solo.pressSpinnerItem(0, 1);
+        solo.pressMenuItem(3);
 
         // make sure that spinner is set to item selected
         assertTrue(solo.isSpinnerTextSelected(0, "Private"));
@@ -136,11 +137,14 @@ public class CalendarAndroidTest {
         // wait for datePicker dialog to open
         solo.waitForDialogToOpen(1000);
 
-        solo.setDatePicker(0, 2021, 11, 01);
+        solo.setDatePicker(0, 2021, 10, 01);
         solo.clickOnButton("OK");
         solo.waitForDialogToClose(1000);
-        solo.clickOnView(solo.getView(R.id.button_saturday));
-        solo.clickOnView(solo.getView(R.id.button_sunday));
+        solo.clickOnView(solo.getView(R.id.button_monday));
+        solo.clickOnView(solo.getView(R.id.button_Tuesday));
+        solo.clickOnView(solo.getView(R.id.button_wednesday));
+        solo.clickOnView(solo.getView(R.id.button_thursday));
+        solo.clickOnView(solo.getView(R.id.button_friday));
 
         // add habit
         solo.clickOnButton("Add");
@@ -162,9 +166,9 @@ public class CalendarAndroidTest {
         solo.assertCurrentActivity("Wrong", Login.class);
 
         // Logging In to test account
-        solo.enterText((EditText) solo.getView(R.id.email), "test10@email.com");
-        solo.enterText((EditText) solo.getView(R.id.password), "test10");
-        solo.clickOnView(solo.getView(R.id.loginBtn));
+//        solo.enterText((EditText) solo.getView(R.id.email), "test10@email.com");
+//        solo.enterText((EditText) solo.getView(R.id.password), "test10");
+//        solo.clickOnView(solo.getView(R.id.loginBtn));
 
         // check to make sure the activity is switched to calendar activity
         solo.clickOnView(solo.getView(R.id.calendar));
@@ -178,12 +182,20 @@ public class CalendarAndroidTest {
         }
 
         // wait for habit event fragment to open
-        solo.clickInList(1, 0);
+        solo.clickInList(2, 0);
         solo.waitForDialogToOpen(1000);
 
         // enter the data for habit event
         solo.enterText((EditText) solo.getView(R.id.editText_comment), "Walked 5000 steps");
         solo.enterText((EditText) solo.getView(R.id.editText_duration), "50");
+        solo.clickOnView(solo.getView(R.id.duration_spinner));
+        solo.pressMenuItem(2);
+
+        // make sure that spinner is set to item selected
+        assertTrue(solo.isSpinnerTextSelected(0, "mins"));
+
+        // adding a image to event
+        // adding location to event
 
         // add habit event
         solo.clickOnButton("Save");
@@ -191,6 +203,32 @@ public class CalendarAndroidTest {
 
         // make sure habit event shows up in list
         assertTrue(solo.waitForText("Walked 5000 steps", 1, 1000));
+
+        // Adding a private habit event
+
+        // wait for habit event fragment to open
+        solo.clickInList(1, 0);
+        solo.waitForDialogToOpen(1000);
+
+        // enter the data for habit event
+        solo.enterText((EditText) solo.getView(R.id.editText_comment), "Evening run");
+        solo.enterText((EditText) solo.getView(R.id.editText_duration), "2");
+        solo.clickOnView(solo.getView(R.id.duration_spinner));
+        solo.pressMenuItem(3);
+
+        // make sure that spinner is set to item selected
+        assertTrue(solo.isSpinnerTextSelected(0, "hr"));
+
+        // adding a image to event
+        // adding location to event
+
+        // add habit event
+        solo.clickOnButton("Save");
+        solo.waitForDialogToClose(1000);
+
+        // make sure habit event shows up in list
+        assertTrue(solo.waitForText("Evening run", 1, 1000));
+        assertTrue(solo.waitForText("Private Event", 1, 1000));
     }
 
     /**
@@ -203,16 +241,16 @@ public class CalendarAndroidTest {
         solo.assertCurrentActivity("Wrong", Login.class);
 
         // Logging In to test account
-        solo.enterText((EditText) solo.getView(R.id.email), "test10@email.com");
-        solo.enterText((EditText) solo.getView(R.id.password), "test10");
-        solo.clickOnView(solo.getView(R.id.loginBtn));
+//        solo.enterText((EditText) solo.getView(R.id.email), "test10@email.com");
+//        solo.enterText((EditText) solo.getView(R.id.password), "test10");
+//        solo.clickOnView(solo.getView(R.id.loginBtn));
 
         // check to make sure the activity is switched to calendar activity
         solo.clickOnView(solo.getView(R.id.calendar));
         assertTrue(solo.waitForActivity(UserCalendar.class));
 
         // wait for habit event fragment to open
-        solo.clickInList(1, 1);
+        solo.clickInList(2, 1);
         solo.waitForDialogToOpen(1000);
 
         // make sure that if a field is left empty that you will be presented with an error message
@@ -228,8 +266,12 @@ public class CalendarAndroidTest {
 
         solo.enterText((EditText) solo.getView(R.id.editText_duration), "70");
 
-        //edit the habit
+        // edit the habit
         solo.clickOnButton("Save");
+
+        // displaying error
+        assertTrue(solo.waitForText("This field cannot be blank", 1, 1000));
+
         solo.waitForDialogToClose(1000);
 
         // make sure habit shows up in list
