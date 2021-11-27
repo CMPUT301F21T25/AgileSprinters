@@ -51,6 +51,7 @@ public class forumPostList extends ArrayAdapter<Forum> {
         TextView event_date = convertView.findViewById(R.id.event_date_text_view);
         TextView opt_cmt = convertView.findViewById(R.id.forum_comment);
         ImageView image = convertView.findViewById(R.id.forum_image_container);
+        TextView optLoc = convertView.findViewById(R.id.forum_location);
 
         user_circle.setText(forumItem.getFirstName().substring(0,1));
         String temp = forumItem.getFirstName()+" "+ forumItem.getLastName().substring(0,1) + ".";
@@ -68,7 +69,7 @@ public class forumPostList extends ArrayAdapter<Forum> {
         System.out.println("Image iid " + forumItem.getImage());
         System.out.println("Event id " + forumItem.getFirstName());
         setImageToDialog(forumItem.getImage(), image);
-
+        optLoc.setText(forumItem.getLocation());
         return convertView;
     }
 

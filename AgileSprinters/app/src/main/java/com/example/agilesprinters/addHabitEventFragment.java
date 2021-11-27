@@ -51,7 +51,7 @@ public class addHabitEventFragment extends DialogFragment {
     private Bitmap bitmapOfImg;
     private Uri selectedImg;
     private HabitInstance habitInstance;
-    private String optLoc;
+    private String optLoc = "";
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
@@ -315,10 +315,7 @@ public class addHabitEventFragment extends DialogFragment {
                     }
                 }
 
-                if (Objects.isNull(habitInstance)){
-                    optLoc = "";
-                }
-                else{
+                if (!Objects.isNull(habitInstance)){
                     optLoc = habitInstance.getOptLoc();
                 }
 

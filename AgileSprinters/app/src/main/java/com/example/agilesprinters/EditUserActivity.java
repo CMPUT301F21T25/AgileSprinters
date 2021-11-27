@@ -5,16 +5,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -27,15 +24,13 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.io.IOException;
-
 public class EditUserActivity extends AppCompatActivity {
     private User user;
     private String UID;
     private String nameStr;
     private static final String TAG = "Habit";
     private Database database = new Database();
-    FirebaseFirestore db;
+    FirebaseFirestore db =  FirebaseFirestore.getInstance();
     private Intent intent;
     private String collectionPath;
 
@@ -61,16 +56,10 @@ public class EditUserActivity extends AppCompatActivity {
         Button signOutButton = findViewById(R.id.signOutbutton);
         Button deleteUserButton = findViewById(R.id.deleteUserButton);
 
-
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FirebaseAuth.getInstance().signOut();
-                intent = new Intent(EditUserActivity.this, Login.class);
-                user = null;
-                startActivity(intent);
-                overridePendingTransition(0, 0);
-                finish();
+                signOut();
             }
         });
 
@@ -78,14 +67,6 @@ public class EditUserActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 deleteUser();
-                user = null;
-                FirebaseAuth.getInstance().signOut();
-                intent = new Intent(EditUserActivity.this, Login.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                overridePendingTransition(0, 0);
-                finish();
             }
         });
     }
@@ -100,20 +81,39 @@ public class EditUserActivity extends AppCompatActivity {
      * This method deletes a user from the database and all its associated data and habits and events.
      */
     private void deleteUser() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        user.delete()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, getString(R.string.USER_DEL_LOG));
-                            deleteUserHabits();
-                            deleteUserData();
-                        } else {
-                            Log.d(TAG, getString(R.string.USER_NOT_DEL_LOG));
+        try{
+            deleteUserHabits();
+            deleteUserData();
+
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            user.delete()
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d(TAG, getString(R.string.USER_DEL_LOG));
+                                signOut();
+                            } else {
+                                Log.d(TAG, getString(R.string.USER_NOT_DEL_LOG));
+                                Toast.makeText(EditUserActivity.this, "Could not delete user",
+                                        Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-                });
+                    });
+        }
+        catch(Exception e){
+            Log.d(TAG, "Couldn't delete user");
+        }
+    }
+
+    private void signOut(){
+        user = null;
+        FirebaseAuth.getInstance().signOut();
+        intent = new Intent(EditUserActivity.this, Login.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
+        finish();
     }
 
     /**
@@ -127,7 +127,7 @@ public class EditUserActivity extends AppCompatActivity {
                     FirebaseFirestoreException error) {
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     Log.d(TAG, String.valueOf(doc.getData().get(getString(R.string.UID))));
-                    if (UID.matches((String) doc.getData().get(getString(R.string.UID)))) {
+                    if (UID.equals((String) doc.getData().get(getString(R.string.UID)))) {
                         if (doc.getId() == null) {
                             return;
                         } else {
@@ -151,7 +151,7 @@ public class EditUserActivity extends AppCompatActivity {
                     FirebaseFirestoreException error) {
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     Log.d(TAG, String.valueOf(doc.getData().get(getString(R.string.UID))));
-                    if (UID.matches((String) doc.getData().get(getString(R.string.UID)))) {
+                    if (UID.equals((String) doc.getData().get(getString(R.string.UID)))) {
                         if (doc.getId() == null) {
                             return;
                         } else {
@@ -174,11 +174,12 @@ public class EditUserActivity extends AppCompatActivity {
                     FirebaseFirestoreException error) {
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     Log.d(TAG, String.valueOf(doc.getData().get("UID")));
-                    if (HID.matches((String) doc.getData().get("HID"))) {
+                    if (HID.equals((String) doc.getData().get("HID"))) {
                         if (doc.getId() == null) {
                             return;
                         } else {
                             collectionPath = "HabitEvents";
+                            deleteForumEventsDb((String) doc.getData().get("FID"));
                             database.deleteData(collectionPath, doc.getId(), TAG);
                         }
                     }
@@ -187,4 +188,11 @@ public class EditUserActivity extends AppCompatActivity {
         });
         return;
     }
+
+    public void deleteForumEventsDb(String FID) {
+        collectionPath = "ForumPosts";
+        // Makes a call to the database which handles it
+        database.deleteData(collectionPath, FID, TAG);
+    }
+
 }

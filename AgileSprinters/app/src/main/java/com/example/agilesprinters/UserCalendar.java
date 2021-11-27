@@ -362,7 +362,7 @@ public class UserCalendar extends AppCompatActivity
         data.put("Opt_comment", instance.getOpt_comment());
         data.put("Duration", String.valueOf(instance.getDuration()));
         data.put("isShared", String.valueOf(instance.getShared()));
-        data.put("Opt_Loc", String.valueOf(instance.getOptLoc()));
+        data.put("Opt_Loc", instance.getOptLoc());
 
         // Makes a call to the database which handles it
         collectionPath = "HabitEvents";
@@ -389,6 +389,7 @@ public class UserCalendar extends AppCompatActivity
                         data.put("UID", instance.getUID());
                         data.put("Opt Cmt", instance.getOpt_comment());
                         data.put("EID", instance.getEID());
+                        data.put("Opt_Loc", instance.getDisplayLocStr(new Geocoder(getApplicationContext(), Locale.getDefault())));
 
                         // Makes a call to the database which handles it
                         database.updateData("ForumPosts", doc.getId(), data, TAG);
@@ -646,6 +647,7 @@ public class UserCalendar extends AppCompatActivity
         data.put("EID", eventToShare.getEID());
         data.put("FID", FID);
         data.put("IID", eventToShare.getIID());
+        data.put("Opt_Loc", eventToShare.getDisplayLocStr((new Geocoder(this, Locale.getDefault()))));
 
         collectionPath = "ForumPosts";
         database.addData(collectionPath, FID, data, "Forum Post");
