@@ -2,24 +2,24 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
     <TextView
         android:id="@+id/EventContent"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
+        android:layout_margin="3dp"
         android:paddingTop="10dp"
         android:text="Title"
         android:textSize="22sp"/>
 
     <TextView
         android:id="@+id/duration_content"
-        android:layout_width="wrap_content"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
+        android:layout_margin="3dp"
         android:paddingTop="10dp"
         android:text="Duration"
         android:textSize="22sp"/>
@@ -27,9 +27,9 @@
 
     <TextView
         android:id="@+id/location_content"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
+        android:layout_margin="3dp"
         android:paddingTop="10dp"
         android:text="Location"
         android:textSize="22sp"/>
@@ -37,10 +37,12 @@
 
     <TextView
         android:id="@+id/privacy_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_margin="10dp"
-        android:visibility="invisible"
-        android:background="@drawable/ic_text_view_border"/>
+        android:layout_margin="3dp"
+        android:background="@drawable/ic_text_view_border"
+        android:gravity="center"
+        android:text="Private Event"
+        android:visibility="invisible" />
 
 </LinearLayout>

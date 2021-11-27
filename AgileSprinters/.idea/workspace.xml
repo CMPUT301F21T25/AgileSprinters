@@ -16,9 +16,10 @@
     <list default="true" id="6f26c80e-617b-489c-9600-b8d6d9367cbf" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/habitListAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/habitListAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/home_list_content.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/home_list_content.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/completedEventsListAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/completedEventsListAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/editHabitEventFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/agilesprinters/editHabitEventFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/completed_habits_content.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/completed_habits_content.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/edit_habit_event_fragment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/edit_habit_event_fragment.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,6 +63,7 @@
     <property name="android-custom-viewC:/Gradle/gradle-7.3/caches/modules-2/files-2.1/com.google.android.material/material/1.4.0/51035a8f6342c20d4d8f242d100e6f25e0c271ac/material-1.4.0-sources.jar!/com/google/android/material/button/MaterialButton.java_SELECTED" value="MaterialButton" />
     <property name="android-custom-viewC:/Users/Leen/AppData/Local/Android/Sdk/sources/android-31/android/view/View.java_SELECTED" value="View" />
     <property name="dart.analysis.tool.window.visible" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../ajerlaMedBook" />
     <property name="memory.settings.postsync.last.time.stamp" value="1636667264616" />
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>

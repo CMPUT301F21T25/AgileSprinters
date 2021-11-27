@@ -61,7 +61,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="84dp"
         android:orientation="horizontal">
 
 
@@ -82,6 +82,33 @@
             android:layout_width="83dp"
             android:layout_height="64dp"
             app:srcCompat="@drawable/ic_location" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/delete_image"
+                android:layout_width="110dp"
+                android:layout_height="42dp"
+                android:text="Del image"
+                android:layout_weight="10"
+                android:layout_gravity="center"
+                android:textSize="10sp"
+                android:visibility="invisible"/>
+
+            <Button
+                android:id="@+id/delete_location"
+                android:layout_width="110dp"
+                android:layout_height="42dp"
+                android:text="Del location"
+                android:layout_gravity="center"
+                android:layout_weight="10"
+                android:textSize="10sp"
+                android:visibility="invisible"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 

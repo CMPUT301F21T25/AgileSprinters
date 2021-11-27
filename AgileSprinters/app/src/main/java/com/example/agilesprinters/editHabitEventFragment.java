@@ -136,8 +136,18 @@ public class editHabitEventFragment extends DialogFragment {
         ImageView addCamPhotoBtn = view.findViewById(R.id.add_Cam_Photo);
         ImageView addGalPhotoBtn = view.findViewById(R.id.add_Gal_Photo);
         ImageView addLocBtn = view.findViewById(R.id.add_location);
+        Button deleteImageBtn = view.findViewById(R.id.delete_image);
+        Button deleteLocBtn = view.findViewById(R.id.delete_location);
 
         setVisibilityForShareButton(habitInstance.getHID(), shareButton);
+        setVisibilityForDeleteImageButton(habitInstance.getEID(), deleteImageBtn, deleteLocBtn);
+
+        EID = habitInstance.getEID();
+        UID = habitInstance.getUID();
+        HID = habitInstance.getHID();
+        FID = habitInstance.getFID();
+        IID = habitInstance.getIID();
+        isShared = habitInstance.getShared();
 
         //getIID(habitInstance);
         setImageToDialog(habitInstance.getIID());
@@ -165,12 +175,19 @@ public class editHabitEventFragment extends DialogFragment {
             }
         });
 
-        EID = habitInstance.getEID();
-        UID = habitInstance.getUID();
-        HID = habitInstance.getHID();
-        FID = habitInstance.getFID();
-        IID = habitInstance.getIID();
-        isShared = habitInstance.getShared();
+        deleteImageBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                IID = null;
+            }
+        });
+
+        deleteLocBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                habitInstance.setOptLoc("");
+            }
+        });
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setView(view);
@@ -231,7 +248,6 @@ public class editHabitEventFragment extends DialogFragment {
 
                 // If everything has been filled out, call the listener and send the edited
                 // habit back to the Home class and dismiss the dialog.
-                System.out.println("Checking ahain " + IID);
                 if (readyToClose) {
                     listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date,
                             Integer.parseInt(duration), IID, FID, isShared, habitInstance.getOptLoc()), bitmapOfImg);
@@ -278,6 +294,26 @@ public class editHabitEventFragment extends DialogFragment {
                             .matches("Private")) {
                         shareButton.setVisibility(View.VISIBLE);
                     }
+                }
+            }
+        });
+    }
+
+    private void setVisibilityForDeleteImageButton(String EID, Button delImageBtn, Button delLocBtn) {
+        db.collection("HabitEvents").addSnapshotListener((value, error) -> {
+            for (QueryDocumentSnapshot doc : value) {
+                if (doc.getId().equals(EID)) {
+                    System.out.println();
+                    String event_iid = (String)doc.getData().get("IID");
+                    String event_location = (String)doc.getData().get("Opt_Loc");
+                    if ( (event_iid != null) ) {
+                        delImageBtn.setVisibility(View.VISIBLE);
+                    }
+
+                    if (!event_location.matches("")) {
+                        delLocBtn.setVisibility(View.VISIBLE);
+                    }
+
                 }
             }
         });
@@ -376,50 +412,50 @@ public class editHabitEventFragment extends DialogFragment {
     }
 
 
-    /**
-     * This function overrides the buttons clicked in order to only allow the dialog to be dismissed
-     * when all requirements have been met.
-     */
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        final AlertDialog dialog = (AlertDialog) getDialog();
-        if (dialog != null) {
-            Button positive = dialog.getButton(Dialog.BUTTON_POSITIVE);
-
-            positive.setOnClickListener(view -> {
-                // Boolean tracks when the all the fields have been filled out. Will turn to false
-                // if anything has been left blank.
-                boolean readyToClose = true;
-
-                String comment = optional_comment.getText().toString();
-                String date = input_date.getText().toString();
-                String duration = input_duration.getText().toString();
-
-                if (optional_comment.length() > 20) {
-                    readyToClose = false;
-                    optional_comment.setError("This field cannot have more than 20 chars");
-                }
-
-                if (date.matches("")) {
-                    readyToClose = false;
-                    input_date.setError("This field cannot be blank");
-                }
-
-                if (duration.matches("")) {
-                    readyToClose = false;
-                    input_duration.setError("This field cannot be blank");
-                }
-
-                // If everything has been filled out, call the listener and send the edited
-                // habit back to the Home class and dismiss the dialog.
-                if (readyToClose) {
-                    listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date,
-                            Integer.parseInt(duration), IID, FID, isShared, habitInstance.getOptLoc()), bitmapOfImg);
-                    dialog.dismiss();
-                }
-            });
-        }
-    }
+//    /**
+//     * This function overrides the buttons clicked in order to only allow the dialog to be dismissed
+//     * when all requirements have been met.
+//     */
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//
+//        final AlertDialog dialog = (AlertDialog) getDialog();
+//        if (dialog != null) {
+//            Button positive = dialog.getButton(Dialog.BUTTON_POSITIVE);
+//
+//            positive.setOnClickListener(view -> {
+//                // Boolean tracks when the all the fields have been filled out. Will turn to false
+//                // if anything has been left blank.
+//                boolean readyToClose = true;
+//
+//                String comment = optional_comment.getText().toString();
+//                String date = input_date.getText().toString();
+//                String duration = input_duration.getText().toString();
+//
+//                if (optional_comment.length() > 20) {
+//                    readyToClose = false;
+//                    optional_comment.setError("This field cannot have more than 20 chars");
+//                }
+//
+//                if (date.matches("")) {
+//                    readyToClose = false;
+//                    input_date.setError("This field cannot be blank");
+//                }
+//
+//                if (duration.matches("")) {
+//                    readyToClose = false;
+//                    input_duration.setError("This field cannot be blank");
+//                }
+//
+//                // If everything has been filled out, call the listener and send the edited
+//                // habit back to the Home class and dismiss the dialog.
+//                if (readyToClose) {
+//                    listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date,
+//                            Integer.parseInt(duration), IID, FID, isShared, habitInstance.getOptLoc()), bitmapOfImg);
+//                    dialog.dismiss();
+//                }
+//            });
+//        }
+//    }
 }
