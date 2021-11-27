@@ -174,4 +174,5 @@
     <string name="HABIT_LIST_SIZE">listSize</string>
     <string name="POSITION_IN_LIST_TEXTVIEW">Position in list:</string>
     <string name="MAPS_API_KEY">AIzaSyDyIM48F5UtaZu5P-hKBVHpLPIj_FkKN7Q</string>
+    <string name="PROGRESS_NUMBER">Progress number</string>
 </resources>

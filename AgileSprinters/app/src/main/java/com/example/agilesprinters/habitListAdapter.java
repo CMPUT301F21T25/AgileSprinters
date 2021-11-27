@@ -68,6 +68,7 @@ public class habitListAdapter extends ArrayAdapter<Habit> {
         TextView titleText = view.findViewById(R.id.habit_list_title_textView);
         TextView reasonText = view.findViewById(R.id.habit_list_reason_textView);
         ProgressBar progressSoFar = view.findViewById(R.id.habit_list_progress_bar);
+        TextView progressInNum = view.findViewById(R.id.progress_number);
 
         // Calculate progress
 
@@ -94,11 +95,6 @@ public class habitListAdapter extends ArrayAdapter<Habit> {
             }
         }
 
-//        System.out.println("Overall progress " + habit.getOverallProgress());
-//        System.out.println("Total events are " + totalEvents);
-//        System.out.println("Progress is " + progress);
-//        System.out.println("Progress percent " + progressPercent);
-
         // Calculating the progress percentage
         double progress = (double) habit.getOverallProgress() / (totalEvents);
         double progressPercent = progress * 100;
@@ -109,6 +105,7 @@ public class habitListAdapter extends ArrayAdapter<Habit> {
         titleText.setText(habit.getTitle());
         reasonText.setText(habit.getReason());
         progressSoFar.setProgress((int) progressPercent);
+        progressInNum.setText(String.valueOf((int) progressPercent)+"%");
 
         return view;
     }
