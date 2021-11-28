@@ -76,7 +76,7 @@ public class SearchForUserAndroidTest {
         solo.assertCurrentActivity("Wrong", Login.class);
 
         // check to make sure the activity is switched to calendar activity
-        solo.clickOnView(solo.getView(R.id.forumn));
+        solo.clickOnView(solo.getView(R.id.forum));
         assertTrue(solo.waitForActivity(ForumManager.class));
 
         solo.clickOnView(solo.getView(R.id.users_list));

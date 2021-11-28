@@ -25,7 +25,7 @@ public class NotificationsUnitTest {
         NotificationTestList notificationList = new NotificationTestList();
 
         currentUser = mockUser();
-        currentUser.setUser("Current User");
+        currentUser.setUserID("Current User");
         notificationList.addNotification(mockUser(), currentUser);
 
         return notificationList;
@@ -54,7 +54,7 @@ public class NotificationsUnitTest {
         assertTrue(notificationTestList.getRequestingUsers().size() == 1);
 
         User user = mockUser();
-        user.setUser("Requesting User 2");
+        user.setUserID("Requesting User 2");
         notificationTestList.addNotification(user, currentUser);
 
         assertTrue(notificationTestList.getRequestingUsers().size() == 2);
@@ -70,7 +70,7 @@ public class NotificationsUnitTest {
         assertTrue(notificationTestList.getRequestingUsers().size() == 1);
 
         User user = mockUser();
-        user.setUser("Requesting User 2");
+        user.setUserID("Requesting User 2");
         notificationTestList.addNotification(user, currentUser);
 
         assertTrue(notificationTestList.getRequestingUsers().size() == 2);
@@ -108,7 +108,7 @@ public class NotificationsUnitTest {
         assertTrue(notificationTestList.getRequestingUsers().size() == 1);
 
         User user = mockUser();
-        user.setUser("Requesting User 2");
+        user.setUserID("Requesting User 2");
 
         assertThrows(IllegalArgumentException.class, () -> {
            notificationTestList.acceptUser(user, currentUser);
@@ -148,7 +148,7 @@ public class NotificationsUnitTest {
         assertTrue(notificationTestList.getRequestingUsers().size() == 1);
 
         User user = mockUser();
-        user.setUser("Requesting User 2");
+        user.setUserID("Requesting User 2");
 
         assertThrows(IllegalArgumentException.class, () -> {
             notificationTestList.declineUser(user, currentUser);
