@@ -91,6 +91,8 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
         bottomNavigationView.setSelectedItemId(R.id.home);
 
+        db = FirebaseFirestore.getInstance();
+
         habitList = findViewById(R.id.habit_list);
         followingTextView = findViewById(R.id.following);
         followersTextView = findViewById(R.id.followers);
@@ -107,19 +109,20 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             UID = user.getUser();
             nameStr = user.getFirstName()+ " " + user.getLastName();
 
-            followersCount = String.valueOf(user.getFollowersList().size());
-            followingCount = String.valueOf(user.getFollowingList().size());
+            getFollowersFollowingCount();
+
+//            followersCount = String.valueOf(user.getFollowersList().size());
+//            followingCount = String.valueOf(user.getFollowingList().size());
         }
 
-        setTextFields(followingCount, followersCount);
 
         Button homeUserButton = findViewById(R.id.homeUserButton);
         homeUserButton.setText(nameStr.substring(0,1));
-        followerCountTextView.setText(followersCount);
-        followingCountTextView.setText(followingCount);
+        getFollowersFollowingCount();
+//        followerCountTextView.setText(followersCount);
+//        followingCountTextView.setText(followingCount);
 
 
-        db = FirebaseFirestore.getInstance();
         CollectionReference habitCollectionReference = db.collection("Habit");
         /**
          * This is a database listener. Each time the Home page is created, it will read the contents
@@ -261,6 +264,19 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
     }
 
+    private void getFollowersFollowingCount() {
+        db.collection("users").addSnapshotListener((value, error) -> {
+            for (QueryDocumentSnapshot doc : value) {
+                if (user.getUserID().matches(doc.getId())) {
+                    followersCount = String.valueOf(((ArrayList<String>)doc.getData().get("followers")).size());
+                    followingCount = String.valueOf(((ArrayList<String>)doc.getData().get("following")).size());
+                    followerCountTextView.setText(followersCount);
+                    followingCountTextView.setText(followingCount);
+                }
+            }
+        });
+    }
+
     /**
      * This function passes a habit to be added to the list once the user clicks add on the
      * addHabitFragment dialog fragment
@@ -302,9 +318,6 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     public void follow(View view) {
     }
 
-    private void setTextFields(String followingCount, String followersCount) {
-
-    }
 
     /**
      * This function adds a habit to the database.

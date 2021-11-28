@@ -16,6 +16,8 @@ import androidx.annotation.Nullable;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -26,6 +28,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * This class provides a custom layout for items in the forum list on the forum page.
@@ -35,6 +38,7 @@ import java.util.Date;
 public class forumPostList extends ArrayAdapter<Forum> {
     private final ArrayList<Forum> forumPost;
     private final Context context;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     /**
      * This function initializes the array list of forum events and the context of the screen.
@@ -80,19 +84,22 @@ public class forumPostList extends ArrayAdapter<Forum> {
 
         // Setting the date of the event
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-        LocalDate startDate = LocalDate.parse(forumItem.getEventDate(), formatter);
-        String formattedDate = startDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG));
+        LocalDate eventDate = LocalDate.parse(forumItem.getEventDate(), formatter);
+        String formattedDate = eventDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG));
 
         event_date.setText(formattedDate);
 
         // Check if optional comment is empty or not and pass the content to TextView accordingly
         if (!forumItem.getComment().matches("")) {
             opt_cmt.setText(forumItem.getComment());
+        } else {
+            String day = eventDate.getDayOfWeek().name().toLowerCase(Locale.ROOT);
+            opt_cmt.setText(day.substring(0,1).toUpperCase(Locale.ROOT) + day.substring(1) + " activity");
         }
 
         // If present, setting the image to the forum event in UI
         setImageToDialog(forumItem.getImage(), image);
-        System.out.println("Printing item "+forumItem.getFirstName());
+
         // If present, setting the location to the forum event in UI
         if (!forumItem.getLocation().matches("")) {
             location.setVisibility(View.VISIBLE);

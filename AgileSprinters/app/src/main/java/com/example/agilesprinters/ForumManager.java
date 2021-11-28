@@ -19,7 +19,19 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The forum manager class is an activity which displays the habit events completed by the user in
@@ -47,7 +59,7 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
 
     // Variables for forum page
     ArrayAdapter<Forum> forumAdapter;
-    final private ArrayList<Forum> forumDataList = new ArrayList<>();;
+    private ArrayList<Forum> forumDataList = new ArrayList<>();
     ArrayList<String> userTempList;
 
     // Variables used to store the content of a forum event
@@ -57,6 +69,7 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
     private ArrayList<String> followersList = new ArrayList<>();
     private ArrayList<String> followingList = new ArrayList<>();
     private ArrayList<String> followRequestList = new ArrayList<>();
+    private HashMap<Forum, LocalDate> arranging= new HashMap<Forum, LocalDate>();
 
     /**
      * This function creates the UI on the screen and listens for user input
@@ -69,12 +82,14 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
         getSupportActionBar().hide();
         setContentView(R.layout.activity_forum_manager);
 
+        db = FirebaseFirestore.getInstance();
+
         // Gets the user information of the logged in user
         if (UID == null) {
             user = (User) getIntent().getSerializableExtra("user");
             UID = user.getUser();
-            userTempList = user.getFollowingList();
-            userTempList.add(UID);
+            setTempList();
+            //userTempList.add(UID);
         }
 
         // connecting to the bottom navigation bar xml file
@@ -87,7 +102,6 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
         users_list = findViewById(R.id.users_list);
 
         ListView forumList = findViewById(R.id.forumListView);
-        db = FirebaseFirestore.getInstance();
 
         screenSetup();
         buildUsersList();
@@ -122,6 +136,18 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
         });
     }
 
+    private void setTempList() {
+        db.collection("users").addSnapshotListener((value, error) -> {
+            for (QueryDocumentSnapshot doc : value) {
+                if (user.getUserID().matches(doc.getId())) {
+                    userTempList = (ArrayList<String>) doc.getData().get("following");
+                    userTempList.add(user.getUserID());
+                    user.setFollowingList(userTempList);
+                }
+            }
+        });
+    }
+
     /**
      * This function gets all the users in the database i.e., using the app
      * and displays it in the search bar
@@ -150,14 +176,13 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
     }
 
     /**
-     * This function sets the forum events on the UI
-     * according to the completed habit events of the user and its following users
+     * This function gets the forum events according to the completed habit events
+     * of the user and its following users
      */
     public void screenSetup() {
         db.collection("ForumPosts").addSnapshotListener((value, error) -> {
             forumDataList.clear();
             for (QueryDocumentSnapshot doc : value) {
-                System.out.println("IDS are " + (String) doc.getData().get("UID"));
                 if(userTempList.contains((String) doc.getData().get("UID"))){
                     firstName = (String) doc.getData().get("First Name");
                     lastName = (String) doc.getData().get("Last Name");
@@ -166,18 +191,43 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
                     optComment = (String) doc.getData().get("Opt Cmt");
                     imageId = (String) doc.getData().get("IID");
                     location = (String) doc.getData().get("Opt_Loc");
-                    System.out.println("Printing while adding "+location);
-                    forumDataList.add(new Forum(firstName, lastName, eventDate, duration, optComment, imageId, location));
-                    System.out.println("Array list1 is " + forumDataList);
+                    Forum event = new Forum(firstName, lastName, eventDate, duration, optComment, imageId, location);
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+                    LocalDate date = LocalDate.parse(eventDate, formatter);
+                    arranging.put(event, date);
                 }
             }
-            forumAdapter.notifyDataSetChanged();
-            if(userTempList.size() > 0){
-                userTempList.remove(userTempList.size()-1);
-            }
-
+            screenDisplay();
         });
+    }
 
+    /**
+     * This functions sets all the events on the UI according in the order
+     * of newer events first and older events at the end
+     */
+    private void screenDisplay() {
+        // Sorts all the events by date
+        HashMap<Forum, LocalDate> sorted = arranging
+                .entrySet()
+                .stream()
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .collect(
+                        Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                                LinkedHashMap::new));
+
+        // Gets all the forum events according to the sorted dates
+        Set<Forum> keys = sorted.keySet();
+        ArrayList<Forum> keysList = new ArrayList<>(keys);
+
+        // Adds all the events to the data list
+        for (Forum event: keysList) {
+            forumDataList.add(event);
+        }
+        forumAdapter.notifyDataSetChanged();
+
+        if(userTempList.size() > 0){
+            userTempList.remove(userTempList.size()-1);
+        }
     }
 
     /**
