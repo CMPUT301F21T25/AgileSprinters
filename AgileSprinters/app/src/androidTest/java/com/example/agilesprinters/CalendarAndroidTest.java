@@ -394,6 +394,8 @@ public class CalendarAndroidTest {
     @Test
     public void testDeleteHabitEvent() {
 
+        testAddEvent();
+
         // check to make sure the activity is switched to calendar activity
         solo.clickOnView(solo.getView(R.id.calendar));
         assertTrue(solo.waitForActivity(UserCalendar.class));
