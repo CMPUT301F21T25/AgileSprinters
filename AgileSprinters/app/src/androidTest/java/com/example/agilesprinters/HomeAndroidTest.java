@@ -1,10 +1,11 @@
 package com.example.agilesprinters;
-import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
@@ -18,10 +19,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 /**
- * This class provides testing for the home activity. Please note that tests must be ran individually
- * and the cache must be cleared between each for them to work due to the app automatically going
- * to the home page after a single sign in on the device.
+ * This class provides testing for the home activity.
  *
  * @author Hannah Desmarais
  */
@@ -42,18 +44,10 @@ public class HomeAndroidTest {
     }
 
     /**
-     * Gets the Activity
-     */
-    @Test
-    public void stage1_start() {
-        Activity activity = rule.getActivity();
-    }
-
-    /**
      * This test will check to make sure that when a habit is added it shows up in the list
      */
     @Test
-    public void stage2_checkHabitList(){
+    public void stage1_checkHabitList(){
         //Login to test account
         solo.assertCurrentActivity("Wrong Activity", Login.class);
         solo.enterText((EditText) solo.getView(R.id.email), "test@email.com");
@@ -131,7 +125,7 @@ public class HomeAndroidTest {
      * This test will make sure that a habit can be edited and the edited version will show in the list
      */
     @Test
-    public void stage3_heckEditViewList(){
+    public void stage2_checkEditViewList(){
         //Login to test account
         solo.assertCurrentActivity("Wrong Activity", Login.class);
         solo.enterText((EditText) solo.getView(R.id.email), "test@email.com");
@@ -171,13 +165,13 @@ public class HomeAndroidTest {
         //will not close if save changes is pressed
         solo.waitForDialogToOpen(1000);
         solo.clearEditText((EditText) solo.getView(R.id.view_edit_habit_reason_editText));
-        solo.clickOnButton("Save Changes");
+        solo.clickOnButton("Save");
         assertFalse(solo.waitForDialogToClose(1000));
 
         //make sure dialog does not close if reason is made blank
         solo.enterText((EditText) solo.getView(R.id.view_edit_habit_reason_editText), "Run 1.5 hours per week");
         solo.clearEditText((EditText) solo.getView(R.id.view_edit_habit_title_editText));
-        solo.clickOnButton("Save Changes");
+        solo.clickOnButton("Save");
         assertFalse(solo.waitForDialogToClose(1000));
 
         //make sure dialog doesn't close if days are made blank
@@ -185,13 +179,13 @@ public class HomeAndroidTest {
         solo.clickOnView(solo.getView(R.id.view_edit_button_monday));
         solo.clickOnView(solo.getView(R.id.view_edit_button_wednesday));
         solo.clickOnView(solo.getView(R.id.view_edit_button_friday));
-        solo.clickOnButton("Save Changes");
+        solo.clickOnButton("Save");
         assertFalse(solo.waitForDialogToClose(1000));
 
         solo.clickOnView(solo.getView(R.id.view_edit_button_monday));
         solo.clickOnView(solo.getView(R.id.view_edit_button_wednesday));
         solo.clickOnView(solo.getView(R.id.view_edit_button_friday));
-        solo.clickOnButton("Save Changes");
+        solo.clickOnButton("Save");
         solo.waitForDialogToClose(1000);
 
         //make sure reason was actually changed and shows in the list
@@ -206,7 +200,7 @@ public class HomeAndroidTest {
      * This test makes sure that a user can delete an item in the list.
      */
     @Test
-    public void stage4_DdeleteHabit(){
+    public void stage3_deleteHabit(){
         //Login to test account
         solo.assertCurrentActivity("Wrong Activity", Login.class);
         solo.enterText((EditText) solo.getView(R.id.email), "test@email.com");
@@ -259,6 +253,171 @@ public class HomeAndroidTest {
         assertFalse(solo.waitForText("Running", 1, 1000));
     }
 
+    /**
+     * This is a test that makes sure items are sorted properly when an item position is manually
+     * changed.
+     */
+    @Test
+    public void stage4_checkHabitPositionChange(){
+        //Login to test account
+        solo.assertCurrentActivity("Wrong Activity", Login.class);
+        solo.enterText((EditText) solo.getView(R.id.email), "test@email.com");
+        solo.enterText((EditText) solo.getView(R.id.password), "testPassword");
+        solo.clickOnView(solo.getView(R.id.loginBtn));
+        solo.assertCurrentActivity("Wrong Activity", Home.class);
+
+        //Create "Running" habit
+        solo.clickOnView(solo.getView(R.id.add_habit_button));
+
+        solo.waitForDialogToOpen(1000);
+        solo.enterText((EditText) solo.getView(R.id.habit_title_editText), "Running");
+        solo.enterText((EditText) solo.getView(R.id.habit_reason_editText), "Run 3 hrs each week");
+        solo.clickOnView(solo.getView(R.id.privacy_spinner));
+        solo.pressSpinnerItem(0, 0);
+
+        assertTrue(solo.isSpinnerTextSelected(0, "Public"));
+        solo.clickOnView(solo.getView(R.id.Date));
+
+        solo.waitForDialogToOpen(1000);
+        solo.setDatePicker(0, 2021, 11,10);
+        solo.clickOnButton("OK");
+        solo.waitForDialogToClose(1000);
+
+        solo.clickOnView(solo.getView(R.id.button_monday));
+        solo.clickOnView(solo.getView(R.id.button_wednesday));
+        solo.clickOnView(solo.getView(R.id.button_friday));
+
+        solo.clickOnButton("Add");
+        solo.waitForDialogToClose(1000);
+
+        assertTrue(solo.waitForText("Running", 1, 1000));
+
+        //Create "Clean Kitchen" habit
+        solo.clickOnView(solo.getView(R.id.add_habit_button));
+
+        solo.waitForDialogToOpen(1000);
+        solo.enterText((EditText) solo.getView(R.id.habit_title_editText), "Clean Kitchen");
+        solo.enterText((EditText) solo.getView(R.id.habit_reason_editText), "Chores");
+        solo.clickOnView(solo.getView(R.id.privacy_spinner));
+        solo.pressSpinnerItem(0, 0);
+
+        assertTrue(solo.isSpinnerTextSelected(0, "Public"));
+        solo.clickOnView(solo.getView(R.id.Date));
+
+        solo.waitForDialogToOpen(1000);
+        solo.setDatePicker(0, 2021, 11,10);
+        solo.clickOnButton("OK");
+        solo.waitForDialogToClose(1000);
+
+        solo.clickOnView(solo.getView(R.id.button_friday));
+
+        solo.clickOnButton("Add");
+        solo.waitForDialogToClose(1000);
+
+        assertTrue(solo.waitForText("Clean Kitchen", 1, 1000));
+
+        //Create "Swimming" habit
+        solo.clickOnView(solo.getView(R.id.add_habit_button));
+
+        solo.waitForDialogToOpen(1000);
+        solo.enterText((EditText) solo.getView(R.id.habit_title_editText), "Swimming");
+        solo.enterText((EditText) solo.getView(R.id.habit_reason_editText), "Fitness");
+        solo.clickOnView(solo.getView(R.id.privacy_spinner));
+        solo.pressSpinnerItem(0, 0);
+
+        assertTrue(solo.isSpinnerTextSelected(0, "Public"));
+        solo.clickOnView(solo.getView(R.id.Date));
+
+        solo.waitForDialogToOpen(1000);
+        solo.setDatePicker(0, 2021, 11,10);
+        solo.clickOnButton("OK");
+        solo.waitForDialogToClose(1000);
+
+        solo.clickOnView(solo.getView(R.id.button_friday));
+
+        solo.clickOnButton("Add");
+        solo.waitForDialogToClose(1000);
+
+        assertTrue(solo.waitForText("Swimming", 1, 1000));
+
+        //Check that the habit in the first position will stay if the edit fragment is cancelled
+        solo.clickInList(1);
+
+        solo.waitForDialogToOpen(1000);
+        assertTrue(solo.isSpinnerTextSelected("1"));
+        solo.clickOnView(solo.getView(R.id.view_edit_position_spinner));
+        solo.pressMenuItem(3);
+        assertTrue(solo.isSpinnerTextSelected("2"));
+
+
+        solo.clickOnButton("Cancel");
+        solo.waitForDialogToClose(1000);
+
+        ListView list = solo.getCurrentViews(ListView.class).get(0);
+        TextView habit = (TextView) list.getChildAt(0).findViewById(R.id.habit_list_title_textView);
+        String title = (String) habit.getText();
+
+        assertTrue(title.equals("Running"));
+
+        //Check that a habit in the list can move down
+        solo.clickInList(1);
+
+        solo.waitForDialogToOpen(1000);
+        assertTrue(solo.isSpinnerTextSelected("1"));
+        solo.clickOnView(solo.getView(R.id.view_edit_position_spinner));
+        solo.pressMenuItem(6);
+        assertTrue(solo.isSpinnerTextSelected("3"));
+
+        solo.clickOnButton("Save");
+        solo.waitForDialogToClose(1000);
+
+        list = solo.getCurrentViews(ListView.class).get(0);
+        habit = (TextView) list.getChildAt(0).findViewById(R.id.habit_list_title_textView);
+        title = (String) habit.getText();
+        assertTrue(title.equals("Clean Kitchen"));
+
+        list = solo.getCurrentViews(ListView.class).get(0);
+        habit = (TextView) list.getChildAt(2).findViewById(R.id.habit_list_title_textView);
+        title = (String) habit.getText();
+        assertTrue(title.equals("Running"));
+
+        //Check that a habit may move up in list
+        solo.clickInList(2);
+
+        solo.waitForDialogToOpen(1000);
+        assertTrue(solo.isSpinnerTextSelected("2"));
+        solo.clickOnView(solo.getView(R.id.view_edit_position_spinner));
+        solo.pressMenuItem(0, 1);
+        assertTrue(solo.isSpinnerTextSelected("1"));
+
+        solo.clickOnButton("Save");
+        solo.waitForDialogToClose(1000);
+
+        list = solo.getCurrentViews(ListView.class).get(0);
+        habit = (TextView) list.getChildAt(1).findViewById(R.id.habit_list_title_textView);
+        title = (String) habit.getText();
+        assertTrue(title.equals("Clean Kitchen"));
+
+        list = solo.getCurrentViews(ListView.class).get(0);
+        habit = (TextView) list.getChildAt(0).findViewById(R.id.habit_list_title_textView);
+        title = (String) habit.getText();
+        assertTrue(title.equals("Swimming"));
+
+        //delete all the habits
+        for(int i = 0; i < 3; i++){
+            //long click on habit
+            solo.clickLongInList(1);
+
+            //wait for deleteHabitFragment to open
+            solo.waitForDialogToOpen(1000);
+            solo.clickOnButton("Yes");
+            solo.waitForDialogToClose(1000);
+        }
+
+        assertFalse(solo.waitForText("Running",1, 1000));
+        assertFalse(solo.waitForText("Clean Kitchen", 1, 1000));
+        assertFalse(solo.waitForText("Swimming", 1, 1000));
+    }
 
 
     /**
@@ -266,6 +425,13 @@ public class HomeAndroidTest {
      */
     @After
     public void tearDown() {
+        if(!solo.getCurrentActivity().equals(Home.class)){
+            solo.clickOnView(solo.getView(R.id.home));
+        }
+
+        solo.clickOnView(solo.getView(R.id.homeUserButton));
+        solo.waitForActivity(EditUserActivity.class);
+        solo.clickOnView(solo.getView(R.id.signOutbutton));
         solo.finishOpenedActivities();
     }
 }

@@ -40,7 +40,7 @@ public class homeUnitTest {
         weekdays.put("SUNDAY", false);
 
         Habit habit = new Habit("Test0","Test0","Running","Get fit",
-                "Date", weekdays, "Public", 0, 0);
+                "Date", weekdays, "Public", 1, 0);
 
         return habit;
     }
@@ -63,7 +63,7 @@ public class homeUnitTest {
         weekdays.put("SUNDAY", false);
 
         Habit habit = new Habit("Test", "Test", "Running", "Get Fit",
-                "Date", weekdays, "Public", 0, 0);
+                "Date", weekdays, "Public" ,0,1);
         habitList.addHabit(habit);
         assertEquals(2, habitList.getHabits().size());
         assertTrue(habitList.getHabits().contains(habit));
@@ -86,7 +86,7 @@ public class homeUnitTest {
         weekdays.put("SUNDAY", false);
 
         Habit habit = new Habit("Test", "Test", "Running", "Get Fit",
-                "Date", weekdays, "Public", 0, 0);
+                "Date", weekdays, "Public", 0,1);
 
         habitList.editHabit(0, habit);
         assertEquals(1, habitList.getHabits().size());
@@ -113,7 +113,7 @@ public class homeUnitTest {
         weekdays.put("SUNDAY", false);
 
         Habit habit = new Habit("Test", "Test", "Running", "Get Fit",
-                "Date", weekdays, "Public", 0, 0);
+                "Date", weekdays, "Public",1,1);
         //list is empty so test that you cannot edit an empty list
         assertThrows(IllegalArgumentException.class, () -> {
             habitList.editHabit(0, habit);
@@ -128,6 +128,9 @@ public class homeUnitTest {
         });
     }
 
+    /**
+     * This is a test which will make sure that a habit can be deleted from the list.
+     */
     @Test
     void testDeleteHabit(){
         HabitTestList habitList = mockHabitList();
@@ -137,6 +140,10 @@ public class homeUnitTest {
         assertEquals(0, habitList.getHabits().size());
     }
 
+    /**
+     * This test will make sure that exceptions are thrown when appropriate while attempting to
+     * delete a habit.
+     */
     @Test
     void testDeleteHabitException(){
         HabitTestList habitList = mockHabitList();
@@ -152,7 +159,7 @@ public class homeUnitTest {
         weekdays.put("SUNDAY", false);
 
         Habit habit = new Habit("Test", "Test", "Running", "Get Fit",
-                "Date", weekdays, "Public", 0, 0);
+                "Date", weekdays, "Public",0,1);
 
         //test that we cannot delete a habit that does not exist in the list
         assertThrows(IllegalArgumentException.class, () -> {
@@ -164,6 +171,103 @@ public class homeUnitTest {
         //check that we cannot delete anything from an empty list
         assertThrows(IllegalArgumentException.class, () -> {
             habitList.deleteHabit(habit);
+        });
+    }
+
+    /**
+     * This is a method which wil test whether a habit can be moved to a new location and that
+     * the other items will not become scrambled in the process.
+     */
+    @Test
+    void testReorderHabit() {
+        HabitTestList habitList = mockHabitList();
+        assertTrue(habitList.getHabits().size() == 1);
+
+        Habit habit2 = mockHabit();
+        habit2.setListPosition(1);
+        habit2.setTitle("Swimming");
+        habitList.addHabit(habit2);
+
+        Habit habit3 = mockHabit();
+        habit3.setListPosition(2);
+        habit3.setTitle("Cleaning");
+        habitList.addHabit(habit3);
+
+        //Test that all habits are in their assigned positions
+        assertTrue(habitList.getHabits().size() == 3);
+        assertTrue(habitList.getHabits().get(0).getTitle().matches("Running"));
+        assertTrue(habitList.getHabits().get(1).getTitle().matches("Swimming"));
+        assertTrue(habitList.getHabits().get(2).getTitle().matches("Cleaning"));
+
+        //Check that a habit can move from the bottom to the top of the list
+        habitList.reorderHabit(habit3, 0);
+
+        assertTrue(habitList.getHabits().get(0).getTitle().matches("Cleaning"));
+        assertTrue(habitList.getHabits().get(1).getTitle().matches("Running"));
+        assertTrue(habitList.getHabits().get(2).getTitle().matches("Swimming"));
+
+        //Check that a habit may move from the bottom to the top of the list
+        habitList.reorderHabit(habit3, 2);
+
+        assertTrue(habitList.getHabits().get(2).getTitle().matches("Cleaning"));
+        assertTrue(habitList.getHabits().get(0).getTitle().matches("Running"));
+        assertTrue(habitList.getHabits().get(1).getTitle().matches("Swimming"));
+
+        //Check that a habit may move from the middle to the top
+        habitList.reorderHabit(habit2, 0);
+
+        assertTrue(habitList.getHabits().get(2).getTitle().matches("Cleaning"));
+        assertTrue(habitList.getHabits().get(1).getTitle().matches("Running"));
+        assertTrue(habitList.getHabits().get(0).getTitle().matches("Swimming"));
+
+        //Check that a habit may move from the middle to the bottom
+        habitList.reorderHabit(habit2, 1);
+        habitList.reorderHabit(habit2, 2);
+
+        assertTrue(habitList.getHabits().get(1).getTitle().matches("Cleaning"));
+        assertTrue(habitList.getHabits().get(0).getTitle().matches("Running"));
+        assertTrue(habitList.getHabits().get(2).getTitle().matches("Swimming"));
+    }
+
+    /**
+     * This is w method that will test that exceptions will be thrown if arguments are given
+     * that will cause the reorderHabit() method to break.
+     */
+    @Test
+    void testReorderHabitExceptions(){
+        HabitTestList habitList = mockHabitList();
+        assertTrue(habitList.getHabits().size() == 1);
+
+        habitList.deleteHabit(habitList.getHabits().get(0));
+        assertTrue(habitList.getHabits().size() == 0);
+
+        Habit habit = mockHabit();
+
+        //Check that an empty list cannot be reordered
+        assertThrows(IllegalArgumentException.class, () -> {
+            habitList.reorderHabit(habit, 0);
+        });
+
+        habitList.addHabit(habit);
+
+        Habit habit1 = mockHabit();
+        habit1.setTitle("Swimming");
+
+        //Check that a habit cannot be moved that doesn't exist in the list
+        assertThrows(IllegalArgumentException.class, () ->{
+            habitList.reorderHabit(habit1, 0);
+        });
+
+        habitList.addHabit(habit1);
+
+        //Check that a habit cannot be moved to a negative position
+        assertThrows(IndexOutOfBoundsException.class, () ->{
+           habitList.reorderHabit(habit1, -1);
+        });
+
+        //Check that a habit cannot be moved to a position that is larger than the list
+        assertThrows(IndexOutOfBoundsException.class, () -> {
+           habitList.reorderHabit(habit1, 2);
         });
     }
 }

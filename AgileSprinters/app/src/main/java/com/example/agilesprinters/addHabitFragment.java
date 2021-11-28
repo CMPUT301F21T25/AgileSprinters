@@ -103,7 +103,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
      * This function attaches the fragment to the activity and keeps track of the context of the
      * fragment so the listener knows what to listen to. Ensures that the proper methods are
      * implemented by the Home class.
-     * @param context
+     * @param context The current screen.
      */
     @Override
     public void onAttach(Context context){

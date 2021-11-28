@@ -177,18 +177,40 @@ public class Habit implements Serializable {
         this.dateToStart = dateToStart;
     }
 
+    /**
+     * This is a method which will get the overall progress of a habit.
+     *
+     * @return Returns the progress as an int.
+     */
     public int getOverallProgress() {
         return overallProgress;
     }
 
+    /**
+     * This is a method which will set the overall progress of a habit as a number given by the user.
+     *
+     * @param overallProgress The overall progress number the user wishes to set overallProgress to
+     *                        as an int.
+     */
     public void setOverallProgress(int overallProgress) {
         this.overallProgress = overallProgress;
     }
 
+    /**
+     * This method will get the position that the habit is supposed to appear in for the Home
+     * screens habit list.
+     *
+     * @return Returns the position in the list as an int.
+     */
     public int getListPosition() {
         return listPosition;
     }
 
+    /**
+     * This method will set the habit's position in the list as a value specified by the user.
+     *
+     * @param listPosition This is the new position the user wishes the habit to be in as an int.
+     */
     public void setListPosition(int listPosition) {
         this.listPosition = listPosition;
     }
