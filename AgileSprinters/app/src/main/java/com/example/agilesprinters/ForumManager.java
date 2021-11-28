@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 
 import androidx.annotation.NonNull;
@@ -61,8 +62,6 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
             userTempList.add(UID);
         }
 
-        System.out.println("User list is " + userTempList);
-
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
         bottomNavigationView.setSelectedItemId(R.id.forumn);
@@ -107,53 +106,62 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
     }
 
     private void buildUsersList() {
-        db.collection("users").addSnapshotListener((value, error) -> {
-            arrayAdapter_users.clear();
-            for (QueryDocumentSnapshot doc : value) {
-                if(!doc.getId().matches(user.getUserID())){
-                    emailId = (String) doc.getData().get("Email ID");
-                    firstName = (String)  doc.getData().get("First Name");
-                    lastName = (String) doc.getData().get("Last Name");
-                    followersList = (ArrayList<String>) doc.getData().get("followers");
-                    followingList = (ArrayList<String>) doc.getData().get("following");
-                    followRequestList = (ArrayList<String>) doc.getData().get("follow request list");
+        try {
+            db.collection("users").addSnapshotListener((value, error) -> {
+                arrayAdapter_users.clear();
+                for (QueryDocumentSnapshot doc : value) {
+                    if(!doc.getId().matches(user.getUserID())){
+                        emailId = (String) doc.getData().get("Email ID");
+                        firstName = (String)  doc.getData().get("First Name");
+                        lastName = (String) doc.getData().get("Last Name");
+                        followersList = (ArrayList<String>) doc.getData().get("followers");
+                        followingList = (ArrayList<String>) doc.getData().get("following");
+                        followRequestList = (ArrayList<String>) doc.getData().get("follow request list");
 
-                    arrayList_users.add(emailId);
-                    array_user_objects.add(
-                            new User((String) doc.getData().get("UID"), firstName, lastName,
-                                    emailId, followersList, followingList, followRequestList));
+                        arrayList_users.add(emailId);
+                        array_user_objects.add(
+                                new User((String) doc.getData().get("UID"), firstName, lastName,
+                                        emailId, followersList, followingList, followRequestList));
 
+                    }
                 }
-            }
-            arrayAdapter_users.notifyDataSetChanged();
-        });
+                arrayAdapter_users.notifyDataSetChanged();
+            });
+        } catch (Exception e) {
+            Toast.makeText(ForumManager.this, e.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     public void screenSetup() {
-
-        db.collection("ForumPosts").addSnapshotListener((value, error) -> {
-            forumDataList.clear();
-            for (QueryDocumentSnapshot doc : value) {
-                System.out.println("IDS are " + (String) doc.getData().get("UID"));
-                if(userTempList.contains((String) doc.getData().get("UID"))){
-                    firstName = (String) doc.getData().get("First Name");
-                    lastName = (String) doc.getData().get("Last Name");
-                    duration = (String) doc.getData().get("duration");
-                    eventDate = (String) doc.getData().get("Event Date");
-                    optComment = (String) doc.getData().get("Opt Cmt");
-                    imageId = (String) doc.getData().get("IID");
-                    location = (String) doc.getData().get("Opt_Loc");
-                    forumDataList.add(new Forum(firstName, lastName, eventDate, duration, optComment, imageId, location));
-                    System.out.println("Array list1 is " + forumDataList);
+        try {
+            db.collection("ForumPosts").addSnapshotListener((value, error) -> {
+                forumDataList.clear();
+                for (QueryDocumentSnapshot doc : value) {
+                    System.out.println("IDS are " + (String) doc.getData().get("UID"));
+                    if(userTempList.contains((String) doc.getData().get("UID"))){
+                        firstName = (String) doc.getData().get("First Name");
+                        lastName = (String) doc.getData().get("Last Name");
+                        duration = (String) doc.getData().get("duration");
+                        eventDate = (String) doc.getData().get("Event Date");
+                        optComment = (String) doc.getData().get("Opt Cmt");
+                        imageId = (String) doc.getData().get("IID");
+                        location = (String) doc.getData().get("Opt_Loc");
+                        forumDataList.add(new Forum(firstName, lastName, eventDate, duration, optComment, imageId, location));
+                        System.out.println("Array list1 is " + forumDataList);
+                    }
                 }
-            }
-            forumAdapter.notifyDataSetChanged();
-            if(userTempList.size() > 0){
-                userTempList.remove(userTempList.size()-1);
-            }
+                forumAdapter.notifyDataSetChanged();
+                if(userTempList.size() > 0){
+                    userTempList.remove(userTempList.size()-1);
+                }
 
-        });
-
+            });
+        } catch (Exception e) {
+            Toast.makeText(ForumManager.this, e.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**

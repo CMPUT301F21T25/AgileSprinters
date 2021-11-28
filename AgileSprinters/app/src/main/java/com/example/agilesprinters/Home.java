@@ -1,34 +1,24 @@
 package com.example.agilesprinters;
 
-import static android.content.ContentValues.TAG;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
@@ -51,6 +41,7 @@ import java.util.HashMap;
 public class Home extends AppCompatActivity implements addHabitFragment.OnFragmentInteractionListener,
         viewEditHabitFragment.OnFragmentInteractionListener, BottomNavigationView.OnNavigationItemSelectedListener,
         deleteHabitFragment.OnFragmentInteractionListener {
+
     private ArrayList<Habit> habitArrayList;
     private ListView habitList;
     private ArrayAdapter<Habit> habitAdapter;
@@ -60,7 +51,6 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     private TextView followersTextView;
     private TextView followingCountTextView;
     private TextView followerCountTextView;
-    private FirebaseAuth auth;
 
     private static final String TAG = "Habit";
     private String UID;
@@ -70,11 +60,6 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     private String followingCount;
     private String followersCount;
     private Database database = new Database();
-
-    private String  firstName, lastName, emailId;
-    private ArrayList<String> followersList = new ArrayList<>();
-    private ArrayList<String> followingList = new ArrayList<>();
-    private ArrayList<String> followRequestList = new ArrayList<>();
 
     /**
      * This function creates the UI on the screen and listens for user input
@@ -125,36 +110,41 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
          * This is a database listener. Each time the Home page is created, it will read the contents
          * of the database and put it in our listview.
          */
-        habitCollectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
-                    FirebaseFirestoreException error) {
-                // Clear the old list
-                habitArrayList.clear();
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    Log.d(TAG, String.valueOf(doc.getData().get("UID")));
-                    if (UID.matches((String) doc.getData().get("UID"))) {
-                        String title = (String) doc.getData().get("Title");
-                        String reason = (String) doc.getData().get("Reason");
-                        String dateToStart = (String) doc.getData().get("Date to Start");
-                        HashMap<String, Boolean> weekdays = (HashMap<String, Boolean>) doc.getData().get("Weekdays");
-                        String privacySetting = (String) doc.getData().get("PrivacySetting");
-                        int progress = Integer.parseInt((doc.get("Progress").toString()));
-                        int position = Integer.parseInt((doc.get("List Position").toString()));
+        try {
+            habitCollectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
+                        FirebaseFirestoreException error) {
+                    // Clear the old list
+                    habitArrayList.clear();
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        Log.d(TAG, String.valueOf(doc.getData().get("UID")));
+                        if (UID.matches((String) doc.getData().get("UID"))) {
+                            String title = (String) doc.getData().get("Title");
+                            String reason = (String) doc.getData().get("Reason");
+                            String dateToStart = (String) doc.getData().get("Date to Start");
+                            HashMap<String, Boolean> weekdays = (HashMap<String, Boolean>) doc.getData().get("Weekdays");
+                            String privacySetting = (String) doc.getData().get("PrivacySetting");
+                            int progress = Integer.parseInt((doc.get("Progress").toString()));
+                            int position = Integer.parseInt((doc.get("List Position").toString()));
 
-                        if (position > habitArrayList.size()-1){
-                            habitArrayList.add(new Habit(doc.getId(), UID, title, reason,
-                                    dateToStart, weekdays, privacySetting, progress, position));
-                        } else{
-                            habitArrayList.add(position, new Habit(doc.getId(), UID, title, reason,
-                                    dateToStart, weekdays, privacySetting, progress, position));
+                            if (position > habitArrayList.size()-1){
+                                habitArrayList.add(new Habit(doc.getId(), UID, title, reason,
+                                        dateToStart, weekdays, privacySetting, progress, position));
+                            } else{
+                                habitArrayList.add(position, new Habit(doc.getId(), UID, title, reason,
+                                        dateToStart, weekdays, privacySetting, progress, position));
+                            }
                         }
                     }
+                    habitAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
+                    // from the cloud
                 }
-                habitAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
-                // from the cloud
-            }
-        });
+            });
+        } catch (Exception e) {
+            Toast.makeText(Home.this, e.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
 
         /**
          * This is an on item click listener which listens for when a user taps on an item in the
@@ -280,7 +270,6 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
      */
     @Override
     public void onEditViewSaveChangesPressed(Habit habit, int oldPosition) {
-
         if (habit.getListPosition() > oldPosition){
             for (int i = habit.getListPosition(); i > oldPosition; i--){
                 habitArrayList.get(i).setListPosition(i - 1);
@@ -328,7 +317,12 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             data.put("List Position", habit.getListPosition());
 
             // Makes a call to the database which handles it.
-            database.addData(collectionPath, HabitId, data, TAG);
+            try {
+                database.addData(collectionPath, HabitId, data, TAG);
+            } catch (Exception e) {
+                Toast.makeText(Home.this, e.toString(),
+                        Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -352,7 +346,13 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         data.put("List Position", habit.getListPosition());
         collectionPath = "Habit";
         // Makes a call to the database which handles it
-        database.updateData(collectionPath, habit.getHID(), data, TAG);
+
+        try {
+            database.updateData(collectionPath, habit.getHID(), data, TAG);
+        } catch (Exception e) {
+            Toast.makeText(Home.this, e.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
@@ -362,7 +362,13 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     public void deleteHabitDb(String HID) {
         collectionPath = "Habit";
         // Makes a call to the database which handles it
-        database.deleteData(collectionPath, HID, TAG);
+        try {
+            database.deleteData(collectionPath, HID, TAG);
+        } catch (Exception e) {
+            Toast.makeText(Home.this, e.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     /**
@@ -372,7 +378,13 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     public void deleteHabitEventsDb(String EID) {
         collectionPath = "HabitEvents";
         // Makes a call to the database which handles it
-        database.deleteData(collectionPath, EID, TAG);
+        try {
+            database.deleteData(collectionPath, EID, TAG);
+        } catch (Exception e) {
+            Toast.makeText(Home.this, e.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     /**
@@ -399,7 +411,12 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     public void deleteForumEventsDb(String FID) {
         collectionPath = "ForumPosts";
         // Makes a call to the database which handles it
-        database.deleteData(collectionPath, FID, TAG);
+        try {
+            database.deleteData(collectionPath, FID, TAG);
+        } catch (Exception e) {
+            Toast.makeText(Home.this, e.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
@@ -408,26 +425,30 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
      */
     public void deleteHabitInstances(String HID) {
         CollectionReference collectionReference = db.collection("HabitEvents");
-        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
-                    FirebaseFirestoreException error) {
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    Log.d(TAG, String.valueOf(doc.getData().get("UID")));
-                    if (HID.matches((String) doc.getData().get("HID"))) {
-                        if(doc.getId() == null){
-                            return;
-                        } else {
-                            deleteHabitEventsDb(doc.getId());
-                            deleteForumEventsDb((String) doc.getData().get("FID"));
+        try {
+            collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
+                        FirebaseFirestoreException error) {
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        Log.d(TAG, String.valueOf(doc.getData().get("UID")));
+                        if (HID.matches((String) doc.getData().get("HID"))) {
+                            if(doc.getId() == null){
+                                return;
+                            } else {
+                                deleteHabitEventsDb(doc.getId());
+                                deleteForumEventsDb((String) doc.getData().get("FID"));
+                            }
                         }
                     }
+                    habitAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
+                    // from the cloud
                 }
-                habitAdapter.notifyDataSetChanged(); // Notifying the adapter to render any new data fetched
-                // from the cloud
-            }
-        });
-        return;
+            });
+        } catch (Exception e) {
+            Toast.makeText(Home.this, e.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
@@ -487,56 +508,4 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         }
         return false;
     }
-
-    /*
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-
-        FirebaseUser firebaseUser = auth.getCurrentUser();
-        if (firebaseUser != null){
-            System.out.println("UID IS:" + firebaseUser.getUid());
-            //Do anything here which needs to be done after user is set is complete
-            getUser(firebaseUser);
-        }
-    }
-
-    private void getUser(FirebaseUser firebaseUser) {
-        db = FirebaseFirestore.getInstance();
-        CollectionReference collectionReference = db.collection("users");
-
-        String uniqueId = firebaseUser.getUid();
-
-        user.setUser(uniqueId);
-        collectionReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    Log.d(TAG, String.valueOf(doc.getData().get("UID")));
-                    if (uniqueId.matches((String) doc.getData().get("UID"))) {
-                        emailId = (String) doc.getData().get("Email ID");
-                        firstName = (String) doc.getData().get("First Name");
-                        lastName = (String) doc.getData().get("Last Name");
-                        followersList = (ArrayList<String>) doc.getData().get("followers");
-                        followingList = (ArrayList<String>) doc.getData().get("following");
-                        followRequestList = (ArrayList<String>) doc.getData().get("follow request list");
-                        setFields(user, emailId, firstName, lastName, followersList, followingList, followRequestList);
-                    }
-                }
-            }
-        });
-    }
-
-    private void setFields(User user, String emailId, String firstName, String lastName, ArrayList<String> followersList, ArrayList<String> followingList, ArrayList<String> followRequestList) {
-        user.setEmailId(emailId);
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setFollowersList(followersList);
-        user.setFollowingList(followingList);
-        user.setFollowRequestList(followRequestList);
-    }
-
-     */
-
 }

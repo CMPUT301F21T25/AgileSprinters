@@ -61,6 +61,7 @@ public class EditUserScreenAndroidTests {
         solo.assertCurrentActivity("wrong", Login.class);
     }
 
+    /*
     @Test
     public void test2(){
         solo.clickOnView(solo.getView(R.id.homeUserButton));
@@ -71,4 +72,5 @@ public class EditUserScreenAndroidTests {
 
         solo.assertCurrentActivity("wrong", Login.class);
     }
+     */
 }

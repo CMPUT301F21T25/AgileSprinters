@@ -9,19 +9,15 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -61,48 +57,49 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
         notificationAdapter = new NotificationsListAdapter(this, notificationList);
         notificationListView.setAdapter(notificationAdapter);
 
+        try {
+            userCollectionReference.addSnapshotListener((value, error) -> {
+                // Clear the old list
+                notificationList.clear();
+                Log.d(TAG, String.valueOf(value.getData().get("UID")));
+                if (UID.matches((String) value.getData().get("UID"))) {
+                    ArrayList<String> followRequests = (ArrayList<String>) value.get("follow request list");
 
-
-        userCollectionReference.addSnapshotListener((value, error) -> {
-            // Clear the old list
-            notificationList.clear();
-            Log.d(TAG, String.valueOf(value.getData().get("UID")));
-            if (UID.matches((String) value.getData().get("UID"))) {
-                ArrayList<String> followRequests = (ArrayList<String>) value.get("follow request list");
-
-                for (int i = 0 ; i < followRequests.size(); i++) {
-                    DocumentReference otherUsersDoc = db.collection(collectionPath).document(followRequests.get(i));
-                    otherUsersDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                DocumentSnapshot documentSnapshot = task.getResult();
-                                if (documentSnapshot.exists()) {
-                                    Log.d(TAG, "onComplete: " + documentSnapshot.getData());
-                                    String otherUID = (String) documentSnapshot.get("UID");
-                                    String firstName = (String) documentSnapshot.get("First Name");
-                                    String lastName = (String) documentSnapshot.get("Last Name");
-                                    String emailId = (String) documentSnapshot.get("Email ID");
-                                    ArrayList<String> followRequest = (ArrayList<String>) documentSnapshot.get("follow request list");
-                                    ArrayList<String> followers = (ArrayList<String>) documentSnapshot.get("followers");
-                                    ArrayList<String> following = (ArrayList<String>) documentSnapshot.get("following");
-                                    User requestingUser = new User(otherUID, firstName, lastName, emailId, followers, following, followRequest);
-                                    notificationList.add(requestingUser);
-                                    notificationAdapter.notifyDataSetChanged();
+                    for (int i = 0 ; i < followRequests.size(); i++) {
+                        DocumentReference otherUsersDoc = db.collection(collectionPath).document(followRequests.get(i));
+                        otherUsersDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot documentSnapshot = task.getResult();
+                                    if (documentSnapshot.exists()) {
+                                        Log.d(TAG, "onComplete: " + documentSnapshot.getData());
+                                        String otherUID = (String) documentSnapshot.get("UID");
+                                        String firstName = (String) documentSnapshot.get("First Name");
+                                        String lastName = (String) documentSnapshot.get("Last Name");
+                                        String emailId = (String) documentSnapshot.get("Email ID");
+                                        ArrayList<String> followRequest = (ArrayList<String>) documentSnapshot.get("follow request list");
+                                        ArrayList<String> followers = (ArrayList<String>) documentSnapshot.get("followers");
+                                        ArrayList<String> following = (ArrayList<String>) documentSnapshot.get("following");
+                                        User requestingUser = new User(otherUID, firstName, lastName, emailId, followers, following, followRequest);
+                                        notificationList.add(requestingUser);
+                                        notificationAdapter.notifyDataSetChanged();
+                                    } else {
+                                        Log.d(TAG, "No such document");
+                                    }
                                 } else {
-                                    Log.d(TAG, "No such document");
+                                    Log.d(TAG, "get failed with ", task.getException());
                                 }
-                            } else {
-                                Log.d(TAG, "get failed with ", task.getException());
                             }
-                        }
-                    });
+                        });
+                    }
                 }
-            }
-            notificationAdapter.notifyDataSetChanged();
-        });
-
-
+                notificationAdapter.notifyDataSetChanged();
+            });
+        } catch (Exception e) {
+            Toast.makeText(Notifications.this, e.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
 
         notificationListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -112,8 +109,6 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
                 values.show(getSupportFragmentManager(), "ACCEPT/DECLINE FRAGMENT");
             }
         });
-
-
     }
 
     @Override
@@ -195,6 +190,11 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
         data.put("following", user.getFollowingList());
         data.put("follow request list", user.getFollowRequestList());
         // Makes a call to the database which handles it
-        database.updateData(collectionPath, user.getUserID(), data, TAG);
+        try {
+            database.updateData(collectionPath, user.getUserID(), data, TAG);
+        } catch (Exception e) {
+            Toast.makeText(Notifications.this, e.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 }

@@ -6,10 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import android.app.DatePickerDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,14 +16,11 @@ import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -35,14 +30,12 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -209,36 +202,40 @@ public class UserCalendar extends AppCompatActivity
         // Gives the day of the week
         String todayDay = currentDate.getDayOfWeek().toString();
 
-        // Display the habits which are scheduled for the current day (checking date and day)
-        db.collection("Habit").addSnapshotListener((value, error) -> {
-            toDoEvents.clear();
-            toDoEventIds.clear();
-            for (QueryDocumentSnapshot doc : value) {
-                Log.d(TAG, "Habits to do today " + String.valueOf(doc.getData().get("Title")));
-                System.out.println(doc.getString("Date to Start"));
-                // Gives the start date
-                if (!String.valueOf(doc.getData().get("Title")).equals("dummy")) {
-                    LocalDate startDate = LocalDate.parse(doc.getString("Date to Start"), formatter);
+        try {
+            // Display the habits which are scheduled for the current day (checking date and day)
+            db.collection("Habit").addSnapshotListener((value, error) -> {
+                toDoEvents.clear();
+                toDoEventIds.clear();
+                for (QueryDocumentSnapshot doc : value) {
+                    Log.d(TAG, "Habits to do today " + String.valueOf(doc.getData().get("Title")));
+                    System.out.println(doc.getString("Date to Start"));
+                    // Gives the start date
+                    if (!String.valueOf(doc.getData().get("Title")).equals("dummy")) {
+                        LocalDate startDate = LocalDate.parse(doc.getString("Date to Start"), formatter);
 
-                    Map<String, Object> weekdays = (Map<String, Object>) doc.getData().get("Weekdays");
-                    HashMap<String, Boolean> weekdays2 = (HashMap<String, Boolean>) doc.getData().get("Weekdays");
-                    ArrayList<String> habitDays = getHabitDays(weekdays);
+                        Map<String, Object> weekdays = (Map<String, Object>) doc.getData().get("Weekdays");
+                        HashMap<String, Boolean> weekdays2 = (HashMap<String, Boolean>) doc.getData().get("Weekdays");
+                        ArrayList<String> habitDays = getHabitDays(weekdays);
 
-                    if (doc.getString("UID").equals(UID)
-                            && (startDate.isBefore(currentDate) || startDate.isEqual(currentDate))
-                            && (habitDays.contains(todayDay))) {
-                        Habit newHabit = new Habit(doc.getId(), doc.getString("UID"), doc.getString("Title"), doc.getString("Reason"),
-                                doc.getString("Date to Start"), weekdays2, doc.getString("PrivacySetting"),
-                                Integer.parseInt(doc.get("Progress").toString()), Integer.parseInt(doc.get("List Position").toString()));
-                        toDoEvents.add(newHabit); // Adding habits from Firestore
-                        toDoEventIds.add(doc.getId());
+                        if (doc.getString("UID").equals(UID)
+                                && (startDate.isBefore(currentDate) || startDate.isEqual(currentDate))
+                                && (habitDays.contains(todayDay))) {
+                            Habit newHabit = new Habit(doc.getId(), doc.getString("UID"), doc.getString("Title"), doc.getString("Reason"),
+                                    doc.getString("Date to Start"), weekdays2, doc.getString("PrivacySetting"),
+                                    Integer.parseInt(doc.get("Progress").toString()), Integer.parseInt(doc.get("List Position").toString()));
+                            toDoEvents.add(newHabit); // Adding habits from Firestore
+                            toDoEventIds.add(doc.getId());
+                        }
                     }
                 }
-            }
 
-            toDoEventAdapter.notifyDataSetChanged();
-        });
-
+                toDoEventAdapter.notifyDataSetChanged();
+            });
+        } catch (Exception e) {
+            Toast.makeText(UserCalendar.this, e.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
@@ -247,29 +244,35 @@ public class UserCalendar extends AppCompatActivity
      */
     public void completedEventsScreenSetup() {
         // Get a list of habit events of the user logged in on the current day
-        db.collection("HabitEvents").addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                completedEvents.clear();
-                completedEventIds.clear();
-                for (QueryDocumentSnapshot doc : value) {
-                    Log.d(TAG, String.valueOf(doc.getData().get("Opt_comment")));
-                    if (doc.getString("UID").equals(UID)) {
-                        LocalDate eventDate = LocalDate.parse(doc.get("Date").toString(), formatter);
-                        if ((eventDate.isEqual(currentDate))) {
-                            HabitInstance newInstance = new HabitInstance(doc.getString("EID"), doc.getString("UID"), doc.getString("HID"),
-                                    doc.getString("Opt_comment"), doc.getString("Date"), Integer.parseInt(doc.get("Duration").toString()), doc.getString("IID"), doc.getString("FID"),
-                                    Boolean.parseBoolean((String) doc.getData().get("isShared")), doc.getString("Opt_Loc"));
-                            completedEvents.add(newInstance);
-                            completedEventIds.add(doc.getId()); // Adding habit events from Firestore
+        try {
+            db.collection("HabitEvents").addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                    completedEvents.clear();
+                    completedEventIds.clear();
+                    for (QueryDocumentSnapshot doc : value) {
+                        Log.d(TAG, String.valueOf(doc.getData().get("Opt_comment")));
+                        if (doc.getString("UID").equals(UID)) {
+                            LocalDate eventDate = LocalDate.parse(doc.get("Date").toString(), formatter);
+                            if ((eventDate.isEqual(currentDate))) {
+                                HabitInstance newInstance = new HabitInstance(doc.getString("EID"), doc.getString("UID"), doc.getString("HID"),
+                                        doc.getString("Opt_comment"), doc.getString("Date"), Integer.parseInt(doc.get("Duration").toString()), doc.getString("IID"), doc.getString("FID"),
+                                        Boolean.parseBoolean((String) doc.getData().get("isShared")), doc.getString("Opt_Loc"));
+                                completedEvents.add(newInstance);
+                                completedEventIds.add(doc.getId()); // Adding habit events from Firestore
+                            }
+
                         }
-
                     }
-                }
 
-                completedEventAdapter.notifyDataSetChanged();
-            }
-        });
+                    completedEventAdapter.notifyDataSetChanged();
+                }
+            });
+        } catch (Exception e) {
+            Toast.makeText(UserCalendar.this, e.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     /**
@@ -317,9 +320,20 @@ public class UserCalendar extends AppCompatActivity
 
             collectionPath = "ForumPosts";
             if (toDo.matches("EDIT")) {
-                database.updateData(collectionPath, habitInstance.getFID(), data, TAG);
+                try {
+                    database.updateData(collectionPath, habitInstance.getFID(), data, TAG);
+                } catch (Exception e) {
+                    Toast.makeText(UserCalendar.this, e.toString(),
+                            Toast.LENGTH_SHORT).show();
+                }
+
             } else if (toDo.matches("ADD")) {
-                database.addData(collectionPath, FID, data, "Forum Post");
+                try {
+                    database.addData(collectionPath, FID, data, "Forum Post");
+                } catch (Exception e) {
+                    Toast.makeText(UserCalendar.this, e.toString(),
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }
@@ -365,10 +379,15 @@ public class UserCalendar extends AppCompatActivity
         data.put("Opt_Loc", String.valueOf(instance.getOptLoc()));
 
         // Makes a call to the database which handles it
-        collectionPath = "HabitEvents";
-        database.updateData(collectionPath, selectedHabitInstanceId, data, TAG);
-        updateForum(instance, instance.getFID(),"EDIT");
+        try {
+            collectionPath = "HabitEvents";
+            database.updateData(collectionPath, selectedHabitInstanceId, data, TAG);
+        } catch (Exception e) {
+            Toast.makeText(UserCalendar.this, e.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
 
+        updateForum(instance, instance.getFID(),"EDIT");
         completedEventsScreenSetup();
     }
 
@@ -391,7 +410,12 @@ public class UserCalendar extends AppCompatActivity
                         data.put("EID", instance.getEID());
 
                         // Makes a call to the database which handles it
-                        database.updateData("ForumPosts", doc.getId(), data, TAG);
+                        try {
+                            database.updateData("ForumPosts", doc.getId(), data, TAG);
+                        } catch (Exception e) {
+                            Toast.makeText(UserCalendar.this, e.toString(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
                         break;
                     }
                 }
@@ -434,14 +458,22 @@ public class UserCalendar extends AppCompatActivity
     @Override
     public void onDeleteHabitEventYesPressed(HabitInstance instance) {
         // Makes a call to the database which handles it
-        database.deleteData(collectionPath, instance.getEID(), TAG);
-        getImageToDelete(instance);
+        try {
+            database.deleteData(collectionPath, instance.getEID(), TAG);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
 
+        getImageToDelete(instance);
         deleteForumElement(instance);
-        database.deleteData(collectionPath, instance.getEID(), TAG);
+
+        try {
+            database.deleteData(collectionPath, instance.getEID(), TAG);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
 
         completedEventsScreenSetup();
-
         updateProgressInDatabase(instance, "DELETE");
     }
 
@@ -453,9 +485,12 @@ public class UserCalendar extends AppCompatActivity
                 if (instance.getEID().matches(doc.getId())
                         && (instance.getHID().matches((String) doc.getData().get("HID")))
                         && (instance.getUID().matches((String) doc.getData().get("UID")))) {
-                    System.out.println("hello form user");
-                    database.deleteImg((String) doc.getData().get("IID"));
-
+                    try {
+                        database.deleteImg((String) doc.getData().get("IID"));
+                    } catch (Exception e) {
+                        Toast.makeText(UserCalendar.this, e.toString(),
+                                Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -473,7 +508,13 @@ public class UserCalendar extends AppCompatActivity
                         if(doc.getId() == null){
                             return;
                         } else {
-                            database.deleteData("ForumPosts", doc.getId(), TAG);
+                            try {
+                                database.deleteData("ForumPosts", doc.getId(), TAG);
+                            } catch (Exception e){
+                                Toast.makeText(UserCalendar.this, e.toString(),
+                                        Toast.LENGTH_SHORT).show();
+                            }
+
                         }
                         break;
                     }
@@ -510,8 +551,13 @@ public class UserCalendar extends AppCompatActivity
             data.put("Opt_Loc", instance.getOptLoc());
 
             // Makes a call to the database which handles it
-            collectionPath = "HabitEvents";
-            database.addData(collectionPath, instanceId, data, TAG);
+            try {
+                collectionPath = "HabitEvents";
+                database.addData(collectionPath, instanceId, data, TAG);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+
         }
     }
 
@@ -536,9 +582,14 @@ public class UserCalendar extends AppCompatActivity
     }
 
     public void updateProgressInDatabase(HabitInstance instance, String toDo){
-        db.collection("Habit")
-                .document(instance.getHID())
-                .update("Progress", getNewProgress(instance, toDo));
+        try {
+            db.collection("Habit")
+                    .document(instance.getHID())
+                    .update("Progress", getNewProgress(instance, toDo));
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
     }
 
     /**
@@ -647,11 +698,16 @@ public class UserCalendar extends AppCompatActivity
         data.put("IID", eventToShare.getIID());
 
         collectionPath = "ForumPosts";
-        database.addData(collectionPath, FID, data, "Forum Post");
+        try {
+            database.addData(collectionPath, FID, data, "Forum Post");
 
 
-        db.collection("HabitEvents")
-                .document(eventToShare.getEID())
-                .update("isShared", String.valueOf(true));
+            db.collection("HabitEvents")
+                    .document(eventToShare.getEID())
+                    .update("isShared", String.valueOf(true));
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
     }
 }

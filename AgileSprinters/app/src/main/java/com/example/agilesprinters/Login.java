@@ -1,7 +1,6 @@
 package com.example.agilesprinters;
 
 import static android.content.ContentValues.TAG;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,28 +10,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 
 
 /**
@@ -179,23 +166,28 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             Toast.makeText(Login.this, getString(R.string.EMPTY_PASSWORD),
                     Toast.LENGTH_SHORT).show();
         } else {
-            auth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(this, task -> {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, getString(R.string.SIGN_IN_SUCCESS_MSG));
-                            FirebaseUser user = auth.getCurrentUser();
-                            if (user != null) {
-                                getUser(user);
+            try {
+                auth.signInWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(this, task -> {
+                            if (task.isSuccessful()) {
+                                // Sign in success, update UI with the signed-in user's information
+                                Log.d(TAG, getString(R.string.SIGN_IN_SUCCESS_MSG));
+                                FirebaseUser user = auth.getCurrentUser();
+                                if (user != null) {
+                                    getUser(user);
+                                }
+                            } else {
+                                // If sign in fails due to a wrong password or email
+                                Log.w(TAG, getString(R.string.SIGN_IN_FAILURE_MSG),
+                                        task.getException());
+                                Toast.makeText(Login.this, getString(R.string.LOGIN_FAILED),
+                                        Toast.LENGTH_SHORT).show();
                             }
-                        } else {
-                            // If sign in fails due to a wrong password or email
-                            Log.w(TAG, getString(R.string.SIGN_IN_FAILURE_MSG),
-                                    task.getException());
-                            Toast.makeText(Login.this, getString(R.string.LOGIN_FAILED),
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                        });
+            } catch (Exception e) {
+                Toast.makeText(Login.this, e.toString(),
+                        Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -211,23 +203,28 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         String uniqueId = user.getUid();
 
         currentUser.setUserID(uniqueId);
-        collectionReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    Log.d(TAG, String.valueOf(doc.getData().get("UID")));
-                    if (uniqueId.matches((String) doc.getData().get("UID"))) {
-                        emailId = (String) doc.getData().get("Email ID");
-                        firstName = (String) doc.getData().get("First Name");
-                        lastName = (String) doc.getData().get("Last Name");
-                        followersList = (ArrayList<String>) doc.getData().get("followers");
-                        followingList = (ArrayList<String>) doc.getData().get("following");
-                        followRequestList = (ArrayList<String>) doc.getData().get("follow request list");
-                        updateUi(currentUser, emailId, firstName, lastName, followersList, followingList, followRequestList);
+        try {
+            collectionReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                @Override
+                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        Log.d(TAG, String.valueOf(doc.getData().get("UID")));
+                        if (uniqueId.matches((String) doc.getData().get("UID"))) {
+                            emailId = (String) doc.getData().get("Email ID");
+                            firstName = (String) doc.getData().get("First Name");
+                            lastName = (String) doc.getData().get("Last Name");
+                            followersList = (ArrayList<String>) doc.getData().get("followers");
+                            followingList = (ArrayList<String>) doc.getData().get("following");
+                            followRequestList = (ArrayList<String>) doc.getData().get("follow request list");
+                            updateUi(currentUser, emailId, firstName, lastName, followersList, followingList, followRequestList);
+                        }
                     }
                 }
-            }
-        });
+            });
+        } catch (Exception e) {
+            Toast.makeText(Login.this, e.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void updateUi(User user, String emailId, String firstName, String lastName,
