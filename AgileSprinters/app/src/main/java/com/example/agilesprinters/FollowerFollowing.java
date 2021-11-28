@@ -50,18 +50,16 @@ public class FollowerFollowing extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getSupportActionBar().hide();
         setContentView(R.layout.activity_follower_following);
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        db = FirebaseFirestore.getInstance();
 
         if (user == null) {
             user = (User) getIntent().getSerializableExtra("user");
             UID = user.getUserID();
             title = (String) getIntent().getStringExtra("Title");
 
-            if (title.matches("Following")) {
-                userTempList = user.getFollowingList();
-            } else if (title.matches("Followers")) {
-                userTempList = user.getFollowersList();
-            }
+            // set temp list
+            setTempList(title);
         }
 
         titleTextView = findViewById(R.id.titleTextView);
@@ -118,6 +116,26 @@ public class FollowerFollowing extends AppCompatActivity {
                 startActivity(intent);
                 overridePendingTransition(0, 0);
                 finish();
+            }
+        });
+    }
+
+    /**
+     * This function gets the followers/following list required to display on UI
+     * @param title    is the string which conveys if its the follower or following page
+     */
+    private void setTempList(String title) {
+        db.collection("users").addSnapshotListener((value, error) -> {
+            for (QueryDocumentSnapshot doc : value) {
+                if (user.getUserID().matches(doc.getId())) {
+                    if (title.matches("Following")){
+                        userTempList = (ArrayList<String>) doc.getData().get("following");
+                        user.setFollowingList(userTempList);
+                    } else if (title.matches( "Followers")) {
+                        userTempList = (ArrayList<String>) doc.getData().get("followers");
+                        user.setFollowersList(userTempList);
+                    }
+                }
             }
         });
     }
