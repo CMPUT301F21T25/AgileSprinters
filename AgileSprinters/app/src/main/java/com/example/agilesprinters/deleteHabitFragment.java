@@ -65,8 +65,8 @@ public class deleteHabitFragment extends DialogFragment {
      * This function creates the actual dialog on the screen and listens for user input, returning
      * the information through the listener based on which button is clicked.
      *
-     * @param savedInstanceState
-     * @return
+     * @param savedInstanceState The instance state of the fragment.
+     * @return Returns the Dialog created
      */
     @NonNull
     @Override

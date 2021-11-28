@@ -62,11 +62,6 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     private String followersCount;
     private Database database = new Database();
 
-    private String firstName, lastName, emailId;
-    private ArrayList<String> followersList = new ArrayList<>();
-    private ArrayList<String> followingList = new ArrayList<>();
-    private ArrayList<String> followRequestList = new ArrayList<>();
-
     /**
      * This function creates the UI on the screen and listens for user input
      *
@@ -93,7 +88,6 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         habitAdapter = new habitListAdapter(this, habitArrayList);
         habitList.setAdapter(habitAdapter);
 
-
         if (user == null) {
             user = (User) getIntent().getSerializableExtra("user");
             UID = user.getUserID();
@@ -103,13 +97,10 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
             followingCount = String.valueOf(user.getFollowingList().size());
         }
 
-        setTextFields(followingCount, followersCount);
-
         Button homeUserButton = findViewById(R.id.homeUserButton);
         homeUserButton.setText(nameStr.substring(0, 1));
         followerCountTextView.setText(followersCount);
         followingCountTextView.setText(followingCount);
-
 
         db = FirebaseFirestore.getInstance();
         CollectionReference habitCollectionReference = db.collection("Habit");
@@ -186,7 +177,6 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 overridePendingTransition(0, 0);
             }
         });
-
 
         /**
          * This is a textview which displays the following count for the current user and listens
@@ -306,15 +296,6 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         }
 
         updateHabitDatabase(habit);
-    }
-
-
-    //onclick for follow and followers. Not to be implemented until after the halfway checkpoint
-    public void follow(View view) {
-    }
-
-    private void setTextFields(String followingCount, String followersCount) {
-
     }
 
     /**

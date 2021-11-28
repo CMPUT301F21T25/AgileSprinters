@@ -3,7 +3,6 @@ package com.example.agilesprinters;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 
-import android.view.View;
 import android.widget.EditText;
 
 import androidx.test.platform.app.InstrumentationRegistry;
