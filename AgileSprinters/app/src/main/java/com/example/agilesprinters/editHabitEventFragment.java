@@ -3,6 +3,7 @@ package com.example.agilesprinters;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -48,6 +49,7 @@ public class editHabitEventFragment extends DialogFragment {
     private TextView displayLocation;
     private Button deleteImageBtn;
     private Button deleteLocBtn;
+    TextView optLocation;
     private String EID;
     private String UID;
     private String HID;
@@ -138,6 +140,7 @@ public class editHabitEventFragment extends DialogFragment {
         deleteImageBtn = view.findViewById(R.id.delete_image);
         deleteLocBtn = view.findViewById(R.id.delete_location);
         displayLocation = view.findViewById(R.id.location_textview);
+        optLocation = view.findViewById(R.id.editText_location);
 
         habitInstance = (HabitInstance) getArguments().getSerializable("Habit instance");
 
@@ -145,6 +148,7 @@ public class editHabitEventFragment extends DialogFragment {
         optional_comment.setText(habitInstance.getOpt_comment());
         input_date.setText(habitInstance.getDate());
         input_duration.setText(String.valueOf(habitInstance.getDuration()));
+        optLocation.setText(habitInstance.getDisplayLocStr((new Geocoder(getContext(), Locale.getDefault()))));
 
         // Setting the visibility of share button
         setVisibilityForShareButton(habitInstance.getHID(), shareButton);
@@ -204,6 +208,46 @@ public class editHabitEventFragment extends DialogFragment {
             public void onClick(View view) {
                 habitInstance.setOptLoc("");
                 displayLocation.setVisibility(View.INVISIBLE);
+            }
+        });
+        // When delete image button is clicked, it sets the IID to null i.e., deletes it
+        imageContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(getContext())
+                        .setTitle("Delete image")
+                        .setMessage("Are you sure you want to delete this image?")
+                        .setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                IID = null;
+                                imageContainer.setVisibility(View.INVISIBLE);
+                            }
+                        })
+                        // A null listener allows the button to dismiss the dialog and take no further action.
+                        .setNegativeButton("CANCEL", null)
+                        .show();
+            }
+        });
+
+        // When delete location button is clicked, it sets the loc to "" i.e., deletes it
+        optLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(getContext())
+                        .setTitle("Delete location")
+                        .setMessage("Are you sure you want to delete this location?")
+
+                        // Specifying a listener allows you to take an action before dismissing the dialog.
+                        // The dialog is automatically dismissed when a dialog button is clicked.
+                        .setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                habitInstance.setOptLoc("");
+                                optLocation.setVisibility(View.INVISIBLE);
+                            }
+                        })
+                        // A null listener allows the button to dismiss the dialog and take no further action.
+                        .setNegativeButton("CANCEL", null)
+                        .show();
             }
         });
 
@@ -292,13 +336,11 @@ public class editHabitEventFragment extends DialogFragment {
 
     }
 
-
     /**
      * This function checks if the current event is public or private
      * and sets the visibility accordingly
-     *
-     * @param HID         is the habit id of the event
-     * @param shareButton is the share button attached to the fragment
+     * @param HID             is the habit id of the event
+     * @param shareButton     is the share button attached to the fragment
      */
     private void setVisibilityForShareButton(String HID, Button shareButton) {
         db.collection("Habit").addSnapshotListener((value, error) -> {
@@ -373,16 +415,14 @@ public class editHabitEventFragment extends DialogFragment {
      * the user to pick a location.
      */
     private void getLocation() {
-        System.out.println("Before " + habitInstance.getOptLoc());
         MapsFragment mapsFragment = new MapsFragment().newInstance((HabitInstance) getArguments().getSerializable("Habit instance"));
         mapsFragment.show(Objects.requireNonNull(getChildFragmentManager()), "ADD LOCATION");
-        System.out.println("After " + habitInstance.getOptLoc());
     }
 
 
     /**
-     * This function switches views to gallery and allows user to pick a photo
-     * to set as image
+     * This function switches the current view of the screen to gallery and allows
+     * the user to pick a picture.
      */
     private void getGalleryPicture() {
         //allow user to pick a photo from gallery
@@ -392,10 +432,11 @@ public class editHabitEventFragment extends DialogFragment {
     }
 
     /**
-     * This function to switch views to camera and allows user to take a picture
-     * and set that as image
+     * This function asks for camera usage permission and
+     * switches the current view of the screen to camera and allows
+     * the user to click a picture.
      */
-    private void getCameraPicture() {
+    private void getCameraPicture(){
         //have to give permission to app to use camera
         //android manifest give permission and then take permission at runtime from user
         //switch view to camera view

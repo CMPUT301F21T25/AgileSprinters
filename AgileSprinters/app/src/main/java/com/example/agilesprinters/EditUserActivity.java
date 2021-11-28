@@ -33,7 +33,7 @@ public class EditUserActivity extends AppCompatActivity {
     private String nameStr;
     private static final String TAG = "Habit";
     private Database database = new Database();
-    private FirebaseFirestore db;
+    FirebaseFirestore db =  FirebaseFirestore.getInstance();
     private Intent intent;
     private String collectionPath;
 
@@ -65,12 +65,7 @@ public class EditUserActivity extends AppCompatActivity {
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FirebaseAuth.getInstance().signOut();
-                intent = new Intent(EditUserActivity.this, Login.class);
-                user = null;
-                startActivity(intent);
-                overridePendingTransition(0, 0);
-                finish();
+                signOut();
             }
         });
 
@@ -126,6 +121,16 @@ public class EditUserActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    private void signOut(){
+        user = null;
+        FirebaseAuth.getInstance().signOut();
+        intent = new Intent(EditUserActivity.this, Login.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        overridePendingTransition(0, 0);
+        finish();
     }
 
     /**
@@ -217,4 +222,11 @@ public class EditUserActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
         }
     }
+
+    public void deleteForumEventsDb(String FID) {
+        collectionPath = "ForumPosts";
+        // Makes a call to the database which handles it
+        database.deleteData(collectionPath, FID, TAG);
+    }
+
 }

@@ -3,6 +3,7 @@ package com.example.agilesprinters;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 
+import android.view.View;
 import android.widget.EditText;
 
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -10,6 +11,7 @@ import androidx.test.rule.ActivityTestRule;
 
 import com.robotium.solo.Solo;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
@@ -24,7 +26,7 @@ import java.time.LocalDate;
  * and the cache must be cleared between each for them to work due to the app automatically
  * going to the home page after a single sign in on the device.
  *
- * @author Sai Rasazna Ajerla
+ * @author Sai Rasazna Ajerla, Leen Alzebdeh
  */
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -34,24 +36,27 @@ public class CalendarAndroidTest {
     private Solo solo;
 
     @Rule
-    public ActivityTestRule<Login> rule = new ActivityTestRule< >
+    public ActivityTestRule<Login> rule = new ActivityTestRule<>
             (Login.class, true, true);
 
     /**
      * Runs before all tests and creates solo instance.
+     *
      * @throws Exception
      */
     @Before
     public void setUp() throws Exception {
         solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
+        logInTestUser();
     }
 
-    /**
-     * This test will check to make sure
-     * that user registration and log in happens successfully
-     */
-    @Test
-    public void stage1_checkLogIn() {
+    private void logInTestUser() {
+
+        try {
+            solo.assertCurrentActivity("Wrong", Login.class);
+        } catch (Exception e) {
+            runAfterTest();
+        }
 
         // checks to make sure we are in the right activity
         solo.assertCurrentActivity("Wrong", Login.class);
@@ -63,18 +68,14 @@ public class CalendarAndroidTest {
 
         // checks to make sure the activity has switched to the Home activity
         solo.assertCurrentActivity("Wrong", Home.class);
-
     }
 
     /**
-     * This test will check to make sure
-     * when a habit is added in home, it shows up in the list
+     * This adds a habit
+     * with the specified privacy setting
      */
-    @Test
-    public void stage2_checkAddHabit() {
+    private void checkAddHabit(String privacy, int loc, String title) {
 
-        // checks to make sure we are in the right activity
-        solo.assertCurrentActivity("Wrong", Login.class);
         solo.waitForDialogToOpen(1000);
 
         solo.clickOnView(solo.getView(R.id.add_habit_button));
@@ -83,13 +84,15 @@ public class CalendarAndroidTest {
         solo.waitForDialogToOpen(1000);
 
         // enter data to create a habit
-        solo.enterText((EditText) solo.getView(R.id.habit_title_editText), "Walking");
-        solo.enterText((EditText) solo.getView(R.id.habit_reason_editText), "Walk 10,000 steps");
+        solo.enterText((EditText) solo.getView(R.id.habit_title_editText), title);
+        solo.enterText((EditText) solo.getView(R.id.habit_reason_editText), title + " 10,000");
         solo.clickOnView(solo.getView(R.id.privacy_spinner));
-        solo.pressSpinnerItem(0,1);
+
+        if (loc == 0) solo.pressSpinnerItem(0, loc);
+        else solo.pressMenuItem(loc + 1);
 
         // make sure that spinner is set to item selected
-        assertTrue(solo.isSpinnerTextSelected(0, "Public"));
+        assertTrue(solo.isSpinnerTextSelected(0, privacy));
 
         solo.clickOnView(solo.getView(R.id.Date));
         // wait for datePicker dialog to open
@@ -100,69 +103,32 @@ public class CalendarAndroidTest {
         solo.clickOnButton("OK");
         solo.waitForDialogToClose(1000);
 
-        solo.clickOnView(solo.getView(R.id.button_sunday));
-        solo.clickOnView(solo.getView(R.id.button_monday));
-        solo.clickOnView(solo.getView(R.id.button_Tuesday));
-        solo.clickOnView(solo.getView(R.id.button_wednesday));
-        solo.clickOnView(solo.getView(R.id.button_thursday));
-        solo.clickOnView(solo.getView(R.id.button_friday));
-        solo.clickOnView(solo.getView(R.id.button_saturday));
+        int dayIds[] = {R.id.button_sunday, R.id.button_monday, R.id.button_Tuesday,
+                R.id.button_wednesday, R.id.button_thursday,
+                R.id.button_friday, R.id.button_saturday};
+
+        for (int i = 0; i < dayIds.length; i++)
+            solo.clickOnView(solo.getView(dayIds[i]));
 
         // Successfully adds a public habit
         solo.clickOnButton("Add");
         solo.waitForDialogToClose(1000);
 
         // make sure habit shows up in list
-        assertTrue(solo.waitForText("Walking", 1, 1000));
+        assertTrue(solo.waitForText(title, 1, 1000));
 
         // Adding another habit which is private
-        solo.clickOnView(solo.getView(R.id.add_habit_button));
-
-        // wait for add habit fragment to open
-        solo.waitForDialogToOpen(1000);
-
-        // enter data to create a habit
-        solo.enterText((EditText) solo.getView(R.id.habit_title_editText), "Running");
-        solo.enterText((EditText) solo.getView(R.id.habit_reason_editText), "Run a 5k");
-        solo.clickOnView(solo.getView(R.id.privacy_spinner));
-        solo.pressMenuItem(3);
-
-        // make sure that spinner is set to item selected
-        assertTrue(solo.isSpinnerTextSelected(0, "Private"));
-
-        solo.clickOnView(solo.getView(R.id.Date));
-        // wait for datePicker dialog to open
-        solo.waitForDialogToOpen(1000);
-
-        // set a date
-        solo.setDatePicker(0, 2021, 10, 01);
-        solo.clickOnButton("OK");
-        solo.waitForDialogToClose(1000);
-
-        solo.clickOnView(solo.getView(R.id.button_sunday));
-        solo.clickOnView(solo.getView(R.id.button_monday));
-        solo.clickOnView(solo.getView(R.id.button_Tuesday));
-        solo.clickOnView(solo.getView(R.id.button_wednesday));
-        solo.clickOnView(solo.getView(R.id.button_thursday));
-        solo.clickOnView(solo.getView(R.id.button_friday));
-        solo.clickOnView(solo.getView(R.id.button_saturday));
-
-        // Successfully adds a private habit
-        solo.clickOnButton("Add");
-        solo.waitForDialogToClose(1000);
-
-        // make sure habit shows up in list
-        assertTrue(solo.waitForText("Running", 1, 1000));
     }
 
     /**
-     * This test will check if the habits
-     * planned for the day are displayed under to-do tasks and also checks
-     * if adding an habit event will be stored or not  (User Story 2.01.01, 2.02.01)
+     * This test will check if the habits planned for the day are displayed under to-do tasks and
+     * also checks if adding an habit event will be stored or not  (User Story 2.01.01, 2.02.01)
      */
     @Test
-    public void stage3_checkAddHabitEvent() {
-        solo.assertCurrentActivity("Wrong", Login.class);
+    public void testAddEvent() {
+
+        checkAddHabit("Public", 1, "Walking");
+        checkAddHabit("Private", 2, "Running");
 
         // check to make sure the activity is switched to calendar activity
         solo.clickOnView(solo.getView(R.id.calendar));
@@ -178,8 +144,6 @@ public class CalendarAndroidTest {
         // wait for habit event fragment to open
         solo.clickOnText("Walking");
         solo.waitForDialogToOpen(1000);
-
-        // enter the data for habit event
         solo.enterText((EditText) solo.getView(R.id.editText_comment), "Walked 5000 steps");
         solo.enterText((EditText) solo.getView(R.id.editText_duration), "50");
         solo.clickOnView(solo.getView(R.id.duration_spinner));
@@ -188,57 +152,21 @@ public class CalendarAndroidTest {
         // make sure that spinner is set to item selected
         assertTrue(solo.isSpinnerTextSelected(0, "mins"));
 
-        /**
-         * Test case for adding an image
-         * in add habit event fragment
-         *
-         *
-         *
-         */
-
-        /**
-         * Test case for adding a location
-         * in add habit event fragment
-         *
-         *
-         *
-         */
+        solo.clickOnView(solo.getView(R.id.add_location));
+        solo.waitForDialogToOpen(5000);
+        solo.clickOnButton("SAVE ADDRESS");
 
         // add habit event
         solo.clickOnButton("Save");
         solo.waitForDialogToClose(1000);
 
         // makes sure if the habit event is successfully added
-        assertTrue(solo.waitForText("Walked 5000 steps", 1, 1000));
+        solo.clickOnText("Walked 5000 steps");
+        solo.waitForDialogToOpen(1000);
+        assertTrue(solo.waitForText("Edmonton,Canada")
+                | solo.waitForText("Mountain View, California, United States"));
 
-        // makes sure the activity is switched to forum activity
-        solo.clickOnView(solo.getView(R.id.forumn));
-        assertTrue(solo.waitForActivity(ForumManager.class));
-
-        // makes sure if the habit event is successfully added in forumn
-        assertTrue(solo.waitForText("Walked 5000 steps", 1, 1000));
-
-        /**
-         * Test case for checking if an image
-         * is displayed in forum
-         *
-         *
-         *
-         */
-
-        /**
-         * Test case for checking if the location
-         * is displayed in forum
-         *
-         *
-         *
-         */
-
-        // Adding private events
-
-        // check to make sure the activity is switched to calendar activity
-        solo.clickOnView(solo.getView(R.id.calendar));
-        assertTrue(solo.waitForActivity(UserCalendar.class));
+        solo.clickOnButton("Save");
 
         // wait for habit event fragment to open
         solo.clickOnText("Running");
@@ -252,6 +180,7 @@ public class CalendarAndroidTest {
 
         // make sure that spinner is set to item selected
         assertTrue(solo.isSpinnerTextSelected(0, "mins"));
+
         /**
          * Test case for adding an image
          * in add habit event fragment
@@ -260,43 +189,68 @@ public class CalendarAndroidTest {
          *
          */
 
-        /**
-         * Test case for adding a location
-         * in add habit event fragment
-         *
-         *
-         *
-         */
+        solo.clickOnView(solo.getView(R.id.add_location));
+        solo.waitForDialogToOpen(5000);
+        solo.clickOnButton("SAVE ADDRESS");
 
         // add the private habit event
         solo.clickOnButton("Save");
         solo.waitForDialogToClose(1000);
 
-        // makes sure if the habit event is successfully added
-        assertTrue(solo.waitForText("Evening run", 1, 1000));
+        solo.clickOnText("Evening run");
+        solo.waitForDialogToOpen(1000);
+        assertTrue(solo.waitForText("Edmonton,Canada")
+                | solo.waitForText("Mountain View, California, United States"));
+
+        solo.clickOnButton("Save");
 
         // makes sure if the tag for a private event shows up
-        assertTrue(solo.waitForText("Private Event", 1, 1000));
+        assertTrue(solo.waitForText("Private", 1, 1000));
+    }
+
+    @Test
+    public void testPublicEventInForum() {
+
+        testAddEvent();
+
+        // makes sure the activity is switched to forum activity
+        solo.clickOnView(solo.getView(R.id.forum));
+        assertTrue(solo.waitForActivity(ForumManager.class));
+
+        // makes sure if the habit event is successfully added in forumn
+        assertTrue(solo.waitForText("Walked 5000 steps", 1, 1000));
+
+        /**
+         * Test case for checking if an image
+         * is displayed in forum
+         *
+         *
+         *
+         */
+        assertTrue(solo.waitForText("Edmonton,Canada")
+                | solo.waitForText("Mountain View, California, United States"));
+
+    }
+
+    @Test
+    public void testPrivateEventNotInForum() {
+
+        testAddEvent();
 
         // check to make sure the activity is switched to forum activity
-        solo.clickOnView(solo.getView(R.id.forumn));
+        solo.clickOnView(solo.getView(R.id.forum));
         assertTrue(solo.waitForActivity(ForumManager.class));
 
         // makes sure the private event is not added to forum
         assertFalse(solo.waitForText("Evening run", 1, 1000));
     }
 
-    /**
-     * This test will check if edits made on the
-     * habit events are updated properly in the UI/database
-     * (User Story 2.04.01, 2.05.01)
-     */
     @Test
-    public void stage4_checkEditHabitEvent() {
-        solo.assertCurrentActivity("Wrong", Login.class);
+    public void testEditEvent() {
+
+        testAddEvent();
 
         // check to make sure the activity is switched to calendar activity
-        solo.clickOnView(solo.getView(R.id.calendar));
         assertTrue(solo.waitForActivity(UserCalendar.class));
 
         // wait for habit event fragment to open
@@ -312,6 +266,10 @@ public class CalendarAndroidTest {
         solo.enterText((EditText) solo.getView(R.id.editText_duration), "70");
         solo.clickOnView(solo.getView(R.id.duration_spinner));
         solo.pressMenuItem(2);
+
+        solo.clickOnView(solo.getView(R.id.editText_location));
+        solo.waitForDialogToOpen(1000);
+        solo.clickOnButton("DELETE");
 
         solo.clickOnButton("Save");
 
@@ -347,7 +305,7 @@ public class CalendarAndroidTest {
         assertTrue(solo.waitForText("60 minutes", 1, 1000));
 
         // check to make sure the activity is switched to forum activity
-        solo.clickOnView(solo.getView(R.id.forumn));
+        solo.clickOnView(solo.getView(R.id.forum));
         assertTrue(solo.waitForActivity(ForumManager.class));
 
         // check to make sure that the edits on the event are displayed in forum
@@ -368,7 +326,6 @@ public class CalendarAndroidTest {
          *
          *
          */
-
     }
 
     /**
@@ -376,8 +333,9 @@ public class CalendarAndroidTest {
      * and completed events in the past.
      */
     @Test
-    public void stage5_checkPastHabitEvents() {
-        solo.assertCurrentActivity("Wrong", Login.class);
+    public void testCheckPastHabitEvents() {
+
+        testAddEvent();
 
         // check to make sure the activity is switched to calendar activity
         solo.clickOnView(solo.getView(R.id.calendar));
@@ -402,8 +360,9 @@ public class CalendarAndroidTest {
      * is displayed in forum when shared
      */
     @Test
-    public void stage6_checkSharePrivateHabitEvent() {
-        solo.assertCurrentActivity("Wrong", Login.class);
+    public void testSharePrivateHabitEvent() {
+
+        testAddEvent();
 
         // check to make sure the activity is switched to calendar activity
         solo.clickOnView(solo.getView(R.id.calendar));
@@ -420,7 +379,7 @@ public class CalendarAndroidTest {
         solo.waitForDialogToClose(1000);
 
         // check to make sure the activity is switched to forum activity
-        solo.clickOnView(solo.getView(R.id.forumn));
+        solo.clickOnView(solo.getView(R.id.forum));
         assertTrue(solo.waitForActivity(ForumManager.class));
 
         // makes sure the private event is added to forum
@@ -433,15 +392,16 @@ public class CalendarAndroidTest {
      * a habit event is successful or not (2.04.01)
      */
     @Test
-    public void stage7_checkDeleteHabitEvents() {
-        solo.assertCurrentActivity("Wrong", Login.class);
+    public void testDeleteHabitEvent() {
+
+        testAddEvent();
 
         // check to make sure the activity is switched to calendar activity
         solo.clickOnView(solo.getView(R.id.calendar));
         assertTrue(solo.waitForActivity(UserCalendar.class));
 
         // wait for habit event fragment to open
-        solo.clickOnText("Walk with friend");
+        solo.clickOnText("Walked 5000 steps");
         solo.waitForDialogToOpen(1000);
 
         // wait for delete event fragment to open
@@ -451,13 +411,13 @@ public class CalendarAndroidTest {
         solo.waitForDialogToClose(1000);
 
         // checks to see if the planned habit is displayed in the past for that day
-        assertFalse(solo.waitForText("Walk with friend", 1, 1000));
+        assertFalse(solo.waitForText("Walked 5000 steps", 1, 1000));
 
         // checks to see if deleting a habit, will delete its forum events
-        solo.clickOnView(solo.getView(R.id.forumn));
+        solo.clickOnView(solo.getView(R.id.forum));
         assertTrue(solo.waitForActivity(ForumManager.class));
         // checks if deleting the habit will remove it from to do list
-        assertFalse(solo.waitForText("Walk with friend", 1, 1000));
+        assertFalse(solo.waitForText("Walked 5000 steps", 1, 1000));
     }
 
     /**
@@ -466,8 +426,11 @@ public class CalendarAndroidTest {
      * and forum as well
      */
     @Test
-    public void stage8_checkDeleteHabitEventsAndForum() {
-        solo.assertCurrentActivity("Wrong", Login.class);
+    public void testDeleteHabit() {
+
+        testAddEvent();
+
+        solo.clickOnView(solo.getView(R.id.home));
 
         solo.clickLongOnText("Walking");
 
@@ -492,11 +455,50 @@ public class CalendarAndroidTest {
         assertFalse(solo.waitForText("Walking", 1, 1000));
         assertFalse(solo.waitForText("Evening run", 1, 1000));
 
-        solo.clickOnView(solo.getView(R.id.forumn));
+        solo.clickOnView(solo.getView(R.id.forum));
 
         // checks to see if deleting a habit, will delete its forum events
         assertTrue(solo.waitForActivity(ForumManager.class));
         // checks if deleting the habit will remove it from to do list
         assertFalse(solo.waitForText("Evening run", 1, 1000));
+
     }
+
+    private void deleteHabitEvents() {
+        solo.clickOnView(solo.getView(R.id.home));
+        // checks to see if deleting a habit, will delete its events
+        assertTrue(solo.waitForActivity(Home.class));
+
+        if (solo.waitForText("Walking")) {
+            solo.clickLongOnText("Walking");
+            //wait for deleteHabitFragment to open
+            solo.waitForDialogToOpen(1000);
+            solo.clickOnButton("Yes");
+            solo.waitForDialogToClose(1000);
+        }
+        if (solo.waitForText("Running")) {
+            solo.clickLongOnText("Running");
+            //wait for deleteHabitFragment to open
+            solo.waitForDialogToOpen(1000);
+            solo.clickOnButton("Yes");
+            solo.waitForDialogToClose(1000);
+        }
+    }
+
+    @After
+    public void runAfterTest() {
+        deleteHabitEvents();
+
+        solo.clickOnView(solo.getView(R.id.home));
+        // checks to make sure the activity has switched to the Home activity
+        solo.assertCurrentActivity("Wrong", Home.class);
+
+        solo.clickOnView(solo.getView(R.id.homeUserButton));
+        solo.assertCurrentActivity("Wrong", EditUserActivity.class);
+
+        solo.clickOnView(solo.getView(R.id.signOutbutton));
+        solo.assertCurrentActivity("Wrong", Login.class);
+
+    }
+
 }

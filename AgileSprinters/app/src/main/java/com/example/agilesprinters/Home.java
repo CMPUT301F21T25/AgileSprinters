@@ -491,7 +491,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 overridePendingTransition(0, 0);
                 break;
 
-            case R.id.forumn:
+            case R.id.forum:
                 Intent forumIntent = new Intent(this, ForumManager.class);
                 forumIntent.putExtra("user", user);
                 finish();
@@ -503,56 +503,5 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         }
         return false;
     }
-
-    /*
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-
-        FirebaseUser firebaseUser = auth.getCurrentUser();
-        if (firebaseUser != null){
-            System.out.println("UID IS:" + firebaseUser.getUid());
-            //Do anything here which needs to be done after user is set is complete
-            getUser(firebaseUser);
-        }
-    }
-
-    private void getUser(FirebaseUser firebaseUser) {
-        db = FirebaseFirestore.getInstance();
-        CollectionReference collectionReference = db.collection("users");
-
-        String uniqueId = firebaseUser.getUid();
-
-        user.setUser(uniqueId);
-        collectionReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    Log.d(TAG, String.valueOf(doc.getData().get("UID")));
-                    if (uniqueId.matches((String) doc.getData().get("UID"))) {
-                        emailId = (String) doc.getData().get("Email ID");
-                        firstName = (String) doc.getData().get("First Name");
-                        lastName = (String) doc.getData().get("Last Name");
-                        followersList = (ArrayList<String>) doc.getData().get("followers");
-                        followingList = (ArrayList<String>) doc.getData().get("following");
-                        followRequestList = (ArrayList<String>) doc.getData().get("follow request list");
-                        setFields(user, emailId, firstName, lastName, followersList, followingList, followRequestList);
-                    }
-                }
-            }
-        });
-    }
-
-    private void setFields(User user, String emailId, String firstName, String lastName, ArrayList<String> followersList, ArrayList<String> followingList, ArrayList<String> followRequestList) {
-        user.setEmailId(emailId);
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setFollowersList(followersList);
-        user.setFollowingList(followingList);
-        user.setFollowRequestList(followRequestList);
-    }
-
-     */
 
 }

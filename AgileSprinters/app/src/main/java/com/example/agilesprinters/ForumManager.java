@@ -80,7 +80,7 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
         // connecting to the bottom navigation bar xml file
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
-        bottomNavigationView.setSelectedItemId(R.id.forumn);
+        bottomNavigationView.setSelectedItemId(R.id.forum);
 
         // connecting to the search bar xml files
         user_drop_down = findViewById(R.id.user_search_drop_down);
@@ -220,7 +220,7 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
                 overridePendingTransition(0,0);
                 break;
 
-            case R.id.forumn:
+            case R.id.forum:
                 if (this instanceof ForumManager) {
                     return true;
                 } else {

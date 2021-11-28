@@ -384,7 +384,7 @@ public class UserCalendar extends AppCompatActivity
         data.put("Opt_comment", instance.getOpt_comment());
         data.put("Duration", String.valueOf(instance.getDuration()));
         data.put("isShared", String.valueOf(instance.getShared()));
-        data.put("Opt_Loc", String.valueOf(instance.getOptLoc()));
+        data.put("Opt_Loc", instance.getOptLoc());
 
         // Makes a call to the database which handles it
         collectionPath = "HabitEvents";
@@ -393,34 +393,6 @@ public class UserCalendar extends AppCompatActivity
 
         // Updates the information in the UI
         completedEventsScreenSetup();
-    }
-
-    private void editForumElement(HabitInstance instance) {
-        String EID = instance.getEID();
-        db.collection("ForumPosts").addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
-                    FirebaseFirestoreException error) {
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    if (EID.matches((String) doc.getData().get("EID"))) {
-
-                        HashMap<String, String> data = new HashMap<>();
-                        data.put("Event Date", instance.getDate());
-                        data.put("First Name", user.getFirstName());
-                        data.put("Last Name", user.getLastName());
-                        data.put("duration", String.valueOf(instance.getDuration()));
-                        data.put("UID", instance.getUID());
-                        data.put("Opt Cmt", instance.getOpt_comment());
-                        data.put("EID", instance.getEID());
-
-                        // Makes a call to the database which handles it
-                        database.updateData("ForumPosts", doc.getId(), data, TAG);
-                        break;
-                    }
-                }
-                // from the cloud
-            }
-        });
     }
 
     /**
@@ -683,7 +655,7 @@ public class UserCalendar extends AppCompatActivity
                 overridePendingTransition(0, 0);
                 break;
 
-            case R.id.forumn:
+            case R.id.forum:
                 Intent forumIntent = new Intent(this, ForumManager.class);
                 forumIntent.putExtra("user", user);
                 startActivity(forumIntent);
@@ -718,6 +690,7 @@ public class UserCalendar extends AppCompatActivity
         data.put("EID", eventToShare.getEID());
         data.put("FID", FID);
         data.put("IID", eventToShare.getIID());
+        data.put("Opt_Loc", eventToShare.getDisplayLocStr((new Geocoder(this, Locale.getDefault()))));
 
         // Add the event to the forum database
         collectionPath = "ForumPosts";

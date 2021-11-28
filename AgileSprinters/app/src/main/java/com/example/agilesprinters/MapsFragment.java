@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
 import android.content.pm.PackageManager;
+import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
@@ -30,6 +31,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
         GoogleMap.OnMarkerClickListener, GoogleMap.OnMarkerDragListener {
@@ -143,13 +149,52 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
     @Override
     public void onMarkerDragEnd(@NonNull Marker marker) {
         addressText = (TextView) getView().findViewById(R.id.etAddress);
-        String address = (marker.getPosition().latitude + "," + marker.getPosition().longitude);
-        addressText.setText(address);
+        String address = (marker.getPosition().latitude +","+ marker.getPosition().longitude);
+        addressText.setText(getDisplayLocStr(address));
     }
 
     @Override
-    public void onMarkerDragStart(@NonNull Marker marker) {
+    public void onMarkerDragStart(@NonNull Marker marker) { }
 
+    public String getDisplayLocStr(String optLoc){
+        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+
+        if (Objects.isNull(optLoc) | optLoc.equals("")) return "";
+
+        List<Address> addresses = null;
+        String[] latLng = optLoc.split(",");
+        System.out.println(latLng);
+        try {
+            addresses = geocoder.getFromLocation(Double.parseDouble(latLng[0]), Double.parseDouble(latLng[1]),1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String[] location = new String[3];
+        String returnStr = "";
+
+        try {
+            location[0] = addresses.get(0).getLocality();
+        }catch(Exception e){
+            location[0] = "";
+        }
+        try {
+            location[1] = addresses.get(0).getAdminArea();
+        } catch(Exception e){
+            location[1] = "";
+        }
+        try {
+            location[2] = addresses.get(0).getCountryName();
+        } catch(Exception e) {
+            location[2] = "";
+        }
+        for (int i = 0; i<location.length;i++){
+                System.out.println("location: "+location[i]);
+                if (location[i]!=null | !location[i].equals(""))
+                    returnStr += location[i]+", ";
+        }
+
+        System.out.printf("returnStr: "+returnStr);
+        return returnStr.substring(0,returnStr.length()-2);
     }
 
     @Override
@@ -167,8 +212,6 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
     }
 
     private void getDeviceLocation() {
-
-
         /*
          * Get the best and most recent location of the device, which may be null in rare
          * cases when a location is not available.

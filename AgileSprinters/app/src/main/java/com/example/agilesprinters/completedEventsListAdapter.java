@@ -63,10 +63,10 @@ public class completedEventsListAdapter extends ArrayAdapter<HabitInstance> {
         // attach and pass variables to the textview in the list
         TextView eventContent = convertView.findViewById(R.id.EventContent);
         TextView durationContent = convertView.findViewById(R.id.duration_content);
-        //TextView locationContent = convertView.findViewById(R.id.location_content);
         TextView privacyContent = convertView.findViewById(R.id.privacy_content);
 
         // Check if optional comment is empty or not and pass the content to TextView accordingly
+        //db = FirebaseFirestore.getInstance();
         if (habitInstance.getOpt_comment().matches("")) {
             db.collection("Habit").addSnapshotListener((value, error) -> {
                 for (QueryDocumentSnapshot doc : value) {
@@ -78,9 +78,6 @@ public class completedEventsListAdapter extends ArrayAdapter<HabitInstance> {
         } else {
             eventContent.setText(habitInstance.getOpt_comment());
         }
-
-        // If given, set the location to event
-        //locationContent.setText(habitInstance.getDisplayLocStr(new Geocoder(getContext(), Locale.getDefault())));
 
         // Setting the duration to the event
         durationContent.setText(habitInstance.getDuration() + " mins");

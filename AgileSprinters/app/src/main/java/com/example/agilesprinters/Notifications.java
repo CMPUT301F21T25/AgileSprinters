@@ -182,7 +182,7 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
                     break;
                 }
 
-            case R.id.forumn:
+            case R.id.forum:
                 Intent forumIntent = new Intent(this, ForumManager.class);
                 forumIntent.putExtra("user", user);
                 startActivity(forumIntent);
