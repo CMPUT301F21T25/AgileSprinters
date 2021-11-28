@@ -207,9 +207,7 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
             dismiss();
         });
     }
-    private void getDeviceLocation() {
-
-
+    private void getDeviceLocation()
         /*
          * Get the best and most recent location of the device, which may be null in rare
          * cases when a location is not available.

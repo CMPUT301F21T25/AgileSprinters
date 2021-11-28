@@ -87,7 +87,7 @@
         <TextView
             android:id="@+id/editText_location"
             android:layout_height="wrap_content"
-            android:text="Del location"
+            android:text="Location"
             android:layout_gravity="center"
             android:layout_weight="10"
             android:textSize="15dp"

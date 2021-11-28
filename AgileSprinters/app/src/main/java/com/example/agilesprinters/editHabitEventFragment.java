@@ -45,8 +45,8 @@ public class editHabitEventFragment extends DialogFragment {
     private EditText optional_comment;
     private TextView input_date;
     private EditText input_duration;
-    private TextView optLocation;
     private Spinner durationSpinner;
+    TextView optLocation;
     private String EID;
     private String UID;
     private String HID;
@@ -57,10 +57,8 @@ public class editHabitEventFragment extends DialogFragment {
     private Bitmap bitmapOfImg;
     private HabitInstance habitInstance;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private Database database = new Database();
 
     private editHabitEventFragment.OnFragmentInteractionListener listener;
-    private Boolean status;
 
     /**
      * This function saves the values sent to the fragment for future manipulation
@@ -95,7 +93,7 @@ public class editHabitEventFragment extends DialogFragment {
     /**
      * This function attaches the fragment to the activity and keeps track of the context of the
      * fragment so the listener knows what to listen to. Ensures that the proper methods are
-     * implemented by the Home class.
+     * implemented by the User calendar class.
      *
      * @param context context of the current fragment
      */
@@ -123,26 +121,33 @@ public class editHabitEventFragment extends DialogFragment {
         //inflate the layout for this fragment
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.edit_habit_event_fragment, null);
 
-        // Display the calendar
+        // Getting the IDs to connect the information to UI
         optional_comment = view.findViewById(R.id.editText_comment);
         input_date = view.findViewById(R.id.editText_date);
         input_duration = view.findViewById(R.id.editText_duration);
         durationSpinner = view.findViewById(R.id.duration_spinner);
+        Button deleteButton = view.findViewById(R.id.delete_event_button);
         Button shareButton = view.findViewById(R.id.share_event_button);
-        optLocation = view.findViewById(R.id.editText_location);
-
-        habitInstance = (HabitInstance) getArguments().getSerializable("Habit instance");
-
-        optional_comment.setText(habitInstance.getOpt_comment());
-        input_date.setText(habitInstance.getDate());
-        input_duration.setText(String.valueOf(habitInstance.getDuration()));
-        optLocation.setText(habitInstance.getDisplayLocStr((new Geocoder(getContext(), Locale.getDefault()))));
+        Button saveButton = view.findViewById(R.id.save_event_button);
 
         imageContainer = view.findViewById(R.id.imageContainer);
         ImageView addCamPhotoBtn = view.findViewById(R.id.add_Cam_Photo);
         ImageView addGalPhotoBtn = view.findViewById(R.id.add_Gal_Photo);
         ImageView addLocBtn = view.findViewById(R.id.add_location);
+        optLocation = view.findViewById(R.id.editText_location);
 
+        habitInstance = (HabitInstance) getArguments().getSerializable("Habit instance");
+
+        // Setting the current information so that the user can make changes accordingly
+        optional_comment.setText(habitInstance.getOpt_comment());
+        input_date.setText(habitInstance.getDate());
+        input_duration.setText(String.valueOf(habitInstance.getDuration()));
+        optLocation.setText(habitInstance.getDisplayLocStr((new Geocoder(getContext(), Locale.getDefault()))));
+
+        // Setting the visibility of share button
+        setVisibilityForShareButton(habitInstance.getHID(), shareButton);
+
+        // Setting the doc ids of all connected elements
         EID = habitInstance.getEID();
         UID = habitInstance.getUID();
         HID = habitInstance.getHID();
@@ -150,10 +155,11 @@ public class editHabitEventFragment extends DialogFragment {
         IID = habitInstance.getIID();
         isShared = habitInstance.getShared();
 
-        setVisibilityForShareButton(habitInstance.getHID(), shareButton);
-
-        //getIID(habitInstance);
+        // Setting the stored image to the fragment so that the user can make
+        // changes accordingly
         setImageToDialog(habitInstance.getIID());
+
+        // When camera icon is clicked, it gets image from the camera
         addCamPhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -161,29 +167,30 @@ public class editHabitEventFragment extends DialogFragment {
             }
         });
 
+        // When location icon is clicked, it gets location from the map
         addLocBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getLocation();
-                imageContainer.setVisibility(View.VISIBLE);
             }
         });
 
+        // When gallery icon is clicked, it gets image from the gallery
         addGalPhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getGalleryPicture();
-                imageContainer.setVisibility(View.VISIBLE);
+                //hides alert dialog after gallery func is finished
             }
         });
 
+        // When delete image button is clicked, it sets the IID to null i.e., deletes it
         imageContainer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new AlertDialog.Builder(getContext())
                         .setTitle("Delete image")
                         .setMessage("Are you sure you want to delete this image?")
-
                         .setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 IID = null;
@@ -196,6 +203,7 @@ public class editHabitEventFragment extends DialogFragment {
             }
         });
 
+        // When delete location button is clicked, it sets the loc to "" i.e., deletes it
         optLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -217,22 +225,23 @@ public class editHabitEventFragment extends DialogFragment {
             }
         });
 
-
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setView(view);
 
-        Button deleteButton = (Button) view.findViewById(R.id.delete_event_button);
+        // When delete button is clicked, it calls the function to delete the event
         deleteButton.setVisibility(View.VISIBLE);
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 listener.onDeletePressed(habitInstance);
                 dismiss();
 
             }
         });
 
-        Button saveButton = view.findViewById(R.id.save_event_button);
+        // When save button is clicked, it calls the function to save and update all
+        // the new information to the event
         saveButton.setVisibility(View.VISIBLE);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -243,16 +252,19 @@ public class editHabitEventFragment extends DialogFragment {
                 String duration = input_duration.getText().toString();
                 String durationSetting = durationSpinner.getSelectedItem().toString();
 
+                // Error checking for comment
                 if (optional_comment.length() > 20) {
                     readyToClose = false;
                     optional_comment.setError("This field cannot have more than 20 chars");
                 }
 
+                // Error checking for date
                 if (date.matches("")) {
                     readyToClose = false;
                     input_date.setError("This field cannot be blank");
                 }
 
+                // Error checking for duration according to its chosen dropdown item
                 if (duration.matches("")) {
                     readyToClose = false;
                     input_duration.setError("This field cannot be blank");
@@ -260,14 +272,14 @@ public class editHabitEventFragment extends DialogFragment {
                     if (durationSetting.matches("mins")) {
                         if (Integer.parseInt(duration) < 0 || Integer.parseInt(duration) > 60) {
                             readyToClose = false;
-                            input_duration.setError("Mins value  muust be between 0 and 60");
+                            input_duration.setError("Req val between 0 and 60");
                         }
                     }
 
                     if (durationSetting.matches("hr")) {
                         if (Integer.parseInt(duration) < 0 || Integer.parseInt(duration) > 2) {
                             readyToClose = false;
-                            input_duration.setError("Hour value must be below 2");
+                            input_duration.setError("Req val below 2");
                         } else {
                             duration = String.valueOf(Integer.parseInt(duration) * 60);
                         }
@@ -275,8 +287,7 @@ public class editHabitEventFragment extends DialogFragment {
                 }
 
                 // If everything has been filled out, call the listener and send the edited
-                // habit back to the Home class and dismiss the dialog.
-                System.out.println("Checking ahain " + IID);
+                // habit event back to the User calendar class and dismiss the dialog.
                 if (readyToClose) {
                     listener.onEditSavePressed(new HabitInstance(EID, UID, HID, comment, date,
                             Integer.parseInt(duration), IID, FID, isShared, habitInstance.getOptLoc()), bitmapOfImg);
@@ -285,6 +296,7 @@ public class editHabitEventFragment extends DialogFragment {
             }
         });
 
+        // When share button is clicked, it calls the function to share the private event to forum
         shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -298,9 +310,18 @@ public class editHabitEventFragment extends DialogFragment {
 
     }
 
+    /**
+     * This function checks if the current event is public or private
+     * and sets the visibility accordingly
+     * @param HID             is the habit id of the event
+     * @param shareButton     is the share button attached to the fragment
+     */
     private void setVisibilityForShareButton(String HID, Button shareButton) {
         db.collection("Habit").addSnapshotListener((value, error) -> {
             for (QueryDocumentSnapshot doc : value) {
+
+                // Sets the button to visible, if the event is private
+                // so that it can be shared to forum if needed
                 if (doc.getId().equals(HID)) {
                     if (((String) doc.getData().get("PrivacySetting"))
                             .matches("Private")) {
@@ -311,6 +332,10 @@ public class editHabitEventFragment extends DialogFragment {
         });
     }
 
+    /**
+     * This function ...
+     * @param iid     is the ...
+     */
     private void setImageToDialog(String iid) {
         if (iid != null){
             IID = iid;
@@ -341,14 +366,20 @@ public class editHabitEventFragment extends DialogFragment {
     }
 
 
-    //switches view to map and allows user to pick location
+    /**
+     * This function shows a popup of maps on the screen and allows
+     * the user to pick a location.
+     */
     private void getLocation() {
         MapsFragment mapsFragment = new MapsFragment().newInstance((HabitInstance) getArguments().getSerializable("Habit instance"));
         mapsFragment.show(Objects.requireNonNull(getChildFragmentManager()), "ADD LOCATION");
     }
 
 
-    //switches view to gallery and allows user to pick photo
+    /**
+     * This function switches the current view of the screen to gallery and allows
+     * the user to pick a picture.
+     */
     private void getGalleryPicture() {
         //allow user to pick a photo from gallery
         Intent pickFromGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -356,6 +387,11 @@ public class editHabitEventFragment extends DialogFragment {
 
     }
 
+    /**
+     * This function asks for camera usage permission and
+     * switches the current view of the screen to camera and allows
+     * the user to click a picture.
+     */
     private void getCameraPicture(){
         //have to give permission to app to use camera
         //android manifest give permission and then take permission at runtime from user
@@ -365,6 +401,12 @@ public class editHabitEventFragment extends DialogFragment {
     }
 
     //overrides the method when activity is returning data (prev intent on line 82)
+    /**
+     * This function ...
+     * @param requestCode      is the ...
+     * @param resultCode       is the ...
+     * @param data             is the ...
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -403,7 +445,6 @@ public class editHabitEventFragment extends DialogFragment {
         }
     }
 
-
     /**
      * This function overrides the buttons clicked in order to only allow the dialog to be dismissed
      * when all requirements have been met.
@@ -412,13 +453,18 @@ public class editHabitEventFragment extends DialogFragment {
     public void onResume() {
         super.onResume();
 
-        optLocation.setText(habitInstance.getDisplayLocStr((new Geocoder(getContext(), Locale.getDefault()))));
-
         if (IID == null) imageContainer.setVisibility(View.INVISIBLE);
-        else imageContainer.setVisibility(View.VISIBLE);
+        else {
+            setImageToDialog(IID);
+            imageContainer.setVisibility(View.VISIBLE);
+        }
+
+        optLocation.setText(habitInstance.getDisplayLocStr((new Geocoder(getContext(), Locale.getDefault()))));
+        optLocation.postInvalidate();
 
         if (habitInstance.getOptLoc().equals("")) optLocation.setVisibility(View.INVISIBLE);
         else optLocation.setVisibility(View.VISIBLE);
+
 
         final AlertDialog dialog = (AlertDialog) getDialog();
         if (dialog != null) {

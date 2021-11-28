@@ -63,7 +63,6 @@ public class completedEventsListAdapter extends ArrayAdapter<HabitInstance> {
         // attach and pass variables to the textview in the list
         TextView eventContent = convertView.findViewById(R.id.EventContent);
         TextView durationContent = convertView.findViewById(R.id.duration_content);
-        TextView locationContent = convertView.findViewById(R.id.location_content);
         TextView privacyContent = convertView.findViewById(R.id.privacy_content);
 
         // Check if optional comment is empty or not and pass the content to TextView accordingly
@@ -79,7 +78,6 @@ public class completedEventsListAdapter extends ArrayAdapter<HabitInstance> {
         } else {
             eventContent.setText(habitInstance.getOpt_comment());
         }
-        locationContent.setText(habitInstance.getDisplayLocStr(new Geocoder(getContext(), Locale.getDefault())));
         durationContent.setText(habitInstance.getDuration() + " mins");
 
         if (habitInstance.getDuration() > 0 && habitInstance.getDuration() <= 60) {
@@ -91,12 +89,7 @@ public class completedEventsListAdapter extends ArrayAdapter<HabitInstance> {
         db.collection("Habit").addSnapshotListener((value, error) -> {
             for (QueryDocumentSnapshot doc : value) {
                 if (doc.getId().equals(habitInstance.getHID())) {
-                    if (((String) doc.getData().get("PrivacySetting"))
-                            .matches("Private")) {
-                        System.out.println("Privacy setting");
-                        privacyContent.setVisibility(View.VISIBLE);
-                        privacyContent.setText("Private Event");
-                    }
+                    privacyContent.setText((String) doc.getData().get("PrivacySetting"));
                 }
             }
         });
