@@ -199,11 +199,13 @@ public class addHabitEventFragment extends DialogFragment {
 
 
     //overrides the method when activity is returning data (prev intent on line 82)
+
     /**
      * This function ...
-     * @param requestCode      is the ...
-     * @param resultCode       is the ...
-     * @param data             is the ...
+     *
+     * @param requestCode is the ...
+     * @param resultCode  is the ...
+     * @param data        is the ...
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -249,7 +251,7 @@ public class addHabitEventFragment extends DialogFragment {
      * when all requirements have been met.
      */
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
 
         final AlertDialog dialog = (AlertDialog) getDialog();

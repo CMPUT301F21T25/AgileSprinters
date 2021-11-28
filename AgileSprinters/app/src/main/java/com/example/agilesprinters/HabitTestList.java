@@ -16,10 +16,11 @@ public class HabitTestList {
 
     /**
      * This method adds a habit to the list
+     *
      * @param habit hbait object being added to the list
      */
-    public void addHabit(Habit habit){
-        if (habitList.contains(habit)){
+    public void addHabit(Habit habit) {
+        if (habitList.contains(habit)) {
             throw new IllegalArgumentException();
         }
         habitList.add(habit);
@@ -28,14 +29,15 @@ public class HabitTestList {
     /**
      * This method edits the item at a certain position by removing the old item and adding the
      * edited one to the list.
+     *
      * @param position position of the item that the user wishes to edit
-     * @param habit the updated habit being re-added
+     * @param habit    the updated habit being re-added
      */
-    public void editHabit(int position, Habit habit){
-        if (habitList.isEmpty()){
+    public void editHabit(int position, Habit habit) {
+        if (habitList.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        if (habitList.size()-1 > position){
+        if (habitList.size() - 1 > position) {
             throw new IndexOutOfBoundsException();
         }
 
@@ -45,13 +47,14 @@ public class HabitTestList {
 
     /**
      * This method deletes a given habit
+     *
      * @param habit the habit that the user wishes to delete
      */
-    public void deleteHabit(Habit habit){
-        if(habitList.isEmpty()){
+    public void deleteHabit(Habit habit) {
+        if (habitList.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        if(habitList.contains(habit)){
+        if (habitList.contains(habit)) {
             habitList.remove(habit);
         } else {
             throw new IllegalArgumentException();
@@ -60,26 +63,27 @@ public class HabitTestList {
 
     /**
      * This is a method which will place a habit in a different desired location in the habit list.
-     * @param habit The habit the user wishes to move.
+     *
+     * @param habit       The habit the user wishes to move.
      * @param newPosition The position the user would like to move the habit to in the list.
      */
-    public void reorderHabit(Habit habit, int newPosition){
-        if (habitList.isEmpty()){
+    public void reorderHabit(Habit habit, int newPosition) {
+        if (habitList.isEmpty()) {
             throw new IllegalArgumentException();
-        } else if (!habitList.contains(habit)){
+        } else if (!habitList.contains(habit)) {
             throw new IllegalArgumentException();
-        } else if (newPosition > habitList.size()-1){
+        } else if (newPosition > habitList.size() - 1) {
             throw new IndexOutOfBoundsException();
-        } else if (newPosition < 0){
+        } else if (newPosition < 0) {
             throw new IndexOutOfBoundsException();
-        } else{
-            if (newPosition > habit.getListPosition()){
-                for (int i = newPosition; i > habit.getListPosition(); i--){
+        } else {
+            if (newPosition > habit.getListPosition()) {
+                for (int i = newPosition; i > habit.getListPosition(); i--) {
                     habitList.get(i).setListPosition(i - 1);
                 }
             }
-            if (newPosition < habit.getListPosition()){
-                for (int i = newPosition; i < habit.getListPosition() ; i ++){
+            if (newPosition < habit.getListPosition()) {
+                for (int i = newPosition; i < habit.getListPosition(); i++) {
                     habitList.get(i).setListPosition(i + 1);
                 }
             }
@@ -91,8 +95,8 @@ public class HabitTestList {
 
     /**
      * This returns a list of habits
-     * @return
-     * Return the list
+     *
+     * @return Return the list
      */
     public ArrayList<Habit> getHabits() {
         ArrayList<Habit> list = habitList;

@@ -33,7 +33,7 @@ import java.util.HashMap;
  * @author Hannah Desmarais
  */
 public class Notifications extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener,
-        AcceptDeclineFollowRequestFragment.OnFragmentInteractionListener{
+        AcceptDeclineFollowRequestFragment.OnFragmentInteractionListener {
     private ArrayList<User> notificationList;
     private ListView notificationListView;
     private ArrayAdapter<User> notificationAdapter;
@@ -47,6 +47,7 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
 
     /**
      * This function creates the UI on the screen and listens for user input.
+     *
      * @param savedInstanceState The instance state.
      */
     @Override
@@ -59,16 +60,16 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
 
         if (user == null) {
             user = (User) getIntent().getSerializableExtra("user");
-            UID = user.getUser();
+            UID = user.getUserID();
         }
 
-        DocumentReference userCollectionReference = db.collection("users").document(user.getUser());
+        DocumentReference userCollectionReference = db.collection("users").document(user.getUserID());
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
         bottomNavigationView.setSelectedItemId(R.id.notification);
 
-        notificationListView= findViewById(R.id.notification_list);
+        notificationListView = findViewById(R.id.notification_list);
         notificationList = new ArrayList<>();
         notificationAdapter = new NotificationsListAdapter(this, notificationList);
         notificationListView.setAdapter(notificationAdapter);
@@ -90,7 +91,7 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
                  * in the database and create a user object with their stored data. Add each created
                  * user to the list.
                  */
-                for (int i = 0 ; i < followRequests.size(); i++) {
+                for (int i = 0; i < followRequests.size(); i++) {
                     DocumentReference otherUsersDoc = db.collection(collectionPath).document(followRequests.get(i));
                     otherUsersDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
@@ -142,9 +143,9 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
     /**
      * This method is for the navigation bar. It will begin the corresponding activity of the item
      * on the navigation bar that was clicked.
+     *
      * @param item The menu item clicked by the user.
-     * @return
-     * Returns true if the item clicked is the button for the current screen the user is already on.
+     * @return Returns true if the item clicked is the button for the current screen the user is already on.
      * Returns false if the item clicked does not match any of the four appropriate activities.
      */
     @Override
@@ -157,7 +158,7 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
 
                 startActivity(intent);
                 finish();
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
                 break;
 
             case R.id.calendar:
@@ -165,11 +166,11 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
                 intentCalendar.putExtra("user", user);
                 startActivity(intentCalendar);
                 finish();
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
                 break;
 
             case R.id.notification:
-                if(this instanceof Notifications){
+                if (this instanceof Notifications) {
                     return true;
                 } else {
                     Intent intent2 = new Intent(this, Notifications.class);
@@ -177,7 +178,7 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
 
                     startActivity(intent2);
                     finish();
-                    overridePendingTransition(0,0);
+                    overridePendingTransition(0, 0);
                     break;
                 }
 
@@ -186,7 +187,7 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
                 forumIntent.putExtra("user", user);
                 startActivity(forumIntent);
                 finish();
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
                 break;
 
         }
@@ -198,6 +199,7 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
      * user to the current user's follower list, add the current user to the requesting user's
      * following list and delete the request from the follow request list. It will update the
      * database for each user by calling updateUserDoc().
+     *
      * @param requestingUser The user who sent the follow request to the current user.
      */
     @Override
@@ -216,6 +218,7 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
      * This method is called from the AcceptDeclineFollowRequestFragment and will simply get rid
      * of the request and update the current user doc in the database to match by calling
      * updateUserDoc().
+     *
      * @param requestingUser The user who requested to follow the current user.
      */
     @Override
@@ -229,6 +232,7 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
     /**
      * This method will get all parameters from a User object and update the corresponding document
      * in the database.
+     *
      * @param user The User object being updated.
      */
     public void updateUserDoc(User user) {

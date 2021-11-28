@@ -39,7 +39,7 @@ public class forumPostList extends ArrayAdapter<Forum> {
     /**
      * This function initializes the array list of forum events and the context of the screen.
      *
-     * @param context The current screen.
+     * @param context   The current screen.
      * @param forumPost The arraylist of object we are using our custom adapter on.
      */
     public forumPostList(Context context, ArrayList<Forum> forumPost) {
@@ -74,8 +74,8 @@ public class forumPostList extends ArrayAdapter<Forum> {
         ImageView image = convertView.findViewById(R.id.forum_image_container);
 
         // Setting the user profile button
-        user_circle.setText(forumItem.getFirstName().substring(0,1));
-        String temp = forumItem.getFirstName()+" "+ forumItem.getLastName().substring(0,1) + ".";
+        user_circle.setText(forumItem.getFirstName().substring(0, 1));
+        String temp = forumItem.getFirstName() + " " + forumItem.getLastName().substring(0, 1) + ".";
         userFullNameTextView.setText(temp);
 
         // Setting the date of the event
@@ -92,7 +92,7 @@ public class forumPostList extends ArrayAdapter<Forum> {
 
         // If present, setting the image to the forum event in UI
         setImageToDialog(forumItem.getImage(), image);
-        System.out.println("Printing item "+forumItem.getFirstName());
+        System.out.println("Printing item " + forumItem.getFirstName());
         // If present, setting the location to the forum event in UI
         if (!forumItem.getLocation().matches("")) {
             location.setVisibility(View.VISIBLE);
@@ -109,25 +109,26 @@ public class forumPostList extends ArrayAdapter<Forum> {
      * is to be set
      * It retrieves the img from firebase storage as a byte array using the img path
      * Then converts byte array to bitmap which is used to set the imageview
-     * @param iid                 is the image id of the event
-     * @param imageContainer      is the container to set the image to
+     *
+     * @param iid            is the image id of the event
+     * @param imageContainer is the container to set the image to
      */
     private void setImageToDialog(String iid, ImageView imageContainer) {
-        if (iid != null){
-        imageContainer.setVisibility(View.VISIBLE);
+        if (iid != null) {
+            imageContainer.setVisibility(View.VISIBLE);
             FirebaseStorage storage = FirebaseStorage.getInstance();
             // Create a storage reference from our app
             StorageReference storageRef = storage.getReference();
 
             StorageReference islandRef = storageRef.child(iid);
 
-            final long ONE_MEGABYTE = 2*(1024 * 1024);
+            final long ONE_MEGABYTE = 2 * (1024 * 1024);
             islandRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                 @Override
                 public void onSuccess(byte[] bytes) {
                     // Data for "images/island.jpg" is returns, use this as needed
                     //convert bytes to bitmap
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes , 0, bytes.length);
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
                     //set image to bitmap data
                     imageContainer.setImageBitmap(bitmap);

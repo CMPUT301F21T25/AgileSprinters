@@ -72,7 +72,7 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
         // Gets the user information of the logged in user
         if (UID == null) {
             user = (User) getIntent().getSerializableExtra("user");
-            UID = user.getUser();
+            UID = user.getUserID();
             userTempList = user.getFollowingList();
             userTempList.add(UID);
         }

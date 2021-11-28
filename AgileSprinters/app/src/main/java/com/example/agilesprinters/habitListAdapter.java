@@ -105,7 +105,7 @@ public class habitListAdapter extends ArrayAdapter<Habit> {
         titleText.setText(habit.getTitle());
         reasonText.setText(habit.getReason());
         progressSoFar.setProgress((int) progressPercent);
-        progressInNum.setText(String.valueOf((int) progressPercent)+"%");
+        progressInNum.setText(String.valueOf((int) progressPercent) + "%");
 
         return view;
     }

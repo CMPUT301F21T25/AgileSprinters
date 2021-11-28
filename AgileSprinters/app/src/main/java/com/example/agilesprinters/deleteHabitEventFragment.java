@@ -68,7 +68,6 @@ public class deleteHabitEventFragment extends DialogFragment {
      *
      * @param savedInstanceState is the reference to the most recent object
      * @return the dialog of the fragment
-     *
      */
     @NonNull
     @Override

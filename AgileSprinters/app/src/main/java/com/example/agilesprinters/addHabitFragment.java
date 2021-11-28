@@ -53,6 +53,7 @@ public class addHabitFragment extends DialogFragment implements DatePickerDialog
 
     /**
      * This function saves the values sent to the fragment for future manipulation
+     *
      * @param UID is the id of the user
      * @return returns the fragment with the bundled parameters
      */

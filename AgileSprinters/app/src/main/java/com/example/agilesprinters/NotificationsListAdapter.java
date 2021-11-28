@@ -40,8 +40,7 @@ public class NotificationsListAdapter extends ArrayAdapter<User> {
      * @param position    Position of the user.
      * @param convertView The converted view.
      * @param parent      The parent of the view we are changing.
-     * @return
-     * Returns the view after it's been converted and it's values set.
+     * @return Returns the view after it's been converted and it's values set.
      */
     @NonNull
     @Override

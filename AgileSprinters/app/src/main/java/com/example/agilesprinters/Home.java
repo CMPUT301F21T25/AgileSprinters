@@ -62,13 +62,14 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     private String followersCount;
     private Database database = new Database();
 
-    private String  firstName, lastName, emailId;
+    private String firstName, lastName, emailId;
     private ArrayList<String> followersList = new ArrayList<>();
     private ArrayList<String> followingList = new ArrayList<>();
     private ArrayList<String> followRequestList = new ArrayList<>();
 
     /**
      * This function creates the UI on the screen and listens for user input
+     *
      * @param savedInstanceState the instance state
      */
     @Override
@@ -95,8 +96,8 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
         if (user == null) {
             user = (User) getIntent().getSerializableExtra("user");
-            UID = user.getUser();
-            nameStr = user.getFirstName()+ " " + user.getLastName();
+            UID = user.getUserID();
+            nameStr = user.getFirstName() + " " + user.getLastName();
 
             followersCount = String.valueOf(user.getFollowersList().size());
             followingCount = String.valueOf(user.getFollowingList().size());
@@ -105,7 +106,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         setTextFields(followingCount, followersCount);
 
         Button homeUserButton = findViewById(R.id.homeUserButton);
-        homeUserButton.setText(nameStr.substring(0,1));
+        homeUserButton.setText(nameStr.substring(0, 1));
         followerCountTextView.setText(followersCount);
         followingCountTextView.setText(followingCount);
 
@@ -182,7 +183,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 intent.putExtra(getString(R.string.USER_STR), user);
                 startActivity(intent);
 
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
             }
         });
 
@@ -200,7 +201,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 intent.putExtra(getString(R.string.USER_STR), user);
                 startActivity(intent);
 
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
             }
         });
 
@@ -216,7 +217,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 intent.putExtra(getString(R.string.USER_STR), user);
                 startActivity(intent);
 
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
             }
         });
 
@@ -233,7 +234,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 intent.putExtra(getString(R.string.USER_STR), user);
                 startActivity(intent);
 
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
             }
         });
 
@@ -248,7 +249,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 intent.putExtra(getString(R.string.USER_STR), user);
                 startActivity(intent);
 
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
             }
         });
 
@@ -259,7 +260,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         habitList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                System.out.println("pos"+i);
+                System.out.println("pos" + i);
                 deleteHabitFragment delete = new deleteHabitFragment().newInstance(i);
                 delete.show(getSupportFragmentManager(), "DELETE");
 
@@ -285,19 +286,20 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     /**
      * This function passes a habit to be updated once a user clicks Save Changes in the
      * viewEditHabitFragment dialog fragment.
+     *
      * @param habit The habit object changed in the viewEditHabitFragment
      */
     @Override
     public void onEditViewSaveChangesPressed(Habit habit, int oldPosition) {
 
-        if (habit.getListPosition() > oldPosition){
-            for (int i = habit.getListPosition(); i > oldPosition; i--){
+        if (habit.getListPosition() > oldPosition) {
+            for (int i = habit.getListPosition(); i > oldPosition; i--) {
                 habitArrayList.get(i).setListPosition(i - 1);
                 updateHabitDatabase(habitArrayList.get(i));
             }
         }
-        if (habit.getListPosition() < oldPosition){
-            for (int i = habit.getListPosition(); i < oldPosition ; i ++){
+        if (habit.getListPosition() < oldPosition) {
+            for (int i = habit.getListPosition(); i < oldPosition; i++) {
                 habitArrayList.get(i).setListPosition(i + 1);
                 updateHabitDatabase(habitArrayList.get(i));
             }
@@ -317,6 +319,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
     /**
      * This function adds a habit to the database.
+     *
      * @param habit The habit that needs to be added to the database.
      */
     public void addHabitDatabase(Habit habit) {
@@ -344,6 +347,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     /**
      * This is a method that updates a habit selected by the user in the database based with the
      * fields entered in the viewEditHabitFragment
+     *
      * @param habit
      */
     public void updateHabitDatabase(Habit habit) {
@@ -366,7 +370,8 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
     /**
      * This method deletes a habit selected by the user from the database
-     * @param  HID is the habit object's ID selected by the user to be deleted
+     *
+     * @param HID is the habit object's ID selected by the user to be deleted
      */
     public void deleteHabitDb(String HID) {
         collectionPath = "Habit";
@@ -376,7 +381,8 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
     /**
      * This method deletes a habit selected by the user from the database
-     * @param  EID is the habit event object's ID selected by the user to be deleted
+     *
+     * @param EID is the habit event object's ID selected by the user to be deleted
      */
     public void deleteHabitEventsDb(String EID) {
         collectionPath = "HabitEvents";
@@ -395,9 +401,9 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
         Habit habit = habitAdapter.getItem(position);
 
         //Set all the positions of habits higher in the list down by one
-        while (position < habitArrayList.size()-1){
-            habitArrayList.get(position+1).setListPosition(position);
-            updateHabitDatabase(habitArrayList.get(position+1));
+        while (position < habitArrayList.size() - 1) {
+            habitArrayList.get(position + 1).setListPosition(position);
+            updateHabitDatabase(habitArrayList.get(position + 1));
             position++;
         }
         deleteHabitInstances(habit.getHID());
@@ -413,6 +419,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
 
     /**
      * This method deletes habit events from the database based on the habit object passed to it.
+     *
      * @param HID this is the habit object the user wishes to be deleted
      */
     public void deleteHabitInstances(String HID) {
@@ -424,7 +431,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     Log.d(TAG, String.valueOf(doc.getData().get("UID")));
                     if (HID.matches((String) doc.getData().get("HID"))) {
-                        if(doc.getId() == null){
+                        if (doc.getId() == null) {
                             return;
                         } else {
                             deleteHabitEventsDb(doc.getId());
@@ -442,9 +449,9 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
     /**
      * This method contains the logic for switching screens by selecting an item from the navigation
      * bar.
+     *
      * @param item This is the item selected by the user
-     * @return
-     * Returns a boolean based on which activity the user is currently in and which item was
+     * @return Returns a boolean based on which activity the user is currently in and which item was
      * clicked.
      */
     @Override
@@ -460,7 +467,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                     finish();
                     startActivity(intent);
 
-                    overridePendingTransition(0,0);
+                    overridePendingTransition(0, 0);
                 }
                 break;
 
@@ -471,7 +478,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 finish();
                 startActivity(intent);
 
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
                 break;
 
             case R.id.notification:
@@ -481,7 +488,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 finish();
                 startActivity(intentNotification);
 
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
                 break;
 
             case R.id.forumn:
@@ -490,7 +497,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 finish();
                 startActivity(forumIntent);
 
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
                 break;
 
         }

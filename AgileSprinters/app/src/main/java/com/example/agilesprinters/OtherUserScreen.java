@@ -44,6 +44,7 @@ public class OtherUserScreen extends AppCompatActivity {
 
     /**
      * This function creates the UI on the screen and listens for user input.
+     *
      * @param savedInstanceState The instance state.
      */
     @Override
@@ -63,14 +64,14 @@ public class OtherUserScreen extends AppCompatActivity {
         habitAdapter = new habitListAdapter(this, habitArrayList);
         habitList.setAdapter(habitAdapter);
 
-        if(currentUser == null){
+        if (currentUser == null) {
             currentUser = (User) getIntent().getSerializableExtra("currentUser");
         }
 
         if (otherUser == null) {
             otherUser = (User) getIntent().getSerializableExtra("otherUser");
-            UID = otherUser.getUser();
-            nameStr = otherUser.getFirstName()+ " " + otherUser.getLastName();
+            UID = otherUser.getUserID();
+            nameStr = otherUser.getFirstName() + " " + otherUser.getLastName();
 
             followersCount = otherUser.getFollowersList().size();
             followingCount = String.valueOf(otherUser.getFollowingList().size());
@@ -92,11 +93,10 @@ public class OtherUserScreen extends AppCompatActivity {
         follow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (follow.getText().toString().matches(getString(R.string.FOLLOW_BUTTON_TEXT))){
+                if (follow.getText().toString().matches(getString(R.string.FOLLOW_BUTTON_TEXT))) {
                     otherUser.getFollowRequestList().add(currentUser.getUserID());
                     updateUserDoc(otherUser);
-                }
-                else if (follow.getText().toString().matches(getString(R.string.UNFOLLOW_BUTTON_TEXT))){
+                } else if (follow.getText().toString().matches(getString(R.string.UNFOLLOW_BUTTON_TEXT))) {
                     otherUser.getFollowersList().remove(currentUser.getUserID());
                     currentUser.getFollowingList().remove(otherUser.getUserID());
                     followersCount--;
@@ -120,7 +120,7 @@ public class OtherUserScreen extends AppCompatActivity {
             for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                 Log.d(TAG, String.valueOf(doc.getData().get("UID")));
                 if (UID.matches((String) doc.getData().get("UID")) &&
-                        ((String) doc.getData().get("PrivacySetting")).matches("Public") ) {
+                        ((String) doc.getData().get("PrivacySetting")).matches("Public")) {
                     String title = (String) doc.getData().get("Title");
                     String reason = (String) doc.getData().get("Reason");
                     String dateToStart = (String) doc.getData().get("Date to Start");
@@ -148,7 +148,7 @@ public class OtherUserScreen extends AppCompatActivity {
      * requested to follow them. If the other user already has a follow request that they have not
      * chosen to accept or decline yet from the current user, the button will not be clickable.
      */
-    private void setFollowButton(){
+    private void setFollowButton() {
         ArrayList<String> followers = otherUser.getFollowersList();
         ArrayList<String> followRequests = otherUser.getFollowRequestList();
 
@@ -156,13 +156,13 @@ public class OtherUserScreen extends AppCompatActivity {
             follow.setText(getString(R.string.UNFOLLOW_BUTTON_TEXT));
             follow.setEnabled(true);
         }
-        if (!followers.contains(currentUser.getUserID()) && followRequests.contains(currentUser.getUserID())){
+        if (!followers.contains(currentUser.getUserID()) && followRequests.contains(currentUser.getUserID())) {
             follow.setEnabled(false);
             follow.setText(getString(R.string.FOLLOW_REQUEST_PENDING_TEXT));
             follow.setTextColor(Color.parseColor(getString(R.string.FOLLOW_REQUEST_PENDING_COLOR)));
             follow.setBackgroundColor(Color.GRAY);
         }
-        if (!followers.contains(currentUser.getUserID()) && !followRequests.contains(currentUser.getUserID())){
+        if (!followers.contains(currentUser.getUserID()) && !followRequests.contains(currentUser.getUserID())) {
             follow.setText(getString(R.string.FOLLOW_BUTTON_TEXT));
             follow.setEnabled(true);
         }
@@ -172,9 +172,10 @@ public class OtherUserScreen extends AppCompatActivity {
     /**
      * This method sets the text fields for following count, follower count, and the text in the
      * otherUserButton to be the first letter of the other user's first name.
+     *
      * @param followingCount The number of people the other user is following as a string.
      * @param followersCount The number of people following the other user as a string.
-     * @param firstNameStr The first name of the other user.
+     * @param firstNameStr   The first name of the other user.
      */
     private void setTextFields(String followingCount, String followersCount, String firstNameStr) {
         TextView followingCountTextView = findViewById(R.id.followingCount);
@@ -183,12 +184,13 @@ public class OtherUserScreen extends AppCompatActivity {
 
         followerCountTextView.setText(followersCount);
         followingCountTextView.setText(followingCount);
-        otherUserButton.setText(firstNameStr.substring(0,1));
+        otherUserButton.setText(firstNameStr.substring(0, 1));
     }
 
     /**
      * This method will update the document of a user in the database with the current values of the
      * user objects parameters upon being called.
+     *
      * @param user The user that is having their document updated as a User object.
      */
     public void updateUserDoc(User user) {
@@ -216,6 +218,6 @@ public class OtherUserScreen extends AppCompatActivity {
         super.onBackPressed();
         this.finish();
 
-        overridePendingTransition(0,0);
+        overridePendingTransition(0, 0);
     }
 }

@@ -6,10 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import android.app.DatePickerDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,16 +16,11 @@ import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -35,14 +28,12 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -63,7 +54,7 @@ public class UserCalendar extends AppCompatActivity
         DatePickerDialog.OnDateSetListener,
         BottomNavigationView.OnNavigationItemSelectedListener,
         deleteHabitEventFragment.OnFragmentInteractionListener,
-        shareHabitEventFragment.OnFragmentInteractionListener{
+        shareHabitEventFragment.OnFragmentInteractionListener {
 
     private static final String TAG = "Instance";
     private ArrayAdapter<Habit> toDoEventAdapter;
@@ -88,6 +79,7 @@ public class UserCalendar extends AppCompatActivity
 
     /**
      * This function creates the UI on the screen and listens for user input
+     *
      * @param savedInstanceState the instance state
      */
     @Override
@@ -100,7 +92,7 @@ public class UserCalendar extends AppCompatActivity
 
         if (UID == null) {
             user = (User) getIntent().getSerializableExtra("user");
-            UID = user.getUser();
+            UID = user.getUserID();
         }
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView2);
@@ -144,7 +136,7 @@ public class UserCalendar extends AppCompatActivity
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedHabitInstance = completedEvents.get(i);
                 selectedHabitInstanceId = completedEventIds.get(i);
-                System.out.println("image id is "+selectedHabitInstance.getIID());
+                System.out.println("image id is " + selectedHabitInstance.getIID());
 
                 editHabitEventFragment values =
                         new editHabitEventFragment().newInstance(i, selectedHabitInstance);
@@ -302,12 +294,10 @@ public class UserCalendar extends AppCompatActivity
     /**
      * This function passes a forum instance to be updated once a user clicks
      * Save in the add or editHabitEventFragment dialog fragment.
-     * @param habitInstance
-     *  The instance object created by the addHabitEventFragment
-     * @param FID
-     *  the forum id that can be used for creating a event or updating
-     * @param toDo
-     *  tells which action to perform add or edit
+     *
+     * @param habitInstance The instance object created by the addHabitEventFragment
+     * @param FID           the forum id that can be used for creating a event or updating
+     * @param toDo          tells which action to perform add or edit
      */
     private void updateForum(HabitInstance habitInstance, String FID, String toDo) {
         String HID = habitInstance.getHID();
@@ -315,8 +305,8 @@ public class UserCalendar extends AppCompatActivity
         HashMap<String, String> data = new HashMap();
 
         // Gets the privacy setting of the event
-        for (int i = 0; i < toDoEvents.size(); i++){
-            if (HID.matches(toDoEvents.get(i).getHID())){
+        for (int i = 0; i < toDoEvents.size(); i++) {
+            if (HID.matches(toDoEvents.get(i).getHID())) {
                 privacySetting = toDoEvents.get(i).getPrivacySetting();
             }
         }
@@ -324,8 +314,8 @@ public class UserCalendar extends AppCompatActivity
         // According to the privacy setting it adds/updates the forum
         // event in the database
         String duration = String.valueOf(habitInstance.getDuration());
-        if ( privacySetting.matches("Public") || (
-                (privacySetting.matches("Private")) && habitInstance.getShared()) ){
+        if (privacySetting.matches("Public") || (
+                (privacySetting.matches("Private")) && habitInstance.getShared())) {
             data.put("Event Date", habitInstance.getDate());
             data.put("First Name", user.getFirstName());
             data.put("Last Name", user.getLastName());
@@ -348,11 +338,12 @@ public class UserCalendar extends AppCompatActivity
 
     /**
      * This function ..
+     *
      * @param str
      * @return
      */
     public String stringChange(String str) {
-        for (int i = 0; i < 3; i++){
+        for (int i = 0; i < 3; i++) {
             if (str != null && str.length() > 0 && str.charAt(str.length() - 1) == 'x') {
                 str = str.substring(0, str.length() - 1);
             }
@@ -364,14 +355,14 @@ public class UserCalendar extends AppCompatActivity
      * This function passes a habit instance to be updated once a user clicks
      * Save in the editHabitEventFragment dialog fragment.
      *
-     * @param instance      The habit instance object changed in the editHabitEventFragment
-     * @param bitmap        The image object edited in the editHabitEventFragment
+     * @param instance The habit instance object changed in the editHabitEventFragment
+     * @param bitmap   The image object edited in the editHabitEventFragment
      */
     @Override
     public void onEditSavePressed(HabitInstance instance, Bitmap bitmap) {
         // Creates a path for the image i.e., IID
-        if (instance.getIID() == null){
-            path = "images/"+System.currentTimeMillis() +".jpg";
+        if (instance.getIID() == null) {
+            path = "images/" + System.currentTimeMillis() + ".jpg";
         } else {
             path = instance.getIID();
         }
@@ -398,7 +389,7 @@ public class UserCalendar extends AppCompatActivity
         // Makes a call to the database which handles it
         collectionPath = "HabitEvents";
         database.updateData(collectionPath, selectedHabitInstanceId, data, TAG);
-        updateForum(instance, instance.getFID(),"EDIT");
+        updateForum(instance, instance.getFID(), "EDIT");
 
         // Updates the information in the UI
         completedEventsScreenSetup();
@@ -525,7 +516,7 @@ public class UserCalendar extends AppCompatActivity
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     if (EID.matches((String) doc.getData().get("EID"))) {
                         System.out.println("ID is " + doc.getId());
-                        if(doc.getId() == null){
+                        if (doc.getId() == null) {
                             return;
                         } else {
                             database.deleteData("ForumPosts", doc.getId(), TAG);
@@ -540,6 +531,7 @@ public class UserCalendar extends AppCompatActivity
 
     /**
      * This function adds a habit event/instance object to the database.
+     *
      * @param instance The habit instance that needs to be added to the database.
      * @param bitmap   The image object added in the addHabitEventFragment
      * @param FID      The forum id of the forum event to be created
@@ -547,7 +539,7 @@ public class UserCalendar extends AppCompatActivity
     public void addHabitEventDatabase(HabitInstance instance, Bitmap bitmap, String FID) {
         // Creates a path and adds an image to the database
         if (bitmap != null) {
-            path = "images/"+System.currentTimeMillis() +".jpg";
+            path = "images/" + System.currentTimeMillis() + ".jpg";
             database.addImage(path, bitmap);
             instance.setIID(path);
         }
@@ -577,8 +569,9 @@ public class UserCalendar extends AppCompatActivity
     /**
      * This function gets the progress values by checking how many events
      * are completed related to the habit.
-     * @param instance     The habit instance that needs to be added to the database.
-     * @param toDoEvent    The status of event if its added or deleted
+     *
+     * @param instance  The habit instance that needs to be added to the database.
+     * @param toDoEvent The status of event if its added or deleted
      */
     private Integer getNewProgress(HabitInstance instance, String toDoEvent) {
         int completed = 0;
@@ -605,10 +598,11 @@ public class UserCalendar extends AppCompatActivity
     /**
      * This function gets the updated progress value and
      * updates it in the database
-     * @param instance      The habit instance that needs to be added to the database.
-     * @param toDoStatus    The status of event if its added or deleted
+     *
+     * @param instance   The habit instance that needs to be added to the database.
+     * @param toDoStatus The status of event if its added or deleted
      */
-    public void updateProgressInDatabase(HabitInstance instance, String toDoStatus){
+    public void updateProgressInDatabase(HabitInstance instance, String toDoStatus) {
         db.collection("Habit")
                 .document(instance.getHID())
                 .update("Progress", getNewProgress(instance, toDoStatus));
@@ -665,7 +659,7 @@ public class UserCalendar extends AppCompatActivity
 
                 startActivity(intent);
                 finish();
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
                 break;
 
             case R.id.calendar:
@@ -676,7 +670,7 @@ public class UserCalendar extends AppCompatActivity
                     //add bundle to send data if need
                     startActivity(intent2);
                     finish();
-                    overridePendingTransition(0,0);
+                    overridePendingTransition(0, 0);
                     break;
                 }
 
@@ -686,7 +680,7 @@ public class UserCalendar extends AppCompatActivity
                 //add bundle to send data if need
                 startActivity(intentNotification);
                 finish();
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
                 break;
 
             case R.id.forumn:
@@ -694,7 +688,7 @@ public class UserCalendar extends AppCompatActivity
                 forumIntent.putExtra("user", user);
                 startActivity(forumIntent);
                 finish();
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
                 break;
 
         }

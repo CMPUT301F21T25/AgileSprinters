@@ -296,8 +296,9 @@ public class editHabitEventFragment extends DialogFragment {
     /**
      * This function checks if the current event is public or private
      * and sets the visibility accordingly
-     * @param HID             is the habit id of the event
-     * @param shareButton     is the share button attached to the fragment
+     *
+     * @param HID         is the habit id of the event
+     * @param shareButton is the share button attached to the fragment
      */
     private void setVisibilityForShareButton(String HID, Button shareButton) {
         db.collection("Habit").addSnapshotListener((value, error) -> {
@@ -334,10 +335,11 @@ public class editHabitEventFragment extends DialogFragment {
 
     /**
      * This function ...
-     * @param iid     is the ...
+     *
+     * @param iid is the ...
      */
     private void setImageToDialog(String iid) {
-        if (iid != null){
+        if (iid != null) {
             IID = iid;
             FirebaseStorage storage = FirebaseStorage.getInstance();
             // Create a storage reference from our app
@@ -345,13 +347,13 @@ public class editHabitEventFragment extends DialogFragment {
 
             StorageReference islandRef = storageRef.child(iid);
 
-            final long ONE_MEGABYTE = 2*(1024 * 1024);
+            final long ONE_MEGABYTE = 2 * (1024 * 1024);
             islandRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                 @Override
                 public void onSuccess(byte[] bytes) {
                     // Data for "images/island.jpg" is returns, use this as needed
                     //convert bytes to bitmap
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes , 0, bytes.length);
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
                     //set image to bitmap data
                     imageContainer.setImageBitmap(bitmap);
@@ -393,7 +395,7 @@ public class editHabitEventFragment extends DialogFragment {
      * This function to switch views to camera and allows user to take a picture
      * and set that as image
      */
-    private void getCameraPicture(){
+    private void getCameraPicture() {
         //have to give permission to app to use camera
         //android manifest give permission and then take permission at runtime from user
         //switch view to camera view
@@ -404,6 +406,7 @@ public class editHabitEventFragment extends DialogFragment {
     /**
      * This function is a callback from intent switching to camera or gallery and handles the return
      * of data which is passed in
+     *
      * @param requestCode
      * @param resultCode
      * @param data
@@ -411,17 +414,17 @@ public class editHabitEventFragment extends DialogFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode){
+        switch (requestCode) {
 
             case 1:
-                if(resultCode == -1){
+                if (resultCode == -1) {
                     //URI is string of characters used to identify a resource (either by location name or both)
                     //use android net uri
                     Uri selectedImg = data.getData();
                     try {
                         bitmapOfImg = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImg);
                     } catch (IOException e) {
-                        System.out.println(e+"I error");
+                        System.out.println(e + "I error");
                     }
                     //set the original placeholder img to be the selected img
                     imageContainer.setImageBitmap(bitmapOfImg);
@@ -430,7 +433,7 @@ public class editHabitEventFragment extends DialogFragment {
 
             case 2:
                 Log.d("CAMERA", "case 2 for camera return result ");
-                if(resultCode == -1 && data != null){
+                if (resultCode == -1 && data != null) {
                     //retrieve data sent back from activity thru bundle
                     Bundle bundle = data.getExtras();
 
