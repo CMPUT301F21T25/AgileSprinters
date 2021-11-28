@@ -95,6 +95,9 @@ public class habitListAdapter extends ArrayAdapter<Habit> {
         double progress = (double) habit.getOverallProgress() / (totalEvents);
         double progressPercent = progress * 100;
 
+        if (progressPercent > 100) {
+            progressPercent = 100;
+        }
         //pass values to variables
         dateText.setText(mContext.getString(R.string.DATE_STARTED) + habit.getDateToStart());
         privacyText.setText(habit.getPrivacySetting());

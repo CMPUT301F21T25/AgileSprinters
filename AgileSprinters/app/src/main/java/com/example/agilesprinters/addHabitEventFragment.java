@@ -128,19 +128,25 @@ public class addHabitEventFragment extends DialogFragment {
         ImageView addCamPhotoBtn = view.findViewById(R.id.add_Cam_Photo);
         ImageView addGalPhotoBtn = view.findViewById(R.id.add_Gal_Photo);
         ImageView addLocBtn = view.findViewById(R.id.add_location);
+        TextView optLocation = view.findViewById(R.id.editText_location);
 
         // When camera icon is clicked, it gets image from the camera
         addCamPhotoBtn.setOnClickListener(view1 -> {
             getCameraPicture();
+            imageContainer.setVisibility(View.VISIBLE);
         });
 
         // When gallery icon is clicked, it gets image from the gallery
         addGalPhotoBtn.setOnClickListener(v -> {
             getGalleryPicture();
+            imageContainer.setVisibility(View.VISIBLE);
         });
 
         // When location icon is clicked, it gets location from the map
-        addLocBtn.setOnClickListener(v -> getLocation());
+        addLocBtn.setOnClickListener(v -> {
+            getLocation();
+            optLocation.setVisibility(View.VISIBLE);
+        });
 
         assert getArguments() != null;
         UID = getArguments().getString(getString(R.string.UID));
@@ -278,27 +284,28 @@ public class addHabitEventFragment extends DialogFragment {
                     input_date.setError("This field cannot be blank");
                 }
 
-
+                // Error checking for duration according to its chosen dropdown item
                 if (duration.matches("")) {
                     readyToClose = false;
                     input_duration.setError("This field cannot be blank");
-                }
+                } else {
+                    if (durationSetting.matches("mins")) {
+                        if (Integer.parseInt(duration) < 0 || Integer.parseInt(duration) > 60) {
+                            readyToClose = false;
+                            input_duration.setError("Req val between 0 and 60");
+                        }
+                    }
 
-                if (durationSetting.matches("mins")) {
-                    if (Integer.parseInt(duration) < 0 || Integer.parseInt(duration) > 60) {
-                        readyToClose = false;
-                        input_duration.setError("Mins value  muust be between 0 and 60");
+                    if (durationSetting.matches("hr")) {
+                        if (Integer.parseInt(duration) < 0 || Integer.parseInt(duration) > 2) {
+                            readyToClose = false;
+                            input_duration.setError("Req val below 2");
+                        } else {
+                            duration = String.valueOf(Integer.parseInt(duration) * 60);
+                        }
                     }
                 }
 
-                if (durationSetting.matches("hr")) {
-                    if (Integer.parseInt(duration) < 0 || Integer.parseInt(duration) > 2) {
-                        readyToClose = false;
-                        input_duration.setError("Hour value must be below 2");
-                    } else {
-                        duration = String.valueOf(Integer.parseInt(duration) * 60);
-                    }
-                }
                 if (Objects.isNull(habitInstance)) {
                     optLoc = "";
                 } else {
