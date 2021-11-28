@@ -93,7 +93,8 @@ public class OtherUserScreen extends AppCompatActivity {
             habitArrayList.clear();
             for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                 Log.d(TAG, String.valueOf(doc.getData().get("UID")));
-                if (UID.matches((String) doc.getData().get("UID"))) {
+                if (UID.matches((String) doc.getData().get("UID")) &&
+                        ((String) doc.getData().get("PrivacySetting")).matches("Public") ) {
                     String title = (String) doc.getData().get("Title");
                     String reason = (String) doc.getData().get("Reason");
                     String dateToStart = (String) doc.getData().get("Date to Start");

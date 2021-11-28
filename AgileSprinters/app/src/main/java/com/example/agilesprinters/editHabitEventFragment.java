@@ -371,14 +371,16 @@ public class editHabitEventFragment extends DialogFragment {
      * the user to pick a location.
      */
     private void getLocation() {
+        System.out.println("Before " + habitInstance.getOptLoc());
         MapsFragment mapsFragment = new MapsFragment().newInstance((HabitInstance) getArguments().getSerializable("Habit instance"));
         mapsFragment.show(Objects.requireNonNull(getChildFragmentManager()), "ADD LOCATION");
+        System.out.println("After " + habitInstance.getOptLoc());
     }
 
 
     /**
-     * This function switches the current view of the screen to gallery and allows
-     * the user to pick a picture.
+     * This function switches views to gallery and allows user to pick a photo
+     * to set as image
      */
     private void getGalleryPicture() {
         //allow user to pick a photo from gallery
@@ -388,9 +390,8 @@ public class editHabitEventFragment extends DialogFragment {
     }
 
     /**
-     * This function asks for camera usage permission and
-     * switches the current view of the screen to camera and allows
-     * the user to click a picture.
+     * This function to switch views to camera and allows user to take a picture
+     * and set that as image
      */
     private void getCameraPicture(){
         //have to give permission to app to use camera
@@ -400,12 +401,12 @@ public class editHabitEventFragment extends DialogFragment {
         startActivityForResult(cameraView, 2);
     }
 
-    //overrides the method when activity is returning data (prev intent on line 82)
     /**
-     * This function ...
-     * @param requestCode      is the ...
-     * @param resultCode       is the ...
-     * @param data             is the ...
+     * This function is a callback from intent switching to camera or gallery and handles the return
+     * of data which is passed in
+     * @param requestCode
+     * @param resultCode
+     * @param data
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

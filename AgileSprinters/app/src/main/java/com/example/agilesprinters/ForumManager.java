@@ -166,6 +166,7 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
                     optComment = (String) doc.getData().get("Opt Cmt");
                     imageId = (String) doc.getData().get("IID");
                     location = (String) doc.getData().get("Opt_Loc");
+                    System.out.println("Printing while adding "+location);
                     forumDataList.add(new Forum(firstName, lastName, eventDate, duration, optComment, imageId, location));
                     System.out.println("Array list1 is " + forumDataList);
                 }

@@ -68,6 +68,18 @@ public class User implements Serializable {
         this.followingList = followingList;
     }
 
+    public void settFollowingList(String ID) {
+        this.followingList.add(ID);
+    }
+
+    public void settFollowerList(String ID) {
+        this.followersList.add(ID);
+    }
+
+    public void settFollowRequestList(String ID) {
+        this.followRequestList.add(ID);
+    }
+
     public String getFirstName() {
         return firstName;
     }

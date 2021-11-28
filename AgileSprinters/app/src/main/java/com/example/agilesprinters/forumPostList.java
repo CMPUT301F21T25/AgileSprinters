@@ -70,6 +70,7 @@ public class forumPostList extends ArrayAdapter<Forum> {
         TextView userFullNameTextView = convertView.findViewById(R.id.forum_name_text_view);
         TextView event_date = convertView.findViewById(R.id.event_date_text_view);
         TextView opt_cmt = convertView.findViewById(R.id.forum_comment);
+        TextView location = convertView.findViewById(R.id.forum_location);
         ImageView image = convertView.findViewById(R.id.forum_image_container);
 
         // Setting the user profile button
@@ -89,16 +90,27 @@ public class forumPostList extends ArrayAdapter<Forum> {
             opt_cmt.setText(forumItem.getComment());
         }
 
-        // If present, setting the image to the forum event
+        // If present, setting the image to the forum event in UI
         setImageToDialog(forumItem.getImage(), image);
+        System.out.println("Printing item "+forumItem.getFirstName());
+        // If present, setting the location to the forum event in UI
+        if (!forumItem.getLocation().matches("")) {
+            location.setVisibility(View.VISIBLE);
+            location.setText(forumItem.getLocation());
+        } else {
+            location.setVisibility(View.INVISIBLE);
+        }
 
         return convertView;
     }
 
     /**
-     * This function ...
-     * @param iid              is the ...
-     * @param imageContainer   is the ...
+     * This function receives the img path and the image container elem of the forum where the image
+     * is to be set
+     * It retrieves the img from firebase storage as a byte array using the img path
+     * Then converts byte array to bitmap which is used to set the imageview
+     * @param iid                 is the image id of the event
+     * @param imageContainer      is the container to set the image to
      */
     private void setImageToDialog(String iid, ImageView imageContainer) {
         if (iid != null){

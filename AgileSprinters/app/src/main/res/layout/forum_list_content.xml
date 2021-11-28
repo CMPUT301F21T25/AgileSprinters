@@ -55,7 +55,8 @@
                     android:layout_weight="10"
                     android:layout_marginLeft="5dp"
                     android:gravity="right"
-                    android:text="Edmonton, Canada" />
+                    android:text="location"
+                    android:visibility="invisible"/>
 
             </LinearLayout>
 

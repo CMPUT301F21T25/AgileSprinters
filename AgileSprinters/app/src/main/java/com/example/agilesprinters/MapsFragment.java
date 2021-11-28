@@ -29,6 +29,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
         GoogleMap.OnMarkerClickListener, GoogleMap.OnMarkerDragListener {
@@ -163,6 +164,7 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
             dismiss();
         });
     }
+
     private void getDeviceLocation() {
 
 
