@@ -23,9 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * This class provides testing for the home activity. Please note that tests must be ran individually
- * and the cache must be cleared between each for them to work due to the app automatically going
- * to the home page after a single sign in on the device.
+ * This class provides testing for the home activity.
  *
  * @author Hannah Desmarais
  */
@@ -46,18 +44,10 @@ public class HomeAndroidTest {
     }
 
     /**
-     * Gets the Activity
-     */
-    @Test
-    public void stage1_start() {
-        Activity activity = rule.getActivity();
-    }
-
-    /**
      * This test will check to make sure that when a habit is added it shows up in the list
      */
     @Test
-    public void stage2_checkHabitList(){
+    public void stage1_checkHabitList(){
         //Login to test account
         solo.assertCurrentActivity("Wrong Activity", Login.class);
         solo.enterText((EditText) solo.getView(R.id.email), "test@email.com");
@@ -135,7 +125,7 @@ public class HomeAndroidTest {
      * This test will make sure that a habit can be edited and the edited version will show in the list
      */
     @Test
-    public void stage3_checkEditViewList(){
+    public void stage2_checkEditViewList(){
         //Login to test account
         solo.assertCurrentActivity("Wrong Activity", Login.class);
         solo.enterText((EditText) solo.getView(R.id.email), "test@email.com");
@@ -210,7 +200,7 @@ public class HomeAndroidTest {
      * This test makes sure that a user can delete an item in the list.
      */
     @Test
-    public void stage4_deleteHabit(){
+    public void stage3_deleteHabit(){
         //Login to test account
         solo.assertCurrentActivity("Wrong Activity", Login.class);
         solo.enterText((EditText) solo.getView(R.id.email), "test@email.com");
@@ -268,7 +258,7 @@ public class HomeAndroidTest {
      * changed.
      */
     @Test
-    public void stage5_checkHabitPositionChange(){
+    public void stage4_checkHabitPositionChange(){
         //Login to test account
         solo.assertCurrentActivity("Wrong Activity", Login.class);
         solo.enterText((EditText) solo.getView(R.id.email), "test@email.com");
@@ -435,6 +425,13 @@ public class HomeAndroidTest {
      */
     @After
     public void tearDown() {
+        if(!solo.getCurrentActivity().equals(Home.class)){
+            solo.clickOnView(solo.getView(R.id.home));
+        }
+
+        solo.clickOnView(solo.getView(R.id.homeUserButton));
+        solo.waitForActivity(EditUserActivity.class);
+        solo.clickOnView(solo.getView(R.id.signOutbutton));
         solo.finishOpenedActivities();
     }
 }

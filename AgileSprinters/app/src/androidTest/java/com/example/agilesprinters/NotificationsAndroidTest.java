@@ -21,8 +21,10 @@ import com.robotium.solo.Solo;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +34,7 @@ import java.util.HashMap;
  *
  * @author Hannah Desmarais
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class NotificationsAndroidTest {
     private Solo solo;
     private FirebaseFirestore db;
@@ -104,14 +107,6 @@ public class NotificationsAndroidTest {
     @Before
     public void setUp() {
         solo = new Solo(InstrumentationRegistry.getInstrumentation(),rule.getActivity());
-    }
-
-    /**
-     * Gets the Activity
-     */
-    @Test
-    public void stage1_start() {
-        Activity activity = rule.getActivity();
     }
 
     /**
@@ -226,6 +221,13 @@ public class NotificationsAndroidTest {
      */
     @After
     public void tearDown() {
+        if(!solo.getCurrentActivity().equals(Home.class)){
+            solo.clickOnView(solo.getView(R.id.home));
+        }
+
+        solo.clickOnView(solo.getView(R.id.homeUserButton));
+        solo.waitForActivity(EditUserActivity.class);
+        solo.clickOnView(solo.getView(R.id.signOutbutton));
         solo.finishOpenedActivities();
     }
 
