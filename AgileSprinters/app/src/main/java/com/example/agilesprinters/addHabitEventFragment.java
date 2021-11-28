@@ -66,7 +66,6 @@ public class addHabitEventFragment extends DialogFragment {
      * @param position is the selected item position
      * @return returns the fragment with the bundled parameters
      */
-
     public static addHabitEventFragment newInstance(int position, String UID, String HID, String EID) {
         addHabitEventFragment fragment = new addHabitEventFragment();
         Bundle args = new Bundle();
@@ -91,6 +90,7 @@ public class addHabitEventFragment extends DialogFragment {
      * This function attaches the fragment to the activity and keeps track of the context of the
      * fragment so the listener knows what to listen to. Ensures that the proper methods are
      * implemented by the User calendar class.
+     *
      * @param context is the current screen
      */
     @Override
@@ -108,9 +108,9 @@ public class addHabitEventFragment extends DialogFragment {
     /**
      * This function creates the actual dialog on the screen and listens for user input, returning
      * the information through the listener based on which button is clicked.
+     *
      * @param savedInstanceState is a reference to the most recent object
-     * @return
-     * Returns the Dialog created
+     * @return Returns the Dialog created
      */
     @NonNull
     @Override
@@ -182,7 +182,7 @@ public class addHabitEventFragment extends DialogFragment {
      * the user to pick a location.
      */
     private void getLocation() {
-        habitInstance = new HabitInstance("null", "null", "null", "null", "null", 0, "null", "null", null,"");
+        habitInstance = new HabitInstance("null", "null", "null", "null", "null", 0, "null", "null", null, "");
         MapsFragment mapsFragment = new MapsFragment().newInstance(habitInstance);
         mapsFragment.show(getChildFragmentManager(), "ADD LOCATION");
     }
@@ -208,17 +208,17 @@ public class addHabitEventFragment extends DialogFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode){
+        switch (requestCode) {
 
             case 1:
-                if(resultCode == -1){
+                if (resultCode == -1) {
                     //URI is string of characters used to identify a resource (either by location name or both)
                     //use android net uri
-                    selectedImg =  data.getData();
+                    selectedImg = data.getData();
                     try {
-                        bitmapOfImg = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(),selectedImg);
+                        bitmapOfImg = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImg);
                     } catch (IOException e) {
-                        System.out.println(e+"I error");
+                        System.out.println(e + "I error");
                     }
                     //set the original placeholder img to be the selected img
                     imageContainer.setImageBitmap(bitmapOfImg);
@@ -227,7 +227,7 @@ public class addHabitEventFragment extends DialogFragment {
 
             case 2:
                 Log.d("CAMERA", "case 2 for camera return result ");
-                if(resultCode == -1 && data != null){
+                if (resultCode == -1 && data != null) {
                     //retrieve data sent back from activity thru bundle
                     Bundle bundle = data.getExtras();
 
@@ -266,51 +266,46 @@ public class addHabitEventFragment extends DialogFragment {
                 String duration = input_duration.getText().toString();
                 String durationSetting = durationSpinner.getSelectedItem().toString();
 
-                // Error checking for comment
                 if (comment.length() > 20) {
                     readyToClose = false;
                     optional_comment.setError("This field cannot have more than 20 chars");
                 }
 
-                // Error checking for date
                 if (date_entry.matches("")) {
                     readyToClose = false;
                     input_date.setError("This field cannot be blank");
                 }
 
-                // Error checking for duration according to its chosen dropdown item
+
                 if (duration.matches("")) {
                     readyToClose = false;
                     input_duration.setError("This field cannot be blank");
-                } else {
-                    if (durationSetting.matches("mins")) {
-                        if (Integer.parseInt(duration) < 0 || Integer.parseInt(duration) > 60) {
-                            readyToClose = false;
-                            input_duration.setError("Mins value  muust be between 0 and 60");
-                        }
-                    }
+                }
 
-                    if (durationSetting.matches("hr")) {
-                        if (Integer.parseInt(duration) < 0 || Integer.parseInt(duration) > 2) {
-                            readyToClose = false;
-                            input_duration.setError("Hour value must be below 2");
-                        } else {
-                            duration = String.valueOf(Integer.parseInt(duration) * 60);
-                        }
+                if (durationSetting.matches("mins")) {
+                    if (Integer.parseInt(duration) < 0 || Integer.parseInt(duration) > 60) {
+                        readyToClose = false;
+                        input_duration.setError("Mins value  muust be between 0 and 60");
                     }
                 }
 
-                // Error checking for location
-                if (Objects.isNull(habitInstance)){
+                if (durationSetting.matches("hr")) {
+                    if (Integer.parseInt(duration) < 0 || Integer.parseInt(duration) > 2) {
+                        readyToClose = false;
+                        input_duration.setError("Hour value must be below 2");
+                    } else {
+                        duration = String.valueOf(Integer.parseInt(duration) * 60);
+                    }
+                }
+                if (Objects.isNull(habitInstance)) {
                     optLoc = "";
-                }
-                else{
+                } else {
                     optLoc = habitInstance.getOptLoc();
                 }
 
                 // If everything has been filled out, call the listener and send the edited
-                // habit event back to the User calendar class and dismiss the dialog.
-                if(readyToClose){
+                // habit back to the Home class and dismiss the dialog.
+                if (readyToClose) {
                     listener.onSavePressed(new HabitInstance(EID, UID, HID, comment, date_entry,
                             Integer.parseInt(duration), null, FID, false, optLoc), bitmapOfImg);
                     dialog.dismiss();

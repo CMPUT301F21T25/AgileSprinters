@@ -1,9 +1,6 @@
 package com.example.agilesprinters;
 
-import static android.content.ContentValues.TAG;
-
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,16 +10,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.agilesprinters.User;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.ArrayList;
 
+/**
+ * This class builds a list of users that is displayed in the followFollowing activity
+ *
+ * @author Hari
+ */
 public class CustomUserList extends ArrayAdapter<User> {
     private ArrayList<User> users;
     private Context context;
@@ -33,6 +27,14 @@ public class CustomUserList extends ArrayAdapter<User> {
         this.context = context;
     }
 
+    /**
+     * This function takes the users and builds a list of their names
+     *
+     * @param position    {@link Integer} position in list
+     * @param convertView {@link View} view passed from followFollowing
+     * @param parent      {@link ViewGroup} the view of the parent
+     * @return {@link View} returns the view that we built in this class
+     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {

@@ -89,7 +89,7 @@ public class completedEventsListAdapter extends ArrayAdapter<HabitInstance> {
         if (habitInstance.getDuration() > 0 && habitInstance.getDuration() <= 60) {
             durationContent.setText(habitInstance.getDuration() + " mins");
         } else {
-            durationContent.setText((habitInstance.getDuration()/60) + " hours");
+            durationContent.setText((habitInstance.getDuration() / 60) + " hours");
         }
 
         // Checks and displays the private tag if a given event is private

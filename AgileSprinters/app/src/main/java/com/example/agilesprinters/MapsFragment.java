@@ -103,6 +103,7 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
         }
 
     }
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         if (map != null) {
@@ -142,7 +143,7 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
     @Override
     public void onMarkerDragEnd(@NonNull Marker marker) {
         addressText = (TextView) getView().findViewById(R.id.etAddress);
-        String address = (marker.getPosition().latitude +","+ marker.getPosition().longitude);
+        String address = (marker.getPosition().latitude + "," + marker.getPosition().longitude);
         addressText.setText(address);
     }
 
@@ -154,10 +155,10 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
     @Override
     public void onResume() {
         super.onResume();
-        System.out.println("DURATION1: "+habitInstance.getDuration());
+        System.out.println("DURATION1: " + habitInstance.getDuration());
         Button saveAddressBtn = getView().findViewById(R.id.saveAddressBtn);
         saveAddressBtn.setOnClickListener(view -> {
-            optLoc = (marker.getPosition().latitude +","+ marker.getPosition().longitude);
+            optLoc = (marker.getPosition().latitude + "," + marker.getPosition().longitude);
             // If everything has been filled out, call the listener and send the edited
             // habit back to the Home class and dismiss the dialog.
             habitInstance.setOptLoc(optLoc);
@@ -199,10 +200,11 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
                     }
                 });
             }
-        } catch (SecurityException e)  {
+        } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage(), e);
         }
     }
+
     private void getLocationPermission() {
         /*
          * Request location permission, so that we can get the location of the
@@ -236,6 +238,7 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
         }
         updateLocationUI();
     }
+
     /**
      * Updates the map's UI settings based on whether the user has granted location permission.
      */
@@ -254,7 +257,7 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
                 lastKnownLocation = null;
                 getLocationPermission();
             }
-        } catch (SecurityException e)  {
+        } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage());
         }
     }

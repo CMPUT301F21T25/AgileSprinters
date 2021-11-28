@@ -12,32 +12,23 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 
 /**
- *
  * This class represents a login activity, it is the first page for users who are not signed it
+ *
  * @author Leen Alzebdeh
  */
 public class Login extends AppCompatActivity implements View.OnClickListener {
@@ -62,15 +53,16 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
     private FirebaseFirestore db;
     private Database database = new Database();
-    private String  firstName, lastName, emailId;
+    private String firstName, lastName, emailId;
     private ArrayList<String> followersList = new ArrayList<>();
     private ArrayList<String> followingList = new ArrayList<>();
     private ArrayList<String> followRequestList = new ArrayList<>();
+
     /**
      * This function is called when the login activity starts
-     * @param savedInstanceState
-     *   a reference to Bundle object that is passed into the onCreate method {@link Bundle } <br>
-     *   if null is passed an exception is thrown
+     *
+     * @param savedInstanceState a reference to Bundle object that is passed into the onCreate method {@link Bundle } <br>
+     *                           if null is passed an exception is thrown
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +106,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = auth.getCurrentUser();
-        if (currentUser != null){
+        if (currentUser != null) {
             System.out.println("UID IS:" + currentUser.getUid());
             //Do anything here which needs to be done after user is set is complete
             getUser(currentUser);
@@ -145,9 +137,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
     /**
      * This function sends an email to let the user update their password
-     * @param emailAddress
-     *  Give the email you want to send the email to <br>
-     *      if null is passed, no email is sent {@link String}
+     *
+     * @param emailAddress Give the email you want to send the email to <br>
+     *                     if null is passed, no email is sent {@link String}
      */
     private void sendPasswordReset(String emailAddress) {
         FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -161,6 +153,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                     }
                 });
     }
+
     /**
      * This function handles sign in/ authentication when the user clicks the sign in button,
      * email and password fields must be non-empty
@@ -171,38 +164,43 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         String password = passwordEditText.getText().toString().trim();
 
         //throw a message if the email is empty
-        if (email.equals("")){
+        if (email.equals("")) {
             Toast.makeText(Login.this, getString(R.string.EMPTY_EMAIL),
                     Toast.LENGTH_SHORT).show();
         } //throw a message if the password is empty
-        else if (password.equals("")){
+        else if (password.equals("")) {
             Toast.makeText(Login.this, getString(R.string.EMPTY_PASSWORD),
                     Toast.LENGTH_SHORT).show();
         } else {
-            auth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(this, task -> {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, getString(R.string.SIGN_IN_SUCCESS_MSG));
-                            FirebaseUser user = auth.getCurrentUser();
-                            if (user != null) {
-                                getUser(user);
+            try {
+                auth.signInWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(this, task -> {
+                            if (task.isSuccessful()) {
+                                // Sign in success, update UI with the signed-in user's information
+                                Log.d(TAG, getString(R.string.SIGN_IN_SUCCESS_MSG));
+                                FirebaseUser user = auth.getCurrentUser();
+                                if (user != null) {
+                                    getUser(user);
+                                }
+                            } else {
+                                // If sign in fails due to a wrong password or email
+                                Log.w(TAG, getString(R.string.SIGN_IN_FAILURE_MSG),
+                                        task.getException());
+                                Toast.makeText(Login.this, getString(R.string.LOGIN_FAILED),
+                                        Toast.LENGTH_SHORT).show();
                             }
-                        } else {
-                            // If sign in fails due to a wrong password or email
-                            Log.w(TAG, getString(R.string.SIGN_IN_FAILURE_MSG),
-                                    task.getException());
-                            Toast.makeText(Login.this, getString(R.string.LOGIN_FAILED),
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                        });
+            } catch (Exception e) {
+                Toast.makeText(Login.this, e.toString(),
+                        Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
     /**
      * This function directs the user to the home page
-     * @param user
-     * Give the firebase user that is logged in, if null is passed {@link FirebaseUser}
+     *
+     * @param user Give the firebase user that is logged in, if null is passed {@link FirebaseUser}
      */
     private void getUser(FirebaseUser user) {
         db = FirebaseFirestore.getInstance();
@@ -210,29 +208,34 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         String uniqueId = user.getUid();
 
-        currentUser.setUser(uniqueId);
-        collectionReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    Log.d(TAG, String.valueOf(doc.getData().get("UID")));
-                    if (uniqueId.matches((String) doc.getData().get("UID"))) {
-                        emailId = (String) doc.getData().get("Email ID");
-                        firstName = (String) doc.getData().get("First Name");
-                        lastName = (String) doc.getData().get("Last Name");
-                        followersList = (ArrayList<String>) doc.getData().get("followers");
-                        followingList = (ArrayList<String>) doc.getData().get("following");
-                        followRequestList = (ArrayList<String>) doc.getData().get("follow request list");
-                        updateUi(currentUser, emailId, firstName, lastName, followersList, followingList, followRequestList);
+        currentUser.setUserID(uniqueId);
+        try {
+            collectionReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                @Override
+                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        Log.d(TAG, String.valueOf(doc.getData().get("UID")));
+                        if (uniqueId.matches((String) doc.getData().get("UID"))) {
+                            emailId = (String) doc.getData().get("Email ID");
+                            firstName = (String) doc.getData().get("First Name");
+                            lastName = (String) doc.getData().get("Last Name");
+                            followersList = (ArrayList<String>) doc.getData().get("followers");
+                            followingList = (ArrayList<String>) doc.getData().get("following");
+                            followRequestList = (ArrayList<String>) doc.getData().get("follow request list");
+                            updateUi(currentUser, emailId, firstName, lastName, followersList, followingList, followRequestList);
+                        }
                     }
                 }
-            }
-        });
+            });
+        } catch (Exception e) {
+            Toast.makeText(Login.this, e.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void updateUi(User user, String emailId, String firstName, String lastName,
                          ArrayList<String> followersList, ArrayList<String> followingList,
-                         ArrayList<String> followRequestList){
+                         ArrayList<String> followRequestList) {
 
         Intent intent = new Intent(Login.this, Home.class);
 
@@ -251,13 +254,13 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
     /**
      * This function handles different cases of view clicks
-     * @param v
-     *  Give the view that is clicked <br> if null is passed nothing happens {@link View}
+     *
+     * @param v Give the view that is clicked <br> if null is passed nothing happens {@link View}
      */
     @Override
     public void onClick(View v) {
         Intent intent = null;
-        switch(v.getId()){
+        switch (v.getId()) {
             case R.id.register:  //if the register text is clicked, direct to the register page
                 intent = new Intent(Login.this, Register.class);
                 break;
@@ -270,7 +273,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             default:
                 break;
         }
-        if (null!=intent) startActivity(intent);
+        if (null != intent) startActivity(intent);
     }
 
 }

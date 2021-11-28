@@ -17,7 +17,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 
 /**
  * This class is used when a user is signing up for the app. It takes the user details and
@@ -33,9 +32,9 @@ public class Register extends AppCompatActivity {
 
     /**
      * This function is called when the Register activity starts
-     * @param savedInstanceState
-     *   a reference to Bundle object that is passed into the onCreate method {@link Bundle } <br>
-     *   if null is passed an exception is thrown
+     *
+     * @param savedInstanceState a reference to Bundle object that is passed into the onCreate method {@link Bundle } <br>
+     *                           if null is passed an exception is thrown
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,18 +66,19 @@ public class Register extends AppCompatActivity {
 
     /**
      * This function takes given user input and checks if the given input is in the right format.
-     * @param emailStr {@link String}, user's email. If null then it calls the updateUI function
-     *                               and passes error message
-     * @param passwordStr {@link String}, user's password. If null then it calls the updateUI
-     *                                  function and passes error message
+     *
+     * @param emailStr           {@link String}, user's email. If null then it calls the updateUI function
+     *                           and passes error message
+     * @param passwordStr        {@link String}, user's password. If null then it calls the updateUI
+     *                           function and passes error message
      * @param passwordConfirmStr {@link String}, user's password. If null then it calls the updateUI
-     *                                         function and passes error message
-     * @param firstNameStr {@link String}, user's first name. If null then it calls the updateUI
-     *                                   function and passes error message
-     * @param lastNameStr {@link String}, user's last name. If null then it calls the updateUI
-     *                                  function and passes error message
+     *                           function and passes error message
+     * @param firstNameStr       {@link String}, user's first name. If null then it calls the updateUI
+     *                           function and passes error message
+     * @param lastNameStr        {@link String}, user's last name. If null then it calls the updateUI
+     *                           function and passes error message
      */
-    private void stringValidation(String emailStr, String passwordStr, String passwordConfirmStr, String firstNameStr, String lastNameStr){
+    private void stringValidation(String emailStr, String passwordStr, String passwordConfirmStr, String firstNameStr, String lastNameStr) {
         emailStr = emailStr.trim();
         passwordStr = passwordStr.trim();
         passwordConfirmStr = passwordConfirmStr.trim();
@@ -116,38 +116,45 @@ public class Register extends AppCompatActivity {
      * This account take the validated user info and makes an API call which then creates a user in
      * the database. If the creating the user is unsuccessful due to an error it passes the error to
      * updateUI to be handled.
-     * @param email {@link String}, User's email. Cannot be null
-     * @param password {@link String}, User's password. Cannot be null
+     *
+     * @param email     {@link String}, User's email. Cannot be null
+     * @param password  {@link String}, User's password. Cannot be null
      * @param firstName {@link String}, User's first name. Cannot be null
-     * @param lastName {@link String}, User's last name. Cannot be null
+     * @param lastName  {@link String}, User's last name. Cannot be null
      */
     private void CreateAccount(String email, String password, String firstName, String lastName) {
-        auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        // Register success, update UI accordingly
-                        Log.d(TAG, getString(R.string.USER_CREATION_SUCCESS_MSG) );
-                        FirebaseUser user = auth.getCurrentUser();
-                        System.out.println(user.getUid());
-                        createUserDoc(user, firstName, lastName);
-                        updateUI(user, null);
-                    } else {
-                        // If Register fails, display a message to the user.
-                        Log.w(TAG, getString(R.string.USER_CREATION_FAILURE_MSG),
-                                task.getException());
-                        String err = task.getException().getLocalizedMessage();
-                        updateUI(null, err);
-                    }
-                });
+        try {
+            auth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, task -> {
+                        if (task.isSuccessful()) {
+                            // Register success, update UI accordingly
+                            Log.d(TAG, getString(R.string.USER_CREATION_SUCCESS_MSG));
+                            FirebaseUser user = auth.getCurrentUser();
+                            System.out.println(user.getUid());
+                            createUserDoc(user, firstName, lastName);
+                            updateUI(user, null);
+                        } else {
+                            // If Register fails, display a message to the user.
+                            Log.w(TAG, getString(R.string.USER_CREATION_FAILURE_MSG),
+                                    task.getException());
+                            String err = task.getException().getLocalizedMessage();
+                            updateUI(null, err);
+                        }
+                    });
+        } catch (Exception e) {
+            Toast.makeText(Register.this, e.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
      * This function checks if the user is created and if the user is created then switches the
      * activity to Login, if the user is not created it displays an error message.
-     * @param user {@link FirebaseUser}, the user object that is created in the database. If null
-     *                                 the user creation did not succeed
+     *
+     * @param user      {@link FirebaseUser}, the user object that is created in the database. If null
+     *                  the user creation did not succeed
      * @param errOutput {@link String}, contains the error message if the user creation is
-     *                                unsuccessful. If null, doesn't display a message.
+     *                  unsuccessful. If null, doesn't display a message.
      */
     public void updateUI(FirebaseUser user, String errOutput) {
         if (user == null) {
@@ -158,19 +165,20 @@ public class Register extends AppCompatActivity {
             Intent intent = new Intent(Register.this, Login.class);
             startActivity(intent);
             finish();
-            overridePendingTransition(0,0);
+            overridePendingTransition(0, 0);
         }
     }
 
     /**
      * This function makes an API call which creates a document in the users collection in the
      * database which stores the user information.
-     * @param user {@link FirebaseUser} this is the user object that is created when registering the
-     *                                 user. If null the API call wont be executed.
+     *
+     * @param user      {@link FirebaseUser} this is the user object that is created when registering the
+     *                  user. If null the API call wont be executed.
      * @param firstName {@link String} this is the first name of the user, checked if it is null
-     *                                before passed in.
-     * @param lastName {@link String} this is the last name of the user, checked if it is null
-     *                               before passed in.
+     *                  before passed in.
+     * @param lastName  {@link String} this is the last name of the user, checked if it is null
+     *                  before passed in.
      */
     public void createUserDoc(FirebaseUser user, String firstName, String lastName) {
         db = FirebaseFirestore.getInstance();
@@ -191,17 +199,22 @@ public class Register extends AppCompatActivity {
         data.put("following", following);
         data.put("follow request list", followRequestList);
 
-        collectionReference
-                .document(userId)
-                .set(data)
-                .addOnSuccessListener(aVoid -> {
-                    // These are a method which gets executed when the task is succeeded
-                    Log.d(TAG, "Data has been added successfully!");
-                })
-                .addOnFailureListener(e -> {
-                    // These are a method which gets executed if there’s any problem
-                    Log.d(TAG, "Data could not be added!" + e.toString());
-                });
+        try {
+            collectionReference
+                    .document(userId)
+                    .set(data)
+                    .addOnSuccessListener(aVoid -> {
+                        // These are a method which gets executed when the task is succeeded
+                        Log.d(TAG, "Data has been added successfully!");
+                    })
+                    .addOnFailureListener(e -> {
+                        // These are a method which gets executed if there’s any problem
+                        Log.d(TAG, "Data could not be added!" + e.toString());
+                    });
+        } catch (Exception e) {
+            Toast.makeText(Register.this, e.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 }
 

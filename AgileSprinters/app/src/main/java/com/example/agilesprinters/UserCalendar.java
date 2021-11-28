@@ -404,6 +404,33 @@ public class UserCalendar extends AppCompatActivity
         completedEventsScreenSetup();
     }
 
+    private void editForumElement(HabitInstance instance) {
+        String EID = instance.getEID();
+        db.collection("ForumPosts").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
+                    FirebaseFirestoreException error) {
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    if (EID.matches((String) doc.getData().get("EID"))) {
+
+                        HashMap<String, String> data = new HashMap<>();
+                        data.put("Event Date", instance.getDate());
+                        data.put("First Name", user.getFirstName());
+                        data.put("Last Name", user.getLastName());
+                        data.put("duration", String.valueOf(instance.getDuration()));
+                        data.put("UID", instance.getUID());
+                        data.put("Opt Cmt", instance.getOpt_comment());
+                        data.put("EID", instance.getEID());
+
+                        // Makes a call to the database which handles it
+                        database.updateData("ForumPosts", doc.getId(), data, TAG);
+                        break;
+                    }
+                }
+                // from the cloud
+            }
+        });
+    }
 
     /**
      * This function deletes a habit instance object from the database once a user clicks
@@ -506,6 +533,7 @@ public class UserCalendar extends AppCompatActivity
                         break;
                     }
                 }
+                // from the cloud
             }
         });
     }
@@ -560,6 +588,7 @@ public class UserCalendar extends AppCompatActivity
                 // On the addition of an event, increment progress
                 if (toDoEvent == "ADD") {
                     completed = habit1.getOverallProgress() + 1;
+                    //updateHomePage(habit1);
                     break;
                 }
                 // On the deletion of an event, decrement progress

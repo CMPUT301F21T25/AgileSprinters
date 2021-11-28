@@ -5,16 +5,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -27,15 +24,16 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.io.IOException;
-
+/**
+ * This activity handles sign out and delete user functionality.
+ */
 public class EditUserActivity extends AppCompatActivity {
     private User user;
     private String UID;
     private String nameStr;
     private static final String TAG = "Habit";
     private Database database = new Database();
-    FirebaseFirestore db;
+    private FirebaseFirestore db;
     private Intent intent;
     private String collectionPath;
 
@@ -48,7 +46,7 @@ public class EditUserActivity extends AppCompatActivity {
 
         if (user == null) {
             user = (User) getIntent().getSerializableExtra("user");
-            UID = user.getUser();
+            UID = user.getUserID();
             nameStr = user.getFirstName() + " " + user.getLastName();
         }
 
@@ -61,7 +59,9 @@ public class EditUserActivity extends AppCompatActivity {
         Button signOutButton = findViewById(R.id.signOutbutton);
         Button deleteUserButton = findViewById(R.id.deleteUserButton);
 
-
+        /**
+         * This onClick listener handles the sign out
+         */
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -74,6 +74,9 @@ public class EditUserActivity extends AppCompatActivity {
             }
         });
 
+        /**
+         * This onClickListener handles the deletion of a user
+         */
         deleteUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -90,6 +93,9 @@ public class EditUserActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * This function handles the back action.
+     */
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -100,6 +106,12 @@ public class EditUserActivity extends AppCompatActivity {
      * This method deletes a user from the database and all its associated data and habits and events.
      */
     private void deleteUser() {
+        try {
+
+        } catch (Exception e) {
+            Toast.makeText(EditUserActivity.this, e.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         user.delete()
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -120,71 +132,89 @@ public class EditUserActivity extends AppCompatActivity {
      * This method deletes all data (email, password etc) associated with a user.
      */
     private void deleteUserData() {
-        CollectionReference collectionReference = db.collection("users");
-        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
-                    FirebaseFirestoreException error) {
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    Log.d(TAG, String.valueOf(doc.getData().get(getString(R.string.UID))));
-                    if (UID.matches((String) doc.getData().get(getString(R.string.UID)))) {
-                        if (doc.getId() == null) {
-                            return;
-                        } else {
-                            collectionPath = getString(R.string.USERS);
-                            database.deleteData(collectionPath, doc.getId(), TAG);
+        try {
+            CollectionReference collectionReference = db.collection("users");
+            collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
+                        FirebaseFirestoreException error) {
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        Log.d(TAG, String.valueOf(doc.getData().get(getString(R.string.UID))));
+                        if (UID.matches((String) doc.getData().get(getString(R.string.UID)))) {
+                            if (doc.getId() == null) {
+                                return;
+                            } else {
+                                collectionPath = getString(R.string.USERS);
+                                database.deleteData(collectionPath, doc.getId(), TAG);
+                            }
                         }
                     }
                 }
-            }
-        });
+            });
+        } catch (Exception e) {
+            Toast.makeText(EditUserActivity.this, e.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
      * This method deletes all of the user's habit and associated events when the user is deleted.
      */
     private void deleteUserHabits() {
-        CollectionReference collectionReference = db.collection(getString(R.string.HABIT));
-        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
-                    FirebaseFirestoreException error) {
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    Log.d(TAG, String.valueOf(doc.getData().get(getString(R.string.UID))));
-                    if (UID.matches((String) doc.getData().get(getString(R.string.UID)))) {
-                        if (doc.getId() == null) {
-                            return;
-                        } else {
-                            collectionPath = "Habit";
-                            deleteHabitInstances((String) doc.getId());
-                            database.deleteData(collectionPath, doc.getId(), TAG);
+        try {
+            CollectionReference collectionReference = db.collection(getString(R.string.HABIT));
+            collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
+                        FirebaseFirestoreException error) {
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        Log.d(TAG, String.valueOf(doc.getData().get(getString(R.string.UID))));
+                        if (UID.matches((String) doc.getData().get(getString(R.string.UID)))) {
+                            if (doc.getId() == null) {
+                                return;
+                            } else {
+                                collectionPath = "Habit";
+                                deleteHabitInstances((String) doc.getId());
+                                database.deleteData(collectionPath, doc.getId(), TAG);
+                            }
                         }
                     }
                 }
-            }
-        });
-        return;
+            });
+        } catch (Exception e) {
+            Toast.makeText(EditUserActivity.this, e.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
+    /**
+     * This function deletes all the habitInstances that are related to the user being deleted
+     *
+     * @param HID {@link String} Habits that need to be deleted.
+     */
     public void deleteHabitInstances(String HID) {
-        CollectionReference collectionReference = db.collection("HabitEvents");
-        collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
-                    FirebaseFirestoreException error) {
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    Log.d(TAG, String.valueOf(doc.getData().get("UID")));
-                    if (HID.matches((String) doc.getData().get("HID"))) {
-                        if (doc.getId() == null) {
-                            return;
-                        } else {
-                            collectionPath = "HabitEvents";
-                            database.deleteData(collectionPath, doc.getId(), TAG);
+        try {
+            CollectionReference collectionReference = db.collection("HabitEvents");
+            collectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
+                        FirebaseFirestoreException error) {
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        Log.d(TAG, String.valueOf(doc.getData().get("UID")));
+                        if (HID.matches((String) doc.getData().get("HID"))) {
+                            if (doc.getId() == null) {
+                                return;
+                            } else {
+                                collectionPath = "HabitEvents";
+                                database.deleteData(collectionPath, doc.getId(), TAG);
+                            }
                         }
                     }
                 }
-            }
-        });
-        return;
+            });
+        } catch (Exception e) {
+            Toast.makeText(EditUserActivity.this, e.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 }
