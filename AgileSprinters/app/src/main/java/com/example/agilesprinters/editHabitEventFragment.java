@@ -46,7 +46,7 @@ public class editHabitEventFragment extends DialogFragment {
     private TextView input_date;
     private EditText input_duration;
     private Spinner durationSpinner;
-    private TextView displayLocation;
+    private TextView instructions;
     private Button deleteImageBtn;
     private Button deleteLocBtn;
     TextView optLocation;
@@ -137,10 +137,11 @@ public class editHabitEventFragment extends DialogFragment {
         ImageView addCamPhotoBtn = view.findViewById(R.id.add_Cam_Photo);
         ImageView addGalPhotoBtn = view.findViewById(R.id.add_Gal_Photo);
         ImageView addLocBtn = view.findViewById(R.id.add_location);
-        deleteImageBtn = view.findViewById(R.id.delete_image);
-        deleteLocBtn = view.findViewById(R.id.delete_location);
-        displayLocation = view.findViewById(R.id.location_textview);
+//        deleteImageBtn = view.findViewById(R.id.delete_image);
+//        deleteLocBtn = view.findViewById(R.id.delete_location);
+//        displayLocation = view.findViewById(R.id.location_textview);
         optLocation = view.findViewById(R.id.editText_location);
+        instructions = view.findViewById(R.id.instructions);
 
         habitInstance = (HabitInstance) getArguments().getSerializable("Habit instance");
 
@@ -154,7 +155,7 @@ public class editHabitEventFragment extends DialogFragment {
         setVisibilityForShareButton(habitInstance.getHID(), shareButton);
 
         // Setting the visibility of delete image, location buttons
-        setVisibilityForDeleteImageButton();
+        setVisibilityForImages();
 
         // Setting the doc ids of all connected elements
         EID = habitInstance.getEID();
@@ -173,6 +174,8 @@ public class editHabitEventFragment extends DialogFragment {
             @Override
             public void onClick(View view) {
                 getCameraPicture();
+                instructions.setVisibility(View.VISIBLE);
+                imageContainer.setVisibility(View.VISIBLE);
             }
         });
 
@@ -181,6 +184,8 @@ public class editHabitEventFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 getLocation();
+                instructions.setVisibility(View.VISIBLE);
+                optLocation.setVisibility(View.VISIBLE);
             }
         });
 
@@ -189,27 +194,12 @@ public class editHabitEventFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 getGalleryPicture();
+                instructions.setVisibility(View.VISIBLE);
+                imageContainer.setVisibility(View.VISIBLE);
                 //hides alert dialog after gallery func is finished
             }
         });
 
-        // When delete image button is clicked, it sets the IID to null i.e., deletes it
-        deleteImageBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                IID = null;
-                imageContainer.setVisibility(View.INVISIBLE);
-            }
-        });
-
-        // When delete location button is clicked, it sets the loc to "" i.e., deletes it
-        deleteLocBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                habitInstance.setOptLoc("");
-                displayLocation.setVisibility(View.INVISIBLE);
-            }
-        });
         // When delete image button is clicked, it sets the IID to null i.e., deletes it
         imageContainer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -221,6 +211,10 @@ public class editHabitEventFragment extends DialogFragment {
                             public void onClick(DialogInterface dialog, int which) {
                                 IID = null;
                                 imageContainer.setVisibility(View.INVISIBLE);
+                                if (habitInstance.getDisplayLocStr((new Geocoder(getContext(),
+                                        Locale.getDefault()))).matches("")) {
+                                    instructions.setVisibility(View.INVISIBLE);
+                                }
                             }
                         })
                         // A null listener allows the button to dismiss the dialog and take no further action.
@@ -243,6 +237,9 @@ public class editHabitEventFragment extends DialogFragment {
                             public void onClick(DialogInterface dialog, int which) {
                                 habitInstance.setOptLoc("");
                                 optLocation.setVisibility(View.INVISIBLE);
+                                if (habitInstance.getIID() == null) {
+                                    instructions.setVisibility(View.INVISIBLE);
+                                }
                             }
                         })
                         // A null listener allows the button to dismiss the dialog and take no further action.
@@ -362,16 +359,17 @@ public class editHabitEventFragment extends DialogFragment {
      * This function checks if the image and location are available and
      * displays their delete buttons accordingly
      */
-    private void setVisibilityForDeleteImageButton() {
+    private void setVisibilityForImages() {
+        // Show instructions and container if there is a image
         if (habitInstance.getIID() != null) {
-            deleteImageBtn.setVisibility(View.VISIBLE);
+            instructions.setVisibility(View.VISIBLE);
+            imageContainer.setVisibility(View.VISIBLE);
         }
 
+        // Show instructions and location text view if there is a location
         if (!habitInstance.getOptLoc().matches("")) {
-            deleteLocBtn.setVisibility(View.VISIBLE);
-            displayLocation.setVisibility(View.VISIBLE);
-            displayLocation.setText("Location: " +
-                    habitInstance.getDisplayLocStr(new Geocoder(getContext(), Locale.getDefault())));
+            instructions.setVisibility(View.VISIBLE);
+            optLocation.setVisibility(View.VISIBLE);
         }
     }
 
