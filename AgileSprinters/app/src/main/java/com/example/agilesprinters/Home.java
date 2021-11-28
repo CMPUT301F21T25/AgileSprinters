@@ -475,7 +475,7 @@ public class Home extends AppCompatActivity implements addHabitFragment.OnFragme
                 overridePendingTransition(0,0);
                 break;
 
-            case R.id.forumn:
+            case R.id.forum:
                 Intent forumIntent = new Intent(this, ForumManager.class);
                 forumIntent.putExtra("user", user);
                 finish();
