@@ -120,9 +120,8 @@ public class CalendarAndroidTest {
     }
 
     /**
-     * This test will check if the habits
-     * planned for the day are displayed under to-do tasks and also checks
-     * if adding an habit event will be stored or not  (User Story 2.01.01, 2.02.01)
+     * This test will check if the habits planned for the day are displayed under to-do tasks and
+     * also checks if adding an habit event will be stored or not  (User Story 2.01.01, 2.02.01)
      */
     @Test
     public void testAddEvent() {
