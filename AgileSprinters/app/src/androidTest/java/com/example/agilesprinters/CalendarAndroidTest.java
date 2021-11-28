@@ -161,7 +161,12 @@ public class CalendarAndroidTest {
         solo.waitForDialogToClose(1000);
 
         // makes sure if the habit event is successfully added
-        assertTrue(solo.waitForText("Walked 5000 steps", 1, 1000));
+        solo.clickOnText("Walked 5000 steps");
+        solo.waitForDialogToOpen(1000);
+        assertTrue(solo.waitForText("Edmonton,Canada")
+                | solo.waitForText("Mountain View, California, United States"));
+
+        solo.clickOnButton("Save");
 
         // wait for habit event fragment to open
         solo.clickOnText("Running");
@@ -192,9 +197,13 @@ public class CalendarAndroidTest {
         solo.clickOnButton("Save");
         solo.waitForDialogToClose(1000);
 
-        // makes sure if the habit event is successfully added
-        assertTrue(solo.waitForText("Evening run", 1, 1000));
-//        assertTrue(solo.waitForText("Edmonton,Canada") | solo.waitForText("Mountain View, California, United States"));
+        solo.clickOnText("Evening run");
+        solo.waitForDialogToOpen(1000);
+        assertTrue(solo.waitForText("Edmonton,Canada")
+                | solo.waitForText("Mountain View, California, United States"));
+
+        solo.clickOnButton("Save");
+
         // makes sure if the tag for a private event shows up
         assertTrue(solo.waitForText("Private", 1, 1000));
     }
@@ -218,8 +227,8 @@ public class CalendarAndroidTest {
          *
          *
          */
-        assertTrue(solo.waitForText("Edmonton,Canada") | solo.waitForText("Mountain View, California, United States"));
-
+        assertTrue(solo.waitForText("Edmonton,Canada")
+                | solo.waitForText("Mountain View, California, United States"));
 
     }
 
