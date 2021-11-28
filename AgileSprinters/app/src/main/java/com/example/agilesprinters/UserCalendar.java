@@ -372,35 +372,6 @@ public class UserCalendar extends AppCompatActivity
         completedEventsScreenSetup();
     }
 
-    private void editForumElement(HabitInstance instance) {
-        String EID = instance.getEID();
-        db.collection("ForumPosts").addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable
-                    FirebaseFirestoreException error) {
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    if (EID.matches((String) doc.getData().get("EID"))) {
-
-                        HashMap<String, String> data = new HashMap<>();
-                        data.put("Event Date", instance.getDate());
-                        data.put("First Name", user.getFirstName());
-                        data.put("Last Name", user.getLastName());
-                        data.put("duration", String.valueOf(instance.getDuration()));
-                        data.put("UID", instance.getUID());
-                        data.put("Opt Cmt", instance.getOpt_comment());
-                        data.put("EID", instance.getEID());
-                        data.put("Opt_Loc", instance.getDisplayLocStr(new Geocoder(getApplicationContext(), Locale.getDefault())));
-
-                        // Makes a call to the database which handles it
-                        database.updateData("ForumPosts", doc.getId(), data, TAG);
-                        break;
-                    }
-                }
-                // from the cloud
-            }
-        });
-    }
-
     /**
      * This function deletes a habit instance object from the database once a user clicks
      * Delete in the editHabitEventFragment dialog fragment.

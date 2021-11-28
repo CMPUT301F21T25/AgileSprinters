@@ -3,8 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/Leen/Desktop/New folder/AgileSprinters/AgileSprinters/app/src/main/res/layout/completed_habits_content.xml" value="0.17391304347826086" />
+        <entry key="..\:/Users/Leen/Desktop/New folder/AgileSprinters/AgileSprinters/app/src/main/res/layout/add_habit_fragment.xml" value="0.264" />
+        <entry key="..\:/Users/Leen/Desktop/New folder/AgileSprinters/AgileSprinters/app/src/main/res/layout/completed_habits_content.xml" value="0.264" />
+        <entry key="..\:/Users/Leen/Desktop/New folder/AgileSprinters/AgileSprinters/app/src/main/res/layout/edit_habit_event_fragment.xml" value="0.264" />
         <entry key="..\:/Users/Leen/Desktop/New folder/AgileSprinters/AgileSprinters/app/src/main/res/layout/forum_list_content.xml" value="0.17391304347826086" />
+        <entry key="..\:/Users/Leen/Desktop/New folder/AgileSprinters/AgileSprinters/app/src/main/res/layout/todo_habits_content.xml" value="0.17798913043478262" />
         <entry key="..\:/Users/haric_ff7o5th/GitRepo/Project/AgileSprinters/AgileSprinters/app/src/main/res/layout/activity_home.xml" value="0.20516304347826086" />
         <entry key="..\:/Users/haric_ff7o5th/GitRepo/Project/AgileSprinters/AgileSprinters/app/src/main/res/layout/add_habit_fragment.xml" value="0.2234375" />
         <entry key="..\:/Users/haric_ff7o5th/GitRepo/Project/AgileSprinters/AgileSprinters/app/src/main/res/layout/edit_habit_event_fragment.xml" value="0.2234375" />

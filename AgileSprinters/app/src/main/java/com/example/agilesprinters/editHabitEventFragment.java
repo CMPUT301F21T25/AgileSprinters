@@ -3,9 +3,11 @@ package com.example.agilesprinters;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -30,6 +32,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -42,6 +45,7 @@ public class editHabitEventFragment extends DialogFragment {
     private EditText optional_comment;
     private TextView input_date;
     private EditText input_duration;
+    private TextView optLocation;
     private Spinner durationSpinner;
     private String EID;
     private String UID;
@@ -125,17 +129,26 @@ public class editHabitEventFragment extends DialogFragment {
         input_duration = view.findViewById(R.id.editText_duration);
         durationSpinner = view.findViewById(R.id.duration_spinner);
         Button shareButton = view.findViewById(R.id.share_event_button);
+        optLocation = view.findViewById(R.id.editText_location);
 
         habitInstance = (HabitInstance) getArguments().getSerializable("Habit instance");
 
         optional_comment.setText(habitInstance.getOpt_comment());
         input_date.setText(habitInstance.getDate());
         input_duration.setText(String.valueOf(habitInstance.getDuration()));
+        optLocation.setText(habitInstance.getDisplayLocStr((new Geocoder(getContext(), Locale.getDefault()))));
 
         imageContainer = view.findViewById(R.id.imageContainer);
         ImageView addCamPhotoBtn = view.findViewById(R.id.add_Cam_Photo);
         ImageView addGalPhotoBtn = view.findViewById(R.id.add_Gal_Photo);
         ImageView addLocBtn = view.findViewById(R.id.add_location);
+
+        EID = habitInstance.getEID();
+        UID = habitInstance.getUID();
+        HID = habitInstance.getHID();
+        FID = habitInstance.getFID();
+        IID = habitInstance.getIID();
+        isShared = habitInstance.getShared();
 
         setVisibilityForShareButton(habitInstance.getHID(), shareButton);
 
@@ -144,9 +157,7 @@ public class editHabitEventFragment extends DialogFragment {
         addCamPhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //if(runtimePermissionForCamera()){
                 getCameraPicture();
-                //}
             }
         });
 
@@ -154,6 +165,7 @@ public class editHabitEventFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 getLocation();
+                imageContainer.setVisibility(View.VISIBLE);
             }
         });
 
@@ -161,16 +173,50 @@ public class editHabitEventFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 getGalleryPicture();
-                //hides alert dialog after gallery func is finished
+                imageContainer.setVisibility(View.VISIBLE);
             }
         });
 
-        EID = habitInstance.getEID();
-        UID = habitInstance.getUID();
-        HID = habitInstance.getHID();
-        FID = habitInstance.getFID();
-        IID = habitInstance.getIID();
-        isShared = habitInstance.getShared();
+        imageContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(getContext())
+                        .setTitle("Delete image")
+                        .setMessage("Are you sure you want to delete this image?")
+
+                        .setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                IID = null;
+                                imageContainer.setVisibility(View.INVISIBLE);
+                            }
+                        })
+                        // A null listener allows the button to dismiss the dialog and take no further action.
+                        .setNegativeButton("CANCEL", null)
+                        .show();
+            }
+        });
+
+        optLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(getContext())
+                        .setTitle("Delete location")
+                        .setMessage("Are you sure you want to delete this location?")
+
+                        // Specifying a listener allows you to take an action before dismissing the dialog.
+                        // The dialog is automatically dismissed when a dialog button is clicked.
+                        .setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                habitInstance.setOptLoc("");
+                                optLocation.setVisibility(View.INVISIBLE);
+                            }
+                        })
+                        // A null listener allows the button to dismiss the dialog and take no further action.
+                        .setNegativeButton("CANCEL", null)
+                        .show();
+            }
+        });
+
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setView(view);
@@ -180,7 +226,6 @@ public class editHabitEventFragment extends DialogFragment {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 listener.onDeletePressed(habitInstance);
                 dismiss();
 
@@ -250,18 +295,6 @@ public class editHabitEventFragment extends DialogFragment {
 
         AlertDialog alertD = builder.create();
         return alertD;
-
-        /**
-        return builder
-                .setView(view)
-                .setTitle("View/Edit Habit Event")
-                .setNegativeButton("Delete", (dialog, id) -> listener.onDeletePressed(habitInstance))
-                .setPositiveButton("Save", (dialogInterface, i) -> {
-                    /* Do not implement anything here in order to override the button
-                     * to only call the listener once all the information required has been
-                     * filled out and display error messages if they have been left blank.
-                     */
-                //}).create();
 
     }
 
@@ -378,6 +411,14 @@ public class editHabitEventFragment extends DialogFragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        optLocation.setText(habitInstance.getDisplayLocStr((new Geocoder(getContext(), Locale.getDefault()))));
+
+        if (IID == null) imageContainer.setVisibility(View.INVISIBLE);
+        else imageContainer.setVisibility(View.VISIBLE);
+
+        if (habitInstance.getOptLoc().equals("")) optLocation.setVisibility(View.INVISIBLE);
+        else optLocation.setVisibility(View.VISIBLE);
 
         final AlertDialog dialog = (AlertDialog) getDialog();
         if (dialog != null) {
