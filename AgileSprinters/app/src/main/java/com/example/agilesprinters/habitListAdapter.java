@@ -88,7 +88,7 @@ public class habitListAdapter extends ArrayAdapter<Habit> {
         double totalEvents = 0;
         for (String weekday : chosenWeekDays) {
             LocalDate day = startDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.valueOf(weekday)));
-            while (day.isBefore(endDate)){
+            while (day.isBefore(endDate)) {
                 totalEvents++;
                 day = day.plusWeeks(1);
             }

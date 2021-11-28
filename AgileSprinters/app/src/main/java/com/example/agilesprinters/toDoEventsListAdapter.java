@@ -25,8 +25,9 @@ public class toDoEventsListAdapter extends ArrayAdapter<Habit> {
     /**
      * This function initializes the current screen and the list of habits to be
      * displayed on the screen
+     *
      * @param context is the current screen
-     * @param habits are the list of planned habits for the day
+     * @param habits  are the list of planned habits for the day
      */
     public toDoEventsListAdapter(Context context, ArrayList<Habit> habits) {
         super(context, 0, habits);
@@ -36,9 +37,10 @@ public class toDoEventsListAdapter extends ArrayAdapter<Habit> {
 
     /**
      * This function converts the view into a custom view
-     * @param position is the position of the habit
+     *
+     * @param position    is the position of the habit
      * @param convertView is the view to be displayed in
-     * @param parent is the parent of the view that is being changed
+     * @param parent      is the parent of the view that is being changed
      */
     @NonNull
     @Override

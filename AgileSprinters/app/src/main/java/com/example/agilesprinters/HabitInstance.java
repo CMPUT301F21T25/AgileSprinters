@@ -25,22 +25,18 @@ public class HabitInstance implements Serializable {
     private String FID;
     private Boolean isShared;
     private String optLoc;
+
     /**
      * This is a constructor that takes the eventID, habitID, userID,
      * optional comment, date of the event, duration of the event as input
      * to create a habit instance
-     * @param EID
-     *  event ID given as string
-     * @param HID
-     *  habit ID given as string
-     * @param UID
-     *  user ID given as string
-     * @param opt_comment
-     *  optional comment given as string
-     * @param date
-     *  date of the event given as string
-     * @param duration
-     *  duration of the event given as an int
+     *
+     * @param EID         event ID given as string
+     * @param HID         habit ID given as string
+     * @param UID         user ID given as string
+     * @param opt_comment optional comment given as string
+     * @param date        date of the event given as string
+     * @param duration    duration of the event given as an int
      */
     public HabitInstance(String EID, String UID, String HID,
                          String opt_comment, String date, int duration, String IID, String FID, Boolean isShared, String opt_loc) {
@@ -66,8 +62,8 @@ public class HabitInstance implements Serializable {
 
     /**
      * This function is used to get the self ID of the instance
-     * @return
-     *  returns the self ID as a string
+     *
+     * @return returns the self ID as a string
      */
     public String getEID() {
         return EID;
@@ -75,8 +71,8 @@ public class HabitInstance implements Serializable {
 
     /**
      * This function is used to get the user ID of the instance
-     * @return
-     *  returns the user ID as a string
+     *
+     * @return returns the user ID as a string
      */
     public String getUID() {
         return UID;
@@ -84,8 +80,8 @@ public class HabitInstance implements Serializable {
 
     /**
      * This function is used to get the habit ID of the instance
-     * @return
-     *  returns the habit ID as a string
+     *
+     * @return returns the habit ID as a string
      */
     public String getHID() {
         return HID;
@@ -93,8 +89,8 @@ public class HabitInstance implements Serializable {
 
     /**
      * This function is used to get the optional comment entered in habit event
-     * @return
-     *  returns the optional comment as a string
+     *
+     * @return returns the optional comment as a string
      */
     public String getOpt_comment() {
         return opt_comment;
@@ -102,8 +98,8 @@ public class HabitInstance implements Serializable {
 
     /**
      * This function is used to get the date on which the event happened
-     * @return
-     *  returns the event date as a string
+     *
+     * @return returns the event date as a string
      */
     public String getDate() {
         return date;
@@ -118,8 +114,8 @@ public class HabitInstance implements Serializable {
 
     /**
      * This function is used to get the duration of the event
-     * @return
-     *  returns the event duration as a int
+     *
+     * @return returns the event duration as a int
      */
     public int getDuration() {
         return duration;
@@ -177,21 +173,22 @@ public class HabitInstance implements Serializable {
     }
 
     public String getOptLoc() {
-        if(optLoc==null) return "";
-        return optLoc; }
+        if (optLoc == null) return "";
+        return optLoc;
+    }
 
     public void setOptLoc(String opt_loc) {
         this.optLoc = opt_loc;
     }
 
-    public String getDisplayLocStr(Geocoder geocoder){
+    public String getDisplayLocStr(Geocoder geocoder) {
         if (Objects.isNull(optLoc) | optLoc.equals("")) return "";
 
         List<Address> addresses = null;
         String[] latLng = optLoc.split(",");
         System.out.println(latLng);
         try {
-            addresses = geocoder.getFromLocation(Double.parseDouble(latLng[0]), Double.parseDouble(latLng[1]),1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+            addresses = geocoder.getFromLocation(Double.parseDouble(latLng[0]), Double.parseDouble(latLng[1]), 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -200,12 +197,12 @@ public class HabitInstance implements Serializable {
         location[0] = addresses.get(0).getLocality();
         location[1] = addresses.get(0).getAdminArea();
         location[2] = addresses.get(0).getCountryName();
-        for (int i = 0; i<location.length;i++){
-            System.out.println("location: "+location[i]);
-            if (location[i]!=null)
-                returnStr += location[i]+", ";
+        for (int i = 0; i < location.length; i++) {
+            System.out.println("location: " + location[i]);
+            if (location[i] != null)
+                returnStr += location[i] + ", ";
         }
-        System.out.printf("returnStr: "+returnStr);
-        return returnStr.substring(0,returnStr.length()-2);
+        System.out.printf("returnStr: " + returnStr);
+        return returnStr.substring(0, returnStr.length() - 2);
     }
 }

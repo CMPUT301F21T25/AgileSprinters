@@ -90,6 +90,7 @@ public class addHabitEventFragment extends DialogFragment {
      * This function attaches the fragment to the activity and keeps track of the context of the
      * fragment so the listener knows what to listen to. Ensures that the proper methods are
      * implemented by the User calendar class.
+     *
      * @param context is the current screen
      */
     @Override
@@ -107,9 +108,9 @@ public class addHabitEventFragment extends DialogFragment {
     /**
      * This function creates the actual dialog on the screen and listens for user input, returning
      * the information through the listener based on which button is clicked.
+     *
      * @param savedInstanceState is a reference to the most recent object
-     * @return
-     * Returns the Dialog created
+     * @return Returns the Dialog created
      */
     @NonNull
     @Override
@@ -174,7 +175,7 @@ public class addHabitEventFragment extends DialogFragment {
 
     //switches view to map and allows user to pick location
     private void getLocation() {
-        habitInstance = new HabitInstance("null", "null", "null", "null", "null", 0, "null", "null", null,"");
+        habitInstance = new HabitInstance("null", "null", "null", "null", "null", 0, "null", "null", null, "");
         MapsFragment mapsFragment = new MapsFragment().newInstance(habitInstance);
         mapsFragment.show(getChildFragmentManager(), "ADD LOCATION");
     }
@@ -192,17 +193,17 @@ public class addHabitEventFragment extends DialogFragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode){
+        switch (requestCode) {
 
             case 1:
-                if(resultCode == -1){
+                if (resultCode == -1) {
                     //URI is string of characters used to identify a resource (either by location name or both)
                     //use android net uri
-                    selectedImg =  data.getData();
+                    selectedImg = data.getData();
                     try {
-                        bitmapOfImg = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(),selectedImg);
+                        bitmapOfImg = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImg);
                     } catch (IOException e) {
-                        System.out.println(e+"I error");
+                        System.out.println(e + "I error");
                     }
                     //set the original placeholder img to be the selected img
                     imageContainer.setImageBitmap(bitmapOfImg);
@@ -211,7 +212,7 @@ public class addHabitEventFragment extends DialogFragment {
 
             case 2:
                 Log.d("CAMERA", "case 2 for camera return result ");
-                if(resultCode == -1 && data != null){
+                if (resultCode == -1 && data != null) {
                     //retrieve data sent back from activity thru bundle
                     Bundle bundle = data.getExtras();
 
@@ -266,7 +267,7 @@ public class addHabitEventFragment extends DialogFragment {
      * when all requirements have been met.
      */
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
 
         final AlertDialog dialog = (AlertDialog) getDialog();
@@ -314,16 +315,15 @@ public class addHabitEventFragment extends DialogFragment {
                         duration = String.valueOf(Integer.parseInt(duration) * 60);
                     }
                 }
-                if (Objects.isNull(habitInstance)){
+                if (Objects.isNull(habitInstance)) {
                     optLoc = "";
-                }
-                else{
+                } else {
                     optLoc = habitInstance.getOptLoc();
                 }
 
                 // If everything has been filled out, call the listener and send the edited
                 // habit back to the Home class and dismiss the dialog.
-                if(readyToClose){
+                if (readyToClose) {
                     listener.onSavePressed(new HabitInstance(EID, UID, HID, comment, date_entry,
                             Integer.parseInt(duration), null, FID, false, optLoc), bitmapOfImg);
                     dialog.dismiss();

@@ -52,8 +52,8 @@ public class forumPostList extends ArrayAdapter<Forum> {
         TextView opt_cmt = convertView.findViewById(R.id.forum_comment);
         ImageView image = convertView.findViewById(R.id.forum_image_container);
 
-        user_circle.setText(forumItem.getFirstName().substring(0,1));
-        String temp = forumItem.getFirstName()+" "+ forumItem.getLastName().substring(0,1) + ".";
+        user_circle.setText(forumItem.getFirstName().substring(0, 1));
+        String temp = forumItem.getFirstName() + " " + forumItem.getLastName().substring(0, 1) + ".";
         userFullNameTextView.setText(temp);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
@@ -73,21 +73,21 @@ public class forumPostList extends ArrayAdapter<Forum> {
     }
 
     private void setImageToDialog(String iid, ImageView imageContainer) {
-        if (iid != null){
-        imageContainer.setVisibility(View.VISIBLE);
+        if (iid != null) {
+            imageContainer.setVisibility(View.VISIBLE);
             FirebaseStorage storage = FirebaseStorage.getInstance();
             // Create a storage reference from our app
             StorageReference storageRef = storage.getReference();
 
             StorageReference islandRef = storageRef.child(iid);
 
-            final long ONE_MEGABYTE = 2*(1024 * 1024);
+            final long ONE_MEGABYTE = 2 * (1024 * 1024);
             islandRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                 @Override
                 public void onSuccess(byte[] bytes) {
                     // Data for "images/island.jpg" is returns, use this as needed
                     //convert bytes to bitmap
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes , 0, bytes.length);
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
                     //set image to bitmap data
                     imageContainer.setImageBitmap(bitmap);

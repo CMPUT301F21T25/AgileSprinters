@@ -15,10 +15,11 @@ public class HabitTestList {
 
     /**
      * This method adds a habit to the list
+     *
      * @param habit hbait object being added to the list
      */
-    public void addHabit(Habit habit){
-        if (habitList.contains(habit)){
+    public void addHabit(Habit habit) {
+        if (habitList.contains(habit)) {
             throw new IllegalArgumentException();
         }
         habitList.add(habit);
@@ -27,14 +28,15 @@ public class HabitTestList {
     /**
      * This method edits the item at a certain position by removing the old item and adding the
      * edited one to the list.
+     *
      * @param position position of the item that the user wishes to edit
-     * @param habit the updated habit being readded
+     * @param habit    the updated habit being readded
      */
-    public void editHabit(int position, Habit habit){
-        if (habitList.isEmpty()){
+    public void editHabit(int position, Habit habit) {
+        if (habitList.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        if (habitList.size()-1 > position){
+        if (habitList.size() - 1 > position) {
             throw new IndexOutOfBoundsException();
         }
 
@@ -44,13 +46,14 @@ public class HabitTestList {
 
     /**
      * This method deletes a given habit
+     *
      * @param habit the habit that the user wishes to delete
      */
-    public void deleteHabit(Habit habit){
-        if(habitList.isEmpty()){
+    public void deleteHabit(Habit habit) {
+        if (habitList.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        if(habitList.contains(habit)){
+        if (habitList.contains(habit)) {
             habitList.remove(habit);
         } else {
             throw new IllegalArgumentException();
@@ -59,8 +62,8 @@ public class HabitTestList {
 
     /**
      * This returns a list of habits
-     * @return
-     * Return the list
+     *
+     * @return Return the list
      */
     public ArrayList<Habit> getHabits() {
         ArrayList<Habit> list = habitList;

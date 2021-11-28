@@ -22,7 +22,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 
-public class ForumManager extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
+public class ForumManager extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
     private String UID;
     private User user;
     private BottomNavigationView bottomNavigationView;
@@ -37,7 +37,8 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
     private ArrayList<User> array_user_objects = new ArrayList<>();
 
     ArrayAdapter<Forum> forumAdapter;
-    final private ArrayList<Forum> forumDataList = new ArrayList<>();;
+    final private ArrayList<Forum> forumDataList = new ArrayList<>();
+    ;
     ArrayList<String> userTempList;
 
     private String firstName, lastName, eventDate, duration, optComment, imageId, location;
@@ -110,9 +111,9 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
             db.collection("users").addSnapshotListener((value, error) -> {
                 arrayAdapter_users.clear();
                 for (QueryDocumentSnapshot doc : value) {
-                    if(!doc.getId().matches(user.getUserID())){
+                    if (!doc.getId().matches(user.getUserID())) {
                         emailId = (String) doc.getData().get("Email ID");
-                        firstName = (String)  doc.getData().get("First Name");
+                        firstName = (String) doc.getData().get("First Name");
                         lastName = (String) doc.getData().get("Last Name");
                         followersList = (ArrayList<String>) doc.getData().get("followers");
                         followingList = (ArrayList<String>) doc.getData().get("following");
@@ -140,7 +141,7 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
                 forumDataList.clear();
                 for (QueryDocumentSnapshot doc : value) {
                     System.out.println("IDS are " + (String) doc.getData().get("UID"));
-                    if(userTempList.contains((String) doc.getData().get("UID"))){
+                    if (userTempList.contains((String) doc.getData().get("UID"))) {
                         firstName = (String) doc.getData().get("First Name");
                         lastName = (String) doc.getData().get("Last Name");
                         duration = (String) doc.getData().get("duration");
@@ -153,8 +154,8 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
                     }
                 }
                 forumAdapter.notifyDataSetChanged();
-                if(userTempList.size() > 0){
-                    userTempList.remove(userTempList.size()-1);
+                if (userTempList.size() > 0) {
+                    userTempList.remove(userTempList.size() - 1);
                 }
 
             });
@@ -182,7 +183,7 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
 
                 startActivity(intent);
                 finish();
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
                 break;
 
             case R.id.calendar:
@@ -191,7 +192,7 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
                 //add bundle to send data if need
                 startActivity(calendarIntent);
                 finish();
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
                 break;
 
             case R.id.notification:
@@ -201,7 +202,7 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
 
                 startActivity(intentNotification);
                 finish();
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
                 break;
 
             case R.id.forumn:
@@ -212,7 +213,7 @@ public class ForumManager extends AppCompatActivity implements BottomNavigationV
                     //add bundle to send data if need
                     startActivity(forumIntent);
                     finish();
-                    overridePendingTransition(0,0);
+                    overridePendingTransition(0, 0);
                     break;
                 }
         }

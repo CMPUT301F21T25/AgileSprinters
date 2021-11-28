@@ -10,19 +10,22 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Notifications extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener,
-        AcceptDeclineFollowRequestFragment.OnFragmentInteractionListener{
+        AcceptDeclineFollowRequestFragment.OnFragmentInteractionListener {
     private ArrayList<User> notificationList;
     private ListView notificationListView;
     private ArrayAdapter<User> notificationAdapter;
@@ -52,7 +55,7 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
         bottomNavigationView.setSelectedItemId(R.id.notification);
 
-        notificationListView= findViewById(R.id.notification_list);
+        notificationListView = findViewById(R.id.notification_list);
         notificationList = new ArrayList<>();
         notificationAdapter = new NotificationsListAdapter(this, notificationList);
         notificationListView.setAdapter(notificationAdapter);
@@ -65,7 +68,7 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
                 if (UID.matches((String) value.getData().get("UID"))) {
                     ArrayList<String> followRequests = (ArrayList<String>) value.get("follow request list");
 
-                    for (int i = 0 ; i < followRequests.size(); i++) {
+                    for (int i = 0; i < followRequests.size(); i++) {
                         DocumentReference otherUsersDoc = db.collection(collectionPath).document(followRequests.get(i));
                         otherUsersDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
@@ -121,7 +124,7 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
 
                 startActivity(intent);
                 finish();
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
                 break;
 
             case R.id.calendar:
@@ -129,11 +132,11 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
                 intentCalendar.putExtra("user", user);
                 startActivity(intentCalendar);
                 finish();
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
                 break;
 
             case R.id.notification:
-                if(this instanceof Notifications){
+                if (this instanceof Notifications) {
                     return true;
                 } else {
                     Intent intent2 = new Intent(this, Notifications.class);
@@ -141,7 +144,7 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
 
                     startActivity(intent2);
                     finish();
-                    overridePendingTransition(0,0);
+                    overridePendingTransition(0, 0);
                     break;
                 }
 
@@ -150,7 +153,7 @@ public class Notifications extends AppCompatActivity implements BottomNavigation
                 forumIntent.putExtra("user", user);
                 startActivity(forumIntent);
                 finish();
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
                 break;
 
         }

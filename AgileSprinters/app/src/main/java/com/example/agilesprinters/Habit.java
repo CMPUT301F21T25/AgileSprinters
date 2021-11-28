@@ -17,7 +17,6 @@ public class Habit implements Serializable {
     private int listPosition;
 
 
-
     private HashMap<String, Boolean> weekdays;
     private String privacySetting;
     private int overallProgress;

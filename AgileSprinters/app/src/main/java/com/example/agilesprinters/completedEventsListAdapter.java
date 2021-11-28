@@ -85,7 +85,7 @@ public class completedEventsListAdapter extends ArrayAdapter<HabitInstance> {
         if (habitInstance.getDuration() > 0 && habitInstance.getDuration() <= 60) {
             durationContent.setText(habitInstance.getDuration() + " minutes");
         } else {
-            durationContent.setText((habitInstance.getDuration()/60) + " hours");
+            durationContent.setText((habitInstance.getDuration() / 60) + " hours");
         }
 
         db.collection("Habit").addSnapshotListener((value, error) -> {

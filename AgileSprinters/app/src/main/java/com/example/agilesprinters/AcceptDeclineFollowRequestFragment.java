@@ -31,6 +31,7 @@ public class AcceptDeclineFollowRequestFragment extends DialogFragment {
 
     public interface OnFragmentInteractionListener {
         void onAcceptPressed(User user);
+
         void onDeclinePressed(User user);
     }
 

@@ -54,7 +54,7 @@ public class viewEditHabitFragment extends DialogFragment {
     /**
      * This function saves the values sent to the fragment for future manipulation
      *
-     * @param habit is the item that was tapped within the list
+     * @param habit    is the item that was tapped within the list
      * @param position is the position of the item clicked
      * @return returns the fragment with the bundled parameters
      */
@@ -154,11 +154,11 @@ public class viewEditHabitFragment extends DialogFragment {
         }
 
         ArrayList<Integer> listPositions = new ArrayList<Integer>();
-        for (int i = 1; i < listSize+1; i++){
+        for (int i = 1; i < listSize + 1; i++) {
             listPositions.add(i);
         }
 
-        ArrayAdapter<Integer> positionsAdapter = new ArrayAdapter<Integer>(getActivity(), android.R.layout.simple_spinner_item,listPositions);
+        ArrayAdapter<Integer> positionsAdapter = new ArrayAdapter<Integer>(getActivity(), android.R.layout.simple_spinner_item, listPositions);
         positionsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         positionSpinner.setAdapter(positionsAdapter);
         positionSpinner.setSelection(position);
@@ -169,7 +169,7 @@ public class viewEditHabitFragment extends DialogFragment {
         // Array with all the string values for weekdays
         String[] weekdayStrArray = new String[]{getString(R.string.SUNDAY_STR), getString(R.string.MONDAY_STR), getString(R.string.TUESDAY_STR),
                 getString(R.string.WEDNESDAY_STR), getString(R.string.THURSDAY_STR), getString(R.string.FRIDAY_STR),
-                getString(R.string.SATURDAY_STR) };
+                getString(R.string.SATURDAY_STR)};
 
         // Set weekday buttons to proper colors based on the habit object passed in
         // and initialize the trackers for buttons pressed
@@ -240,11 +240,10 @@ public class viewEditHabitFragment extends DialogFragment {
                 @Override
                 public void onClick(View view) {
                     int j = 0;
-                    for (String key : weekdaysHashMap.keySet()){
-                        if (weekdaysHashMap.get(key) == true && originalWeekdaysHashMap.get(key) == false){
+                    for (String key : weekdaysHashMap.keySet()) {
+                        if (weekdaysHashMap.get(key) == true && originalWeekdaysHashMap.get(key) == false) {
                             weekdayEditButtonArray[j].setBackgroundColor(Color.parseColor(getString(R.string.greyHexCode)));
-                        }
-                        else if(weekdaysHashMap.get(key) == false && originalWeekdaysHashMap.get(key) == true){
+                        } else if (weekdaysHashMap.get(key) == false && originalWeekdaysHashMap.get(key) == true) {
                             weekdayEditButtonArray[j].setBackgroundColor(Color.parseColor(getString(R.string.orangeHexCode)));
                         }
                         j++;

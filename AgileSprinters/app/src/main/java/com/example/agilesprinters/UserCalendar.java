@@ -55,7 +55,7 @@ public class UserCalendar extends AppCompatActivity
         DatePickerDialog.OnDateSetListener,
         BottomNavigationView.OnNavigationItemSelectedListener,
         deleteHabitEventFragment.OnFragmentInteractionListener,
-        shareHabitEventFragment.OnFragmentInteractionListener{
+        shareHabitEventFragment.OnFragmentInteractionListener {
 
     private static final String TAG = "Instance";
     private ArrayAdapter<Habit> toDoEventAdapter;
@@ -80,6 +80,7 @@ public class UserCalendar extends AppCompatActivity
 
     /**
      * This function creates the UI on the screen and listens for user input
+     *
      * @param savedInstanceState the instance state
      */
     @Override
@@ -136,7 +137,7 @@ public class UserCalendar extends AppCompatActivity
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedHabitInstance = completedEvents.get(i);
                 selectedHabitInstanceId = completedEventIds.get(i);
-                System.out.println("image id is "+selectedHabitInstance.getIID());
+                System.out.println("image id is " + selectedHabitInstance.getIID());
 
                 editHabitEventFragment values =
                         new editHabitEventFragment().newInstance(i, selectedHabitInstance);
@@ -299,14 +300,14 @@ public class UserCalendar extends AppCompatActivity
         String privacySetting = "";
         HashMap<String, String> data = new HashMap();
 
-        for (int i = 0; i < toDoEvents.size(); i++){
-            if (HID.matches(toDoEvents.get(i).getHID())){
+        for (int i = 0; i < toDoEvents.size(); i++) {
+            if (HID.matches(toDoEvents.get(i).getHID())) {
                 privacySetting = toDoEvents.get(i).getPrivacySetting();
             }
         }
         String duration = String.valueOf(habitInstance.getDuration());
-        if ( privacySetting.matches("Public") || (
-                (privacySetting.matches("Private")) && habitInstance.getShared()) ){
+        if (privacySetting.matches("Public") || (
+                (privacySetting.matches("Private")) && habitInstance.getShared())) {
             data.put("Event Date", habitInstance.getDate());
             data.put("First Name", user.getFirstName());
             data.put("Last Name", user.getLastName());
@@ -339,7 +340,7 @@ public class UserCalendar extends AppCompatActivity
     }
 
     public String stringChange(String str) {
-        for (int i = 0; i < 3; i++){
+        for (int i = 0; i < 3; i++) {
             if (str != null && str.length() > 0 && str.charAt(str.length() - 1) == 'x') {
                 str = str.substring(0, str.length() - 1);
             }
@@ -355,8 +356,8 @@ public class UserCalendar extends AppCompatActivity
      */
     @Override
     public void onEditSavePressed(HabitInstance instance, Bitmap bitmap) {
-        if (instance.getIID() == null){
-            path = "images/"+System.currentTimeMillis() +".jpg";
+        if (instance.getIID() == null) {
+            path = "images/" + System.currentTimeMillis() + ".jpg";
         } else {
             path = instance.getIID();
         }
@@ -387,7 +388,7 @@ public class UserCalendar extends AppCompatActivity
                     Toast.LENGTH_SHORT).show();
         }
 
-        updateForum(instance, instance.getFID(),"EDIT");
+        updateForum(instance, instance.getFID(), "EDIT");
         completedEventsScreenSetup();
     }
 
@@ -505,12 +506,12 @@ public class UserCalendar extends AppCompatActivity
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     if (EID.matches((String) doc.getData().get("EID"))) {
                         System.out.println("ID is " + doc.getId());
-                        if(doc.getId() == null){
+                        if (doc.getId() == null) {
                             return;
                         } else {
                             try {
                                 database.deleteData("ForumPosts", doc.getId(), TAG);
-                            } catch (Exception e){
+                            } catch (Exception e) {
                                 Toast.makeText(UserCalendar.this, e.toString(),
                                         Toast.LENGTH_SHORT).show();
                             }
@@ -526,12 +527,13 @@ public class UserCalendar extends AppCompatActivity
 
     /**
      * This function adds a habit event/instance object to the database.
+     *
      * @param instance The habit instance that needs to be added to the database.
      */
     public void addHabitEventDatabase(HabitInstance instance, Bitmap bitmap, String FID) {
         final CollectionReference collectionReference = db.collection("HabitEvents");
         if (bitmap != null) {
-            path = "images/"+System.currentTimeMillis() +".jpg";
+            path = "images/" + System.currentTimeMillis() + ".jpg";
             database.addImage(path, bitmap);
         }
 
@@ -581,7 +583,7 @@ public class UserCalendar extends AppCompatActivity
         return completed;
     }
 
-    public void updateProgressInDatabase(HabitInstance instance, String toDo){
+    public void updateProgressInDatabase(HabitInstance instance, String toDo) {
         try {
             db.collection("Habit")
                     .document(instance.getHID())
@@ -643,7 +645,7 @@ public class UserCalendar extends AppCompatActivity
 
                 startActivity(intent);
                 finish();
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
                 break;
 
             case R.id.calendar:
@@ -654,7 +656,7 @@ public class UserCalendar extends AppCompatActivity
                     //add bundle to send data if need
                     startActivity(intent2);
                     finish();
-                    overridePendingTransition(0,0);
+                    overridePendingTransition(0, 0);
                     break;
                 }
 
@@ -664,7 +666,7 @@ public class UserCalendar extends AppCompatActivity
                 //add bundle to send data if need
                 startActivity(intentNotification);
                 finish();
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
                 break;
 
             case R.id.forumn:
@@ -672,7 +674,7 @@ public class UserCalendar extends AppCompatActivity
                 forumIntent.putExtra("user", user);
                 startActivity(forumIntent);
                 finish();
-                overridePendingTransition(0,0);
+                overridePendingTransition(0, 0);
                 break;
 
         }

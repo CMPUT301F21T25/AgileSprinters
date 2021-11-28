@@ -43,7 +43,7 @@ public class Forum {
         this.comment = comment;
     }
 
-    public String  getDuration() {
+    public String getDuration() {
         return duration;
     }
 
@@ -59,9 +59,13 @@ public class Forum {
         this.image = image;
     }
 
-    public void setLocation(String location){this.location=location;}
+    public void setLocation(String location) {
+        this.location = location;
+    }
 
-    public String getLocation(){return location;}
+    public String getLocation() {
+        return location;
+    }
 
     public Forum(String firstName, String lastName, String eventDate, String duration, String comment, String image, String location) {
         this.firstName = firstName;
