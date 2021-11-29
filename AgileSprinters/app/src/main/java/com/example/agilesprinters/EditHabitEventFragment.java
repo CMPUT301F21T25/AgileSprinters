@@ -60,7 +60,6 @@ public class EditHabitEventFragment extends DialogFragment {
     private Bitmap bitmapOfImg;
     private HabitInstance habitInstance;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private MapHelperClass mapHelperClass;
 
     private EditHabitEventFragment.OnFragmentInteractionListener listener;
 
@@ -71,12 +70,11 @@ public class EditHabitEventFragment extends DialogFragment {
      * @param position      is the position of the tapped item within the list
      * @return returns the fragment with the bundled parameters
      */
-    public static EditHabitEventFragment newInstance(int position, HabitInstance habitInstance, MapHelperClass mapHelperClass) {
+    public static EditHabitEventFragment newInstance(int position, HabitInstance habitInstance) {
         EditHabitEventFragment fragment = new EditHabitEventFragment();
         Bundle args = new Bundle();
         args.putInt("position", position);
         args.putSerializable("Habit instance", habitInstance);
-        args.putSerializable("mapHelper", mapHelperClass);
         fragment.setArguments(args);
 
         return fragment;
@@ -146,7 +144,6 @@ public class EditHabitEventFragment extends DialogFragment {
         instructions = view.findViewById(R.id.instructions);
 
         habitInstance = (HabitInstance) getArguments().getSerializable("Habit instance");
-        mapHelperClass = (MapHelperClass) getArguments().getSerializable("mapHelper");
 
         // Setting the current information so that the user can make changes accordingly
         optional_comment.setText(habitInstance.getOpt_comment());
@@ -159,10 +156,6 @@ public class EditHabitEventFragment extends DialogFragment {
 
         // Setting the visibility of delete image, location buttons
         setVisibilityForImages();
-
-        if (!mapHelperClass.isLocationPermissionGranted()) {
-            addLocBtn.setEnabled(false);
-        }
 
         // Setting the doc ids of all connected elements
         EID = habitInstance.getEID();
@@ -420,7 +413,7 @@ public class EditHabitEventFragment extends DialogFragment {
      * the user to pick a location.
      */
     private void getLocation() {
-        MapsFragment mapsFragment = new MapsFragment().newInstance((HabitInstance) getArguments().getSerializable("Habit instance"), mapHelperClass);
+        MapsFragment mapsFragment = new MapsFragment().newInstance((HabitInstance) getArguments().getSerializable("Habit instance"));
         mapsFragment.show(Objects.requireNonNull(getChildFragmentManager()), "ADD LOCATION");
     }
 

@@ -55,7 +55,6 @@ public class HomeActivity extends AppCompatActivity implements AddHabitFragment.
     private TextView followingCountTextView;
     private TextView followerCountTextView;
     private FirebaseAuth auth;
-    private MapHelperClass mapHelperClass = new MapHelperClass();
 
     private static final String TAG = "Habit";
     private String UID;
@@ -77,8 +76,6 @@ public class HomeActivity extends AppCompatActivity implements AddHabitFragment.
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getSupportActionBar().hide();
         setContentView(R.layout.activity_home);
-
-        mapHelperClass.getLocationPermission(HomeActivity.this, HomeActivity.this);
 
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
@@ -487,7 +484,6 @@ public class HomeActivity extends AppCompatActivity implements AddHabitFragment.
             case R.id.calendar:
                 Intent intent = new Intent(this, UserCalendarActivity.class);
                 intent.putExtra("user", user);
-                intent.putExtra("mapHelper", mapHelperClass);
                 //add bundle to send data if need
                 finish();
                 startActivity(intent);

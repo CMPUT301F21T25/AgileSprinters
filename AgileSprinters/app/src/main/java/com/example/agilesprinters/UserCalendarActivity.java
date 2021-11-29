@@ -69,8 +69,6 @@ public class UserCalendarActivity extends AppCompatActivity
     private User user;
     private String collectionPath;
     private Database database = new Database();
-    private MapHelperClass mapHelperClass;
-
     private String path = null;
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
@@ -94,7 +92,6 @@ public class UserCalendarActivity extends AppCompatActivity
 
         if (UID == null) {
             user = (User) getIntent().getSerializableExtra("user");
-            mapHelperClass = (MapHelperClass) getIntent().getSerializableExtra("mapHelper");
             UID = user.getUserID();
         }
 
@@ -126,7 +123,7 @@ public class UserCalendarActivity extends AppCompatActivity
 
                 // get hid here
                 AddHabitEventFragment values =
-                        new AddHabitEventFragment().newInstance(i, UID, selectedHabitInstanceId, instanceId, mapHelperClass);
+                        new AddHabitEventFragment().newInstance(i, UID, selectedHabitInstanceId, instanceId);
                 values.show(getSupportFragmentManager(), "ADD");
 
             }
@@ -142,7 +139,7 @@ public class UserCalendarActivity extends AppCompatActivity
                 System.out.println("image id is " + selectedHabitInstance.getIID());
 
                 EditHabitEventFragment values =
-                        new EditHabitEventFragment().newInstance(i, selectedHabitInstance, mapHelperClass);
+                        new EditHabitEventFragment().newInstance(i, selectedHabitInstance);
                 values.show(getSupportFragmentManager(), "VIEW/EDIT");
             }
         });
