@@ -48,7 +48,7 @@ public class NotificationsListAdapter extends ArrayAdapter<User> {
         View view = convertView;
 
         if (view == null) {
-            view = LayoutInflater.from(mContext).inflate(R.layout.notifications_content, parent, false);
+            view = LayoutInflater.from(mContext).inflate(R.layout.content_notifications, parent, false);
         }
 
         User user = notificationsArrayList.get(position);

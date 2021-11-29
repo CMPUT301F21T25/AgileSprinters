@@ -35,8 +35,8 @@ public class CalendarAndroidTest {
     private Solo solo;
 
     @Rule
-    public ActivityTestRule<Login> rule = new ActivityTestRule<>
-            (Login.class, true, true);
+    public ActivityTestRule<LoginActivity> rule = new ActivityTestRule<>
+            (LoginActivity.class, true, true);
 
     /**
      * Runs before all tests and creates solo instance.
@@ -52,13 +52,13 @@ public class CalendarAndroidTest {
     private void logInTestUser() {
 
         try {
-            solo.assertCurrentActivity("Wrong", Login.class);
+            solo.assertCurrentActivity("Wrong", LoginActivity.class);
         } catch (Exception e) {
             runAfterTest();
         }
 
         // checks to make sure we are in the right activity
-        solo.assertCurrentActivity("Wrong", Login.class);
+        solo.assertCurrentActivity("Wrong", LoginActivity.class);
 
         // Log In to the test account
         solo.enterText((EditText) solo.getView(R.id.email), "sai@test.com");
@@ -66,7 +66,7 @@ public class CalendarAndroidTest {
         solo.clickOnView(solo.getView(R.id.loginBtn));
 
         // checks to make sure the activity has switched to the Home activity
-        solo.assertCurrentActivity("Wrong", Home.class);
+        solo.assertCurrentActivity("Wrong", HomeActivity.class);
     }
 
     /**
@@ -131,7 +131,7 @@ public class CalendarAndroidTest {
 
         // check to make sure the activity is switched to calendar activity
         solo.clickOnView(solo.getView(R.id.calendar));
-        assertTrue(solo.waitForActivity(UserCalendar.class));
+        assertTrue(solo.waitForActivity(UserCalendarActivity.class));
 
         String todayDay = LocalDate.now().getDayOfWeek().toString();
 
@@ -214,7 +214,7 @@ public class CalendarAndroidTest {
 
         // makes sure the activity is switched to forum activity
         solo.clickOnView(solo.getView(R.id.forum));
-        assertTrue(solo.waitForActivity(ForumManager.class));
+        assertTrue(solo.waitForActivity(ForumActivity.class));
 
         // makes sure if the habit event is successfully added in forumn
         assertTrue(solo.waitForText("Walked 5000 steps", 1, 1000));
@@ -238,7 +238,7 @@ public class CalendarAndroidTest {
 
         // check to make sure the activity is switched to forum activity
         solo.clickOnView(solo.getView(R.id.forum));
-        assertTrue(solo.waitForActivity(ForumManager.class));
+        assertTrue(solo.waitForActivity(ForumActivity.class));
 
         // makes sure the private event is not added to forum
         assertFalse(solo.waitForText("Evening run", 1, 1000));
@@ -250,7 +250,7 @@ public class CalendarAndroidTest {
         testAddEvent();
 
         // check to make sure the activity is switched to calendar activity
-        assertTrue(solo.waitForActivity(UserCalendar.class));
+        assertTrue(solo.waitForActivity(UserCalendarActivity.class));
 
         // wait for habit event fragment to open
         solo.clickOnText("Walked 5000 steps");
@@ -305,7 +305,7 @@ public class CalendarAndroidTest {
 
         // check to make sure the activity is switched to forum activity
         solo.clickOnView(solo.getView(R.id.forum));
-        assertTrue(solo.waitForActivity(ForumManager.class));
+        assertTrue(solo.waitForActivity(ForumActivity.class));
 
         // check to make sure that the edits on the event are displayed in forum
         assertTrue(solo.waitForText("Walk with friend", 1, 1000));
@@ -338,7 +338,7 @@ public class CalendarAndroidTest {
 
         // check to make sure the activity is switched to calendar activity
         solo.clickOnView(solo.getView(R.id.calendar));
-        assertTrue(solo.waitForActivity(UserCalendar.class));
+        assertTrue(solo.waitForActivity(UserCalendarActivity.class));
 
         // Opening a calendar to check previous events
         solo.clickOnView(solo.getView(R.id.title1));
@@ -365,7 +365,7 @@ public class CalendarAndroidTest {
 
         // check to make sure the activity is switched to calendar activity
         solo.clickOnView(solo.getView(R.id.calendar));
-        assertTrue(solo.waitForActivity(UserCalendar.class));
+        assertTrue(solo.waitForActivity(UserCalendarActivity.class));
 
         // wait for habit event fragment to open
         solo.clickOnText("Evening run");
@@ -379,7 +379,7 @@ public class CalendarAndroidTest {
 
         // check to make sure the activity is switched to forum activity
         solo.clickOnView(solo.getView(R.id.forum));
-        assertTrue(solo.waitForActivity(ForumManager.class));
+        assertTrue(solo.waitForActivity(ForumActivity.class));
 
         // makes sure the private event is added to forum
         assertTrue(solo.waitForText("Evening run", 1, 1000));
@@ -397,7 +397,7 @@ public class CalendarAndroidTest {
 
         // check to make sure the activity is switched to calendar activity
         solo.clickOnView(solo.getView(R.id.calendar));
-        assertTrue(solo.waitForActivity(UserCalendar.class));
+        assertTrue(solo.waitForActivity(UserCalendarActivity.class));
 
         // wait for habit event fragment to open
         solo.clickOnText("Walked 5000 steps");
@@ -414,7 +414,7 @@ public class CalendarAndroidTest {
 
         // checks to see if deleting a habit, will delete its forum events
         solo.clickOnView(solo.getView(R.id.forum));
-        assertTrue(solo.waitForActivity(ForumManager.class));
+        assertTrue(solo.waitForActivity(ForumActivity.class));
         // checks if deleting the habit will remove it from to do list
         assertFalse(solo.waitForText("Walked 5000 steps", 1, 1000));
     }
@@ -448,7 +448,7 @@ public class CalendarAndroidTest {
         solo.clickOnView(solo.getView(R.id.calendar));
 
         // checks to see if deleting a habit, will delete its events
-        assertTrue(solo.waitForActivity(UserCalendar.class));
+        assertTrue(solo.waitForActivity(UserCalendarActivity.class));
 
         // checks if deleting the habit will remove it from to do list
         assertFalse(solo.waitForText("Walking", 1, 1000));
@@ -457,7 +457,7 @@ public class CalendarAndroidTest {
         solo.clickOnView(solo.getView(R.id.forum));
 
         // checks to see if deleting a habit, will delete its forum events
-        assertTrue(solo.waitForActivity(ForumManager.class));
+        assertTrue(solo.waitForActivity(ForumActivity.class));
         // checks if deleting the habit will remove it from to do list
         assertFalse(solo.waitForText("Evening run", 1, 1000));
 
@@ -466,7 +466,7 @@ public class CalendarAndroidTest {
     private void deleteHabitEvents() {
         solo.clickOnView(solo.getView(R.id.home));
         // checks to see if deleting a habit, will delete its events
-        assertTrue(solo.waitForActivity(Home.class));
+        assertTrue(solo.waitForActivity(HomeActivity.class));
 
         if (solo.waitForText("Walking")) {
             solo.clickLongOnText("Walking");
@@ -490,13 +490,13 @@ public class CalendarAndroidTest {
 
         solo.clickOnView(solo.getView(R.id.home));
         // checks to make sure the activity has switched to the Home activity
-        solo.assertCurrentActivity("Wrong", Home.class);
+        solo.assertCurrentActivity("Wrong", HomeActivity.class);
 
         solo.clickOnView(solo.getView(R.id.homeUserButton));
         solo.assertCurrentActivity("Wrong", EditUserActivity.class);
 
         solo.clickOnView(solo.getView(R.id.signOutbutton));
-        solo.assertCurrentActivity("Wrong", Login.class);
+        solo.assertCurrentActivity("Wrong", LoginActivity.class);
 
     }
 

@@ -1,15 +1,12 @@
 package com.example.agilesprinters;
 
 import static org.junit.Assert.assertEquals;
-import android.app.Activity;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
-import com.google.firebase.firestore.FirebaseFirestore;
+
 import com.robotium.solo.Solo;
 import org.junit.After;
 import org.junit.Before;
@@ -22,14 +19,14 @@ public class FollowFollowingAndroidTest {
     private Solo solo;
 
     @Rule
-    public ActivityTestRule<Login> rule = new ActivityTestRule< >
-            (Login.class, true, true);
+    public ActivityTestRule<LoginActivity> rule = new ActivityTestRule< >
+            (LoginActivity.class, true, true);
 
     @Before
     public void setUp() throws Exception {
         solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
 
-        solo.assertCurrentActivity("Wrong", Login.class);
+        solo.assertCurrentActivity("Wrong", LoginActivity.class);
 
         // Logging In to test account
         solo.enterText((EditText) solo.getView(R.id.email), "hari@gmail.com");
@@ -38,12 +35,12 @@ public class FollowFollowingAndroidTest {
         solo.clickOnView(solo.getView(R.id.loginBtn));
 
         // checks to make sure the activity has switched to the Home activity
-        solo.assertCurrentActivity("Wrong", Home.class);
+        solo.assertCurrentActivity("Wrong", HomeActivity.class);
     }
 
     @Test
     public void stage1_followers() {
-        solo.assertCurrentActivity("Wrong", Home.class);
+        solo.assertCurrentActivity("Wrong", HomeActivity.class);
 
         solo.clickOnView(solo.getView(R.id.followerCount));
         solo.waitForDialogToOpen(1000);
@@ -57,12 +54,12 @@ public class FollowFollowingAndroidTest {
         String str1 = textViewArrayList.get(0).getText().toString();
         assertEquals(str1, "Leen Alzebdeh");
 
-        solo.assertCurrentActivity("Wrong", OtherUserScreen.class);
+        solo.assertCurrentActivity("Wrong", OtherUserScreenActivity.class);
     }
 
     @Test
     public void stage2_following() {
-        solo.assertCurrentActivity("Wrong", Home.class);
+        solo.assertCurrentActivity("Wrong", HomeActivity.class);
 
         solo.clickOnView(solo.getView(R.id.followingCount));
         solo.waitForDialogToOpen(1000);
@@ -76,7 +73,7 @@ public class FollowFollowingAndroidTest {
         String str1 = textViewArrayList.get(0).getText().toString();
         assertEquals(str1, "riya patel");
 
-        solo.assertCurrentActivity("Wrong", OtherUserScreen.class);
+        solo.assertCurrentActivity("Wrong", OtherUserScreenActivity.class);
     }
 
     @After
@@ -84,7 +81,7 @@ public class FollowFollowingAndroidTest {
 
         solo.goBack();
         solo.waitForDialogToOpen(1000);
-        solo.assertCurrentActivity("Wrong", Home.class);
+        solo.assertCurrentActivity("Wrong", HomeActivity.class);
 
         solo.clickOnView(solo.getView(R.id.homeUserButton));
 
@@ -92,7 +89,7 @@ public class FollowFollowingAndroidTest {
 
         solo.clickOnView(solo.getView(R.id.signOutbutton));
 
-        solo.assertCurrentActivity("Wrong", Login.class);
+        solo.assertCurrentActivity("Wrong", LoginActivity.class);
 
         solo.finishOpenedActivities();
     }

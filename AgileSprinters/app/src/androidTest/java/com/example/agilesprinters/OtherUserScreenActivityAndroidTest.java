@@ -2,7 +2,9 @@ package com.example.agilesprinters;
 
 import static org.junit.Assert.assertEquals;
 
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
@@ -14,7 +16,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class EditUserScreenAndroidTests {
+import java.util.ArrayList;
+
+public class OtherUserScreenActivityAndroidTest {
     private Solo solo;
 
     @Rule
@@ -39,32 +43,47 @@ public class EditUserScreenAndroidTests {
 
     @After
     public void tearDown() throws Exception {
-        solo.assertCurrentActivity("Wrong", LoginActivity.class);
+        solo.goBack();
 
-        solo.finishOpenedActivities();
-    }
+        solo.assertCurrentActivity("Wrong", HomeActivity.class);
 
-    @Test
-    public void test1(){
         solo.clickOnView(solo.getView(R.id.homeUserButton));
 
         solo.assertCurrentActivity("Wrong", EditUserActivity.class);
 
         solo.clickOnView(solo.getView(R.id.signOutbutton));
 
-        solo.assertCurrentActivity("wrong", LoginActivity.class);
+        solo.assertCurrentActivity("Wrong", LoginActivity.class);
+
+        solo.finishOpenedActivities();
     }
 
-    /*
     @Test
-    public void test2(){
-        solo.clickOnView(solo.getView(R.id.homeUserButton));
+    public void stage1FollowerFollowingCount() {
+        solo.assertCurrentActivity("Wrong", HomeActivity.class);
 
-        solo.assertCurrentActivity("Wrong", EditUserActivity.class);
+        solo.clickOnView(solo.getView(R.id.followerCount));
+        solo.waitForDialogToOpen(1000);
 
-        solo.clickOnView(solo.getView(R.id.deleteUserButton));
+        TextView textView = (TextView) solo.getView(R.id.titleTextView);
+        String str = textView.getText().toString();
 
-        solo.assertCurrentActivity("wrong", Login.class);
+        assertEquals(str, "Followers");
+
+        ArrayList<TextView> textViewArrayList = solo.clickInList(0, 0);
+        String str1 = textViewArrayList.get(0).getText().toString();
+        assertEquals(str1, "HariTest User");
+
+        solo.assertCurrentActivity("Wrong", OtherUserScreenActivity.class);
+
+        TextView textView1 = (TextView) solo.getView(R.id.followingCount);
+        String str2 = textView1.getText().toString();
+        int i = Integer.parseInt(str2);
+
+        assertEquals(i, 1);
+
+        Button button = (Button) solo.getView(R.id.followButton);
+        String str3 = button.getText().toString();
+        assertEquals(str3, "Unfollow");
     }
-     */
 }
