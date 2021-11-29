@@ -7,7 +7,7 @@ Note:
 In the to-do list, three-story duplicates were forgotten to be deleted
 
 ## CRC Cards
-They are found [here](https://github.com/CMPUT301F21T25/AgileSprinters/blob/main/doc/CRC%20cards.pdf)
+They are found [here](https://github.com/CMPUT301F21T25/AgileSprinters/blob/main/doc/CRC%20Cards.pdf)
 
 ## UML
 They are found [here](https://github.com/CMPUT301F21T25/AgileSprinters/blob/main/doc/UML.png)
@@ -16,6 +16,6 @@ They are found [here](https://github.com/CMPUT301F21T25/AgileSprinters/blob/main
 The UI Mock Up can be found [here](https://github.com/CMPUT301F21T25/AgileSprinters/blob/main/doc/UI_MockUp.pdf)
 
 ## Storyboard Summary/How to Use
-The storyboard summary/how to use the app may be found [here](https://github.com/CMPUT301F21T25/AgileSprinters/blob/main/doc/Story%20Board.pdf)
+The storyboard summary/how to use the app may be found [here](https://github.com/CMPUT301F21T25/AgileSprinters/blob/main/Story%20Board%20.pdf)
 
 
