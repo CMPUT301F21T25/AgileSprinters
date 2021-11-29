@@ -1,25 +1,17 @@
 package com.example.agilesprinters;
 
-import static org.junit.Assert.assertEquals;
-
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
-
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 import com.robotium.solo.Solo;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.ArrayList;
-
+/**
+ * This class does the android testing for EditUserScreen.
+ */
 public class EditUserScreenAndroidTests {
     private Solo solo;
 
@@ -27,10 +19,27 @@ public class EditUserScreenAndroidTests {
     public ActivityTestRule<Login> rule = new ActivityTestRule< >
             (Login.class, true, true);
 
+    /**
+     * Runs before all tests and creates solo instance.
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
+    }
 
+    @After
+    public void tearDown() throws Exception {
+        solo.assertCurrentActivity("Wrong", Login.class);
+
+        solo.finishOpenedActivities();
+    }
+
+    /**
+     * This test checks if the sign out functionality works properly.
+     */
+    @Test
+    public void test1(){
         solo.assertCurrentActivity("Wrong", Login.class);
 
         // Logging In to test account
@@ -41,17 +50,7 @@ public class EditUserScreenAndroidTests {
 
         // checks to make sure the activity has switched to the Home activity
         solo.assertCurrentActivity("Wrong", Home.class);
-    }
 
-    @After
-    public void tearDown() throws Exception {
-        solo.assertCurrentActivity("Wrong", Login.class);
-
-        solo.finishOpenedActivities();
-    }
-
-    @Test
-    public void test1(){
         solo.clickOnView(solo.getView(R.id.homeUserButton));
 
         solo.assertCurrentActivity("Wrong", EditUserActivity.class);
@@ -60,17 +59,4 @@ public class EditUserScreenAndroidTests {
 
         solo.assertCurrentActivity("wrong", Login.class);
     }
-
-    /*
-    @Test
-    public void test2(){
-        solo.clickOnView(solo.getView(R.id.homeUserButton));
-
-        solo.assertCurrentActivity("Wrong", EditUserActivity.class);
-
-        solo.clickOnView(solo.getView(R.id.deleteUserButton));
-
-        solo.assertCurrentActivity("wrong", Login.class);
-    }
-     */
 }

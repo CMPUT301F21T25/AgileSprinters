@@ -18,6 +18,9 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 
+/**
+ * This function tests the behavior of OtherUserScreen.
+ */
 public class OtherUserScreenAndroidTest {
     private Solo solo;
 
@@ -25,6 +28,10 @@ public class OtherUserScreenAndroidTest {
     public ActivityTestRule<Login> rule = new ActivityTestRule< >
             (Login.class, true, true);
 
+    /**
+     * This function runs the setup for each test before the start of each test
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
@@ -41,6 +48,10 @@ public class OtherUserScreenAndroidTest {
         solo.assertCurrentActivity("Wrong", Home.class);
     }
 
+    /**
+     * This function handles the actions needed to properly finish the test
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
         solo.goBack();
@@ -58,6 +69,9 @@ public class OtherUserScreenAndroidTest {
         solo.finishOpenedActivities();
     }
 
+    /**
+     * This function checks the info displayed is as expected.
+     */
     @Test
     public void stage1FollowerFollowingCount() {
         solo.assertCurrentActivity("Wrong", Home.class);

@@ -25,7 +25,7 @@ public class userUnitTest {
     }
 
     /**
-     * This is a test method which tests if the getters for the mock user object match what they
+     * These method tests if the getters for the mock user object match what they
      * were set to
      */
     @Test
@@ -71,7 +71,7 @@ public class userUnitTest {
     }
 
     /**
-     * This is a test method which tests if the setters are setting values to the ones specified
+     * These methods below tests if the setters are setting values to the ones specified
      */
     @Test
     void testUserSetter(){

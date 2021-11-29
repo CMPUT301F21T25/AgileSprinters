@@ -1,23 +1,20 @@
 package com.example.agilesprinters;
 
 import static org.junit.Assert.assertEquals;
-import android.app.Activity;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.robotium.solo.Solo;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-
 import java.util.ArrayList;
 
+/**
+ * This class tests the behaviour of the FollowFollowing Activity
+ */
 public class FollowFollowingAndroidTest {
     private Solo solo;
 
@@ -25,6 +22,11 @@ public class FollowFollowingAndroidTest {
     public ActivityTestRule<Login> rule = new ActivityTestRule< >
             (Login.class, true, true);
 
+    /**
+     * This function runs the setup for each test before the start of each test
+     *
+     * @throws Exception
+     */
     @Before
     public void setUp() throws Exception {
         solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
@@ -41,6 +43,9 @@ public class FollowFollowingAndroidTest {
         solo.assertCurrentActivity("Wrong", Home.class);
     }
 
+    /**
+     * This function tests all the followers info retrieval
+     */
     @Test
     public void stage1_followers() {
         solo.assertCurrentActivity("Wrong", Home.class);
@@ -60,6 +65,9 @@ public class FollowFollowingAndroidTest {
         solo.assertCurrentActivity("Wrong", OtherUserScreen.class);
     }
 
+    /**
+     * This function tests all the following users info retrieval
+     */
     @Test
     public void stage2_following() {
         solo.assertCurrentActivity("Wrong", Home.class);
@@ -79,6 +87,10 @@ public class FollowFollowingAndroidTest {
         solo.assertCurrentActivity("Wrong", OtherUserScreen.class);
     }
 
+    /**
+     * This function handles the actions needed to properly finish the test
+     * @throws Exception
+     */
     @After
     public void tearDown() throws Exception {
 
