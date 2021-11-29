@@ -2,7 +2,7 @@ name: Android CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ newMain ]
   pull_request:
     branches: [ main ]
 
@@ -19,11 +19,8 @@ jobs:
         java-version: '11'
         distribution: 'adopt'
         cache: gradle
-    - name: change dir
-      run: cd AgileSprinters
+
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
-    - name: Look for gradlew
-      run: find / -type f -name "gradlew"
