@@ -28,6 +28,10 @@ import java.util.Objects;
  * This class handles sign out and delete user functionality
  *
  * @author Leen Alzebdeh, Hari Bheesetti
+ *
+ * Resources used:
+ * google map documentation: https://developers.google.com/maps/documentation/android-sdk/current-place-tutorial
+ *
  */
 public class EditUserActivity extends AppCompatActivity {
 

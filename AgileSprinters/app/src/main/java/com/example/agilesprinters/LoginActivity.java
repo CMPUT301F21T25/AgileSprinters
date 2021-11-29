@@ -15,15 +15,14 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 
 /**
@@ -49,13 +48,31 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     /**
      * this variable contains the current user
      */
-    private User currentUser = new User();
-
-    private FirebaseFirestore db;
-    private Database database = new Database();
-    private String firstName, lastName, emailId;
+    private final User currentUser = new User();
+    /**
+     * this variable contains the current user's first name \
+     */
+    private String firstName;
+    /**
+     * this variable contains the current user's last name
+     */
+    private String lastName;
+    /**
+     * this variable contains the current user's entered email
+     */
+    private String emailId;
+    /**
+     * this variable contains a list of the current user's follower list
+     */
     private ArrayList<String> followersList = new ArrayList<>();
+    /**
+     * this variable contains a list of the current user's following list
+     */
     private ArrayList<String> followingList = new ArrayList<>();
+
+    /**
+     * this variable contains a list of the current user's follow requests list
+     */
     private ArrayList<String> followRequestList = new ArrayList<>();
 
     /**
@@ -106,8 +123,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = auth.getCurrentUser();
         if (currentUser != null) {
-            System.out.println("UID IS:" + currentUser.getUid());
-            //Do anything here which needs to be done after user is set is complete
+            //Do anything here which needs to be done after user is set and complete
             getUser(currentUser);
         }
     }
@@ -197,32 +213,29 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     /**
-     * This function directs the user to the home page
+     * This function gets the user and their info from the database
      *
-     * @param user Give the firebase user that is logged in, if null is passed {@link FirebaseUser}
+     * @param user Give the firebase user that is logged in, if null is passed, nothing is retrieved {@link FirebaseUser}
      */
     private void getUser(FirebaseUser user) {
-        db = FirebaseFirestore.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference collectionReference = db.collection("users");
 
         String uniqueId = user.getUid();
 
         currentUser.setUserID(uniqueId);
         try {
-            collectionReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                @Override
-                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                        Log.d(TAG, String.valueOf(doc.getData().get("UID")));
-                        if (uniqueId.matches((String) doc.getData().get("UID"))) {
-                            emailId = (String) doc.getData().get("Email ID");
-                            firstName = (String) doc.getData().get("First Name");
-                            lastName = (String) doc.getData().get("Last Name");
-                            followersList = (ArrayList<String>) doc.getData().get("followers");
-                            followingList = (ArrayList<String>) doc.getData().get("following");
-                            followRequestList = (ArrayList<String>) doc.getData().get("follow request list");
-                            updateUi(currentUser, emailId, firstName, lastName, followersList, followingList, followRequestList);
-                        }
+            collectionReference.get().addOnSuccessListener(queryDocumentSnapshots -> {
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    Log.d(TAG, String.valueOf(doc.getData().get("UID")));
+                    if (uniqueId.matches((String) Objects.requireNonNull(doc.getData().get("UID")))) {
+                        emailId = (String) doc.getData().get("Email ID");
+                        firstName = (String) doc.getData().get("First Name");
+                        lastName = (String) doc.getData().get("Last Name");
+                        followersList = (ArrayList<String>) doc.getData().get("followers");
+                        followingList = (ArrayList<String>) doc.getData().get("following");
+                        followRequestList = (ArrayList<String>) doc.getData().get("follow request list");
+                        updateUi(currentUser, emailId, firstName, lastName, followersList, followingList, followRequestList);
                     }
                 }
             });
@@ -232,6 +245,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    /**
+     * After authentication is successful,
+     * this function sets the information of the current user's object and switches user to home
+     * @param user current user object {@link User}
+     * @param emailId current user's entered email {@link String}
+     * @param firstName current user's first name {@link String}
+     * @param lastName  current user's last name {@link String}
+     * @param followersList  a list of the current user's follower list {@link ArrayList}
+     * @param followingList  a list of the current user's following list {@link ArrayList}
+     * @param followRequestList  a list of the current user's follow reuests list {@link ArrayList}
+     */
     public void updateUi(User user, String emailId, String firstName, String lastName,
                          ArrayList<String> followersList, ArrayList<String> followingList,
                          ArrayList<String> followRequestList) {
