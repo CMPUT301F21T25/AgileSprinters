@@ -12,5 +12,5 @@ They are found [here](https://github.com/CMPUT301F21T25/AgileSprinters/blob/main
 ## UML
 They are found [https://github.com/CMPUT301F21T25/AgileSprinters/blob/main/doc/UML.png)
 
-## Storyboard Summary
-In the file "figma read me.pdf" is a summary of our main frames from our story board (ui_mockup.png) that is made in Figma. To view, navigate to AgileSprinters/projectpartwo, where the file is.
+## Storyboard Summary/How to Use
+The storyboard summary/how to use the app may be found here
