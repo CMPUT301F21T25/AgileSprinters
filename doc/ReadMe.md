@@ -7,7 +7,7 @@ Note:
 In the to-do list, three-story duplicates were forgotten to be deleted
 
 ## CRC Cards
-They are found [here](https://github.com/CMPUT301F21T25/AgileSprinters/blob/main/doc/CRC%20cards.pdf)
+They are found [here](https://github.com/CMPUT301F21T25/AgileSprinters/blob/main/doc/CRC_cards.pdf)
 
 ## UML
 They are found [https://github.com/CMPUT301F21T25/AgileSprinters/blob/main/doc/UML.png)
