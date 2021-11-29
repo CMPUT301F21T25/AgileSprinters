@@ -2,7 +2,6 @@ package com.example.agilesprinters;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.security.cert.TrustAnchor;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,8 +19,8 @@ class CalendarUnitTest {
      * @return
      * Return a new empty list of habits
      */
-    private HabitInstanceList mockHabitInstanceList() {
-        HabitInstanceList instanceList = new HabitInstanceList();
+    private HabitInstanceTestList mockHabitInstanceList() {
+        HabitInstanceTestList instanceList = new HabitInstanceTestList();
         instanceList.add(mockHabitInstance1());
         return instanceList;
     }
@@ -33,8 +32,8 @@ class CalendarUnitTest {
      * Return a new empty list of habits
      */
 
-    private Habit_list mockHabitList() {
-        return new Habit_list();
+    private ToDoHabitTestList mockHabitList() {
+        return new ToDoHabitTestList();
     }
 
     /**
@@ -92,7 +91,7 @@ class CalendarUnitTest {
      */
     @Test
     void testSeeHabitsToDoToday() throws ParseException {
-        Habit_list myHabitsForToday = mockHabitList();
+        ToDoHabitTestList myHabitsForToday = mockHabitList();
 
         // create a map of weekdays to show which days the habit should take place
         HashMap<String, Boolean> weekdays = new HashMap<>();
@@ -142,24 +141,24 @@ class CalendarUnitTest {
      */
     @Test
     void testAddHabitEvent() {
-        HabitInstanceList habitInstanceList = mockHabitInstanceList();
-        assertEquals(1, habitInstanceList.countInstances());
+        HabitInstanceTestList habitInstanceTestList = mockHabitInstanceList();
+        assertEquals(1, habitInstanceTestList.countInstances());
 
         // Adds a habit event to the list of habit events
         HabitInstance instance2 = mockHabitInstance2();
-        habitInstanceList.add(instance2);
+        habitInstanceTestList.add(instance2);
 
         // Checks to see if the habit event is added correctly
-        assertEquals(2, habitInstanceList.countInstances());
-        assertTrue(habitInstanceList.getInstances().contains(instance2));
+        assertEquals(2, habitInstanceTestList.countInstances());
+        assertTrue(habitInstanceTestList.getInstances().contains(instance2));
 
         // Throws assertion if the same habit event is added again
-        assertThrows(IllegalArgumentException.class, () -> habitInstanceList.add(instance2));
+        assertThrows(IllegalArgumentException.class, () -> habitInstanceTestList.add(instance2));
 
         // Throws assertion if the comment has more than 20 characters
         HabitInstance instance3 = mockHabitInstance3();
         instance3.setOpt_comment("Morning meditation with mom");
-        assertThrows(IllegalArgumentException.class, () -> habitInstanceList.add(instance3));
+        assertThrows(IllegalArgumentException.class, () -> habitInstanceTestList.add(instance3));
     }
 
     /**
@@ -168,27 +167,27 @@ class CalendarUnitTest {
      */
     @Test
     void testHasHabitEvent() {
-        HabitInstanceList habitInstanceList = mockHabitInstanceList();
+        HabitInstanceTestList habitInstanceTestList = mockHabitInstanceList();
 
         // Adds completed habit events
         HabitInstance instance2 = mockHabitInstance2();
-        habitInstanceList.add(instance2);
+        habitInstanceTestList.add(instance2);
 
         HabitInstance instance3 = mockHabitInstance3();
-        habitInstanceList.add(instance3);
+        habitInstanceTestList.add(instance3);
 
         // Checking if the habit event exists in the list
-        assertTrue(habitInstanceList.hasInstances(instance2));
+        assertTrue(habitInstanceTestList.hasInstances(instance2));
 
         HabitInstance instance4 = mockHabitInstance4();
-        assertFalse(habitInstanceList.hasInstances(instance4));
+        assertFalse(habitInstanceTestList.hasInstances(instance4));
 
         // Checking details of a habit event
-        assertEquals(habitInstanceList.getInstances().get(1)
+        assertEquals(habitInstanceTestList.getInstances().get(1)
                 .getOpt_comment(), "Read 2 pages");
-        assertNotEquals(habitInstanceList.getInstances().get(2)
+        assertNotEquals(habitInstanceTestList.getInstances().get(2)
                 .getDuration(), 12);
-        assertEquals(habitInstanceList.getInstances().get(2)
+        assertEquals(habitInstanceTestList.getInstances().get(2)
                 .getShared(), false);
 
     }
@@ -200,32 +199,32 @@ class CalendarUnitTest {
      */
     @Test
     void testEditHabitEvent() {
-        HabitInstanceList habitInstanceList = mockHabitInstanceList();
+        HabitInstanceTestList habitInstanceTestList = mockHabitInstanceList();
 
         // Adds habit events
         HabitInstance instance2 = mockHabitInstance2();
-        habitInstanceList.add(instance2);
+        habitInstanceTestList.add(instance2);
 
         HabitInstance instance3 = mockHabitInstance3();
-        habitInstanceList.add(instance3);
+        habitInstanceTestList.add(instance3);
 
         // Checking if the edits to the details are saved in the instances list as well
-        habitInstanceList.editCommentDetails(instance2,"Read 5 pages" );
-        assertEquals(habitInstanceList.getInstances().get(1)
+        habitInstanceTestList.editCommentDetails(instance2,"Read 5 pages" );
+        assertEquals(habitInstanceTestList.getInstances().get(1)
                 .getOpt_comment(), "Read 5 pages");
 
         // Checking if the edits to the details are saved in the instances list as well
-        habitInstanceList.editDurationDetails(instance3,"15");
-        assertEquals(habitInstanceList.getInstances().get(2)
+        habitInstanceTestList.editDurationDetails(instance3,"15");
+        assertEquals(habitInstanceTestList.getInstances().get(2)
                 .getDuration(), 15);
 
         // Throws assertion if the edit comment has more than 20 characters
         assertThrows(IllegalArgumentException.class, () ->
-                habitInstanceList.editCommentDetails(instance3,"Morning meditation in the hills" ));
+                habitInstanceTestList.editCommentDetails(instance3,"Morning meditation in the hills" ));
 
         // Throws assertion if the edit duration does not have digits
         assertThrows(IllegalArgumentException.class, () ->
-                habitInstanceList.editDurationDetails(instance3,"Thirty" ));
+                habitInstanceTestList.editDurationDetails(instance3,"Thirty" ));
 
     }
 

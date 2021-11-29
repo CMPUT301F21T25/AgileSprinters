@@ -80,7 +80,7 @@ public class AcceptDeclineFollowRequestFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         //inflate the layout for this fragment
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.accept_decline_follow_request_fragment, null);
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_accept_decline_follow_request, null);
 
         //Get user who is requesting to follow from the bundle
         followRequestUser = (User) getArguments().getSerializable("followRequestUser");

@@ -78,7 +78,7 @@ public class EditUserActivity extends AppCompatActivity {
                 deleteUser();
                 user = null;
                 FirebaseAuth.getInstance().signOut();
-                intent = new Intent(EditUserActivity.this, Login.class);
+                intent = new Intent(EditUserActivity.this, LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
@@ -126,7 +126,7 @@ public class EditUserActivity extends AppCompatActivity {
     private void signOut(){
         user = null;
         FirebaseAuth.getInstance().signOut();
-        intent = new Intent(EditUserActivity.this, Login.class);
+        intent = new Intent(EditUserActivity.this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         overridePendingTransition(0, 0);
