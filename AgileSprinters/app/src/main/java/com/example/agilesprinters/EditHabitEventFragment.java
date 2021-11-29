@@ -160,6 +160,10 @@ public class EditHabitEventFragment extends DialogFragment {
         // Setting the visibility of delete image, location buttons
         setVisibilityForImages();
 
+        if (!mapHelperClass.isLocationPermissionGranted()) {
+            addLocBtn.setEnabled(false);
+        }
+
         // Setting the doc ids of all connected elements
         EID = habitInstance.getEID();
         UID = habitInstance.getUID();

@@ -119,6 +119,7 @@ public class AddHabitEventFragment extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         //inflate the layout for this fragment
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_edit_habit_event, null);
+        mapHelperClass = (MapHelperClass) getArguments().getSerializable("mapHelper");
 
         // Display the calendar
         optional_comment = view.findViewById(R.id.editText_comment);
@@ -132,6 +133,10 @@ public class AddHabitEventFragment extends DialogFragment {
         ImageView addGalPhotoBtn = view.findViewById(R.id.add_Gal_Photo);
         ImageView addLocBtn = view.findViewById(R.id.add_location);
         TextView optLocation = view.findViewById(R.id.editText_location);
+
+        if (!mapHelperClass.isLocationPermissionGranted()) {
+            addLocBtn.setEnabled(false);
+        }
 
         // When camera icon is clicked, it gets image from the camera
         addCamPhotoBtn.setOnClickListener(view1 -> {
@@ -156,7 +161,7 @@ public class AddHabitEventFragment extends DialogFragment {
         HID = getArguments().getString(getString(R.string.HID));
         EID = getArguments().getString(getString(R.string.EID));
         FID = getArguments().getString("FID");
-        mapHelperClass = (MapHelperClass) getArguments().getSerializable("mapHelper");
+
 
         // Setting the date of the event
         LocalDate currentDate = LocalDate.now();

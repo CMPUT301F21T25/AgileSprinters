@@ -48,7 +48,6 @@ public class MapHelperClass implements Serializable {
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             setLocationPermissionGranted(true);
-            System.out.println("permissonSEt");
         } else {
             ActivityCompat.requestPermissions(activity,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
