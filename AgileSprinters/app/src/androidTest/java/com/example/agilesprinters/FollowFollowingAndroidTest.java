@@ -62,7 +62,7 @@ public class FollowFollowingAndroidTest {
 
         ArrayList<TextView> textViewArrayList = solo.clickInList(0, 0);
         String str1 = textViewArrayList.get(0).getText().toString();
-        assertEquals(str1, "Leen Alzebdeh");
+        assertEquals(str1, "HariTest User");
 
         solo.assertCurrentActivity("Wrong", OtherUserScreenActivity.class);
     }
@@ -84,7 +84,7 @@ public class FollowFollowingAndroidTest {
 
         ArrayList<TextView> textViewArrayList = solo.clickInList(0, 0);
         String str1 = textViewArrayList.get(0).getText().toString();
-        assertEquals(str1, "riya patel");
+        assertEquals(str1, "HariTest User");
 
         solo.assertCurrentActivity("Wrong", OtherUserScreenActivity.class);
     }
