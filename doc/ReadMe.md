@@ -1,5 +1,5 @@
 ## Wiki
-The wiki containing information about the app, meeting summaries, and members contributions can be found [here] (https://github.com/CMPUT301F21T25/AgileSprinters/wiki)
+The wiki containing information about the app, meeting summaries, and members contributions can be found [here](https://github.com/CMPUT301F21T25/AgileSprinters/wiki)
 
 ## Product Backlog
 The product backlog is linked to the repository and uses github project board. <br>
