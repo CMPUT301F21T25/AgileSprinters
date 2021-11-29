@@ -45,6 +45,8 @@ import java.util.Map;
  * regarding that. The user can also share public, private events to the forum from here.
  * There is a navigation bar on the bottom that the user may click
  * to go to either home, forum, or notifications.
+ * NOTE: when selecting location for the first time (when the app asks for permission to get current location), do not click save address after giving permission, 
+ * instead, exit, and the location can be added normally once the fragment is opened agian.
  *
  * @author Sai Rasazna Ajerla and Riyaben Patel
  */
