@@ -8,9 +8,11 @@ on:
 
 jobs:
   build:
-
+  
     runs-on: ubuntu-latest
-
+    defaults:
+        run:
+          working-directory: ./AgileSprinters
     steps:
     - uses: actions/checkout@v2
     - name: set up JDK 11
@@ -19,8 +21,9 @@ jobs:
         java-version: '11'
         distribution: 'adopt'
         cache: gradle
-
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
+    - name: Look for gradlew
+      run: find / -type f -name "gradlew"
