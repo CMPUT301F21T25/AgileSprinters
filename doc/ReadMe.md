@@ -10,7 +10,7 @@ In the to-do list, three-story duplicates were forgotten to be deleted
 They are found [here](https://github.com/CMPUT301F21T25/AgileSprinters/blob/main/doc/CRC%20cards.pdf)
 
 ## UML
-They are found [https://github.com/CMPUT301F21T25/AgileSprinters/blob/main/doc/UML.png)
+They are found [here](https://github.com/CMPUT301F21T25/AgileSprinters/blob/main/doc/UML.png)
 
 ## Storyboard Summary/How to Use
 The storyboard summary/how to use the app may be found here
