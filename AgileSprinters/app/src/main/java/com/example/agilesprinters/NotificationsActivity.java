@@ -16,9 +16,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,8 +62,13 @@ public class NotificationsActivity extends AppCompatActivity implements BottomNa
 
         if (user == null) {
             user = (User) getIntent().getSerializableExtra("user");
+            user.getFollowRequestList().clear();
+            user.getFollowersList().clear();
+            user.getFollowingList().clear();
             UID = user.getUserID();
         }
+
+        getUserLists();
 
         DocumentReference userCollectionReference = db.collection("users").document(user.getUserID());
 
@@ -249,5 +256,22 @@ public class NotificationsActivity extends AppCompatActivity implements BottomNa
         data.put("follow request list", user.getFollowRequestList());
         // Makes a call to the database which handles it
         database.updateData(collectionPath, user.getUserID(), data, TAG);
+    }
+
+    public void getUserLists(){
+        db.collection("users").addSnapshotListener((value, error) -> {
+            for (QueryDocumentSnapshot doc : value) {
+                if (user.getUserID().matches(doc.getId())) {
+                    ArrayList<String> userTempList = (ArrayList<String>) doc.getData().get("following");
+                    user.setFollowingList(userTempList);
+
+                    userTempList = (ArrayList<String>) doc.getData().get("followers");
+                    user.setFollowersList(userTempList);
+
+                    userTempList = (ArrayList<String>) doc.getData().get("follow request list");
+                    user.setFollowRequestList(userTempList);
+                }
+            }
+        });
     }
 }
