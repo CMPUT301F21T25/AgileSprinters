@@ -21,11 +21,11 @@ import java.time.LocalDate;
 
 /**
  * This class provides testing for the calendar activity.
- * Please note that tests must be ran individually
- * and the cache must be cleared between each for them to work due to the app automatically
- * going to the home page after a single sign in on the device.
  *
  * @author Sai Rasazna Ajerla, Leen Alzebdeh
+ *
+ * Note: there is no way, using robotium, to test adding an image thus it was not tested here
+ * Note: there is no way to test editing the location (by dragging the marker), thus is was not tested
  */
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -49,12 +49,15 @@ public class CalendarAndroidTest {
         logInTestUser();
     }
 
+    /**
+     * if a user is logged in, sign them out then sign in the test user
+     */
     private void logInTestUser() {
 
         try {
             solo.assertCurrentActivity("Wrong", LoginActivity.class);
         } catch (Exception e) {
-            runAfterTest();
+            signOutUser();
         }
 
         // checks to make sure we are in the right activity
@@ -180,14 +183,6 @@ public class CalendarAndroidTest {
         // make sure that spinner is set to item selected
         assertTrue(solo.isSpinnerTextSelected(0, "mins"));
 
-        /**
-         * Test case for adding an image
-         * in add habit event fragment
-         *
-         *
-         *
-         */
-
         solo.clickOnView(solo.getView(R.id.add_location));
         solo.waitForDialogToOpen(5000);
         solo.clickOnButton("SAVE ADDRESS");
@@ -204,9 +199,12 @@ public class CalendarAndroidTest {
         solo.clickOnButton("Save");
 
         // makes sure if the tag for a private event shows up
-        assertTrue(solo.waitForText("Private", 1, 1000));
+        assertTrue(solo.waitForText("Private Event", 1, 1000));
     }
 
+    /**
+     * Checks that a public event gets added to the forum
+     */
     @Test
     public void testPublicEventInForum() {
 
@@ -219,18 +217,14 @@ public class CalendarAndroidTest {
         // makes sure if the habit event is successfully added in forumn
         assertTrue(solo.waitForText("Walked 5000 steps", 1, 1000));
 
-        /**
-         * Test case for checking if an image
-         * is displayed in forum
-         *
-         *
-         *
-         */
         assertTrue(solo.waitForText("Edmonton,Canada")
                 | solo.waitForText("Mountain View, California, United States"));
 
     }
 
+    /**
+     * Checks that a private event is not in forum
+     */
     @Test
     public void testPrivateEventNotInForum() {
 
@@ -244,6 +238,9 @@ public class CalendarAndroidTest {
         assertFalse(solo.waitForText("Evening run", 1, 1000));
     }
 
+    /**
+     * test if an edited event is edited in forum as well
+     */
     @Test
     public void testEditEvent() {
 
@@ -279,22 +276,6 @@ public class CalendarAndroidTest {
         solo.clearEditText((EditText) solo.getView(R.id.editText_duration));
         solo.enterText((EditText) solo.getView(R.id.editText_duration), "60");
 
-        /**
-         * Test case for editing an image
-         * in edit habit event fragment
-         *
-         *
-         *
-         */
-
-        /**
-         * Test case for editing the location
-         * in edit habit event fragment
-         *
-         *
-         *
-         */
-
         solo.clickOnButton("Save");
 
         // waits for the dialog to close
@@ -310,21 +291,6 @@ public class CalendarAndroidTest {
         // check to make sure that the edits on the event are displayed in forum
         assertTrue(solo.waitForText("Walk with friend", 1, 1000));
 
-        /**
-         * Test case for checking if edits made to the image
-         * is displayed in forum
-         *
-         *
-         *
-         */
-
-        /**
-         * Test case for checking if edits made to the location
-         * is displayed in forum
-         *
-         *
-         *
-         */
     }
 
     /**
@@ -463,6 +429,9 @@ public class CalendarAndroidTest {
 
     }
 
+    /**
+     * delete habits after a test is run
+     */
     private void deleteHabitEvents() {
         solo.clickOnView(solo.getView(R.id.home));
         // checks to see if deleting a habit, will delete its events
@@ -484,10 +453,10 @@ public class CalendarAndroidTest {
         }
     }
 
-    @After
-    public void runAfterTest() {
-        deleteHabitEvents();
-
+    /**
+     * signs out the current user
+     */
+    private void signOutUser(){
         solo.clickOnView(solo.getView(R.id.home));
         // checks to make sure the activity has switched to the Home activity
         solo.assertCurrentActivity("Wrong", HomeActivity.class);
@@ -497,6 +466,15 @@ public class CalendarAndroidTest {
 
         solo.clickOnView(solo.getView(R.id.signOutbutton));
         solo.assertCurrentActivity("Wrong", LoginActivity.class);
+
+    }
+    /**
+     * delete habits and sign out user
+     */
+    @After
+    public void runAfterTest() {
+        deleteHabitEvents();
+        signOutUser();
 
     }
 

@@ -44,6 +44,7 @@ public class AddHabitEventFragment extends DialogFragment {
     private String FID;
     private EditText optional_comment;
     private TextView input_date;
+    private TextView privacy_text;
     private EditText input_duration;
     private Spinner durationSpinner;
     private ImageView imageContainer;
@@ -120,6 +121,7 @@ public class AddHabitEventFragment extends DialogFragment {
         // Display the calendar
         optional_comment = view.findViewById(R.id.editText_comment);
         input_date = view.findViewById(R.id.editText_date);
+        privacy_text = view.findViewById(R.id.privacy_content);
         input_duration = view.findViewById(R.id.editText_duration);
         durationSpinner = view.findViewById(R.id.duration_spinner);
 
