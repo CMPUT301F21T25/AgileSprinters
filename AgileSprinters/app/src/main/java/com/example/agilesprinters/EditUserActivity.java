@@ -47,9 +47,9 @@ public class EditUserActivity extends AppCompatActivity {
     private String nameStr;
 
     /**
-     * This variable contains the tag used for the rest of the class
+     * This variable contains the tag used for the rest of the class (name of class)
      */
-    private static final String TAG = "Habit";
+    private static final String TAG = EditUserActivity.class.getSimpleName();;
 
     /**
      * This variable contains the database class
