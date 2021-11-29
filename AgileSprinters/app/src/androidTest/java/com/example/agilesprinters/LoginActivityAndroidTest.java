@@ -11,8 +11,10 @@ import com.robotium.solo.Solo;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 /**
  * Test class for Login Activity. All the UI tests are written here. Robotium test framework is
@@ -27,6 +29,7 @@ import org.junit.Test;
  *
  *  Before running the test cache and the storage in the app info needs to be cleared.
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class LoginActivityAndroidTest {
     private Solo solo;
 
@@ -40,6 +43,10 @@ public class LoginActivityAndroidTest {
     @Before
     public void setUp() {
         solo = new Solo(InstrumentationRegistry.getInstrumentation(),rule.getActivity());
+        /**try {
+            solo.assertCurrentActivity("Wrong", LoginActivity.class);
+        } catch (Exception e) {
+        }**/
     }
 
     /**
@@ -48,7 +55,17 @@ public class LoginActivityAndroidTest {
      * then have both email and password be incorrect and check for error message
      */
     @Test
-    public void checkEmptySignIn() {
+    public void A_checkEmptySignIn() {
+        solo.clickOnView(solo.getView(R.id.home));
+        // checks to make sure the activity has switched to the Home activity
+        solo.assertCurrentActivity("Wrong", HomeActivity.class);
+
+        solo.clickOnView(solo.getView(R.id.homeUserButton));
+        solo.assertCurrentActivity("Wrong", EditUserActivity.class);
+
+        solo.clickOnView(solo.getView(R.id.signOutbutton));
+        solo.assertCurrentActivity("Wrong", LoginActivity.class);
+
         //Asserts that the current activity is the Login Activity. Otherwise, show "Wrong Activity"
         solo.assertCurrentActivity(solo.getString(R.string.WRONG_ACTIVITY), LoginActivity.class);
 
@@ -85,7 +102,7 @@ public class LoginActivityAndroidTest {
      * Need to cache before running the test
      */
     @Test
-    public void correctInfoTest(){
+    public void X_correctInfoTest(){
         String signInStr = solo.getString(R.string.action_sign_in);  //string of sign in button
 
         //enter the log in info of the test user
@@ -97,7 +114,6 @@ public class LoginActivityAndroidTest {
         solo.assertCurrentActivity(solo.getString(R.string.WRONG_ACTIVITY), HomeActivity.class);
         assertTrue(solo.waitForLogMessage("signInWithEmail:success", 2000));
     }
-
 
 
     /**
