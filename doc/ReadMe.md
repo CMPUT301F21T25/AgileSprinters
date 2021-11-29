@@ -12,5 +12,10 @@ They are found [here](https://github.com/CMPUT301F21T25/AgileSprinters/blob/main
 ## UML
 They are found [here](https://github.com/CMPUT301F21T25/AgileSprinters/blob/main/doc/UML.png)
 
+## UI Mock Up 
+The UI Mock Up can be found [here](https://github.com/CMPUT301F21T25/AgileSprinters/blob/main/doc/UI_MockUp.pdf)
+
 ## Storyboard Summary/How to Use
-The storyboard summary/how to use the app may be found here
+The storyboard summary/how to use the app may be found [here](https://github.com/CMPUT301F21T25/AgileSprinters/blob/main/doc/Story%20Board.pdf)
+
+
