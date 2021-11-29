@@ -89,9 +89,8 @@ public class HabitInstanceList {
      * This edits the contents of the duration section
      * in a instance or throws an exception accordingly
      *
-     * @param instance, duration
-     *                  This is a candidate instance to edit
-     *                  The older duration is replaced with this duration param
+     * @param instance     This is a candidate instance to edit
+     * @param duration     The older duration is replaced with this duration param
      */
     public void editDurationDetails(HabitInstance instance, String duration) {
         if (!duration.matches("[0-9]+")) {
