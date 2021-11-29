@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="3dp"
         android:paddingTop="10dp"
+        android:layout_gravity="center"
         android:text="Title"
         android:textSize="22sp"/>
 
@@ -22,6 +23,7 @@
         android:layout_margin="3dp"
         android:paddingTop="10dp"
         android:text="Duration"
+        android:layout_gravity="center"
         android:textSize="22sp"/>
 
 
@@ -30,6 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:layout_margin="10dp"
+        android:layout_gravity="center"
         android:visibility="invisible"
         android:background="@drawable/ic_text_view_border"/>
 
