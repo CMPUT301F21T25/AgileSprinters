@@ -11,6 +11,7 @@ import androidx.test.rule.ActivityTestRule;
 
 import com.robotium.solo.Solo;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
@@ -18,10 +19,7 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 /**
- * This class provides testing for the calendar activity.
- * Please note that tests must be ran individually
- * and the cache must be cleared between each for them to work due to the app automatically
- * going to the home page after a single sign in on the device.
+ * This class provides testing for the search bar in the forum activity
  *
  * @author Sai Rasazna Ajerla
  */
@@ -46,12 +44,11 @@ public class SearchForUserAndroidTest {
     }
 
     /**
-     * This test will check to make sure
-     * that user registration and log in happens successfully
+     * This test will check if searching other users
+     * from search bar shows up
      */
     @Test
-    public void stage1_checkLogIn() {
-
+    public void stage1_checkSearchBar() {
         // checks to make sure we are in the right activity
         solo.assertCurrentActivity("Wrong", LoginActivity.class);
 
@@ -62,16 +59,6 @@ public class SearchForUserAndroidTest {
 
         // checks to make sure the activity has switched to the Home activity
         solo.assertCurrentActivity("Wrong", HomeActivity.class);
-
-    }
-
-    /**
-     * This test will check if searching other users
-     * from search bar shows up
-     */
-    @Test
-    public void stage3_checkSearchBar() {
-        solo.assertCurrentActivity("Wrong", LoginActivity.class);
 
         // check to make sure the activity is switched to calendar activity
         solo.clickOnView(solo.getView(R.id.forum));
@@ -86,5 +73,21 @@ public class SearchForUserAndroidTest {
         solo.clickOnText("riya@gmail.com");
 
         assertTrue(solo.waitForText("Followers", 1, 1000));
+        solo.goBack();
+    }
+
+    /**
+     * Closes the activity after test
+     */
+    @After
+    public void tearDown() {
+        if(!solo.getCurrentActivity().equals(HomeActivity.class)){
+            solo.clickOnView(solo.getView(R.id.home));
+        }
+
+        solo.clickOnView(solo.getView(R.id.homeUserButton));
+        solo.waitForActivity(EditUserActivity.class);
+        solo.clickOnView(solo.getView(R.id.signOutbutton));
+        solo.finishOpenedActivities();
     }
 }

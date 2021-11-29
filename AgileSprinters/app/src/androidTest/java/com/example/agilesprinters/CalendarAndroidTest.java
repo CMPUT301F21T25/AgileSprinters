@@ -26,6 +26,8 @@ import java.time.LocalDate;
  *
  * Note: there is no way, using robotium, to test adding an image thus it was not tested here
  * Note: there is no way to test editing the location (by dragging the marker), thus is was not tested
+ * Note: there is no way to give permission to location permission using robotium. So when testing for
+ *       the first time, please give the location permissions and the test or else the test cases will fail.
  */
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -164,7 +166,7 @@ public class CalendarAndroidTest {
 
         // makes sure if the habit event is successfully added
         solo.clickOnText("Walked 5000 steps");
-        solo.waitForDialogToOpen(1000);
+        //solo.waitForDialogToOpen(1000);
         assertTrue(solo.waitForText("Edmonton,Canada")
                 | solo.waitForText("Mountain View, California, United States"));
 
@@ -189,10 +191,10 @@ public class CalendarAndroidTest {
 
         // add the private habit event
         solo.clickOnButton("Save");
-        solo.waitForDialogToClose(1000);
+        solo.waitForDialogToClose(500);
 
         solo.clickOnText("Evening run");
-        solo.waitForDialogToOpen(1000);
+        //solo.waitForDialogToOpen(400);
         assertTrue(solo.waitForText("Edmonton,Canada")
                 | solo.waitForText("Mountain View, California, United States"));
 
@@ -266,15 +268,17 @@ public class CalendarAndroidTest {
         solo.clickOnView(solo.getView(R.id.editText_location));
         solo.waitForDialogToOpen(1000);
         solo.clickOnButton("DELETE");
+        solo.waitForDialogToClose(1000);
 
         solo.clickOnButton("Save");
 
         // checks to make sure the error message is displayed
-        assertTrue(solo.waitForText("Req val between 0 and 60", 1, 1000));
+        assertTrue(solo.waitForText("minutes value must be between 0 and 60", 1, 1000));
 
         // enter the correct information and save
         solo.clearEditText((EditText) solo.getView(R.id.editText_duration));
         solo.enterText((EditText) solo.getView(R.id.editText_duration), "60");
+        assertTrue(solo.waitForText("60", 1, 1000));
 
         solo.clickOnButton("Save");
 
@@ -282,7 +286,7 @@ public class CalendarAndroidTest {
         solo.waitForDialogToClose(1000);
 
         // makes sure edited content of the habit event shows up in list
-        assertTrue(solo.waitForText("60 minutes", 1, 1000));
+        assertTrue(solo.waitForText("60 mins", 1, 1000));
 
         // check to make sure the activity is switched to forum activity
         solo.clickOnView(solo.getView(R.id.forum));
@@ -433,9 +437,12 @@ public class CalendarAndroidTest {
      * delete habits after a test is run
      */
     private void deleteHabitEvents() {
-        solo.clickOnView(solo.getView(R.id.home));
+        if(!solo.getCurrentActivity().equals(HomeActivity.class)){
+            solo.clickOnView(solo.getView(R.id.home));
+        }
         // checks to see if deleting a habit, will delete its events
-        assertTrue(solo.waitForActivity(HomeActivity.class));
+        //assertTrue(solo.getCurrentActivity().equals(HomeActivity.class));
+        solo.assertCurrentActivity("Home", HomeActivity.class);
 
         if (solo.waitForText("Walking")) {
             solo.clickLongOnText("Walking");
@@ -475,6 +482,7 @@ public class CalendarAndroidTest {
     public void runAfterTest() {
         deleteHabitEvents();
         signOutUser();
+        solo.finishOpenedActivities();
 
     }
 
