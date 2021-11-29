@@ -72,11 +72,12 @@ public class OtherUserScreenActivity extends AppCompatActivity {
             otherUser = (User) getIntent().getSerializableExtra("otherUser");
             UID = otherUser.getUserID();
             nameStr = otherUser.getFirstName() + " " + otherUser.getLastName();
-
             followersCount = otherUser.getFollowersList().size();
             followingCount = String.valueOf(otherUser.getFollowingList().size());
         }
 
+        getUserLists(currentUser);
+        getUserLists(otherUser);
         setTextFields(followingCount, String.valueOf(followersCount), nameStr);
 
         //Set the follow button to the appropriate state.
@@ -219,5 +220,22 @@ public class OtherUserScreenActivity extends AppCompatActivity {
         this.finish();
 
         overridePendingTransition(0, 0);
+    }
+
+    public void getUserLists(User user){
+        db.collection("users").addSnapshotListener((value, error) -> {
+            for (QueryDocumentSnapshot doc : value) {
+                if (user.getUserID().matches(doc.getId())) {
+                    ArrayList<String> userTempList = (ArrayList<String>) doc.getData().get("following");
+                    user.setFollowingList(userTempList);
+
+                    userTempList = (ArrayList<String>) doc.getData().get("followers");
+                    user.setFollowersList(userTempList);
+
+                    userTempList = (ArrayList<String>) doc.getData().get("follow request list");
+                    user.setFollowRequestList(userTempList);
+                }
+            }
+        });
     }
 }
