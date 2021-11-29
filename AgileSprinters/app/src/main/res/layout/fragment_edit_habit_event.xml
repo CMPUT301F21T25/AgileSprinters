@@ -99,7 +99,7 @@
         android:id="@+id/editText_location"
         android:layout_height="40dp"
         android:layout_margin="5dp"
-        android:text="Location"
+        android:text="Successful addition of location"
         android:textSize="15dp"
         android:gravity="center"
         android:textStyle="bold"

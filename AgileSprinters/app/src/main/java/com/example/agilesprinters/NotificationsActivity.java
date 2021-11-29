@@ -258,6 +258,10 @@ public class NotificationsActivity extends AppCompatActivity implements BottomNa
         database.updateData(collectionPath, user.getUserID(), data, TAG);
     }
 
+    /**
+     * This method gets the updated followers and following lists from the
+     * database and updates the user information
+     */
     public void getUserLists(){
         db.collection("users").addSnapshotListener((value, error) -> {
             for (QueryDocumentSnapshot doc : value) {

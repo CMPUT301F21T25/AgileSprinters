@@ -222,6 +222,11 @@ public class OtherUserScreenActivity extends AppCompatActivity {
         overridePendingTransition(0, 0);
     }
 
+    /**
+     * This method gets the updated followers and following lists from the
+     * database and updates the user information
+     * @param user     is the user object to make changes on
+     */
     public void getUserLists(User user){
         db.collection("users").addSnapshotListener((value, error) -> {
             for (QueryDocumentSnapshot doc : value) {

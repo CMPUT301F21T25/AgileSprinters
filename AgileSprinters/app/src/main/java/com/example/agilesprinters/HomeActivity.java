@@ -97,16 +97,12 @@ public class HomeActivity extends AppCompatActivity implements AddHabitFragment.
 
             getFollowersFollowingCount();
 
-//            followersCount = String.valueOf(user.getFollowersList().size());
-//            followingCount = String.valueOf(user.getFollowingList().size());
         }
 
 
         Button homeUserButton = findViewById(R.id.homeUserButton);
         homeUserButton.setText(nameStr.substring(0, 1));
         getFollowersFollowingCount();
-//        followerCountTextView.setText(followersCount);
-//        followingCountTextView.setText(followingCount);
 
 
         CollectionReference habitCollectionReference = db.collection("Habit");
@@ -352,7 +348,7 @@ public class HomeActivity extends AppCompatActivity implements AddHabitFragment.
      * This is a method that updates a habit selected by the user in the database based with the
      * fields entered in the viewEditHabitFragment
      *
-     * @param habit
+     * @param habit is the habit object selected by the user to be updated
      */
     public void updateHabitDatabase(Habit habit) {
         db = FirebaseFirestore.getInstance();
@@ -415,6 +411,12 @@ public class HomeActivity extends AppCompatActivity implements AddHabitFragment.
         habitAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * This function deletes the forum events in the list after a user clicks deletes
+     * its associated habit events or habit.
+     *
+     * @param FID The forum ID of the object chosen to delete.
+     */
     public void deleteForumEventsDb(String FID) {
         collectionPath = "ForumPosts";
         // Makes a call to the database which handles it
