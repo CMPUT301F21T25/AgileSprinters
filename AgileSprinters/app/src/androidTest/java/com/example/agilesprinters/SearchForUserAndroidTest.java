@@ -17,8 +17,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import java.time.LocalDate;
-
 /**
  * This class provides testing for the calendar activity.
  * Please note that tests must be ran individually
@@ -35,8 +33,8 @@ public class SearchForUserAndroidTest {
     private Solo solo;
 
     @Rule
-    public ActivityTestRule<Login> rule = new ActivityTestRule< >
-            (Login.class, true, true);
+    public ActivityTestRule<LoginActivity> rule = new ActivityTestRule< >
+            (LoginActivity.class, true, true);
 
     /**
      * Runs before all tests and creates solo instance.
@@ -55,7 +53,7 @@ public class SearchForUserAndroidTest {
     public void stage1_checkLogIn() {
 
         // checks to make sure we are in the right activity
-        solo.assertCurrentActivity("Wrong", Login.class);
+        solo.assertCurrentActivity("Wrong", LoginActivity.class);
 
         // Log In to the test account
         solo.enterText((EditText) solo.getView(R.id.email), "sai@test.com");
@@ -63,7 +61,7 @@ public class SearchForUserAndroidTest {
         solo.clickOnView(solo.getView(R.id.loginBtn));
 
         // checks to make sure the activity has switched to the Home activity
-        solo.assertCurrentActivity("Wrong", Home.class);
+        solo.assertCurrentActivity("Wrong", HomeActivity.class);
 
     }
 
@@ -73,11 +71,11 @@ public class SearchForUserAndroidTest {
      */
     @Test
     public void stage3_checkSearchBar() {
-        solo.assertCurrentActivity("Wrong", Login.class);
+        solo.assertCurrentActivity("Wrong", LoginActivity.class);
 
         // check to make sure the activity is switched to calendar activity
-        solo.clickOnView(solo.getView(R.id.forumn));
-        assertTrue(solo.waitForActivity(ForumManager.class));
+        solo.clickOnView(solo.getView(R.id.forum));
+        assertTrue(solo.waitForActivity(ForumActivity.class));
 
         solo.clickOnView(solo.getView(R.id.users_list));
 

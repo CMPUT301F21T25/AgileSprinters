@@ -1,9 +1,7 @@
 package com.example.agilesprinters;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 /**
  * This class is specifically for testing as testing with the firestore was not working. It tracks
@@ -17,7 +15,7 @@ public class HabitTestList {
     /**
      * This method adds a habit to the list
      *
-     * @param habit hbait object being added to the list
+     * @param habit habit object being added to the list
      */
     public void addHabit(Habit habit) {
         if (habitList.contains(habit)) {

@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:text="Long click the marker pin or click anywhere on map"
+            android:text="Long click the marker pin to drag it to the desired location"
             android:textAlignment="center"
             android:textSize="18dp" />
 
@@ -48,7 +48,7 @@
                     android:name="com.google.android.gms.maps.SupportMapFragment"
                     android:layout_marginTop="15dp"/>
 
-                <EditText
+                <TextView
                     android:layout_marginTop="10dp"
                     android:padding="20dp"
                     android:layout_width="match_parent"
