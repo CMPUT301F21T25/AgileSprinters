@@ -84,8 +84,8 @@ public class ForumActivity extends AppCompatActivity implements BottomNavigation
         if (UID == null) {
             user = (User) getIntent().getSerializableExtra("user");
             UID = user.getUserID();
-            setTempList();
         }
+        setTempList();
 
         // connecting to the bottom navigation bar xml file
         bottomNavigationView = findViewById(R.id.bottomNavigationView);

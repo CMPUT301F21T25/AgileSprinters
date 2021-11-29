@@ -39,7 +39,7 @@ public class OtherUserScreenActivity extends AppCompatActivity {
     private Button follow;
     private static final String TAG = "Habit";
     private static final String UPDATE_TAG = "users";
-    private FirebaseFirestore db;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private Database database = new Database();
 
     /**
