@@ -124,7 +124,6 @@ public class ForumActivity extends AppCompatActivity implements BottomNavigation
                         intent.putExtra("currentUser", user);
                         intent.putExtra("otherUser", userToSend);
                         startActivity(intent);
-
                     }
                 }
             }

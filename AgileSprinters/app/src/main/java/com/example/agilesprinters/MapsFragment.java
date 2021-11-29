@@ -2,11 +2,7 @@ package com.example.agilesprinters;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
-
-import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -17,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -29,7 +24,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
@@ -53,11 +47,11 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
     /**
      * This variable contains an instance of the map's marker
      */
-    Marker marker;
+    private Marker marker;
     /**
      * This variable contains the habit instance passed to the user
      */
-    HabitInstance habitInstance;
+    private HabitInstance habitInstance;
     /**
      * This variable contains the entry point to the Fused Location Provider.
      */
@@ -85,6 +79,7 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
      * location retrieved by the Fused Location Provider, thus where the device is currently.
      */
     private Location lastKnownLocation;
+    private MapHelperClass mapHelperClass;
     /**
      * This variable is to store the ccamera state.
      */
@@ -102,10 +97,11 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
      *
      * @param  habitInstance the habit instance who's location will be determined
      */
-    public static MapsFragment newInstance(HabitInstance habitInstance) {
+    public static MapsFragment newInstance(HabitInstance habitInstance, MapHelperClass mapHelperClass) {
         MapsFragment fragment = new MapsFragment();
         Bundle args = new Bundle();
         args.putSerializable("Habit instance", habitInstance);
+        args.putSerializable("mapHelper", mapHelperClass);
         fragment.setArguments(args);
 
         return fragment;
@@ -137,6 +133,9 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         assert getArguments() != null;
+
+        mapHelperClass = (MapHelperClass) getArguments().getSerializable("mapHelper");
+
         habitInstance = (HabitInstance) getArguments().getSerializable("Habit instance");
         // Get location from saved instance state
         if (savedInstanceState != null) {
@@ -180,8 +179,8 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
     public void onMapReady(GoogleMap map) {
         this.map = map;
         // Prompt the user for location permission
-        getLocationPermission();
-
+        locationPermissionGranted = mapHelperClass.isLocationPermissionGranted();
+        System.out.println("permission"+locationPermissionGranted);
         // Turn on the control on the map and update its UI.
         updateLocationUI();
 
@@ -275,6 +274,7 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
         super.onResume();
         Button saveAddressBtn = getView().findViewById(R.id.saveAddressBtn);
         //if the save button is pressed, st the habit event's location to the marker's location
+        System.out.println("marker" + marker);
         saveAddressBtn.setOnClickListener(view -> {
             location = (marker.getPosition().latitude + "," + marker.getPosition().longitude);
             habitInstance.setOptLoc(location);
@@ -283,10 +283,9 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
     }
 
     /**
-     * gets the most recent locatin of the device of permission is granted
+     * gets the most recent location of the device of permission is granted
      */
     private void getDeviceLocation() {
-
         try {
             if (locationPermissionGranted) {
                 Task<Location> locationResult = fusedLocationProviderClient.getLastLocation();
@@ -304,6 +303,7 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
                                             new LatLng(lastKnownLocation.getLatitude(),
                                                     lastKnownLocation.getLongitude()))
                                     .draggable(true).visible(true));
+                            System.out.println("marker" + marker);
                         }
                         //if retrieving location is not successful, set to default
                     } else {
@@ -320,43 +320,7 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
         }
     }
 
-    /**
-     * gets permission to the location of the user. The result  is handled by onRequestPermissionsResult.
-     */
-    private void getLocationPermission() {
-        if (ContextCompat.checkSelfPermission(getContext().getApplicationContext(),
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            locationPermissionGranted = true;
-        } else {
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-        }
-    }
 
-    /**
-     * this function receives the result of permission requests
-     * @param requestCode  num of the  request code {@link int}
-     * @param permissions  The requested permissions
-     * @param grantResults  The grant results for the permissions
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        locationPermissionGranted = false;
-        switch (requestCode) {
-            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    locationPermissionGranted = true;
-                }
-            }
-        }
-        updateLocationUI();
-    }
 
     /**
      * Updates the map's UI settings based on whether the user has granted location permission.
@@ -374,7 +338,7 @@ public class MapsFragment extends DialogFragment implements OnMapReadyCallback,
                 map.setMyLocationEnabled(false);
                 map.getUiSettings().setMyLocationButtonEnabled(false);
                 lastKnownLocation = null;
-                getLocationPermission();
+                locationPermissionGranted = mapHelperClass.isLocationPermissionGranted();
             }
         } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage());

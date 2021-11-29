@@ -1,6 +1,7 @@
 package com.example.agilesprinters;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -15,6 +16,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -52,6 +55,7 @@ public class HomeActivity extends AppCompatActivity implements AddHabitFragment.
     private TextView followingCountTextView;
     private TextView followerCountTextView;
     private FirebaseAuth auth;
+    private MapHelperClass mapHelperClass = new MapHelperClass();
 
     private static final String TAG = "Habit";
     private String UID;
@@ -73,6 +77,9 @@ public class HomeActivity extends AppCompatActivity implements AddHabitFragment.
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getSupportActionBar().hide();
         setContentView(R.layout.activity_home);
+
+        mapHelperClass.getLocationPermission(HomeActivity.this, HomeActivity.this);
+
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
@@ -480,6 +487,7 @@ public class HomeActivity extends AppCompatActivity implements AddHabitFragment.
             case R.id.calendar:
                 Intent intent = new Intent(this, UserCalendarActivity.class);
                 intent.putExtra("user", user);
+                intent.putExtra("mapHelper", mapHelperClass);
                 //add bundle to send data if need
                 finish();
                 startActivity(intent);
@@ -509,5 +517,4 @@ public class HomeActivity extends AppCompatActivity implements AddHabitFragment.
         }
         return false;
     }
-
 }

@@ -52,6 +52,7 @@ public class AddHabitEventFragment extends DialogFragment {
     private Uri selectedImg;
     private HabitInstance habitInstance;
     private String optLoc;
+    private MapHelperClass mapHelperClass;
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
@@ -66,13 +67,14 @@ public class AddHabitEventFragment extends DialogFragment {
      * @param position is the selected item position
      * @return returns the fragment with the bundled parameters
      */
-    public static AddHabitEventFragment newInstance(int position, String UID, String HID, String EID) {
+    public static AddHabitEventFragment newInstance(int position, String UID, String HID, String EID, MapHelperClass mapHelperClass) {
         AddHabitEventFragment fragment = new AddHabitEventFragment();
         Bundle args = new Bundle();
         args.putInt("position", position);
         args.putString("UID", UID);
         args.putString("HID", HID);
         args.putString("EID", EID);
+        args.putSerializable("mapHelper", mapHelperClass);
         fragment.setArguments(args);
 
         return fragment;
@@ -154,6 +156,7 @@ public class AddHabitEventFragment extends DialogFragment {
         HID = getArguments().getString(getString(R.string.HID));
         EID = getArguments().getString(getString(R.string.EID));
         FID = getArguments().getString("FID");
+        mapHelperClass = (MapHelperClass) getArguments().getSerializable("mapHelper");
 
         // Setting the date of the event
         LocalDate currentDate = LocalDate.now();
@@ -190,7 +193,7 @@ public class AddHabitEventFragment extends DialogFragment {
      */
     private void getLocation() {
         habitInstance = new HabitInstance("null", "null", "null", "null", "null", 0, "null", "null", null, "");
-        MapsFragment mapsFragment = new MapsFragment().newInstance(habitInstance);
+        MapsFragment mapsFragment = new MapsFragment().newInstance(habitInstance, mapHelperClass);
         mapsFragment.show(getChildFragmentManager(), "ADD LOCATION");
     }
 
