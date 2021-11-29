@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:weightSum="100">
+
+    <TextView
+        android:id="@+id/requesting_user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="3dp"
+        android:gravity="center_vertical"
+        android:layout_gravity="center_vertical"
+        android:textSize="18sp"
+        android:textColor="@color/purple_200"
+        android:layout_weight="60">
+    </TextView>
+
+
+    <TextView
+        android:id="@+id/request_message_notifications"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="3dp"
+        android:layout_gravity="center_vertical"
+        android:textSize="18sp"
+        android:text= "@string/FOLLOW_REQUEST_MESSAGE"
+        android:layout_weight="40"/>
+</LinearLayout>
